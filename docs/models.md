@@ -46,6 +46,8 @@ Code | String
 Title | String
 Description | String | Having this badge indicates these qualities
 Benefits | String | The benefits of having this badge
+IsPrevilege | Boolean
+Previlege | String
 Prerequisites | String
 PrerequisitesJsonSourceUrl | String | Each badge has a github file which will be synced one-way from it.
 PrerequisitesJson | String
@@ -63,7 +65,26 @@ AchieveType | Enum.AchieveType | Manual, Automatic
 ApproverType | BadgeApproverType | Maual, Automatic
 Approver | Learner?
 Description | String | Why and how this badge achieved.
-RefUrl | String | URL reference for why this badge is assigned. eg. A post on stackoverflow or an activity page
+
+
+# LearnerBadgeProof
+| Property | Type | Description |
+---|---|---
+Learner | Learner
+Badge | Badge
+LearnerBadge | LearnerBadge
+ProofType | Enum.ProofType | `Activity, Badge, Approver`
+Title | String | A human undrestanable title generated based on proof information.
+ApproverNote | String
+ProofBadge | LearnerBadge
+ProofBadgeJson | String | A copy of ProofLearnerBadge at the moment.
+ProofActivity | LearnerActivity
+ProofActivityJson | String | A copy of ProofLearnerActivity at the moment.
+CreateDateTime | DateTimeOffset | The time the proof is created
+ProofDateTime | DateTimeOffSet | The time the proof is considered `Final`
+Status | Enum.ProofStatus | `Draft, Final`
+
+
 
 # Privilege
 | Property | Type | Description |
