@@ -4,7 +4,7 @@ Someone who can login to the system. Can be someone that is not involved in lear
 | Property | Type | Description |
 ---|---|---
 DisplayName | String |  
-Roles | Enum.Role[]  | Learner, Company, CompanyCreator, ContentHero 
+RolesStr | String  | Learner, Company, CompanyCreator, ContentHero 
 Learner | Learner
 
 
@@ -34,9 +34,6 @@ StackOverflowUsername | String
 EthereumPubKey | String   
 TonPubKey | String   
 TagStr | String   
-BadgeStr| String | coordinator:12,typer:56  
-PrivilegeStr | String   
-RolesStr | String   
 
 # Badge
 A badge is indication of a specific quality of a learner. For example if you participate in writing a document you may get a `document-creator` badge for each of the documents you write. Or if you participate in enough documentations you may get `documentation-guru` badge.
@@ -46,28 +43,37 @@ Code | String
 Title | String
 Description | String | Having this badge indicates these qualities
 Benefits | String | The benefits of having this badge
-IsPrevilege | Boolean
-Previlege | String
+IsPermission | Boolean
+Permission | String
 Prerequisites | String
 PrerequisitesJsonSourceUrl | String | Each badge has a github file which will be synced one-way from it.
 PrerequisitesJson | String
 Level | Enum.BadgeLevel | Bronze, Silver, Gold
 IsApprovalRequired | Boolean
 
+# Privilege
+| Property | Type | Description |
+---|---|---
+Code | String
+Title | String
+Description | String
+Power | String
+Prerequisites | String
+PrerequisitesJson | String
+IsApprovalRequired | Boolean
 
-# LearnerBadge
+# LearnerAchievement
 | Property | Type | Description |
 ---|---|---
 Learner | Learner
-Badge | Badge
+AchivementId | Guid | Badge or Previlege
 AchieveDate | Date
 AchieveType | Enum.AchieveType | Manual, Automatic
-ApproverType | BadgeApproverType | Maual, Automatic
+ApproverType | AchievementApproverType | Maual, Automatic
 Approver | Learner?
 Description | String | Why and how this badge achieved.
 
-
-# LearnerBadgeProof
+# LearnerAchievementProof
 | Property | Type | Description |
 ---|---|---
 Learner | Learner
@@ -83,29 +89,5 @@ ProofActivityJson | String | A copy of ProofLearnerActivity at the moment.
 CreateDateTime | DateTimeOffset | The time the proof is created
 ProofDateTime | DateTimeOffSet | The time the proof is considered `Final`
 Status | Enum.ProofStatus | `Draft, Final`
-
-
-
-# Privilege
-| Property | Type | Description |
----|---|---
-Code | String
-Title | String
-Description | String
-Power | String
-Prerequisites | String
-PrerequisitesJson | String
-IsNeedApproval | Boolean
-
-
-# LearnerPrivilege
-| Property | Type | Description |
----|---|---
-Learner | Learner
-Privilege | Privilege
-AchieveDate | Date
-AchieveType | Enum.AchieveType | Manual, Automatic
-ApproverType | BadgeApproverType | Maual, Automatic
-Approver | Learner?
 
 
