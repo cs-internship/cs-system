@@ -5,6 +5,16 @@
         "fa": "info_fa.md"
     },
     "prerequisites": {
+        "activities": [
+            {
+                "activity": "prerequisite-activity-code-1",
+                "count": "required activity count"
+            },
+            {
+                "activity": "type-race-coordinator",
+                "count": "5"
+            }
+        ],
         "badges": [
             {
                 "badge": "prerequisite-badge-code-1",
