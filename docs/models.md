@@ -13,7 +13,7 @@ A user that is a part of CS Internship program and is in the middle of growing j
 
 Property | Type | Description
 ---|---|---
-Code | String   
+Username | String   
 FirstName | String   
 LastName | String   
 Summary | String   

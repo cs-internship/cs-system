@@ -1,0 +1,36 @@
+{
+    "code": "",
+    "info": {
+        "en": "info_en.md",
+        "fa": "info_fa.md"
+    },
+    "prerequisites": {
+        "badges": [
+            {
+                "badge": "prerequisite-badge-code-1",
+                "count": "required badge count"
+            },
+            {
+                "badge": "prerequisite-badge-code-2",
+                "count": "required badge count"
+            }
+        ],
+        "approvers": [
+            {
+                "prerequisites": {
+                    "badges": [
+                        {
+                            "badge": "prerequisite-badge-code-1",
+                            "count": "2"
+                        },
+                        {
+                            "badge": "prerequisite-badge-code-2",
+                            "count": "5"
+                        }
+                    ]
+                },
+                "count": "required approver count"
+            }
+        ]
+    }
+}
