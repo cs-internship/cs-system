@@ -13,14 +13,15 @@ A user that is a part of CS Internship program and is in the middle of growing j
 
 Property | Type | Description
 ---|---|---
-Username | String   
+Username | String  | just letters and digits and underscore
 FirstName | String   
 LastName | String   
 Summary | String   
 Status  | Enum.LearnerStatus | PendingInfo, Active, Inactive
 IsActive | Boolean   
-BirthCity | String   
-LivingCity | String   
+BirthCity | City   
+LivingCity | City
+Address | String   
 AnimalCharacter | String   
 MobileNo | String   
 TelegramUsername | String   
