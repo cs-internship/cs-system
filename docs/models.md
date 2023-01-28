@@ -102,6 +102,7 @@ ActivityTypeText | String | If unknown, this is the helping information
 Title | String
 Description | String
 RefUrl | String
+RefInfoJson | String | More information about the ref eg. starting second (if video).
 ActivityDateTime | DateTimeOffset
 ActivityStatus | Enum.ActivityStatus | Pending, Approved, Rejected
 Approver | Learner
