@@ -78,10 +78,11 @@ Description | String | Why and how this badge achieved.
 | Property | Type | Description |
 ---|---|---
 Learner | Learner
-Badge | Badge
-LearnerBadge | LearnerBadge
+AchievementId | Guid
+LearnerAchievement | LearnerAchievement
 ProofType | Enum.ProofType | `Activity, Badge, Approver`
 Title | String | A human undrestanable title generated based on proof information.
+Approver | Learner
 ApproverNote | String
 ProofBadge | LearnerBadge
 ProofBadgeJson | String | A copy of ProofLearnerBadge at the moment.
@@ -92,3 +93,16 @@ ProofDateTime | DateTimeOffSet | The time the proof is considered `Final`
 Status | Enum.ProofStatus | `Draft, Final`
 
 
+# LearnerActivity
+| Property | Type | Description |
+---|---|---
+Learner | Learner
+ActivityType | Enum.ActivityType | Unknown, OperationMeetingCoordination
+ActivityTypeText | String | If unknown, this is the helping information
+Title | String
+Description | String
+RefUrl | String
+ActivityDateTime | DateTimeOffset
+ActivityStatus | Enum.ActivityStatus | Pending, Approved, Rejected
+Approver | Learner
+ApproveDateTime | DateTimeOffset
