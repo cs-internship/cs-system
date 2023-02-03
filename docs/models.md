@@ -107,3 +107,35 @@ ActivityDateTime | DateTimeOffset
 ActivityStatus | Enum.ActivityStatus | Pending, Approved, Rejected
 Approver | Learner
 ApproveDateTime | DateTimeOffset
+
+# Praisal System
+The Praisal System is designed to specify the requirements to pick a learner for a specific situation.
+## RequirementSet
+| Property | Type | Description |
+---|---|---
+Badges | BadgeRequirement[]
+Activities | ActivityRequirement[]
+Approvers | ApproverRequirement[]
+
+A `RequirementSet` is a set of requirements that should be satified on a learner to accept for a situation. These requirements are one of these 3 types:
+- Badge Requirements
+- Activity Requirements
+- Approver Requirements
+
+## BadgeRequirement
+| Property | Type | Description |
+---|---|---
+Badge | Badge |
+Count | Integer
+## ActivityRequirement
+| Property | Type | Description |
+---|---|---
+ActivityType | Enum.ActivityType
+Count | Integer
+## ApproverRequirement
+| Property | Type | Description |
+---|---|---
+ActivityType | Enum.ActivityType
+Badges | BadgeRequirement[]
+Activities | ActivityRequirement[]
+ApproverCount | Integer

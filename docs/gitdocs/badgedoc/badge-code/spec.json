@@ -4,43 +4,46 @@
         "en": "info_en.md",
         "fa": "info_fa.md"
     },
-    "prerequisites": {
-        "activities": [
-            {
-                "activity": "prerequisite-activity-code-1",
-                "count": "required activity count"
-            },
-            {
-                "activity": "type-race-coordinator",
-                "count": "5"
-            }
-        ],
-        "badges": [
-            {
-                "badge": "prerequisite-badge-code-1",
-                "count": "required badge count"
-            },
-            {
-                "badge": "prerequisite-badge-code-2",
-                "count": "required badge count"
-            }
-        ],
-        "approvers": [
-            {
-                "prerequisites": {
-                    "badges": [
-                        {
-                            "badge": "prerequisite-badge-code-1",
-                            "count": "2"
-                        },
-                        {
-                            "badge": "prerequisite-badge-code-2",
-                            "count": "5"
-                        }
-                    ]
+    "praisal-methods": [
+        {
+            "title": "Main Method",
+            "badge-requirements": [
+                "requirement-badge-code-A; 2",
+                "requirement-badge-code-B",
+                "requirement-badge-code-C|requirement-badge-code-D; 1"
+            ],
+            "activity-requirements": [
+                "requirement-activity-code-A",
+                "requirement-activity-code-B; 1",
+                "requirement-activity-code-C|requirement-activity-code-D"
+            ],
+            "approver-requirements": [
+                {
+                    "badges":[
+                        "requirement-badge-code-A; 2",
+                        "requirement-badge-code-B",
+                        "requirement-badge-code-C|requirement-badge-code-D; 1"
+                    ],
+                    "count": "required approver count"
                 },
-                "count": "required approver count"
-            }
-        ]
-    }
+                {
+                    "badges":[
+                        "requirement-badge-code-D; 2"
+                    ],
+                    "count": "required approver count"
+                }
+            ]
+        },
+        {
+            "title": "Superpower Method",
+            "approver-requirements": [
+                {
+                    "badges":[
+                        "superpower"
+                    ],
+                    "count": "1"
+                }
+            ]
+        }
+    ]
 }
