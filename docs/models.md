@@ -149,8 +149,9 @@ This system helps to manage all the work with these approvals.
 ---|---|---
 Title | String
 Description | String
-ApprovalType | String | WeeklyReport
-ApprovalRef | String | A document Id or a link reference
+ApprovalArtifact | Enum.ApprovalArtifact | WeeklyReport
+ApprovalRefId | String | A document Id
+ApprovalRefUrl | String | A link reference
 ApprovalJson | String | What is going to be approved
 RequestDateTime | DateTimeOffset
 FinalizeDateTime | DateTimeOffset
