@@ -139,3 +139,29 @@ ActivityType | Enum.ActivityType
 Badges | BadgeRequirement[]
 Activities | ActivityRequirement[]
 ApproverCount | Integer
+
+# Approval System
+The CS systems requires a lot of manual approvals which should be done by people.
+This system helps to manage all the work with these approvals.
+
+## ApprovalRequest
+| Property | Type | Description |
+---|---|---
+Title | String
+Description | String
+ApprovalType | String | WeeklyReport
+ApprovalRef | String | A document Id or a link reference
+ApprovalJson | String | What is going to be approved
+RequestDateTime | DateTimeOffset
+FinalizeDateTime | DateTimeOffset
+
+## ApprovalRequestApprover
+| Property | Type | Description |
+---|---|---
+ApprovalRequest | ApprovalRequest
+Approver | Learner
+Status | Enum.ApprovalStatus | Approved, Rejected , Skipped
+ApprovalComment | String
+CreateDateTime | DataTimeOffset
+FirstResponseDateTime | DateTimeOffSet
+LastResponseDateTime | DateTimeOffSet

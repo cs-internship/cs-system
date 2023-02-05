@@ -8,27 +8,29 @@
         {
             "title": "Main Method",
             "badge-requirements": [
-                "requirement-badge-code-A; 2",
+                "requirement-badge-code-A:2",
                 "requirement-badge-code-B",
-                "requirement-badge-code-C|requirement-badge-code-D; 1"
+                "requirement-badge-code-C:1|requirement-badge-code-D:2"
             ],
             "activity-requirements": [
                 "requirement-activity-code-A",
-                "requirement-activity-code-B; 1",
-                "requirement-activity-code-C|requirement-activity-code-D"
+                "requirement-activity-code-B:1",
+                "requirement-activity-code-C|requirement-activity-code-D:2"
             ],
             "approver-requirements": [
                 {
+                    "step": 1,
                     "badges":[
-                        "requirement-badge-code-A; 2",
+                        "requirement-badge-code-A:2",
                         "requirement-badge-code-B",
-                        "requirement-badge-code-C|requirement-badge-code-D; 1"
+                        "requirement-badge-code-C:2|requirement-badge-code-D"
                     ],
                     "count": "required approver count"
                 },
                 {
+                    "step": 2,
                     "badges":[
-                        "requirement-badge-code-D; 2"
+                        "requirement-badge-code-D:2"
                     ],
                     "count": "required approver count"
                 }
