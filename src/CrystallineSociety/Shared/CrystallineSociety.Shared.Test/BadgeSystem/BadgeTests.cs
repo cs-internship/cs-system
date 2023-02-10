@@ -25,7 +25,7 @@ namespace CrystallineSociety.Shared.Test.BadgeSystem
             Assert.IsNotNull(badgeService);
 
             var specJson = await LoadSampleBadge("doc_guru_badge_sample");
-            var badge = badgeService.Parse(specJson);
+            var badge = badgeService.ParseBadge(specJson);
 
             Assert.IsNotNull(badge);
             Assert.IsNotNull(badge.Code);
@@ -36,19 +36,45 @@ namespace CrystallineSociety.Shared.Test.BadgeSystem
             
             var firstAppraisal = appraisalMethods.First();
             Assert.IsNotNull(firstAppraisal.Title);
-            //Assert.IsTrue(firstAppraisal.BadgeRequirements.Any());
-            //Assert.IsTrue(firstAppraisal.ActivityRequirements.Any());
+            Assert.IsTrue(firstAppraisal.BadgeRequirements.Any());
+            Assert.IsTrue(firstAppraisal.ActivityRequirementNodes.Any());
             Assert.IsTrue(firstAppraisal.ApprovingSteps.Any());
 
             var firstApprovingStep = firstAppraisal.ApprovingSteps.First();
             Assert.AreEqual(1, firstApprovingStep.Step);
             Assert.AreEqual(2, firstApprovingStep.RequiredApprovalCount);
             Assert.IsNotNull(firstApprovingStep.Title);
-            //Assert.IsTrue(firstApprovingStep.ApproverRequiredBadges.Any());
+            Assert.IsTrue(firstApprovingStep.ApproverRequiredBadges.Any());
 
 
-            //var firstApprovingStepBadge = firstApprovingStep.ApproverRequiredBadges.First();
-            //Assert.AreEqual(2, firstApprovingStepBadge.RequiredCount);
+            var firstApprovingStepBadge = firstApprovingStep.ApproverRequiredBadges.First();
+            Assert.AreEqual(1, firstApprovingStepBadge.RequirementOptions.Count);
+
+            var lastApprovingStepBadge = firstApprovingStep.ApproverRequiredBadges.Last();
+            Assert.AreEqual(2, lastApprovingStepBadge.RequirementOptions.Count);
+
+        }
+
+        [TestMethod]
+        public async Task Badge_FullRound()
+        {
+            var testHost = Host.CreateDefaultBuilder()
+                               .ConfigureServices((_, services) =>
+                                   {
+                                       services.AddSharedServices();
+                                   }
+                               ).Build();
+
+            var badgeService = testHost.Services.GetService<IBadgeService>();
+
+            Assert.IsNotNull(badgeService);
+
+            var specJson = await LoadSampleBadge("doc_guru_badge_sample");
+            var badge = badgeService.ParseBadge(specJson);
+
+            var resultJson = badgeService.SerializeBadge(badge);
+
+            Assert.AreEqual(specJson, resultJson);
 
         }
 

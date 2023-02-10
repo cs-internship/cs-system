@@ -1,7 +1,7 @@
 {
   "code": "doc-guru-badge-sample",
   "description": "Description for doc-guru-badge-sample",
-  "level":  "Gold",
+  "level": "Gold",
   "info": {
     "en": "info_en.md",
     "fa": "info_fa.md"
@@ -10,23 +10,23 @@
     {
       "title": "Main Method",
       "badge-requirements": [
-        "requirement-badge-code-A:2",
+        "requirement-badge-code-A*2",
         "requirement-badge-code-B",
-        "requirement-badge-code-C:1|requirement-badge-code-D:2"
+        "requirement-badge-code-C*1|requirement-badge-code-D*2"
       ],
       "activity-requirements": [
         "requirement-activity-code-A",
-        "requirement-activity-code-B:1",
-        "requirement-activity-code-C|requirement-activity-code-D:2"
+        "requirement-activity-code-B*1",
+        "requirement-activity-code-C|requirement-activity-code-D*2"
       ],
       "approving-steps": [
         {
           "step": 1,
-          "title":  "Initial Approval",
+          "title": "Initial Approval",
           "approver-required-badges": [
-            "requirement-badge-code-A:2",
+            "requirement-badge-code-A*2",
             "requirement-badge-code-B",
-            "requirement-badge-code-C:2|requirement-badge-code-D"
+            "requirement-badge-code-C*2|requirement-badge-code-D"
           ],
           "required-approval-count": 2
         },
@@ -34,7 +34,7 @@
           "step": 2,
           "title": "Final Approval",
           "approver-required-badges": [
-            "requirement-badge-code-D:2"
+            "requirement-badge-code-D*2"
           ],
           "required-approval-count": 2
         }
@@ -42,9 +42,13 @@
     },
     {
       "title": "Superpower Method",
-      "approver-requirements": [
+      "badge-requirements": [],
+      "activity-requirements": [],
+      "approving-steps": [
         {
-          "badges": [
+          "step": 1,
+          "title": "Superpower Admin",
+          "approver-required-badges": [
             "superpower"
           ],
           "required-approval-count": 1
