@@ -5,8 +5,8 @@ MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".SolutionItems", ".SolutionItems", "{5CF43F76-BB71-4B5B-B4DF-1C753E042A8F}"
 	ProjectSection(SolutionItems) = preProject
 		.gitignore = .gitignore
-		src\Directory.Build.props = src\Directory.Build.props
-		src\global.json = src\global.json
+		Directory.Build.props = Directory.Build.props
+		global.json = global.json
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Client", "Client", "{99987B56-D7E8-43AA-9EFC-07EC384B4382}"
@@ -17,17 +17,17 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Shared", "Shared", "{4CB2E4
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Infra", "Infra", "{4FFA9633-C4EC-4DD8-8C26-DE597E731E09}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CrystallineSociety.Shared", "src\Shared\Shared\CrystallineSociety.Shared.csproj", "{E654B009-D083-4476-AEA5-EF5D73BF2EA8}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CrystallineSociety.Shared", "Shared\Shared\CrystallineSociety.Shared.csproj", "{E654B009-D083-4476-AEA5-EF5D73BF2EA8}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CrystallineSociety.Iac", "src\Infra\Iac\CrystallineSociety.Iac.csproj", "{50296618-0E17-4596-9BFF-B5C47EB40E74}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CrystallineSociety.Iac", "Infra\Iac\CrystallineSociety.Iac.csproj", "{50296618-0E17-4596-9BFF-B5C47EB40E74}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CrystallineSociety.Server.Api", "src\Server\Api\CrystallineSociety.Server.Api.csproj", "{29532CE7-708E-4ED0-981E-EF17C573B6CB}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CrystallineSociety.Server.Api", "Server\Api\CrystallineSociety.Server.Api.csproj", "{29532CE7-708E-4ED0-981E-EF17C573B6CB}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CrystallineSociety.Client.Shared", "src\Client\Shared\CrystallineSociety.Client.Shared.csproj", "{0AAA866C-CEA9-4D11-B66A-AA2E295DA30B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CrystallineSociety.Client.Shared", "Client\Shared\CrystallineSociety.Client.Shared.csproj", "{0AAA866C-CEA9-4D11-B66A-AA2E295DA30B}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CrystallineSociety.Client.Web", "src\Client\Web\CrystallineSociety.Client.Web.csproj", "{37B0BFFF-762E-42C6-A999-80EF9F38BE4C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CrystallineSociety.Client.Web", "Client\Web\CrystallineSociety.Client.Web.csproj", "{37B0BFFF-762E-42C6-A999-80EF9F38BE4C}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CrystallineSociety.Client.App", "src\Client\App\CrystallineSociety.Client.App.csproj", "{5DD4EE2C-8397-4E32-B147-6FF87D7DD648}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CrystallineSociety.Client.App", "Client\App\CrystallineSociety.Client.App.csproj", "{5DD4EE2C-8397-4E32-B147-6FF87D7DD648}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".github", ".github", "{6FF861C0-D900-4CE2-A4E6-6FD525EC1A8F}"
 EndProject
