@@ -1,0 +1,53 @@
+{
+  "code": "doc-guru-badge-sample",
+  "description": "Description for doc-guru-badge-sample",
+  "level":  "Gold",
+  "info": {
+    "en": "info_en.md",
+    "fa": "info_fa.md"
+  },
+  "praisal-methods": [
+    {
+      "title": "Main Method",
+      "badge-requirements": [
+        "requirement-badge-code-A:2",
+        "requirement-badge-code-B",
+        "requirement-badge-code-C:1|requirement-badge-code-D:2"
+      ],
+      "activity-requirements": [
+        "requirement-activity-code-A",
+        "requirement-activity-code-B:1",
+        "requirement-activity-code-C|requirement-activity-code-D:2"
+      ],
+      "approver-requirements": [
+        {
+          "step": 1,
+          "badges": [
+            "requirement-badge-code-A:2",
+            "requirement-badge-code-B",
+            "requirement-badge-code-C:2|requirement-badge-code-D"
+          ],
+          "count": "required approver count"
+        },
+        {
+          "step": 2,
+          "badges": [
+            "requirement-badge-code-D:2"
+          ],
+          "count": "required approver count"
+        }
+      ]
+    },
+    {
+      "title": "Superpower Method",
+      "approver-requirements": [
+        {
+          "badges": [
+            "superpower"
+          ],
+          "count": "1"
+        }
+      ]
+    }
+  ]
+}

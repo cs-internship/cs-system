@@ -1,4 +1,5 @@
 ﻿using CrystallineSociety.Shared.Services.Implementations;
+using CrystallineSociety.Shared.Services.Implementations.BadgeSystem;
 
 namespace Microsoft.Extensions.DependencyInjection;
 
@@ -13,5 +14,6 @@ public static class IServiceCollectionExtensions
         services.AddAuthorizationCore();
 
         services.AddSingleton<IDateTimeProvider, DateTimeProvider>();
+        services.AddTransient<IBadgeService, BadgeService>();
     }
 }
