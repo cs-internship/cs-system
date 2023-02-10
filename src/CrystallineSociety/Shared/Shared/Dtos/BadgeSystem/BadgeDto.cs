@@ -41,26 +41,26 @@ namespace CrystallineSociety.Shared.Dtos.BadgeSystem
 
     public class ActivityRequirement
     {
-        public ActivityRequirement(string requiredActivityStr, string requiredCount)
+        public ActivityRequirement(string requiredActivityStr, int requiredCount)
         {
             RequiredActivityStr = requiredActivityStr;
             RequiredCount = requiredCount;
         }
 
         public string RequiredActivityStr { get; set; }
-        public string RequiredCount { get; set; }
+        public int RequiredCount { get; set; }
     }
 
     public class BadgeRequirement
     {
-        public BadgeRequirement(string requiredBadgeStr, string requiredCount)
+        public BadgeRequirement(string requiredBadgeStr, int requiredCount)
         {
             RequiredBadgeStr = requiredBadgeStr;
             RequiredCount = requiredCount;
         }
 
         public string RequiredBadgeStr { get; set; }
-        public string RequiredCount { get; set; }
+        public int RequiredCount { get; set; }
     }
 
     public enum BadgeLevel
