@@ -6,7 +6,7 @@
     "en": "info_en.md",
     "fa": "info_fa.md"
   },
-  "praisal-methods": [
+  "appraisal-methods": [
     {
       "title": "Main Method",
       "badge-requirements": [
@@ -19,22 +19,24 @@
         "requirement-activity-code-B:1",
         "requirement-activity-code-C|requirement-activity-code-D:2"
       ],
-      "approver-requirements": [
+      "approving-steps": [
         {
           "step": 1,
-          "badges": [
+          "title":  "Initial Approval",
+          "approver-required-badges": [
             "requirement-badge-code-A:2",
             "requirement-badge-code-B",
             "requirement-badge-code-C:2|requirement-badge-code-D"
           ],
-          "count": "required approver count"
+          "required-approval-count": 2
         },
         {
           "step": 2,
-          "badges": [
+          "title": "Final Approval",
+          "approver-required-badges": [
             "requirement-badge-code-D:2"
           ],
-          "count": "required approver count"
+          "required-approval-count": 2
         }
       ]
     },
@@ -45,7 +47,7 @@
           "badges": [
             "superpower"
           ],
-          "count": "1"
+          "required-approval-count": 1
         }
       ]
     }

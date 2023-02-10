@@ -10,7 +10,7 @@ namespace CrystallineSociety.Shared.Test.BadgeSystem
     {
         public TestContext TestContext { get; set; } = default!;
 
-            [TestMethod]
+        [TestMethod]
         public async Task Badge_LoadSimple()
         {
             var testHost = Host.CreateDefaultBuilder()
@@ -24,15 +24,37 @@ namespace CrystallineSociety.Shared.Test.BadgeSystem
 
             Assert.IsNotNull(badgeService);
 
-            var specJson = await ResourceUtil.GetResourceAsync("doc_guru_badge_sample.spec.json");
+            var specJson = await LoadSampleBadge("doc_guru_badge_sample");
             var badge = badgeService.Parse(specJson);
 
             Assert.IsNotNull(badge);
             Assert.IsNotNull(badge.Code);
             Assert.IsNotNull(badge.Description);
 
+            var appraisalMethods = badge.AppraisalMethods!;
+            Assert.IsTrue(appraisalMethods.Any());
+            
+            var firstAppraisal = appraisalMethods.First();
+            Assert.IsNotNull(firstAppraisal.Title);
+            //Assert.IsTrue(firstAppraisal.BadgeRequirements.Any());
+            //Assert.IsTrue(firstAppraisal.ActivityRequirements.Any());
+            Assert.IsTrue(firstAppraisal.ApprovingSteps.Any());
+
+            var firstApprovingStep = firstAppraisal.ApprovingSteps.First();
+            Assert.AreEqual(1, firstApprovingStep.Step);
+            Assert.AreEqual(2, firstApprovingStep.RequiredApprovalCount);
+            Assert.IsNotNull(firstApprovingStep.Title);
+            //Assert.IsTrue(firstApprovingStep.ApproverRequiredBadges.Any());
 
 
+            //var firstApprovingStepBadge = firstApprovingStep.ApproverRequiredBadges.First();
+            //Assert.AreEqual(2, firstApprovingStepBadge.RequiredCount);
+
+        }
+
+        private static async Task<string> LoadSampleBadge(string badge)
+        {
+            return await ResourceUtil.GetResourceAsync($"{badge}.spec.json");
         }
     }
 }
