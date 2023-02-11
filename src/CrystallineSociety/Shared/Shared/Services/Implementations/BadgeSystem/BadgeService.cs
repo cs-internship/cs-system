@@ -18,7 +18,8 @@ namespace CrystallineSociety.Shared.Services.Implementations.BadgeSystem
             Converters =
             {
                 new JsonStringEnumConverter(),
-                new RequirementBadgeConverter()
+                new BadgeRequirementConverter(),
+                new ActivityRequirementConverter(),
             }
         };
 
@@ -34,7 +35,7 @@ namespace CrystallineSociety.Shared.Services.Implementations.BadgeSystem
         }
     }
 
-    public class RequirementBadgeConverter : JsonConverter<BadgeRequirement>
+    public class BadgeRequirementConverter : JsonConverter<BadgeRequirement>
     {
         public override BadgeRequirement? Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
         {
@@ -58,7 +59,7 @@ namespace CrystallineSociety.Shared.Services.Implementations.BadgeSystem
         }
     }
 
-    public class RequirementActivityConverter : JsonConverter<ActivityRequirement>
+    public class ActivityRequirementConverter : JsonConverter<ActivityRequirement>
     {
         public override ActivityRequirement? Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
         {

@@ -37,7 +37,7 @@ namespace CrystallineSociety.Shared.Test.BadgeSystem
             var firstAppraisal = appraisalMethods.First();
             Assert.IsNotNull(firstAppraisal.Title);
             Assert.IsTrue(firstAppraisal.BadgeRequirements.Any());
-            Assert.IsTrue(firstAppraisal.ActivityRequirementNodes.Any());
+            Assert.IsTrue(firstAppraisal.ActivityRequirements.Any());
             Assert.IsTrue(firstAppraisal.ApprovingSteps.Any());
 
             var firstApprovingStep = firstAppraisal.ApprovingSteps.First();

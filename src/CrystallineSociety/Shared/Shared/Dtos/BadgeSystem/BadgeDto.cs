@@ -25,14 +25,8 @@ namespace CrystallineSociety.Shared.Dtos.BadgeSystem
     {
         public string Title { get; set; }
 
-        //[JsonPropertyName("badge-requirements")]
-        //public List<string> BadgeRequirementNodes { get; set; } = new();
-        //[JsonIgnore]
         public List<BadgeRequirement> BadgeRequirements { get; set; } = new();
 
-        [JsonPropertyName("activity-requirements")]
-        public List<string> ActivityRequirementNodes { get; set; } = new();
-        [JsonIgnore]
         public List<ActivityRequirement> ActivityRequirements { get; set; } = new();
         public List<ApprovingStep> ApprovingSteps { get; set; } = new();
     }
