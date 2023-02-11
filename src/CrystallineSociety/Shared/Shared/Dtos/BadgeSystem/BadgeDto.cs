@@ -13,7 +13,7 @@ namespace CrystallineSociety.Shared.Dtos.BadgeSystem
         public string? Description { get; set; }
         public BadgeLevel Level { get; set; }
         public Dictionary<string, string> Info { get; set; }
-        public List<AppraisalMethod>? AppraisalMethods { get; set; }
+        public List<AppraisalMethod> AppraisalMethods { get; set; } = new List<AppraisalMethod>();
         
         public override string ToString()
         {

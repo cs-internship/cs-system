@@ -24,7 +24,7 @@ namespace CrystallineSociety.Shared.Test.BadgeSystem
 
             Assert.IsNotNull(badgeService);
 
-            var specJson = await LoadSampleBadge("serialization-badge-sample");
+            var specJson = await ResourceUtil.LoadSampleBadge("serialization-badge-sample");
             var badge = badgeService.ParseBadge(specJson);
 
             Assert.IsNotNull(badge);
@@ -69,18 +69,13 @@ namespace CrystallineSociety.Shared.Test.BadgeSystem
 
             Assert.IsNotNull(badgeService);
 
-            var specJson = await LoadSampleBadge("serialization-badge-sample");
+            var specJson = await ResourceUtil.LoadSampleBadge("serialization-badge-sample");
             var badge = badgeService.ParseBadge(specJson);
 
             var resultJson = badgeService.SerializeBadge(badge);
 
             Assert.AreEqual(specJson, resultJson);
 
-        }
-
-        private static async Task<string> LoadSampleBadge(string badge)
-        {
-            return await ResourceUtil.GetResourceAsync($"{badge.Replace("-","_")}.spec.json");
         }
     }
 }

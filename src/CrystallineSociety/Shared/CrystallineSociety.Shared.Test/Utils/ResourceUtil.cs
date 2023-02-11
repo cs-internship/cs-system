@@ -22,5 +22,10 @@ namespace CrystallineSociety.Shared.Test.Utils
             using StreamReader reader = new StreamReader(stream);
             return await reader.ReadToEndAsync();
         }
+
+        public static async Task<string> LoadSampleBadge(string badge)
+        {
+            return await GetResourceAsync($"{badge.Replace("-", "_")}.spec.json");
+        }
     }
 }

@@ -5,12 +5,18 @@ using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
 using CrystallineSociety.Shared.Dtos.BadgeSystem;
+using CrystallineSociety.Shared.Dtos.BadgeSystem.Validations;
+using CrystallineSociety.Shared.Json.Converters;
 using CrystallineSociety.Shared.Utils;
 
 namespace CrystallineSociety.Shared.Services.Implementations.BadgeSystem
 {
-    public class BadgeService : IBadgeService
+    public partial class BadgeService : IBadgeService
     {
+        [AutoInject]
+        public IEnumerable<IBadgeSystemValidator> BadgeValidations { get; set; }
+
+
         private static JsonSerializerOptions BadgeOptions { get; set; } = new JsonSerializerOptions
         {
             PropertyNamingPolicy = KebabCaseNamingPolicy.Instance,
@@ -33,54 +39,33 @@ namespace CrystallineSociety.Shared.Services.Implementations.BadgeSystem
         {
             return JsonSerializer.Serialize(badge, BadgeOptions);
         }
-    }
 
-    public class BadgeRequirementConverter : JsonConverter<BadgeRequirement>
-    {
-        public override BadgeRequirement? Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+        public List<BadgeSystemValidationDto> ValidateBadgeSystem(BadgeSystemDto badgeSystem)
         {
-            var text = reader.GetString();
-            var requirements =
-            (
-                from part in text.Split("|")
-                let badgeCount = part.Split("*")
-                select new
+            var logs = new List<BadgeSystemValidationDto>();
+
+            foreach (var badge in badgeSystem.Badges)
+            {
+                foreach (var validation in BadgeValidations)
                 {
-                    BadgeCode = badgeCount[0], BadgeCount = int.Parse(badgeCount.ElementAtOrDefault(1) ?? "1")
+                    var list = validation.ValidateBadge(badge, badgeSystem);
+                    logs.AddRange(list);
                 }
-            ).ToDictionary(o => o.BadgeCode, o => o.BadgeCount);
+            }
+            
+            foreach (var validation in BadgeValidations)
+            {
+                var list = validation.ValidateSystem(badgeSystem);
+                logs.AddRange(list);
+            }
 
-            return new BadgeRequirement(text, requirements);
+            return logs;
         }
 
-        public override void Write(Utf8JsonWriter writer, BadgeRequirement value, JsonSerializerOptions options)
+        public void BuildBadgeSystem(BadgeSystemDto badgeSystem)
         {
-            writer.WriteStringValue(value.RequirementStr);
-        }
-    }
-
-    public class ActivityRequirementConverter : JsonConverter<ActivityRequirement>
-    {
-        public override ActivityRequirement? Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
-        {
-            var text = reader.GetString();
-            var requirements =
-            (
-                from part in text.Split("|")
-                let badgeCount = part.Split("*")
-                select new
-                {
-                    BadgeCode = badgeCount[0],
-                    BadgeCount = int.Parse(badgeCount.ElementAtOrDefault(1) ?? "1")
-                }
-            ).ToDictionary(o => o.BadgeCode, o => o.BadgeCount);
-
-            return new ActivityRequirement(text, requirements);
-        }
-
-        public override void Write(Utf8JsonWriter writer, ActivityRequirement value, JsonSerializerOptions options)
-        {
-            writer.WriteStringValue(value.RequirementStr);
+            var logs = ValidateBadgeSystem(badgeSystem);
+            badgeSystem.Logs = logs;
         }
     }
 }
