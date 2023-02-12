@@ -16,8 +16,7 @@ namespace CrystallineSociety.Shared.Services.Implementations.BadgeSystem
         [AutoInject]
         public IEnumerable<IBadgeSystemValidator> BadgeValidations { get; set; }
 
-
-        private static JsonSerializerOptions BadgeOptions { get; set; } = new JsonSerializerOptions
+        private static JsonSerializerOptions BadgeSerializerOptions { get; set; } = new JsonSerializerOptions
         {
             PropertyNamingPolicy = KebabCaseNamingPolicy.Instance,
             WriteIndented = true,
@@ -31,13 +30,13 @@ namespace CrystallineSociety.Shared.Services.Implementations.BadgeSystem
 
         public BadgeDto? ParseBadge(string specJson)
         {
-            var badge = JsonSerializer.Deserialize<BadgeDto>(specJson, BadgeOptions);
+            var badge = JsonSerializer.Deserialize<BadgeDto>(specJson, BadgeSerializerOptions);
             return badge;
         }
 
         public string SerializeBadge(BadgeDto badge)
         {
-            return JsonSerializer.Serialize(badge, BadgeOptions);
+            return JsonSerializer.Serialize(badge, BadgeSerializerOptions);
         }
 
         public List<BadgeSystemValidationDto> ValidateBadgeSystem(BadgeSystemDto badgeSystem)
