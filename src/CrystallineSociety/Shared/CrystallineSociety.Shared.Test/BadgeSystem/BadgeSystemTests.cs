@@ -36,8 +36,8 @@ namespace CrystallineSociety.Shared.Test.BadgeSystem
 
             badgeService.BuildBadgeSystem(badgeSystem);
 
-            Assert.IsNotNull(badgeSystem.Logs);
-            Assert.IsTrue(badgeSystem.Logs.Any());
+            Assert.IsNotNull(badgeSystem.Validations);
+            Assert.IsTrue(badgeSystem.Validations.Any());
 
         }
     }

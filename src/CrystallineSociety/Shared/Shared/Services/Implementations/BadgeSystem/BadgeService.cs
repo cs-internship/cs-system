@@ -65,7 +65,7 @@ namespace CrystallineSociety.Shared.Services.Implementations.BadgeSystem
         public void BuildBadgeSystem(BadgeSystemDto badgeSystem)
         {
             var logs = ValidateBadgeSystem(badgeSystem);
-            badgeSystem.Logs = logs;
+            badgeSystem.Validations = logs;
         }
     }
 }

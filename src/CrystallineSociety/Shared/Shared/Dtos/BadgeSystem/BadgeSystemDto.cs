@@ -9,7 +9,7 @@ namespace CrystallineSociety.Shared.Dtos.BadgeSystem
     public class BadgeSystemDto
     {
         public List<BadgeDto> Badges { get; set; } = new();
-        public List<BadgeSystemValidationDto>? Logs { get; set; }
+        public List<BadgeSystemValidationDto>? Validations { get; set; }
         
         public bool BadgeExists(string badgeCode)
         {
