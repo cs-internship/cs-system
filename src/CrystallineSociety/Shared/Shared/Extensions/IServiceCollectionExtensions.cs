@@ -16,6 +16,7 @@ public static class IServiceCollectionExtensions
 
         services.AddSingleton<IDateTimeProvider, DateTimeProvider>();
         services.AddTransient<IBadgeService, BadgeService>();
+        services.AddTransient<IBadgeSystemService, BadgeSystemService>();
 
         services.AddTransient<IBadgeSystemValidator, RequirementsHaveValidBadgesValidator>();
     }

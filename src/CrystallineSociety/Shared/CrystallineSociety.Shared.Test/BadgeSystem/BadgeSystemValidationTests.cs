@@ -215,9 +215,8 @@ public class BadgeSystemValidationTests : TestBase
                            .ConfigureServices((_, services) => { services.AddSharedServices(); }
                            ).Build();
 
-        var badgeService = testHost.Services.GetService<IBadgeService>();
-
-        Assert.IsNotNull(badgeService);
+        var badgeService = testHost.Services.GetRequiredService<IBadgeService>();
+        var badgeSystemService = testHost.Services.GetRequiredService<IBadgeSystemService>();
 
         var badge = badgeService.ParseBadge(specJson);
 
@@ -226,7 +225,7 @@ public class BadgeSystemValidationTests : TestBase
         var badgeSystem = new BadgeSystemDto();
         badgeSystem.Badges.Add(badge);
 
-        badgeService.BuildBadgeSystem(badgeSystem);
+        badgeSystemService.BuildBadgeSystem(badgeSystem);
         return badgeSystem;
     }
 
@@ -237,6 +236,7 @@ public class BadgeSystemValidationTests : TestBase
                            ).Build();
 
         var badgeService = testHost.Services.GetRequiredService<IBadgeService>();
+        var badgeSystemService = testHost.Services.GetRequiredService<IBadgeSystemService>();
 
         var badgeSystem = new BadgeSystemDto();
 
@@ -247,7 +247,7 @@ public class BadgeSystemValidationTests : TestBase
             badgeSystem.Badges.Add(badge);
         }
 
-        badgeService.BuildBadgeSystem(badgeSystem);
+        badgeSystemService.BuildBadgeSystem(badgeSystem);
         return badgeSystem;
     }
 }

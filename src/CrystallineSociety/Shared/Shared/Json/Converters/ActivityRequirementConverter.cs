@@ -7,7 +7,7 @@ public class ActivityRequirementConverter : JsonConverter<ActivityRequirement>
 {
     public override ActivityRequirement? Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
     {
-        var text = reader.GetString();
+        var text = reader.GetString() ?? "";
         var requirements =
         (
             from part in text.Split("|")

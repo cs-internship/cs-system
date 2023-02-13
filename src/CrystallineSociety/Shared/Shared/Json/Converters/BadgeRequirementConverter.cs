@@ -7,7 +7,7 @@ public class BadgeRequirementConverter : JsonConverter<BadgeRequirement>
 {
     public override BadgeRequirement? Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
     {
-        var text = reader.GetString();
+        var text = reader.GetString() ?? "";
         var requirements =
         (
             from part in text.Split("|")

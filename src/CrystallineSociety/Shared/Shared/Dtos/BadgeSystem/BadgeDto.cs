@@ -12,8 +12,8 @@ namespace CrystallineSociety.Shared.Dtos.BadgeSystem
         public required string Code { get; set; }
         public string? Description { get; set; }
         public BadgeLevel Level { get; set; }
-        public Dictionary<string, string> Info { get; set; }
-        public List<AppraisalMethod> AppraisalMethods { get; set; } = new List<AppraisalMethod>();
+        public Dictionary<string, string> Info { get; set; } = new();
+        public List<AppraisalMethod> AppraisalMethods { get; set; } = new();
         
         public override string ToString()
         {
@@ -23,7 +23,7 @@ namespace CrystallineSociety.Shared.Dtos.BadgeSystem
 
     public class AppraisalMethod
     {
-        public string Title { get; set; }
+        public string Title { get; set; } = "Default";
 
         public List<BadgeRequirement> BadgeRequirements { get; set; } = new();
 

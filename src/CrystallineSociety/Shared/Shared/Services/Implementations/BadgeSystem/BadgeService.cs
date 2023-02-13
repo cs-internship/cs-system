@@ -13,9 +13,6 @@ namespace CrystallineSociety.Shared.Services.Implementations.BadgeSystem
 {
     public partial class BadgeService : IBadgeService
     {
-        [AutoInject]
-        public IEnumerable<IBadgeSystemValidator> BadgeValidations { get; set; }
-
         private static JsonSerializerOptions BadgeSerializerOptions { get; set; } = new JsonSerializerOptions
         {
             PropertyNamingPolicy = KebabCaseNamingPolicy.Instance,
@@ -28,9 +25,13 @@ namespace CrystallineSociety.Shared.Services.Implementations.BadgeSystem
             }
         };
 
-        public BadgeDto? ParseBadge(string specJson)
+        public BadgeDto ParseBadge(string specJson)
         {
             var badge = JsonSerializer.Deserialize<BadgeDto>(specJson, BadgeSerializerOptions);
+            
+            if (badge is null)
+                throw new InvalidOperationException("Can not create badge from spec.");
+
             return badge;
         }
 
@@ -39,32 +40,6 @@ namespace CrystallineSociety.Shared.Services.Implementations.BadgeSystem
             return JsonSerializer.Serialize(badge, BadgeSerializerOptions);
         }
 
-        public List<BadgeSystemValidationDto> ValidateBadgeSystem(BadgeSystemDto badgeSystem)
-        {
-            var logs = new List<BadgeSystemValidationDto>();
-
-            foreach (var badge in badgeSystem.Badges)
-            {
-                foreach (var validation in BadgeValidations)
-                {
-                    var list = validation.ValidateBadge(badge, badgeSystem);
-                    logs.AddRange(list);
-                }
-            }
-            
-            foreach (var validation in BadgeValidations)
-            {
-                var list = validation.ValidateSystem(badgeSystem);
-                logs.AddRange(list);
-            }
-
-            return logs;
-        }
-
-        public void BuildBadgeSystem(BadgeSystemDto badgeSystem)
-        {
-            var logs = ValidateBadgeSystem(badgeSystem);
-            badgeSystem.Validations = logs;
-        }
+        
     }
 }
