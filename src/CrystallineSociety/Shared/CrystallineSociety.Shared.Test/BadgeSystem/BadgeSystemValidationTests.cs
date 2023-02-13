@@ -225,7 +225,7 @@ public class BadgeSystemValidationTests : TestBase
         var badgeSystem = new BadgeSystemDto();
         badgeSystem.Badges.Add(badge);
 
-        badgeSystemService.BuildBadgeSystem(badgeSystem);
+        badgeSystemService.Build(badgeSystem);
         return badgeSystem;
     }
 
@@ -247,7 +247,7 @@ public class BadgeSystemValidationTests : TestBase
             badgeSystem.Badges.Add(badge);
         }
 
-        badgeSystemService.BuildBadgeSystem(badgeSystem);
+        badgeSystemService.Build(badgeSystem);
         return badgeSystem;
     }
 }

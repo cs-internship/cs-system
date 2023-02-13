@@ -11,34 +11,34 @@ namespace CrystallineSociety.Shared.Services.Implementations.BadgeSystem
     public partial class BadgeSystemService : IBadgeSystemService
     {
         [AutoInject]
-        public IEnumerable<IBadgeSystemValidator> BadgeValidations { get; set; }
+        public IEnumerable<IBadgeSystemValidator> BadgeValidators { get; set; }
 
-        public List<BadgeSystemValidationDto> ValidateBadgeSystem(BadgeSystemDto badgeSystem)
+        public List<BadgeSystemValidationDto> Validate(BadgeSystemDto badgeSystem)
         {
-            var logs = new List<BadgeSystemValidationDto>();
+            var validations = new List<BadgeSystemValidationDto>();
 
             foreach (var badge in badgeSystem.Badges)
             {
-                foreach (var validation in BadgeValidations)
+                foreach (var validator in BadgeValidators)
                 {
-                    var list = validation.ValidateBadge(badge, badgeSystem);
-                    logs.AddRange(list);
+                    var list = validator.ValidateBadge(badge, badgeSystem);
+                    validations.AddRange(list);
                 }
             }
 
-            foreach (var validation in BadgeValidations)
+            foreach (var validation in BadgeValidators)
             {
                 var list = validation.ValidateSystem(badgeSystem);
-                logs.AddRange(list);
+                validations.AddRange(list);
             }
 
-            return logs;
+            return validations;
         }
 
-        public void BuildBadgeSystem(BadgeSystemDto badgeSystem)
+        public void Build(BadgeSystemDto badgeSystem)
         {
-            var logs = ValidateBadgeSystem(badgeSystem);
-            badgeSystem.Validations = logs;
+            var validations = Validate(badgeSystem);
+            badgeSystem.Validations = validations;
         }
     }
 }

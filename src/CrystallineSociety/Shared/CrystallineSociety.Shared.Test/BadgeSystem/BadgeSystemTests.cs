@@ -33,7 +33,7 @@ namespace CrystallineSociety.Shared.Test.BadgeSystem
             var badgeSystem = new BadgeSystemDto();
             badgeSystem.Badges.Add(badge);
 
-            badgeSystemService.BuildBadgeSystem(badgeSystem);
+            badgeSystemService.Build(badgeSystem);
 
             Assert.IsNotNull(badgeSystem.Validations);
             Assert.IsTrue(badgeSystem.Validations.Any());
