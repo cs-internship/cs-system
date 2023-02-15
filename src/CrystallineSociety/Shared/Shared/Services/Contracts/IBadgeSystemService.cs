@@ -7,4 +7,5 @@ public interface IBadgeSystemService
     void Build(BadgeBundleDto bundle);
     List<BadgeDto> Badges { get; }
     List<BadgeSystemValidationDto> Validations { get; }
+    List<BadgeSystemValidationDto> Errors { get; }
 }

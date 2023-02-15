@@ -16,7 +16,7 @@ namespace CrystallineSociety.Shared.Services.Implementations.BadgeSystem
 
         public List<BadgeDto> Badges => BadgeBundle?.Badges ?? throw new Exception("BadgeSystem is not built yet.");
         public List<BadgeSystemValidationDto> Validations => BadgeBundle?.Validations ?? throw new Exception("BadgeSystem is not built yet.");
-
+        public List<BadgeSystemValidationDto> Errors => Validations.Where(v => v.Level == BadgeSystemValidationLevel.Error).ToList();
         public List<BadgeSystemValidationDto> Validate()
         {
             var validations = new List<BadgeSystemValidationDto>();

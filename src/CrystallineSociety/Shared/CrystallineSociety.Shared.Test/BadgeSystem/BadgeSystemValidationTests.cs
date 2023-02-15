@@ -49,10 +49,10 @@ public class BadgeSystemValidationTests : TestBase
         var badgeSystem = CreateBadgeSystem(specJson);
 
         Assert.IsNotNull(badgeSystem.Validations);
-        Assert.IsTrue(badgeSystem.Errors().Any(v => v.Title.Contains("requirement-badge-code-B")));
-        Assert.IsTrue(badgeSystem.Errors().Any(v => v.Title.Contains("requirement-badge-code-A")));
-        Assert.IsTrue(badgeSystem.Errors().Any(v => v.Title.Contains("requirement-badge-code-C")));
-        Assert.IsTrue(badgeSystem.Errors().Any(v => v.Title.Contains("requirement-badge-code-D")));
+        Assert.IsTrue(badgeSystem.Errors.Any(v => v.Title.Contains("requirement-badge-code-B")));
+        Assert.IsTrue(badgeSystem.Errors.Any(v => v.Title.Contains("requirement-badge-code-A")));
+        Assert.IsTrue(badgeSystem.Errors.Any(v => v.Title.Contains("requirement-badge-code-C")));
+        Assert.IsTrue(badgeSystem.Errors.Any(v => v.Title.Contains("requirement-badge-code-D")));
 
     }
 
@@ -71,7 +71,7 @@ public class BadgeSystemValidationTests : TestBase
         var badgeSystem = CreateBadgeSystem(specJson);
 
         Assert.IsNotNull(badgeSystem.Validations);
-        Assert.AreEqual(4, badgeSystem.Errors().Count(v => v.Title.Contains("Invalid badge name")));
+        Assert.AreEqual(4, badgeSystem.Errors.Count(v => v.Title.Contains("Invalid badge name")));
     }
 
     [TestMethod]
@@ -112,7 +112,7 @@ public class BadgeSystemValidationTests : TestBase
         Assert.IsNotNull(badgeSystem.Validations);
         Assert.AreEqual(
             1,
-            badgeSystem.Errors().Count(v =>
+            badgeSystem.Errors.Count(v =>
                 v.Title.Contains("Circular")
                 && v.Title.Contains("badge-a")
                 && v.Title.Contains("badge-b")
@@ -168,7 +168,7 @@ public class BadgeSystemValidationTests : TestBase
         Assert.IsNotNull(badgeSystem3Chain.Validations);
         Assert.AreEqual(
             1,
-            badgeSystem3Chain.Errors().Count(v =>
+            badgeSystem3Chain.Errors.Count(v =>
                 v.Title.Contains("Circular")
                 && v.Title.Contains("badge-a")
                 && v.Title.Contains("badge-b")
@@ -204,7 +204,7 @@ public class BadgeSystemValidationTests : TestBase
         Assert.IsNotNull(badgeSystem.Validations);
         Assert.AreEqual(
             1,
-            badgeSystem.Errors().Count(v =>
+            badgeSystem.Errors.Count(v =>
                 v.Title.Contains("Repeating dependency")
                 && v.Title.Contains("badge-b")
             ));
@@ -250,13 +250,5 @@ public class BadgeSystemValidationTests : TestBase
 
         var badgeSystem = factory.CreateNew(bundle);
         return badgeSystem;
-    }
-}
-
-static class BadgeSystemExtensions
-{
-    public static IEnumerable<BadgeSystemValidationDto> Errors(this IBadgeSystemService badgeSystem)
-    {
-        return badgeSystem.Validations?.Where(v => v.Level == BadgeSystemValidationLevel.Error) ?? new List<BadgeSystemValidationDto>();
     }
 }
