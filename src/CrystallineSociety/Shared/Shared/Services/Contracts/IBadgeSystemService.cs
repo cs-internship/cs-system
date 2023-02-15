@@ -4,5 +4,7 @@ namespace CrystallineSociety.Shared.Services.Contracts;
 
 public interface IBadgeSystemService
 {
-    void Build(BadgeSystemDto badgeSystem);
+    void Build(BadgeBundleDto bundle);
+    List<BadgeDto> Badges { get; }
+    List<BadgeSystemValidationDto> Validations { get; }
 }

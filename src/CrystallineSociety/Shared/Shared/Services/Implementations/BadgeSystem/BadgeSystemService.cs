@@ -12,33 +12,42 @@ namespace CrystallineSociety.Shared.Services.Implementations.BadgeSystem
     {
         [AutoInject]
         public IEnumerable<IBadgeSystemValidator> BadgeValidators { get; set; }
+        public BadgeBundleDto? BadgeBundle { get; set; }
 
-        public List<BadgeSystemValidationDto> Validate(BadgeSystemDto badgeSystem)
+        public List<BadgeDto> Badges => BadgeBundle?.Badges ?? throw new Exception("BadgeSystem is not built yet.");
+        public List<BadgeSystemValidationDto> Validations => BadgeBundle?.Validations ?? throw new Exception("BadgeSystem is not built yet.");
+
+        public List<BadgeSystemValidationDto> Validate()
         {
             var validations = new List<BadgeSystemValidationDto>();
 
-            foreach (var badge in badgeSystem.Badges)
+            if (BadgeBundle is null)
+                return validations;
+
+            foreach (var badge in BadgeBundle.Badges)
             {
                 foreach (var validator in BadgeValidators)
                 {
-                    var list = validator.ValidateBadge(badge, badgeSystem);
+                    var list = validator.ValidateBadge(badge, BadgeBundle);
                     validations.AddRange(list);
                 }
             }
 
             foreach (var validation in BadgeValidators)
             {
-                var list = validation.ValidateSystem(badgeSystem);
+                var list = validation.ValidateSystem(BadgeBundle);
                 validations.AddRange(list);
             }
 
             return validations;
         }
 
-        public void Build(BadgeSystemDto badgeSystem)
+        public void Build(BadgeBundleDto bundle)
         {
-            var validations = Validate(badgeSystem);
-            badgeSystem.Validations = validations;
+            BadgeBundle = bundle;
+
+            var validations = Validate();
+            bundle.Validations = validations;
         }
     }
 }

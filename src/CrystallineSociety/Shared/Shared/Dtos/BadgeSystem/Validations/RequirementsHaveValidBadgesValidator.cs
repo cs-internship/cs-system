@@ -8,7 +8,7 @@ namespace CrystallineSociety.Shared.Dtos.BadgeSystem.Validations
 {
     public class RequirementsHaveValidBadgesValidator : BadgeSystemValidator
     {
-        public override List<BadgeSystemValidationDto> ValidateBadge(BadgeDto badge, BadgeSystemDto badgeSystem)
+        public override List<BadgeSystemValidationDto> ValidateBadge(BadgeDto badge, BadgeBundleDto badgeBundle)
         {
             var list = new List<BadgeSystemValidationDto>();
 
@@ -18,7 +18,7 @@ namespace CrystallineSociety.Shared.Dtos.BadgeSystem.Validations
                 {
                     foreach (var badgeStr in badgeRequirement.RequirementOptions.Keys)
                     {
-                        if (!badgeSystem.BadgeExists(badgeStr))
+                        if (!badgeBundle.BadgeExists(badgeStr))
                             list.Add(
                                 BadgeSystemValidationDto.Error(
                                     $"Badge does not exist: '{badgeStr}'", 
@@ -32,7 +32,7 @@ namespace CrystallineSociety.Shared.Dtos.BadgeSystem.Validations
                 {
                     foreach (var badgeStr in badgeRequirement.RequirementOptions.Keys)
                     {
-                        if (!badgeSystem.BadgeExists(badgeStr))
+                        if (!badgeBundle.BadgeExists(badgeStr))
                             list.Add(
                                 BadgeSystemValidationDto.Error(
                                     $"Badge does not exist: '{badgeStr}'",

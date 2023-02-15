@@ -1,4 +1,7 @@
-﻿var builder = WebApplication.CreateBuilder(args);
+﻿using CrystallineSociety.Shared.Dtos.BadgeSystem;
+using CrystallineSociety.Shared.Services.Implementations.BadgeSystem;
+
+var builder = WebApplication.CreateBuilder(args);
 
 #if DEBUG
 if (OperatingSystem.IsWindows())
@@ -11,6 +14,14 @@ if (OperatingSystem.IsWindows())
 CrystallineSociety.Server.Api.Startup.Services.Add(builder.Services, builder.Environment, builder.Configuration);
 
 var app = builder.Build();
+
+using (var serviceScope = app.Services.CreateScope())
+{
+    var services = serviceScope.ServiceProvider;
+
+    var badgeSystemFactory = services.GetRequiredService<BadgeSystemFactory>();
+    badgeSystemFactory.SetCurrentBadgeSystem(new BadgeBundleDto(){Badges = new List<BadgeDto>(){new BadgeDto(){Code = "hello"}}});
+}
 
 CrystallineSociety.Server.Api.Startup.Middlewares.Use(app, builder.Environment, builder.Configuration);
 

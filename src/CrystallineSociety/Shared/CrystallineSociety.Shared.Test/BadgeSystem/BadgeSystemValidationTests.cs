@@ -1,4 +1,5 @@
 ﻿using CrystallineSociety.Shared.Dtos.BadgeSystem;
+using CrystallineSociety.Shared.Services.Implementations.BadgeSystem;
 using CrystallineSociety.Shared.Test.Infrastructure;
 using CrystallineSociety.Shared.Test.Utils;
 using Microsoft.Extensions.Hosting;
@@ -209,7 +210,7 @@ public class BadgeSystemValidationTests : TestBase
             ));
     }
 
-    private static BadgeSystemDto CreateBadgeSystem(string specJson)
+    private static IBadgeSystemService CreateBadgeSystem(string specJson)
     {
         var testHost = Host.CreateDefaultBuilder()
                            .ConfigureServices((_, services) => { services.AddSharedServices(); }
@@ -222,39 +223,39 @@ public class BadgeSystemValidationTests : TestBase
 
         Assert.IsNotNull(badge);
 
-        var badgeSystem = new BadgeSystemDto();
-        badgeSystem.Badges.Add(badge);
+        var bundle = new BadgeBundleDto();
+        bundle.Badges.Add(badge);
 
-        badgeSystemService.Build(badgeSystem);
-        return badgeSystem;
+        badgeSystemService.Build(bundle);
+        return badgeSystemService;
     }
 
-    private static BadgeSystemDto CreateBadgeSystem(IEnumerable<string> specJsons)
+    private static IBadgeSystemService CreateBadgeSystem(IEnumerable<string> specJsons)
     {
         var testHost = Host.CreateDefaultBuilder()
                            .ConfigureServices((_, services) => { services.AddSharedServices(); }
                            ).Build();
 
         var badgeService = testHost.Services.GetRequiredService<IBadgeService>();
-        var badgeSystemService = testHost.Services.GetRequiredService<IBadgeSystemService>();
+        var factory = testHost.Services.GetRequiredService<BadgeSystemFactory>();
 
-        var badgeSystem = new BadgeSystemDto();
+        var bundle = new BadgeBundleDto();
 
         foreach (var specJson in specJsons)
         {
             var badge = badgeService.ParseBadge(specJson);
             Assert.IsNotNull(badge);
-            badgeSystem.Badges.Add(badge);
+            bundle.Badges.Add(badge);
         }
 
-        badgeSystemService.Build(badgeSystem);
+        var badgeSystem = factory.CreateNew(bundle);
         return badgeSystem;
     }
 }
 
 static class BadgeSystemExtensions
 {
-    public static IEnumerable<BadgeSystemValidationDto> Errors(this BadgeSystemDto badgeSystem)
+    public static IEnumerable<BadgeSystemValidationDto> Errors(this IBadgeSystemService badgeSystem)
     {
         return badgeSystem.Validations?.Where(v => v.Level == BadgeSystemValidationLevel.Error) ?? new List<BadgeSystemValidationDto>();
     }

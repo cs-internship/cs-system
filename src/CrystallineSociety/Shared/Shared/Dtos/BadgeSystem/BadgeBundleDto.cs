@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace CrystallineSociety.Shared.Dtos.BadgeSystem
 {
-    public class BadgeSystemDto
+    public class BadgeBundleDto
     {
         public List<BadgeDto> Badges { get; set; } = new();
         public List<BadgeSystemValidationDto>? Validations { get; set; }

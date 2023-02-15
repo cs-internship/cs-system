@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using CrystallineSociety.Shared.Dtos.BadgeSystem;
+using CrystallineSociety.Shared.Services.Implementations.BadgeSystem;
 
 namespace CrystallineSociety.Shared.Test.BadgeSystem
 {
@@ -23,20 +24,20 @@ namespace CrystallineSociety.Shared.Test.BadgeSystem
                                ).Build();
 
             var badgeService = testHost.Services.GetRequiredService<IBadgeService>();
-            var badgeSystemService = testHost.Services.GetRequiredService<IBadgeSystemService>();
+            var factory = testHost.Services.GetRequiredService<BadgeSystemFactory>();
 
             var specJson = await ResourceUtil.LoadSampleBadge("serialization-badge-sample");
             var badge = badgeService.ParseBadge(specJson);
 
             Assert.IsNotNull(badge);
 
-            var badgeSystem = new BadgeSystemDto();
-            badgeSystem.Badges.Add(badge);
+            var bundle = new BadgeBundleDto();
+            bundle.Badges.Add(badge);
 
-            badgeSystemService.Build(badgeSystem);
+            var badgeSystem = factory.CreateNew(bundle);
 
-            Assert.IsNotNull(badgeSystem.Validations);
-            Assert.IsTrue(badgeSystem.Validations.Any());
+            Assert.IsNotNull(bundle.Validations);
+            Assert.IsTrue(bundle.Validations.Any());
 
         }
     }
