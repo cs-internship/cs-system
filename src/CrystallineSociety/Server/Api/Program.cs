@@ -15,14 +15,6 @@ CrystallineSociety.Server.Api.Startup.Services.Add(builder.Services, builder.Env
 
 var app = builder.Build();
 
-using (var serviceScope = app.Services.CreateScope())
-{
-    var services = serviceScope.ServiceProvider;
-
-    var badgeSystemFactory = services.GetRequiredService<BadgeSystemFactory>();
-    badgeSystemFactory.SetCurrentBadgeSystem(new BadgeBundleDto(){Badges = new List<BadgeDto>(){new BadgeDto(){Code = "hello"}}});
-}
-
 CrystallineSociety.Server.Api.Startup.Middlewares.Use(app, builder.Environment, builder.Configuration);
 
 app.Run();
