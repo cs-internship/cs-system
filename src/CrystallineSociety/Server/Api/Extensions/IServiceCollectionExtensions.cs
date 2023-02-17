@@ -13,6 +13,11 @@ namespace Microsoft.Extensions.DependencyInjection;
 
 public static class IServiceCollectionExtensions
 {
+    public static void AddServerServices(this IServiceCollection services)
+    {
+        services.AddTransient<IGitHubBadgeService, ServerGitHubBadgeService>();
+    }
+
     public static void AddIdentity(this IServiceCollection services, IConfiguration configuration)
     {
         var appsettings = configuration.GetSection(nameof(AppSettings)).Get<AppSettings>();
