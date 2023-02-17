@@ -5,7 +5,6 @@ using System.Text;
 using System.Threading.Tasks;
 using CrystallineSociety.Shared.Dtos.Account;
 using CrystallineSociety.Shared.Dtos.BadgeSystem;
-using LearnerDto = CrystallineSociety.Shared.Dtos.Account.LearnerDto;
 
 namespace CrystallineSociety.Shared.Services.Contracts
 {
@@ -16,6 +15,6 @@ namespace CrystallineSociety.Shared.Services.Contracts
         Task<LearnerDto> GetLearnerByUsernameAsync(string username);
         IQueryable<Dtos.LearnerDto> GetLearners();
 
-        IQueryable<BadgeDto> GetLearnerBadges(Dtos.LearnerDto learner);
+        IQueryable<BadgeDto> GetLearnerBadges(LearnerDto learner);
     }
 }
