@@ -1,5 +1,5 @@
 ﻿using CrystallineSociety.Shared.Dtos.BadgeSystem;
-using CrystallineSociety.Shared.Dtos.BadgeSystem.Validations;
+using CrystallineSociety.Shared.Services.Implementations.BadgeSystem.Validations;
 using System;
 using System.Collections.Generic;
 using System.Linq;

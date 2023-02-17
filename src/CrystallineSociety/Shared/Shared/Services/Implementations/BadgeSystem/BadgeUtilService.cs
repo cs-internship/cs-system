@@ -5,13 +5,12 @@ using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
 using CrystallineSociety.Shared.Dtos.BadgeSystem;
-using CrystallineSociety.Shared.Dtos.BadgeSystem.Validations;
 using CrystallineSociety.Shared.Json.Converters;
 using CrystallineSociety.Shared.Utils;
 
 namespace CrystallineSociety.Shared.Services.Implementations.BadgeSystem
 {
-    public partial class BadgeService : IBadgeService
+    public partial class BadgeUtilService : IBadgeUtilService
     {
         private static JsonSerializerOptions BadgeSerializerOptions { get; set; } = new JsonSerializerOptions
         {

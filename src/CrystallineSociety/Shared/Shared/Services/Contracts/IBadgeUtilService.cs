@@ -2,7 +2,7 @@
 
 namespace CrystallineSociety.Shared.Services.Contracts;
 
-public interface IBadgeService
+public interface IBadgeUtilService
 {
     BadgeDto ParseBadge(string specJson);
     string SerializeBadge(BadgeDto badge);

@@ -20,7 +20,7 @@ namespace CrystallineSociety.Shared.Test.BadgeSystem
                                    }
                                ).Build();
 
-            var badgeService = testHost.Services.GetRequiredService<IBadgeService>();
+            var badgeService = testHost.Services.GetRequiredService<IBadgeUtilService>();
 
             var specJson = await ResourceUtil.LoadSampleBadge("serialization-badge-sample");
             var badge = badgeService.ParseBadge(specJson);
@@ -63,7 +63,7 @@ namespace CrystallineSociety.Shared.Test.BadgeSystem
                                    }
                                ).Build();
 
-            var badgeService = testHost.Services.GetRequiredService<IBadgeService>();
+            var badgeService = testHost.Services.GetRequiredService<IBadgeUtilService>();
 
             var specJson = await ResourceUtil.LoadSampleBadge("serialization-badge-sample");
             var badge = badgeService.ParseBadge(specJson);

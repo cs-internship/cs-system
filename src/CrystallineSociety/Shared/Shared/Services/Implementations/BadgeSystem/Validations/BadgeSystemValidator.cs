@@ -3,8 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using CrystallineSociety.Shared.Dtos.BadgeSystem;
 
-namespace CrystallineSociety.Shared.Dtos.BadgeSystem.Validations
+namespace CrystallineSociety.Shared.Services.Implementations.BadgeSystem.Validations
 {
     public abstract class BadgeSystemValidator : IBadgeSystemValidator
     {

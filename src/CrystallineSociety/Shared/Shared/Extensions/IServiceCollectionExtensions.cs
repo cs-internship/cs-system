@@ -1,6 +1,6 @@
-﻿using CrystallineSociety.Shared.Dtos.BadgeSystem.Validations;
-using CrystallineSociety.Shared.Services.Implementations;
+﻿using CrystallineSociety.Shared.Services.Implementations;
 using CrystallineSociety.Shared.Services.Implementations.BadgeSystem;
+using CrystallineSociety.Shared.Services.Implementations.BadgeSystem.Validations;
 
 namespace Microsoft.Extensions.DependencyInjection;
 
@@ -15,7 +15,7 @@ public static class IServiceCollectionExtensions
         services.AddAuthorizationCore();
 
         services.AddSingleton<IDateTimeProvider, DateTimeProvider>();
-        services.AddTransient<IBadgeService, BadgeService>();
+        services.AddTransient<IBadgeUtilService, BadgeUtilService>();
         services.AddTransient<IBadgeSystemService, BadgeSystemService>();
         services.AddTransient<BadgeSystemFactory>();
 

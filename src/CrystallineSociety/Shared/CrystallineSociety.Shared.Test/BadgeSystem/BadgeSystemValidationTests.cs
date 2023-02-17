@@ -216,7 +216,7 @@ public class BadgeSystemValidationTests : TestBase
                            .ConfigureServices((_, services) => { services.AddSharedServices(); }
                            ).Build();
 
-        var badgeService = testHost.Services.GetRequiredService<IBadgeService>();
+        var badgeService = testHost.Services.GetRequiredService<IBadgeUtilService>();
         var badgeSystemService = testHost.Services.GetRequiredService<IBadgeSystemService>();
 
         var badge = badgeService.ParseBadge(specJson);
@@ -236,7 +236,7 @@ public class BadgeSystemValidationTests : TestBase
                            .ConfigureServices((_, services) => { services.AddSharedServices(); }
                            ).Build();
 
-        var badgeService = testHost.Services.GetRequiredService<IBadgeService>();
+        var badgeService = testHost.Services.GetRequiredService<IBadgeUtilService>();
         var factory = testHost.Services.GetRequiredService<BadgeSystemFactory>();
 
         var bundle = new BadgeBundleDto();

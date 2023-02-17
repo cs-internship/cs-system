@@ -23,7 +23,7 @@ namespace CrystallineSociety.Shared.Test.BadgeSystem
                                .ConfigureServices((_, services) => { services.AddSharedServices(); }
                                ).Build();
 
-            var badgeService = testHost.Services.GetRequiredService<IBadgeService>();
+            var badgeService = testHost.Services.GetRequiredService<IBadgeUtilService>();
             var factory = testHost.Services.GetRequiredService<BadgeSystemFactory>();
 
             var specJson = await ResourceUtil.LoadSampleBadge("serialization-badge-sample");

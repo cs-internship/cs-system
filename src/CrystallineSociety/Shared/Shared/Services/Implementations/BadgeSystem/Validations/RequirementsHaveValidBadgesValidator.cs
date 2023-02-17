@@ -3,8 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using CrystallineSociety.Shared.Dtos.BadgeSystem;
 
-namespace CrystallineSociety.Shared.Dtos.BadgeSystem.Validations
+namespace CrystallineSociety.Shared.Services.Implementations.BadgeSystem.Validations
 {
     public class RequirementsHaveValidBadgesValidator : BadgeSystemValidator
     {
@@ -21,14 +22,14 @@ namespace CrystallineSociety.Shared.Dtos.BadgeSystem.Validations
                         if (!badgeBundle.BadgeExists(badgeStr))
                             list.Add(
                                 BadgeSystemValidationDto.Error(
-                                    $"Badge does not exist: '{badgeStr}'", 
+                                    $"Badge does not exist: '{badgeStr}'",
                                     description: $"In the badge requirements of '{badge.Code}', this is invalid: '{badgeRequirement.RequirementStr}'. No badge found with code: {badgeStr} ",
                                     refBadge: badge.Code)
                             );
                     }
                 }
 
-                foreach (var badgeRequirement in appraisalMethod.ApprovingSteps.SelectMany(o=>o.ApproverRequiredBadges))
+                foreach (var badgeRequirement in appraisalMethod.ApprovingSteps.SelectMany(o => o.ApproverRequiredBadges))
                 {
                     foreach (var badgeStr in badgeRequirement.RequirementOptions.Keys)
                     {
