@@ -15,6 +15,10 @@ CrystallineSociety.Server.Api.Startup.Services.Add(builder.Services, builder.Env
 
 var app = builder.Build();
 
+var hooks = app.Services.GetRequiredService<IEnumerable<IAppHook>>();
+
+await Task.WhenAll(from hook in hooks select hook.OnStartup());
+
 CrystallineSociety.Server.Api.Startup.Middlewares.Use(app, builder.Environment, builder.Configuration);
 
 app.Run();

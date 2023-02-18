@@ -17,8 +17,15 @@ public static class IServiceCollectionExtensions
         services.AddSingleton<IDateTimeProvider, DateTimeProvider>();
         services.AddTransient<IBadgeUtilService, BadgeUtilService>();
         services.AddTransient<IBadgeSystemService, BadgeSystemService>();
-        services.AddTransient<BadgeSystemFactory>();
+        services.AddSingleton<BadgeSystemFactory>();
 
         services.AddTransient<IBadgeSystemValidator, RequirementsHaveValidBadgesValidator>();
+
+    }
+
+    public static void AddAppHook<T>(this IServiceCollection services) where T : class, IAppHook
+    {
+        // Services being registered here can get injected everywhere (Api, Web, Android, iOS, Windows, and Mac)
+        services.AddTransient<IAppHook, T>();
     }
 }

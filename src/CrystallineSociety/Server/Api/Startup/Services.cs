@@ -21,6 +21,7 @@ public static class Services
         var appSettings = configuration.GetSection(nameof(AppSettings)).Get<AppSettings>();
 
         services.AddSharedServices();
+        services.AddServerServices();
 
         services.AddScoped<IUserInformationProvider, UserInformationProvider>();
 

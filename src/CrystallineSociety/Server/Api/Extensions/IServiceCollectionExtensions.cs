@@ -6,6 +6,7 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.SwaggerGen;
 using CrystallineSociety.Server.Api;
+using CrystallineSociety.Server.Api.AppHooks;
 using CrystallineSociety.Server.Api.Models.Account;
 using CrystallineSociety.Server.Api.Services.Implementations;
 
@@ -16,6 +17,7 @@ public static class IServiceCollectionExtensions
     public static void AddServerServices(this IServiceCollection services)
     {
         services.AddTransient<IGitHubBadgeService, ServerGitHubBadgeService>();
+        services.AddAppHook<ServerBadgeSystemAppHook>();
     }
 
     public static void AddIdentity(this IServiceCollection services, IConfiguration configuration)

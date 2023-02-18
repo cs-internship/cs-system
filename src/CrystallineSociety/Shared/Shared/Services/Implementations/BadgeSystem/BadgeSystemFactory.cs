@@ -22,7 +22,7 @@ public partial class BadgeSystemFactory
 
     public IBadgeSystemService Default()
     {
-        return DefaultBadgeSystem ?? throw new AbandonedMutexException("Default badge system is not set yet.");
+        return DefaultBadgeSystem ?? throw new InvalidOperationException("Default badge system is not set yet.");
     }
 
     public void SetCurrentBadgeSystem(BadgeBundleDto bundle)
