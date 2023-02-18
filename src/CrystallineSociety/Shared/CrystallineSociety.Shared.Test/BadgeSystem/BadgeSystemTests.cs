@@ -45,33 +45,33 @@ namespace CrystallineSociety.Shared.Test.BadgeSystem
 
         }
 
-        //[TestMethod]
-        //public async Task GetLearnerBadges_Simple()
-        //{
-        //    var testHost = Host.CreateDefaultBuilder()
-        //                       .ConfigureServices((_, services) =>
-        //                           {
-        //                               services.AddSharedServices();
-        //                               services.AddTestServices();
-        //                           }
-        //                       ).Build();
+        [TestMethod]
+        public async Task GetLearnerBadges_Simple()
+        {
+            var testHost = Host.CreateDefaultBuilder()
+                               .ConfigureServices((_, services) =>
+                                   {
+                                       services.AddSharedServices();
+                                       services.AddTestServices();
+                                   }
+                               ).Build();
 
-        //    var badgeService = testHost.Services.GetRequiredService<IBadgeUtilService>();
-        //    var factory = testHost.Services.GetRequiredService<BadgeSystemFactory>();
+            var badgeUtilService = testHost.Services.GetRequiredService<IBadgeUtilService>();
+            var factory = testHost.Services.GetRequiredService<BadgeSystemFactory>();
 
-        //    var specJson = await ResourceUtil.LoadSampleBadge("serialization-badge-sample");
-        //    var badge = badgeService.ParseBadge(specJson);
+            var badgeSpecs = await ResourceUtil.LoadScenarioBadges("scenario-simple-doc");
+            var badges = from badgeSpec in badgeSpecs select badgeUtilService.ParseBadge(badgeSpec);
 
-        //    Assert.IsNotNull(badge);
+            Assert.IsNotNull(badges);
 
-        //    var bundle = new BadgeBundleDto();
-        //    bundle.Badges.Add(badge);
+            var bundle = new BadgeBundleDto();
+            bundle.Badges.AddRange(badges);
 
-        //    var badgeSystem = factory.CreateNew(bundle);
+            var badgeSystem = factory.CreateNew(bundle);
 
-        //    Assert.IsNotNull(badgeSystem.Validations);
-        //    Assert.IsTrue(badgeSystem.Validations.Any());
+            Assert.IsNotNull(badgeSystem.Validations);
+            Assert.IsFalse(badgeSystem.Validations.Any());
 
-        //}
+        }
     }
 }

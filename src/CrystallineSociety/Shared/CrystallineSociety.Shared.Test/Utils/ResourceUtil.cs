@@ -4,28 +4,43 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
+using CrystallineSociety.Shared.Dtos.BadgeSystem;
 
 namespace CrystallineSociety.Shared.Test.Utils
 {
     public class ResourceUtil
     {
-        public static async Task<string> GetResourceAsync(string resource)
+        public static async Task<List<string>> GetResourcesAsync(string resource)
         {
+            resource = resource.Replace("-", "_");
             var assembly = Assembly.GetExecutingAssembly();
-            var resourceName = assembly.GetManifestResourceNames().Single(r=>r.Contains(resource));
+            var resourceNames = assembly.GetManifestResourceNames().Where(r=>r.Contains(resource));
 
-            var stream = assembly.GetManifestResourceStream(resourceName);
+            var result = new List<string>();
 
-            if (stream is null)
-                throw new InvalidOperationException($"No resource found: '{resource}'");
+            foreach (var resourceName in resourceNames)
+            {
+                var stream = assembly.GetManifestResourceStream(resourceName);
 
-            using StreamReader reader = new StreamReader(stream);
-            return await reader.ReadToEndAsync();
+                if (stream is null)
+                    throw new InvalidOperationException($"No resource found: '{resource}'");
+
+                using StreamReader reader = new StreamReader(stream);
+                result.Add(await reader.ReadToEndAsync());
+            }
+
+            return result;
         }
 
         public static async Task<string> LoadSampleBadge(string badge)
         {
-            return await GetResourceAsync($"{badge.Replace("-", "_")}.spec.json");
+            return (await GetResourcesAsync($"{badge}.spec.json")).Single();
+        }
+
+        public static Task<List<string>> LoadScenarioBadges(string scenario)
+        {
+            var resources = GetResourcesAsync(scenario);
+            return resources;
         }
     }
 }
