@@ -19,4 +19,11 @@ public partial class BadgeController : AppControllerBase
         var badgeService = BadgeSystemFactory.Default();
         return badgeService.Badges;
     }
+
+    [HttpGet]
+    public IEnumerable<BadgeSystemValidationDto> GetBadgeValidations(CancellationToken cancellationToken)
+    {
+        var badgeService = BadgeSystemFactory.Default();
+        return badgeService.Validations;
+    }
 }

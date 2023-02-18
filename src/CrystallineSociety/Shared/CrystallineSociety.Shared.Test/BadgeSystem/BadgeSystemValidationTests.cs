@@ -213,7 +213,11 @@ public class BadgeSystemValidationTests : TestBase
     private static IBadgeSystemService CreateBadgeSystem(string specJson)
     {
         var testHost = Host.CreateDefaultBuilder()
-                           .ConfigureServices((_, services) => { services.AddSharedServices(); }
+                           .ConfigureServices((_, services) =>
+                               {
+                                   services.AddSharedServices();
+                                   services.AddTestServices();
+                               }
                            ).Build();
 
         var badgeService = testHost.Services.GetRequiredService<IBadgeUtilService>();

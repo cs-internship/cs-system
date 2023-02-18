@@ -12,6 +12,10 @@ namespace CrystallineSociety.Shared.Services.Implementations.BadgeSystem
     {
         [AutoInject]
         public IEnumerable<IBadgeSystemValidator> BadgeValidators { get; set; }
+
+        [AutoInject]
+        public ILeanerService LearnerService { get; set; }
+        
         public BadgeBundleDto? BadgeBundle { get; set; }
 
         public List<BadgeDto> Badges => BadgeBundle?.Badges ?? throw new Exception("BadgeSystem is not built yet.");
@@ -40,6 +44,15 @@ namespace CrystallineSociety.Shared.Services.Implementations.BadgeSystem
             }
 
             return validations;
+        }
+
+        
+        public async Task<List<BadgeDto>> GetLearnerBadgesAsync(string username)
+        {
+            var learner = await LearnerService.GetLearnerByUsernameAsync(username);
+            var learnerStringBadges = learner.GetBadges();
+            var badges = Badges.Where(b => learnerStringBadges.Contains(b.Code)).ToList();
+            return badges;
         }
 
         public void Build(BadgeBundleDto bundle)

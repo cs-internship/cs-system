@@ -18,9 +18,7 @@ public static class IServiceCollectionExtensions
         services.AddTransient<IBadgeUtilService, BadgeUtilService>();
         services.AddTransient<IBadgeSystemService, BadgeSystemService>();
         services.AddSingleton<BadgeSystemFactory>();
-
         services.AddTransient<IBadgeSystemValidator, RequirementsHaveValidBadgesValidator>();
-
     }
 
     public static void AddAppHook<T>(this IServiceCollection services) where T : class, IAppHook

@@ -8,4 +8,5 @@ public interface IBadgeSystemService
     List<BadgeDto> Badges { get; }
     List<BadgeSystemValidationDto> Validations { get; }
     List<BadgeSystemValidationDto> Errors { get; }
+    Task<List<BadgeDto>> GetLearnerBadgesAsync(string username);
 }

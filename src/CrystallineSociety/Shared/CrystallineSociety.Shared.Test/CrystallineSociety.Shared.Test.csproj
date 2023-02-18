@@ -9,12 +9,24 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="BadgeSystem\SampleBadgeDocs\scenario-simple-doc\doc-guru\info_en.md" />
+    <None Remove="BadgeSystem\SampleBadgeDocs\scenario-simple-doc\doc-guru\info_fa.md" />
+    <None Remove="BadgeSystem\SampleBadgeDocs\scenario-simple-doc\doc-guru\spec.json" />
     <None Remove="BadgeSystem\SampleBadgeDocs\serialization-badge-sample\info_en.md" />
     <None Remove="BadgeSystem\SampleBadgeDocs\serialization-badge-sample\info_fa.md" />
     <None Remove="BadgeSystem\SampleBadgeDocs\serialization-badge-sample\spec.json" />
   </ItemGroup>
 
   <ItemGroup>
+    <EmbeddedResource Include="BadgeSystem\SampleBadgeDocs\scenario-simple-doc\doc-guru\info_en.md">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="BadgeSystem\SampleBadgeDocs\scenario-simple-doc\doc-guru\info_fa.md">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="BadgeSystem\SampleBadgeDocs\scenario-simple-doc\doc-guru\spec.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </EmbeddedResource>
     <EmbeddedResource Include="BadgeSystem\SampleBadgeDocs\serialization-badge-sample\info_en.md">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </EmbeddedResource>

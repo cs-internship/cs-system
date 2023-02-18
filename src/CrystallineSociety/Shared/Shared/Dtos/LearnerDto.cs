@@ -39,5 +39,6 @@ namespace CrystallineSociety.Shared.Dtos
         public string? LinkedInProfileUrl { get; set; }
         public string TagStr { get; set; } = String.Empty;
         public string? BadgesStr { get; set; }
+        public string[] GetBadges() => BadgesStr?.Split(' ') ?? new string[]{};
     }
 }
