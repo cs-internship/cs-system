@@ -13,5 +13,6 @@ namespace CrystallineSociety.Shared.Services.Contracts
         Task<LearnerDto> GetLearnerByIdAsync(Guid id);
         Task<LearnerDto> GetLearnerByUsernameAsync(string username);
         IQueryable<Dtos.LearnerDto> GetLearners();
+        Task<List<LearnerDto>> GetLearnersHavingBadgeAsync(params BadgeCountDto[] requiredEarnedBadges);
     }
 }

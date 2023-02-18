@@ -37,9 +37,9 @@ namespace CrystallineSociety.Shared.Test.Utils
             return (await GetResourcesAsync($"{badge}.spec.json")).Single();
         }
 
-        public static Task<List<string>> LoadScenarioBadges(string scenario)
+        public static async Task<List<string>> LoadScenarioBadges(string scenario)
         {
-            var resources = GetResourcesAsync(scenario);
+            var resources = await GetResourcesAsync(scenario);
             return resources;
         }
     }

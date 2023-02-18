@@ -47,11 +47,15 @@ namespace CrystallineSociety.Shared.Services.Implementations.BadgeSystem
         }
 
         
-        public async Task<List<BadgeDto>> GetLearnerBadgesAsync(string username)
+        public async Task<List<BadgeCountDto>> GetEarnedBadgesAsync(string username)
         {
             var learner = await LearnerService.GetLearnerByUsernameAsync(username);
-            var learnerStringBadges = learner.GetBadges();
-            var badges = Badges.Where(b => learnerStringBadges.Contains(b.Code)).ToList();
+            var earnedBadgeStrs = learner.GetEarnedBadgeStrs();
+            var badges = (
+                from earnedBadgeStr in earnedBadgeStrs
+                select new BadgeCountDto(earnedBadgeStr)
+            ).ToList();
+
             return badges;
         }
 

@@ -8,6 +8,17 @@ namespace CrystallineSociety.Shared.Dtos
 {
     public class LearnerDto
     {
+        public LearnerDto()
+        {
+            
+        }
+
+        public LearnerDto(string username, string badges)
+        {
+            Username = username;
+            BadgesStr = badges;
+        }
+
         public Guid Id { get; set; }
         public string? FirstName { get; set; }
         public string? LastName { get; set; }
@@ -38,7 +49,11 @@ namespace CrystallineSociety.Shared.Dtos
         /// </summary>
         public string? LinkedInProfileUrl { get; set; }
         public string TagStr { get; set; } = String.Empty;
+        /// <summary>
+        /// Example: doc-guru,doc-master*3,doc-beginner*2
+        /// </summary>
         public string? BadgesStr { get; set; }
-        public string[] GetBadges() => BadgesStr?.Split(' ') ?? new string[]{};
+
+        public string[] GetEarnedBadgeStrs() => BadgesStr?.Split(",") ?? new string[]{};
     }
 }

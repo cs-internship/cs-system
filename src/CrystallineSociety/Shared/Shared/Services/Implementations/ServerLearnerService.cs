@@ -29,6 +29,11 @@ namespace CrystallineSociety.Shared.Services.Implementations
             throw new NotImplementedException();
         }
 
+        public Task<List<LearnerDto>> GetLearnersHavingBadgeAsync(params BadgeCountDto[] requiredEarnedBadges)
+        {
+            throw new NotImplementedException();
+        }
+
         public IQueryable<BadgeDto> GetLearnerBadges(LearnerDto learner)
         {
             throw new NotImplementedException();
