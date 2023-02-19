@@ -8,5 +8,6 @@ public interface IBadgeSystemService
     List<BadgeDto> Badges { get; }
     List<BadgeSystemValidationDto> Validations { get; }
     List<BadgeSystemValidationDto> Errors { get; }
+    BadgeBundleDto BadgeBundle { get; set; }
     Task<List<BadgeCountDto>> GetEarnedBadgesAsync(string username);
 }

@@ -10,20 +10,5 @@ namespace CrystallineSociety.Server.Api.Controllers;
 [AllowAnonymous]
 public partial class BadgeController : AppControllerBase
 {
-    [AutoInject]
-    public BadgeSystemFactory BadgeSystemFactory { get; set; }
 
-    [HttpGet]
-    public IEnumerable<BadgeDto> Get(CancellationToken cancellationToken)
-    {
-        var badgeService = BadgeSystemFactory.Default();
-        return badgeService.Badges;
-    }
-
-    [HttpGet]
-    public IEnumerable<BadgeSystemValidationDto> GetBadgeValidations(CancellationToken cancellationToken)
-    {
-        var badgeService = BadgeSystemFactory.Default();
-        return badgeService.Validations;
-    }
 }

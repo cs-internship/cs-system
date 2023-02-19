@@ -16,7 +16,7 @@ namespace CrystallineSociety.Shared.Services.Implementations.BadgeSystem
         [AutoInject]
         public ILeanerService LearnerService { get; set; }
         
-        public BadgeBundleDto? BadgeBundle { get; set; }
+        public BadgeBundleDto BadgeBundle { get; set; } = new();
 
         public List<BadgeDto> Badges => BadgeBundle?.Badges ?? throw new Exception("BadgeSystem is not built yet.");
         public List<BadgeSystemValidationDto> Validations => BadgeBundle?.Validations ?? throw new Exception("BadgeSystem is not built yet.");
