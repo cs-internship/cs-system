@@ -12,6 +12,7 @@
 
         <Content Remove="compilerconfig.json" />
         <None Include="compilerconfig.json" />
+        <None Include="Components\BadgeSystem.razor.scss" />
         <None Include="Shared\LoadingComponent.razor.scss" />
 
         <Content Remove="wwwroot\appsettings.json" />
@@ -70,6 +71,10 @@
     </ItemGroup>
 
     <ItemGroup>
+      <SassFile Remove="Components\BadgeSystem.razor.scss" />
+    </ItemGroup>
+
+    <ItemGroup>
         <ProjectReference Include="..\..\Shared\Shared\CrystallineSociety.Shared.csproj" />
     </ItemGroup>
 
@@ -83,6 +88,10 @@
             <Generator>PublicResXFileCodeGenerator</Generator>
             <LastGenOutput>%(Filename).Designer.cs</LastGenOutput>
         </EmbeddedResource>
+    </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="AppHooks\" />
     </ItemGroup>
 
 </Project>

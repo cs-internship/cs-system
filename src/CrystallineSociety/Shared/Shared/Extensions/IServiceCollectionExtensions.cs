@@ -1,6 +1,7 @@
 ﻿using CrystallineSociety.Shared.Services.Implementations;
 using CrystallineSociety.Shared.Services.Implementations.BadgeSystem;
 using CrystallineSociety.Shared.Services.Implementations.BadgeSystem.Validations;
+using System.Net.Http;
 
 namespace Microsoft.Extensions.DependencyInjection;
 
@@ -24,6 +25,6 @@ public static class IServiceCollectionExtensions
     public static void AddAppHook<T>(this IServiceCollection services) where T : class, IAppHook
     {
         // Services being registered here can get injected everywhere (Api, Web, Android, iOS, Windows, and Mac)
-        services.AddTransient<IAppHook, T>();
+        services.AddSingleton<IAppHook, T>();
     }
 }

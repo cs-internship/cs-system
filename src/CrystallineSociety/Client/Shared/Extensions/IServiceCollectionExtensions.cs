@@ -16,6 +16,8 @@ public static class IServiceCollectionExtensions
         services.AddScoped<IAuthenticationService, AuthenticationService>();
         services.AddScoped(sp => (AppAuthenticationStateProvider)sp.GetRequiredService<AuthenticationStateProvider>());
 
+        services.AddTransient<ILearnerService, ClientLearnerService>();
+
         return services;
     }
 }

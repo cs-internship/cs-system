@@ -15,8 +15,12 @@ public class Program
 #if !BlazorWebAssembly && !BlazorServer
         throw new InvalidOperationException("Please switch to either blazor web assembly or server as described in readme.md");
 #else
-        await CreateHostBuilder(args)
-            .RunAsync();
+        var app = CreateHostBuilder(args);
+
+        var hooks = app.Services.GetRequiredService<IEnumerable<IAppHook>>();
+        await Task.WhenAll(from hook in hooks select hook.OnStartup());
+
+        await app.RunAsync();
 #endif
     }
 

@@ -65,14 +65,14 @@ namespace CrystallineSociety.Shared.Test.BadgeSystem
                                    {
                                        services.AddSharedServices();
                                        services.AddTestServices();
-                                       services.AddSingleton<ILeanerService>(new FakeLearnerService(learners));
+                                       services.AddSingleton<ILearnerService>(new FakeLearnerService(learners));
 
                                    }
                                ).Build();
 
             var badgeUtilService = testHost.Services.GetRequiredService<IBadgeUtilService>();
             var factory = testHost.Services.GetRequiredService<BadgeSystemFactory>();
-            var learnerService = testHost.Services.GetRequiredService<ILeanerService>();
+            var learnerService = testHost.Services.GetRequiredService<ILearnerService>();
 
             var badgeSpecs = await ResourceUtil.LoadScenarioBadges("scenario-simple-doc");
             var badges = from badgeSpec in badgeSpecs select badgeUtilService.ParseBadge(badgeSpec);

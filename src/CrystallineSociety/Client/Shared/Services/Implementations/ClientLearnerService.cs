@@ -1,8 +1,13 @@
 ﻿using CrystallineSociety.Shared.Dtos.BadgeSystem;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
-namespace CrystallineSociety.Server.Api.Services.Implementations
+namespace CrystallineSociety.Client.Shared.Services.Implementations
 {
-    internal class ServerLearnerService : ILearnerService
+    public class ClientLearnerService : ILearnerService
     {
         public Task<List<BadgeDto>> GetLearnerBadgesAsync(LearnerDto learner)
         {

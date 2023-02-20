@@ -47,7 +47,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "workflows", "workflows", "{
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CrystallineSociety.Shared.Test", "Shared\CrystallineSociety.Shared.Test\CrystallineSociety.Shared.Test.csproj", "{18D91EA0-2743-4A46-A274-40345B968B10}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CrystallineSociety.Server.Api.Test", "CrystallineSociety.Server.Api.Test\CrystallineSociety.Server.Api.Test.csproj", "{3BFB3DA0-AB96-47AF-9FD5-16E53CB6739D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CrystallineSociety.Server.Api.Test", "CrystallineSociety.Server.Api.Test\CrystallineSociety.Server.Api.Test.csproj", "{3BFB3DA0-AB96-47AF-9FD5-16E53CB6739D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

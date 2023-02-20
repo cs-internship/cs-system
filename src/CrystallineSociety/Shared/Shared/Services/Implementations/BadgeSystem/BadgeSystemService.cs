@@ -14,7 +14,7 @@ namespace CrystallineSociety.Shared.Services.Implementations.BadgeSystem
         public IEnumerable<IBadgeSystemValidator> BadgeValidators { get; set; }
 
         [AutoInject]
-        public ILeanerService LearnerService { get; set; }
+        public ILearnerService LearnerService { get; set; }
         
         public BadgeBundleDto BadgeBundle { get; set; } = new();
 

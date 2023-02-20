@@ -25,6 +25,7 @@ public static class Services
 
         services.AddScoped<IUserInformationProvider, UserInformationProvider>();
 
+
 #if BlazorWebAssembly
         services.AddTransient<IAuthTokenProvider, ServerSideAuthTokenProvider>();
         services.AddClientSharedServices();

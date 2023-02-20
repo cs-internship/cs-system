@@ -8,7 +8,7 @@ using CrystallineSociety.Shared.Dtos.BadgeSystem;
 
 namespace CrystallineSociety.Shared.Services.Contracts
 {
-    public interface ILeanerService
+    public interface ILearnerService
     {
         Task<LearnerDto> GetLearnerByIdAsync(Guid id);
         Task<LearnerDto> GetLearnerByUsernameAsync(string username);

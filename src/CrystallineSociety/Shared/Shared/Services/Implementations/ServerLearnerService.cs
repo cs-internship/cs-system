@@ -7,7 +7,7 @@ using CrystallineSociety.Shared.Dtos.BadgeSystem;
 
 namespace CrystallineSociety.Shared.Services.Implementations
 {
-    internal class ServerLearnerService : ILeanerService
+    internal class ServerLearnerService : ILearnerService
     {
         public Task<List<BadgeDto>> GetLearnerBadgesAsync(LearnerDto learner)
         {

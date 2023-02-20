@@ -14,6 +14,6 @@ public static class IServiceCollectionExtensions
 {
     public static void AddTestServices(this IServiceCollection services)
     {
-        services.AddSingleton<ILeanerService>(new FakeLearnerService(new List<LearnerDto> { }));
+        services.AddSingleton<ILearnerService>(new FakeLearnerService(new List<LearnerDto> { }));
     }
 }

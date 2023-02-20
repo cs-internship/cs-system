@@ -9,7 +9,7 @@ using CrystallineSociety.Shared.Services.Implementations.BadgeSystem;
 
 namespace CrystallineSociety.Shared.Test.Fake
 {
-    public partial class FakeLearnerService : ILeanerService
+    public partial class FakeLearnerService : ILearnerService
     {
         private List<LearnerDto> Learners { get; set; }
 
