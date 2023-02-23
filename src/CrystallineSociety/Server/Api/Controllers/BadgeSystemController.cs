@@ -34,4 +34,10 @@ public partial class BadgeSystemController : AppControllerBase
         var badgeService = BadgeSystemFactory.Default();
         return badgeService.Validations;
     }
+
+    [HttpGet]
+    public async Task<List<BadgeCountDto>> GetEarnedBadgesAsync(string username)
+    {
+        return await BadgeSystemService.GetEarnedBadgesAsync(username);
+    }
 }

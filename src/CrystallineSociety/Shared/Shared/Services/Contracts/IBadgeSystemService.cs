@@ -10,4 +10,5 @@ public interface IBadgeSystemService
     List<BadgeSystemValidationDto> Errors { get; }
     BadgeBundleDto BadgeBundle { get; set; }
     Task<List<BadgeCountDto>> GetEarnedBadgesAsync(string username);
+    Task<List<LearnerDto>> GetLearnersHavingBadgeAsync(params BadgeCountDto[] requiredEarnedBadges);
 }

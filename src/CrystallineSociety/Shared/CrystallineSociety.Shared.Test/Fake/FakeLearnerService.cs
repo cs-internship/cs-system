@@ -28,19 +28,19 @@ namespace CrystallineSociety.Shared.Test.Fake
             return Learners.First(l => l.Username == username);
         }
 
-        public async Task<List<LearnerDto>> GetLearnersHavingBadgeAsync(params BadgeCountDto[] requiredEarnedBadges)
-        {
-            var learners = Learners
-                           .Where(l =>
-                           {
-                               var leanerBadgeCounts = from bc in l.GetEarnedBadgeStrs() select new BadgeCountDto(bc);
-                               return requiredEarnedBadges.All(r =>
-                                   leanerBadgeCounts.Any(lb =>
-                                       lb.Badge == r.Badge && lb.Count >= r.Count));
-                           })
-                           .ToList();
-            return learners;
-        }
+        //public async Task<List<LearnerDto>> GetLearnersHavingBadgeAsync(params BadgeCountDto[] requiredEarnedBadges)
+        //{
+        //    var learners = Learners
+        //                   .Where(l =>
+        //                   {
+        //                       var leanerBadgeCounts = from bc in l.GetEarnedBadgeStrs() select new BadgeCountDto(bc);
+        //                       return requiredEarnedBadges.All(r =>
+        //                           leanerBadgeCounts.Any(lb =>
+        //                               lb.Badge == r.Badge && lb.Count >= r.Count));
+        //                   })
+        //                   .ToList();
+        //    return learners;
+        //}
 
         public IQueryable<LearnerDto> GetLearners()
         {

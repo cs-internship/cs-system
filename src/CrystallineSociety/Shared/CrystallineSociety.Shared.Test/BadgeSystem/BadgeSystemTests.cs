@@ -72,7 +72,7 @@ namespace CrystallineSociety.Shared.Test.BadgeSystem
 
             var badgeUtilService = testHost.Services.GetRequiredService<IBadgeUtilService>();
             var factory = testHost.Services.GetRequiredService<BadgeSystemFactory>();
-            var learnerService = testHost.Services.GetRequiredService<ILearnerService>();
+            var badgeService = factory.Default();
 
             var badgeSpecs = await ResourceUtil.LoadScenarioBadges("scenario-simple-doc");
             var badges = from badgeSpec in badgeSpecs select badgeUtilService.ParseBadge(badgeSpec);
@@ -93,18 +93,31 @@ namespace CrystallineSociety.Shared.Test.BadgeSystem
             var aminBadges = await badgeSystem.GetEarnedBadgesAsync("amin");
             Assert.AreEqual(2, aminBadges.Count);
 
-            var guruLearners = await learnerService.GetLearnersHavingBadgeAsync(new BadgeCountDto("doc-guru"));
+            var guruLearners = await badgeService.GetLearnersHavingBadgeAsync(CreateBadgeCount("doc-guru"));
             Assert.AreEqual(3, guruLearners.Count);
 
-            var masterLearners = await learnerService.GetLearnersHavingBadgeAsync(new BadgeCountDto("doc-master"));
+            var masterLearners = await badgeService.GetLearnersHavingBadgeAsync(CreateBadgeCount("doc-master"));
             Assert.AreEqual(5, masterLearners.Count);
 
-            var master2Learners = await learnerService.GetLearnersHavingBadgeAsync(new BadgeCountDto("doc-master*2"));
+            var master2Learners = await badgeService.GetLearnersHavingBadgeAsync(CreateBadgeCount("doc-master*2"));
             Assert.AreEqual(2, master2Learners.Count);
 
-            var beginnerLearners = await learnerService.GetLearnersHavingBadgeAsync(new BadgeCountDto("doc-beginner"));
+            var beginnerLearners = await badgeService.GetLearnersHavingBadgeAsync(CreateBadgeCount("doc-beginner"));
             Assert.AreEqual(7, beginnerLearners.Count);
 
+        }
+
+
+        BadgeCountDto CreateBadgeCount(string badgeCount)
+        {
+            var parts = badgeCount.Split('*');
+            string badge = parts[0] ?? throw new Exception($"badge is null: '{badgeCount}'");
+
+            return new BadgeCountDto
+            {
+                Badge = new BadgeDto(){Code = badge},
+                Count = int.Parse(parts.Length > 1 ? parts[1] : "1")
+            };
         }
     }
 }
