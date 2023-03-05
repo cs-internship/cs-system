@@ -1,4 +1,5 @@
 ﻿using CrystallineSociety.Shared.Dtos.Account;
+using CrystallineSociety.Shared.Dtos.BadgeSystem;
 using CrystallineSociety.Shared.Dtos.TodoItem;
 
 namespace CrystallineSociety.Shared.Dtos;
@@ -20,6 +21,7 @@ namespace CrystallineSociety.Shared.Dtos;
 [JsonSerializable(typeof(SendConfirmationEmailRequestDto))]
 [JsonSerializable(typeof(SendResetPasswordEmailRequestDto))]
 [JsonSerializable(typeof(ResetPasswordRequestDto))]
+[JsonSerializable(typeof(BadgeBundleDto))]
 public partial class AppJsonContext : JsonSerializerContext
 {
 }

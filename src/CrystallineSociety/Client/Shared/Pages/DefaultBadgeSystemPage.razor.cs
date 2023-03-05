@@ -9,7 +9,7 @@ public partial class DefaultBadgeSystemPage
     [AutoInject]
     public required BadgeSystemFactory BadgeSystemFactory { get; set; }
 
-    private BadgeBundleDto DefaultBundle { get; set; } = new();
+    private BadgeBundleDto? DefaultBundle { get; set; } = new();
 
     protected override async Task OnInitAsync()
     {
@@ -18,9 +18,10 @@ public partial class DefaultBadgeSystemPage
 
     private async Task LoadDefaultBundleAsync()
     {
-        var badgeSystem = BadgeSystemFactory.Default();
-        await Task.Delay(TimeSpan.FromSeconds(3));
-        DefaultBundle = new BadgeBundleDto() { Badges = new List<BadgeDto>() { new BadgeDto() { Code = "hello" } } };
+        DefaultBundle = await HttpClient.GetFromJsonAsync("BadgeSystem/GetDefaultBadgeBundle", AppJsonContext.Default.BadgeBundleDto);
+        //var badgeSystem = BadgeSystemFactory.Default();
+        //await Task.Delay(TimeSpan.FromSeconds(3));
+        //DefaultBundle = new BadgeBundleDto() { Badges = new List<BadgeDto>() { new BadgeDto() { Code = "hello" } } };
         StateHasChanged();
     }
 }

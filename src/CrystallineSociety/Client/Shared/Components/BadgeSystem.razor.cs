@@ -11,7 +11,7 @@ namespace CrystallineSociety.Client.Shared.Components
 {
     public partial class BadgeSystem
     {
-        [Parameter] public required BadgeBundleDto Bundle { get; set; }
+        [Parameter] public BadgeBundleDto? Bundle { get; set; }
 
         protected override Task OnInitializedAsync()
         {

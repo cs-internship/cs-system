@@ -9,7 +9,7 @@ namespace CrystallineSociety.Shared.Dtos.BadgeSystem
 {
     public class BadgeDto
     {
-        public required string Code { get; set; }
+        public string Code { get; set; } = default!;
         public string? Description { get; set; }
         public BadgeLevel Level { get; set; }
         public Dictionary<string, string> Info { get; set; } = new();
@@ -34,7 +34,7 @@ namespace CrystallineSociety.Shared.Dtos.BadgeSystem
     public class ApprovingStep
     {
         public int Step { get; set; }
-        public required string Title { get; set; }
+        public string Title { get; set; } = default!;
 
         public List<BadgeRequirement> ApproverRequiredBadges { get; set; } = new();
         public int RequiredApprovalCount { get; set; }
