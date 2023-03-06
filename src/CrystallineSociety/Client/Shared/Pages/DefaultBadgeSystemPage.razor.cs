@@ -19,9 +19,6 @@ public partial class DefaultBadgeSystemPage
     private async Task LoadDefaultBundleAsync()
     {
         DefaultBundle = await HttpClient.GetFromJsonAsync("BadgeSystem/GetDefaultBadgeBundle", AppJsonContext.Default.BadgeBundleDto);
-        //var badgeSystem = BadgeSystemFactory.Default();
-        //await Task.Delay(TimeSpan.FromSeconds(3));
-        //DefaultBundle = new BadgeBundleDto() { Badges = new List<BadgeDto>() { new BadgeDto() { Code = "hello" } } };
         StateHasChanged();
     }
 }
