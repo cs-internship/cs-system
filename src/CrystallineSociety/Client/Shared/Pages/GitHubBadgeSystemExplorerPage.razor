@@ -1,0 +1,11 @@
+﻿@page "/badge-system/github"
+@using CrystallineSociety.Shared.Dtos.BadgeSystem
+@inherits AppComponentBase
+
+<div>
+    <BitLabel>GitHub URL:</BitLabel>
+    <BitTextField @bind-Value="GitHubUrl"/>
+    <BitButton OnClick="LoadBadgeSystem">Load Badge System</BitButton>
+    <BitLabel>@GitHubUrl</BitLabel>
+    <BadgeSystem Bundle="Bundle"></BadgeSystem>
+</div>

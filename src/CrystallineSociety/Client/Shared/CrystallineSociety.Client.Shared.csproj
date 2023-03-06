@@ -13,6 +13,7 @@
         <Content Remove="compilerconfig.json" />
         <None Include="compilerconfig.json" />
         <None Include="Components\BadgeSystem.razor.scss" />
+        <None Include="Pages\GitHubBadgeSystemExplorerPage.razor.scss" />
         <None Include="Shared\LoadingComponent.razor.scss" />
 
         <Content Remove="wwwroot\appsettings.json" />
@@ -72,6 +73,7 @@
 
     <ItemGroup>
       <SassFile Remove="Components\BadgeSystem.razor.scss" />
+      <SassFile Remove="Pages\GitHubBadgeSystemExplorerPage.razor.scss" />
     </ItemGroup>
 
     <ItemGroup>
