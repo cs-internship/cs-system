@@ -16,15 +16,13 @@ namespace CrystallineSociety.Client.Shared.Components
         [AutoInject] private IBadgeUtilService BadgeUtilService { get; set; } = default!;
         [Parameter] public BadgeBundleDto? Bundle { get; set; }
 
-        private string? BundleText { get; set; }
 
         protected override Task OnInitializedAsync()
         {
-            RefreshBundle();
             return base.OnInitializedAsync();
         }
 
-        private void RefreshBundle()
+        private string? GetBundleText(BadgeBundleDto bundle)
         {
             var builder = new StringBuilder();
             if (Bundle != null)
@@ -35,8 +33,7 @@ namespace CrystallineSociety.Client.Shared.Components
                 }
             }
 
-            BundleText = builder.ToString();
-
+            return builder.ToString();
         }
     }
 }
