@@ -1,0 +1,13 @@
+{
+  "code": "mentoring-intern",
+  "description": "Description for mentoring-intern",
+  "level": "Bronze",
+  "appraisal-methods": [
+    {
+      "title": "Main Method",
+      "badge-requirements": [],
+      "activity-requirements": [],
+      "approving-steps": []
+    }
+  ]
+}
