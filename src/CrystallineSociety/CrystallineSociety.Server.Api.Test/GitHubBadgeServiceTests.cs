@@ -38,5 +38,30 @@ namespace CrystallineSociety.Server.Api.Test
             Assert.IsFalse(badgeSystem.Validations.Any());
 
         }
+
+        [TestMethod]
+        public async Task GitHubBadgesList_LoadSimple()
+        {
+            var testHost = Host.CreateDefaultBuilder()
+                               .ConfigureServices((_, services) =>
+                                   {
+                                       services.AddSharedServices();
+                                       services.AddServerServices();
+                                   }
+                               ).Build();
+
+            var githubService = testHost.Services.GetRequiredService<IGitHubBadgeService>();
+            var factory = testHost.Services.GetRequiredService<BadgeSystemFactory>();
+
+            var badgesFolderUrl =
+                "https://github.com/cs-internship/cs-system/tree/main/src/CrystallineSociety/Shared/CrystallineSociety.Shared.Test/BadgeSystem/SampleBadgeDocs/github-sample-folder";
+            var badges = await githubService.GetBadgesAsync(badgesFolderUrl);
+
+            Assert.IsNotNull(badges);
+            Assert.AreEqual(6, badges.Count);
+
+            var badgeSystem = factory.CreateNew(badges);
+
+        }
     }
 }
