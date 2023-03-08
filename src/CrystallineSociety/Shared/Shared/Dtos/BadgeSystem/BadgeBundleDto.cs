@@ -8,6 +8,16 @@ namespace CrystallineSociety.Shared.Dtos.BadgeSystem
 {
     public class BadgeBundleDto
     {
+        public BadgeBundleDto()
+        {
+            
+        }
+
+        public BadgeBundleDto(List<BadgeDto> badges)
+        {
+            Badges = badges;
+        }
+
         public List<BadgeDto> Badges { get; set; } = new();
         public List<BadgeSystemValidationDto>? Validations { get; set; }
         

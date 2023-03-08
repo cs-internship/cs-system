@@ -13,12 +13,22 @@ public partial class BadgeSystemController : AppControllerBase
     [AutoInject]
     public BadgeSystemFactory BadgeSystemFactory { get; set; }
 
+    [AutoInject]
+    public IGitHubBadgeService GitHubBadgeService { get; set; }
+
     public IBadgeSystemService BadgeSystemService => BadgeSystemFactory.Default();
 
     [HttpGet]
     public async Task<BadgeBundleDto> GetDefaultBadgeBundle(CancellationToken cancellationToken)
     {
         return BadgeSystemService.BadgeBundle;
+    }
+
+    [HttpGet]
+    public async Task<BadgeBundleDto> GetBadgeBundleFromGitHub(string url, CancellationToken cancellationToken)
+    {
+        var badges = await GitHubBadgeService.GetBadgesAsync(url);
+        return new BadgeBundleDto(badges);
     }
 
     [HttpGet]

@@ -20,6 +20,15 @@ public partial class BadgeSystemFactory
         return badgeService;
     }
 
+    public IBadgeSystemService CreateNew(List<BadgeDto> badges)
+    {
+        var bundle = new BadgeBundleDto(badges);
+        using IServiceScope scope = ServiceScopeFactory.CreateScope();
+        var badgeService = scope.ServiceProvider.GetRequiredService<IBadgeSystemService>();
+        badgeService.Build(bundle);
+        return badgeService;
+    }
+
     public IBadgeSystemService Default()
     {
         return DefaultBadgeSystem ?? throw new InvalidOperationException("Default badge system is not set yet.");

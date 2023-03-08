@@ -3,11 +3,19 @@ using Octokit;
 
 namespace CrystallineSociety.Server.Api.Services.Implementations
 {
-    public class ServerGitHubBadgeService : IGitHubBadgeService
+    public partial class ServerGitHubBadgeService : IGitHubBadgeService
     {
-        public Task<List<BadgeDto>> GetBadgesAsync(string url)
+        [AutoInject]
+        public IBadgeUtilService BadgeUtilService { get; set; }
+
+        public async Task<List<BadgeDto>> GetBadgesAsync(string url)
         {
-            throw new NotImplementedException();
+            // Todo: return the real list.
+            return new List<BadgeDto>()
+            {
+                BadgeUtilService.ParseBadge($$"""{"code": "github-test-badge-a", "description": "from: {{url}}"}"""),
+                BadgeUtilService.ParseBadge($$"""{"code": "github-test-badge-b", "description": "from: {{url}}"}"""),
+            };
         }
 
         public async Task<BadgeDto> GetBadgeAsync(string url)
