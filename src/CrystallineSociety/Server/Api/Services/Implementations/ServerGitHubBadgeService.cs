@@ -1,4 +1,8 @@
-﻿using CrystallineSociety.Shared.Dtos.BadgeSystem;
+﻿using System.Reflection.Metadata;
+using System.Text;
+
+using CrystallineSociety.Shared.Dtos.BadgeSystem;
+
 using Octokit;
 
 namespace CrystallineSociety.Server.Api.Services.Implementations
@@ -10,12 +14,31 @@ namespace CrystallineSociety.Server.Api.Services.Implementations
 
         public async Task<List<BadgeDto>> GetBadgesAsync(string url)
         {
-            // Todo: return the real list.
-            return new List<BadgeDto>()
+            var client = new GitHubClient(new ProductHeaderValue("CS-System"));
+            var repos = await client.Repository.GetAllForOrg("cs-internship");
+            var repo = repos.First(r => r.Name == "cs-system");
+            var lastSegment = GetLastSegmentFromUrl(url, out var parentFolderPath);
+            var folderContents = await client.Repository.Content.GetAllContents(repo.Id, parentFolderPath);
+            var destinationFolderSha = folderContents?.First(f => f.Name == lastSegment).Sha;
+            var destinationFolderContents = await client.Git.Tree.GetRecursive(repo.Id, destinationFolderSha);
+
+            var badges = new List<BadgeDto>();
+
+            foreach (var item in destinationFolderContents.Tree)
             {
-                BadgeUtilService.ParseBadge($$"""{"code": "github-test-badge-a", "description": "from: {{url}}"}"""),
-                BadgeUtilService.ParseBadge($$"""{"code": "github-test-badge-b", "description": "from: {{url}}"}"""),
-            };
+                if (Path.GetExtension(item.Path) != ".json") 
+                    continue;
+
+                var getBadge = await client.Git.Blob.Get(repo.Id,item.Sha);
+
+                if (getBadge.Encoding != EncodingType.Base64) 
+                    continue;
+
+                var bytes = Convert.FromBase64String(getBadge.Content);
+                var badgeContent = Encoding.UTF8.GetString(bytes);
+                badges.Add(BadgeUtilService.ParseBadge(badgeContent));
+            }
+            return badges;
         }
 
         public async Task<BadgeDto> GetBadgeAsync(string url)
@@ -23,10 +46,9 @@ namespace CrystallineSociety.Server.Api.Services.Implementations
             var client = new GitHubClient(new ProductHeaderValue("CS-System"));
             var repos = await client.Repository.GetAllForOrg("cs-internship");
             var repo = repos.First(r => r.Name == "cs-system");
-            var urlSrcIndex = url.IndexOf("src", StringComparison.Ordinal);
-            var folderPath = url[urlSrcIndex..];
+            var folderPath = GetRelativeFolderPath(url);
             var folderContents = await client.Repository.Content.GetAllContents(repo.Id, folderPath);
-            var badgeFilePath = folderContents.FirstOrDefault(x => x.Name.Contains(".json"))?.Path;
+            var badgeFilePath = folderContents.FirstOrDefault(x => Path.GetExtension(x.Name) == ".json")?.Path;
             var badgeFile = await client.Repository.Content.GetAllContents(repo.Id, badgeFilePath);
             var badge = new BadgeDto();
             var badgeFileContent = badgeFile?.FirstOrDefault()?.Content;
@@ -44,6 +66,25 @@ namespace CrystallineSociety.Server.Api.Services.Implementations
             }
 
             return badge;
+        }
+
+        private static string GetRelativeFolderPath(string url)
+        {
+            var urlSrcIndex = url.IndexOf("src", StringComparison.Ordinal);
+            var folderPath = url[urlSrcIndex..];
+            return folderPath;
+        }
+
+        private static string GetLastSegmentFromUrl(string url, out string parentFolderPath)
+        {
+            var uri = new Uri(url);
+            var lastSegment = uri.Segments.Last().TrimEnd('/');
+            var parentFolderUrl = uri.GetLeftPart(UriPartial.Authority) +
+                                  string.Join("", uri.Segments.Take(uri.Segments.Length - 1));
+            var urlSrcIndex = parentFolderUrl.IndexOf("src", StringComparison.Ordinal);
+            parentFolderPath = parentFolderUrl[urlSrcIndex..];
+
+            return lastSegment;
         }
     }
 }
