@@ -44,28 +44,42 @@ namespace CrystallineSociety.Server.Api.Services.Implementations
         public async Task<BadgeDto> GetBadgeAsync(string url)
         {
             var client = new GitHubClient(new ProductHeaderValue("CS-System"));
-            var repos = await client.Repository.GetAllForOrg("cs-internship");
+
+            //var organization = 
+
+            // ToDo: get from url
+            var repos = 
+                await client.Repository.GetAllForOrg("cs-internship")
+                ?? throw new ResourceNotFoundException($"Unable to locate organization: {url}");
+
+
             var repo = repos.First(r => r.Name == "cs-system");
             var folderPath = GetRelativeFolderPath(url);
             var folderContents = await client.Repository.Content.GetAllContents(repo.Id, folderPath);
-            var badgeFilePath = folderContents.FirstOrDefault(x => Path.GetExtension(x.Name) == ".json")?.Path;
-            var badgeFile = await client.Repository.Content.GetAllContents(repo.Id, badgeFilePath);
-            var badge = new BadgeDto();
-            var badgeFileContent = badgeFile?.FirstOrDefault()?.Content;
+            var badgeFilePath = 
+                folderContents.FirstOrDefault(x => Path.GetExtension(x.Name) == ".json")?.Path
+                ?? throw new ResourceNotFoundException($"Unable to locate badge url: {url}");
+
+            //if (badgeFilePath is null)
+            //    throw new ResourceNotFoundException($"Unable to locate badge url: {url}");
+
+            var contents = await client.Repository.Content.GetAllContents(repo.Id, badgeFilePath);
+            var badgeFile = contents.FirstOrDefault();
+            var badgeFileContent = badgeFile?.Content;
 
             if (badgeFileContent == null)
-                return badge;
+                return null;
 
             try
             {
-                badge = BadgeUtilService.ParseBadge(badgeFileContent);
+                var badge = BadgeUtilService.ParseBadge(badgeFileContent);
+                return badge;
             }
-            catch (Exception e)
+            catch (Exception exception)
             {
-                Console.WriteLine(e);
+                throw new FormatException($"Can not parse badge with url: '{url}' ", exception);
             }
 
-            return badge;
         }
 
         private static string GetRelativeFolderPath(string url)
