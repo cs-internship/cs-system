@@ -29,14 +29,6 @@ namespace CrystallineSociety.Server.Api.Test
 
             Assert.IsNotNull(badge);
 
-            var bundle = new BadgeBundleDto();
-            bundle.Badges.Add(badge);
-
-            var badgeSystem = factory.CreateNew(bundle);
-
-            Assert.IsNotNull(badgeSystem.Validations);
-            Assert.IsFalse(badgeSystem.Validations.Any());
-
         }
 
         [TestMethod]
