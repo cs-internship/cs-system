@@ -29,12 +29,12 @@ namespace CrystallineSociety.Server.Api.Services.Implementations
                 if (Path.GetExtension(item.Path) != ".json") 
                     continue;
 
-                var getBadge = await client.Git.Blob.Get(repo.Id,item.Sha);
+                var badgeBlob = await client.Git.Blob.Get(repo.Id,item.Sha);
 
-                if (getBadge.Encoding != EncodingType.Base64) 
+                if (badgeBlob.Encoding != EncodingType.Base64) 
                     continue;
 
-                var bytes = Convert.FromBase64String(getBadge.Content);
+                var bytes = Convert.FromBase64String(badgeBlob.Content);
                 var badgeContent = Encoding.UTF8.GetString(bytes);
                 badges.Add(BadgeUtilService.ParseBadge(badgeContent));
             }
