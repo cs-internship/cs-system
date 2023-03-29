@@ -26,12 +26,12 @@ namespace CrystallineSociety.Server.Api.Services.Implementations
 
             foreach (var item in destinationFolderContents.Tree)
             {
-                if (Path.GetExtension(item.Path) != ".json") 
+                if (Path.GetExtension(item.Path) != ".json")
                     continue;
 
-                var badgeBlob = await client.Git.Blob.Get(repo.Id,item.Sha);
+                var badgeBlob = await client.Git.Blob.Get(repo.Id, item.Sha);
 
-                if (badgeBlob.Encoding != EncodingType.Base64) 
+                if (badgeBlob.Encoding != EncodingType.Base64)
                     continue;
 
                 var bytes = Convert.FromBase64String(badgeBlob.Content);
@@ -44,31 +44,26 @@ namespace CrystallineSociety.Server.Api.Services.Implementations
         public async Task<BadgeDto> GetBadgeAsync(string url)
         {
             var client = new GitHubClient(new ProductHeaderValue("CS-System"));
+            var (orgName, repoName) = GetRepoAndOrgNameFromUrl(url);
 
-            //var organization = 
+            var repos =
+                await client.Repository.GetAllForOrg(orgName)
+                ?? throw new ResourceNotFoundException($"Unable to locate orgName: {url}");
 
-            // ToDo: get from url
-            var repos = 
-                await client.Repository.GetAllForOrg("cs-internship")
-                ?? throw new ResourceNotFoundException($"Unable to locate organization: {url}");
+            var repo =
+                repos.First(r => r.Name == repoName)
+                ?? throw new ResourceNotFoundException($"Unable to locate repoName: {url}");
 
-
-            var repo = repos.First(r => r.Name == "cs-system");
             var folderPath = GetRelativeFolderPath(url);
             var folderContents = await client.Repository.Content.GetAllContents(repo.Id, folderPath);
-            var badgeFilePath = 
-                folderContents.FirstOrDefault(x => Path.GetExtension(x.Name) == ".json")?.Path
+            var badgeFilePath =
+                folderContents.FirstOrDefault(x => x.Name.EndsWith("-badge.json"))?.Path
                 ?? throw new ResourceNotFoundException($"Unable to locate badge url: {url}");
 
-            //if (badgeFilePath is null)
-            //    throw new ResourceNotFoundException($"Unable to locate badge url: {url}");
-
             var contents = await client.Repository.Content.GetAllContents(repo.Id, badgeFilePath);
-            var badgeFile = contents.FirstOrDefault();
-            var badgeFileContent = badgeFile?.Content;
-
-            if (badgeFileContent == null)
-                return null;
+            // ToDo: Dig a little deeper in each of these variables for being null
+            var badgeFile = contents?.FirstOrDefault();
+            var badgeFileContent = badgeFile?.Content ?? throw new FileContentIsNullException($"File content retrieved from {url} is null");
 
             try
             {
@@ -99,6 +94,16 @@ namespace CrystallineSociety.Server.Api.Services.Implementations
             parentFolderPath = parentFolderUrl[urlSrcIndex..];
 
             return lastSegment;
+        }
+
+        private static (string org, string repo) GetRepoAndOrgNameFromUrl(string url)
+        {
+            var uri = new Uri(url);
+            string[] segments = uri.Segments;
+            string org = segments[1].TrimEnd('/');
+            string repo = segments[2].TrimEnd('/');
+
+            return (org, repo);
         }
     }
 }
