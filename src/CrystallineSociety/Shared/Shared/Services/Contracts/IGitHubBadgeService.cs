@@ -17,12 +17,12 @@ namespace CrystallineSociety.Shared.Services.Contracts
         Task<List<BadgeDto>> GetBadgesAsync(string url);
         
         /// <summary>
-        /// Loads a badge spec from the given <paramref name="url"/> and parses and return a BadgeDto
+        /// Loads a badge spec from the given <paramref name="url"/> and parses it, and returns a BadgeDto.
         /// </summary>
         /// <param name="url"></param>
-        /// <returns>Returns the parsed badge if url exists, otherwise return null</returns>
+        /// <returns>Returns the parsed badge.</returns>
         /// <exception cref="FormatException">If the loaded url string is not in a correct format.</exception>
-        /// <exception cref="ResourceNotFoundException"></exception>
+        /// <exception cref="ResourceNotFoundException">If the given url could not be found.</exception>
         Task<BadgeDto> GetBadgeAsync(string url);
     }
 }
