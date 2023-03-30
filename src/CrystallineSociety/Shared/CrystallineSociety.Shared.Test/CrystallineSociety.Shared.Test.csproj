@@ -55,6 +55,9 @@
     <EmbeddedResource Include="BadgeSystem\SampleBadgeDocs\serialization-badge-sample\info_fa.md">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </EmbeddedResource>
+    <EmbeddedResource Include="BadgeSystem\SampleBadgeDocs\serialization-badge-sample\spec-badge.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </EmbeddedResource>
     <EmbeddedResource Include="BadgeSystem\SampleBadgeDocs\serialization-badge-sample\spec.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </EmbeddedResource>
