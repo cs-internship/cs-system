@@ -58,12 +58,10 @@ namespace CrystallineSociety.Server.Api.Services.Implementations
             var folderContents = await client.Repository.Content.GetAllContents(repo.Id, folderPath);
             var badgeFilePath =
                 folderContents.FirstOrDefault(x => x.Name.EndsWith("-badge.json"))?.Path
-                ?? throw new ResourceNotFoundException($"Unable to locate badge url: {url}");
-
+                ?? throw new FileNotFoundException($"Badge file not found in: {url}");
             var contents = await client.Repository.Content.GetAllContents(repo.Id, badgeFilePath);
-            // ToDo: Dig a little deeper in each of these variables for being null
-            var badgeFile = contents?.FirstOrDefault();
-            var badgeFileContent = badgeFile?.Content ?? throw new FileContentIsNullException($"File content retrieved from {url} is null");
+            var badgeFile = contents!.First();
+            var badgeFileContent = badgeFile.Content ?? throw new FileContentIsNullException($"File content retrieved from {url} is null");
 
             try
             {
