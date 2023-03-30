@@ -1,16 +1,14 @@
 ﻿using System.Reflection.Metadata;
 using System.Text;
-
+using System.Text.RegularExpressions;
 using CrystallineSociety.Shared.Dtos.BadgeSystem;
-
 using Octokit;
 
 namespace CrystallineSociety.Server.Api.Services.Implementations
 {
     public partial class ServerGitHubBadgeService : IGitHubBadgeService
     {
-        [AutoInject]
-        public IBadgeUtilService BadgeUtilService { get; set; }
+        [AutoInject] public IBadgeUtilService BadgeUtilService { get; set; }
 
         public async Task<List<BadgeDto>> GetBadgesAsync(string url)
         {
@@ -38,6 +36,7 @@ namespace CrystallineSociety.Server.Api.Services.Implementations
                 var badgeContent = Encoding.UTF8.GetString(bytes);
                 badges.Add(BadgeUtilService.ParseBadge(badgeContent));
             }
+
             return badges;
         }
 
@@ -47,26 +46,23 @@ namespace CrystallineSociety.Server.Api.Services.Implementations
 
             var (orgName, repoName) = GetRepoAndOrgNameFromUrl(url);
 
-            var repo =
-                    await client.Repository.Get(orgName, repoName)
-                ?? throw new ResourceNotFoundException($"Unable to locate orgName/repoName: {url}");
-
-            var branchName = GetBranchNameFromUrl(url);
+            var repo = await client.Repository.Get(orgName, repoName)
+                       ?? throw new ResourceNotFoundException($"Unable to locate orgName/repoName: {url}");
 
             var refs = await client.Git.Reference.GetAll(repo.Id);
-
+            var branchName = GetBranchNameFromUrl(url, refs);
             var branchRef = refs.First(r => r.Ref.Contains($"refs/heads/{branchName}"));
-
             var folderPath = GetRelativeFolderPath(url);
-
-            var folderContents = await client.Repository.Content.GetAllContentsByRef(repo.Id, folderPath, branchRef.Ref);
+            var folderContents =
+                await client.Repository.Content.GetAllContentsByRef(repo.Id, folderPath, branchRef.Ref);
 
             var badgeFilePath =
                 folderContents.FirstOrDefault(x => x.Name.EndsWith("-badge.json"))?.Path
                 ?? throw new FileNotFoundException($"Badge file not found in: {url}");
-            var contents = await client.Repository.Content.GetAllContentsByRef(repo.Id, badgeFilePath,branchRef.Ref);
+            var contents = await client.Repository.Content.GetAllContentsByRef(repo.Id, badgeFilePath, branchRef.Ref);
             var badgeFile = contents!.First();
-            var badgeFileContent = badgeFile.Content ?? throw new FileContentIsNullException($"File content retrieved from {url} is null");
+            var badgeFileContent = badgeFile.Content ??
+                                   throw new FileContentIsNullException($"File content retrieved from {url} is null");
 
             try
             {
@@ -77,7 +73,6 @@ namespace CrystallineSociety.Server.Api.Services.Implementations
             {
                 throw new FormatException($"Can not parse badge with url: '{url}' ", exception);
             }
-
         }
 
         private static string GetRelativeFolderPath(string url)
@@ -87,17 +82,21 @@ namespace CrystallineSociety.Server.Api.Services.Implementations
             return folderPath;
         }
 
-        private static string GetBranchNameFromUrl(string url)
+        private static string GetBranchNameFromUrl(string url, IReadOnlyList<Reference> refs)
         {
-            var treeIndex = url.IndexOf("/tree/", StringComparison.Ordinal);
+            var uri = new Uri(url);
+            var afterTreeSegments = String.Join("", uri.Segments[4..]);
+            var branchInRefWithEndingSlash = "";
+            foreach (var reference in refs)
+            {
+                branchInRefWithEndingSlash = $"{Regex.Replace(reference.Ref, @"^[^/]+/[^/]+/", "")}/";
+                if (afterTreeSegments.StartsWith(branchInRefWithEndingSlash))
+                {
+                    break;
+                }
+            }
 
-            var branchName = url[(treeIndex + "/tree/".Length)..];
-
-            var slashIndex = branchName.IndexOf('/');
-
-            branchName = branchName[..slashIndex];
-
-            return branchName;
+            return branchInRefWithEndingSlash.TrimEnd('/');
         }
 
         private static string GetLastSegmentFromUrl(string url, out string parentFolderPath)
