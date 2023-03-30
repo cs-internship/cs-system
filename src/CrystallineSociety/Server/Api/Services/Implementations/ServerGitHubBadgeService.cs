@@ -50,7 +50,8 @@ namespace CrystallineSociety.Server.Api.Services.Implementations
                        ?? throw new ResourceNotFoundException($"Unable to locate orgName/repoName: {url}");
 
             var refs = await client.Git.Reference.GetAll(repo.Id);
-            var branchName = GetBranchNameFromUrl(url, refs);
+            var branchName = GetBranchNameFromUrl(url, refs) ??
+                             throw new ResourceNotFoundException($"Unable to locate branchName: {url}");
             var branchRef = refs.First(r => r.Ref.Contains($"refs/heads/{branchName}"));
             var folderPath = GetRelativeFolderPath(url);
             var folderContents =
@@ -82,21 +83,21 @@ namespace CrystallineSociety.Server.Api.Services.Implementations
             return folderPath;
         }
 
-        private static string GetBranchNameFromUrl(string url, IReadOnlyList<Reference> refs)
+        private static string? GetBranchNameFromUrl(string url, IReadOnlyList<Reference> refs)
         {
             var uri = new Uri(url);
             var afterTreeSegments = String.Join("", uri.Segments[4..]);
-            var branchInRefWithEndingSlash = "";
             foreach (var reference in refs)
             {
-                branchInRefWithEndingSlash = $"{Regex.Replace(reference.Ref, @"^[^/]+/[^/]+/", "")}/";
+                
+                var branchInRefWithEndingSlash = $"{Regex.Replace(reference.Ref, @"^[^/]+/[^/]+/", "")}/";
                 if (afterTreeSegments.StartsWith(branchInRefWithEndingSlash))
                 {
-                    break;
+                    return branchInRefWithEndingSlash.TrimEnd('/');
                 }
             }
 
-            return branchInRefWithEndingSlash.TrimEnd('/');
+            return null;
         }
 
         private static string GetLastSegmentFromUrl(string url, out string parentFolderPath)
