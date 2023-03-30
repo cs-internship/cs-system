@@ -44,22 +44,27 @@ namespace CrystallineSociety.Server.Api.Services.Implementations
         public async Task<BadgeDto> GetBadgeAsync(string url)
         {
             var client = new GitHubClient(new ProductHeaderValue("CS-System"));
+
             var (orgName, repoName) = GetRepoAndOrgNameFromUrl(url);
 
-            var repos =
-                await client.Repository.GetAllForOrg(orgName)
-                ?? throw new ResourceNotFoundException($"Unable to locate orgName: {url}");
-
             var repo =
-                repos.First(r => r.Name == repoName)
-                ?? throw new ResourceNotFoundException($"Unable to locate repoName: {url}");
+                    await client.Repository.Get(orgName, repoName)
+                ?? throw new ResourceNotFoundException($"Unable to locate orgName/repoName: {url}");
+
+            var branchName = GetBranchNameFromUrl(url);
+
+            var refs = await client.Git.Reference.GetAll(repo.Id);
+
+            var branchRef = refs.First(r => r.Ref.Contains($"refs/heads/{branchName}"));
 
             var folderPath = GetRelativeFolderPath(url);
-            var folderContents = await client.Repository.Content.GetAllContents(repo.Id, folderPath);
+
+            var folderContents = await client.Repository.Content.GetAllContentsByRef(repo.Id, folderPath, branchRef.Ref);
+
             var badgeFilePath =
                 folderContents.FirstOrDefault(x => x.Name.EndsWith("-badge.json"))?.Path
                 ?? throw new FileNotFoundException($"Badge file not found in: {url}");
-            var contents = await client.Repository.Content.GetAllContents(repo.Id, badgeFilePath);
+            var contents = await client.Repository.Content.GetAllContentsByRef(repo.Id, badgeFilePath,branchRef.Ref);
             var badgeFile = contents!.First();
             var badgeFileContent = badgeFile.Content ?? throw new FileContentIsNullException($"File content retrieved from {url} is null");
 
@@ -82,6 +87,19 @@ namespace CrystallineSociety.Server.Api.Services.Implementations
             return folderPath;
         }
 
+        private static string GetBranchNameFromUrl(string url)
+        {
+            var treeIndex = url.IndexOf("/tree/", StringComparison.Ordinal);
+
+            var branchName = url[(treeIndex + "/tree/".Length)..];
+
+            var slashIndex = branchName.IndexOf('/');
+
+            branchName = branchName[..slashIndex];
+
+            return branchName;
+        }
+
         private static string GetLastSegmentFromUrl(string url, out string parentFolderPath)
         {
             var uri = new Uri(url);
@@ -97,9 +115,9 @@ namespace CrystallineSociety.Server.Api.Services.Implementations
         private static (string org, string repo) GetRepoAndOrgNameFromUrl(string url)
         {
             var uri = new Uri(url);
-            string[] segments = uri.Segments;
-            string org = segments[1].TrimEnd('/');
-            string repo = segments[2].TrimEnd('/');
+            var segments = uri.Segments;
+            var org = segments[1].TrimEnd('/');
+            var repo = segments[2].TrimEnd('/');
 
             return (org, repo);
         }

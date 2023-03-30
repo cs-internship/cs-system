@@ -24,7 +24,7 @@ namespace CrystallineSociety.Server.Api.Test
             var factory = testHost.Services.GetRequiredService<BadgeSystemFactory>();
 
             var badgeUrl =
-                "https://github.com/cs-internship/cs-system/tree/main/src/CrystallineSociety/Shared/CrystallineSociety.Shared.Test/BadgeSystem/SampleBadgeDocs/serialization-badge-sample";
+                "https://github.com/hootanht/cs-system/tree/feature/initial-get-badge-system/src/CrystallineSociety/Shared/CrystallineSociety.Shared.Test/BadgeSystem/SampleBadgeDocs/serialization-badge-sample";
             var badge = await githubService.GetBadgeAsync(badgeUrl);
 
             Assert.IsNotNull(badge);
@@ -46,7 +46,7 @@ namespace CrystallineSociety.Server.Api.Test
             var factory = testHost.Services.GetRequiredService<BadgeSystemFactory>();
 
             var badgesFolderUrl =
-                "https://github.com/cs-internship/cs-system/tree/main/src/CrystallineSociety/Shared/CrystallineSociety.Shared.Test/BadgeSystem/SampleBadgeDocs/github-sample-folder";
+                "https://github.com/cs-internship/cs-system/tree/feature/initial-get-badge-system/src/CrystallineSociety/Shared/CrystallineSociety.Shared.Test/BadgeSystem/SampleBadgeDocs/github-sample-folder";
             var badges = await githubService.GetBadgesAsync(badgesFolderUrl);
 
             Assert.IsNotNull(badges);
