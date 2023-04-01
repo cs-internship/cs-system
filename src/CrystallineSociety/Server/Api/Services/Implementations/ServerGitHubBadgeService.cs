@@ -46,8 +46,7 @@ namespace CrystallineSociety.Server.Api.Services.Implementations
 
             var (orgName, repoName) = GetRepoAndOrgNameFromUrl(url);
 
-            var repo = await client.Repository.Get(orgName, repoName)
-                       ?? throw new ResourceNotFoundException($"Unable to locate orgName/repoName: {url}");
+            var repo = await client.Repository.Get(orgName, repoName);
 
             var refs = await client.Git.Reference.GetAll(repo.Id);
             var branchName = GetBranchNameFromUrl(url, refs) ??
@@ -62,9 +61,9 @@ namespace CrystallineSociety.Server.Api.Services.Implementations
                 ?? throw new FileNotFoundException($"Badge file not found in: {url}");
             var contents = await client.Repository.Content.GetAllContentsByRef(repo.Id, badgeFilePath, branchRef.Ref);
             var badgeFile = contents!.First();
-            var badgeFileContent = badgeFile.Content ??
-                                   throw new FileContentIsNullException($"File content retrieved from {url} is null");
-
+            
+            var badgeFileContent = badgeFile.Content;
+            
             try
             {
                 var badge = BadgeUtilService.ParseBadge(badgeFileContent);
@@ -72,8 +71,9 @@ namespace CrystallineSociety.Server.Api.Services.Implementations
             }
             catch (Exception exception)
             {
-                throw new FormatException($"Can not parse badge with url: '{url}' ", exception);
+                throw new FormatException($"Can not parse badge with url: '{url}'", exception);
             }
+
         }
 
         private static string GetRelativeFolderPath(string url)
@@ -89,7 +89,7 @@ namespace CrystallineSociety.Server.Api.Services.Implementations
             var afterTreeSegments = String.Join("", uri.Segments[4..]);
             foreach (var reference in refs)
             {
-                
+
                 var branchInRefWithEndingSlash = $"{Regex.Replace(reference.Ref, @"^[^/]+/[^/]+/", "")}/";
                 if (afterTreeSegments.StartsWith(branchInRefWithEndingSlash))
                 {

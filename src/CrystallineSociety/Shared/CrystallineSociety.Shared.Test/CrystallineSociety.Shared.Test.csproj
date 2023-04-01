@@ -18,6 +18,7 @@
     <None Remove="BadgeSystem\SampleBadgeDocs\scenario-simple-doc\doc-master.json" />
     <None Remove="BadgeSystem\SampleBadgeDocs\serialization-badge-sample\info_en.md" />
     <None Remove="BadgeSystem\SampleBadgeDocs\serialization-badge-sample\info_fa.md" />
+    <None Remove="BadgeSystem\SampleBadgeDocs\serialization-badge-sample\spec-empty-badge.json" />
     <None Remove="BadgeSystem\SampleBadgeDocs\serialization-badge-sample\spec.json" />
   </ItemGroup>
 
@@ -53,6 +54,9 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </EmbeddedResource>
     <EmbeddedResource Include="BadgeSystem\SampleBadgeDocs\serialization-badge-sample\info_fa.md">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="BadgeSystem\SampleBadgeDocs\serialization-badge-sample\spec-empty-badge.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </EmbeddedResource>
     <EmbeddedResource Include="BadgeSystem\SampleBadgeDocs\serialization-badge-sample\spec-badge.json">
