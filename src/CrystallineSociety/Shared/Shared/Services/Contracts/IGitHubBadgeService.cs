@@ -12,19 +12,19 @@ namespace CrystallineSociety.Shared.Services.Contracts
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="url"></param>
+        /// <param name="folderUrl"></param>
         /// <returns></returns>
-        Task<List<BadgeDto>> GetBadgesAsync(string url);
+        Task<List<BadgeDto>> GetBadgesAsync(string folderUrl);
         
         /// <summary>
-        /// Loads a badge spec from the given <paramref name="url"/> and parses it, and returns a BadgeDto.
+        /// Loads a badge spec from the given <paramref name="badgeUrl"/> and parses it, and returns a BadgeDto.
         /// </summary>
-        /// <param name="url">The url address that contains badge files or folders containing badge file/folders.</param>
+        /// <param name="badgeUrl">The badgeUrl address that contains badge files or folders containing badge file/folders.</param>
         /// <returns>Returns the parsed badge.</returns>
-        /// <exception cref="FormatException">If the loaded url string is not in a correct format.</exception>
-        /// <exception cref="ResourceNotFoundException">If the given url could not be found.</exception>
-        /// <exception cref="FileNotFoundException">If the given url contains no valid badge file.</exception>
+        /// <exception cref="FormatException">If the loaded badgeUrl string is not in a correct format.</exception>
+        /// <exception cref="ResourceNotFoundException">If the given badgeUrl could not be found.</exception>
+        /// <exception cref="FileNotFoundException">If the given badgeUrl contains no valid badge file.</exception>
         /// <exception cref="FileContentIsNullException">If the badge file content is null.</exception>
-        Task<BadgeDto> GetBadgeAsync(string url);
+        Task<BadgeDto> GetBadgeAsync(string badgeUrl);
     }
 }

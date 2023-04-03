@@ -9,15 +9,18 @@ namespace CrystallineSociety.Shared.Dtos.BadgeSystem
 {
     public class BadgeDto
     {
-        public string Code { get; set; } = default!;
+        public string? Code { get; set; } = default!;
         public string? Description { get; set; }
-        public BadgeLevel Level { get; set; }
-        public Dictionary<string, string> Info { get; set; } = new();
-        public List<AppraisalMethod> AppraisalMethods { get; set; } = new();
-        
+        public BadgeLevel? Level { get; set; }
+        public Dictionary<string, string>? Info { get; set; } = new();
+        public List<AppraisalMethod>? AppraisalMethods { get; set; } = new();
+
+        public string? Sha { get; set; }
+        public string? Url { get; set; }
+        public long? RepoId { get; set; }
         public override string ToString()
         {
-            return Code;
+            return Code ?? "";
         }
     }
 

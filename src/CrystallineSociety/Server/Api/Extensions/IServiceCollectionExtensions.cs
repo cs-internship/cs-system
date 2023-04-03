@@ -16,7 +16,7 @@ public static class IServiceCollectionExtensions
 {
     public static void AddServerServices(this IServiceCollection services)
     {
-        services.AddTransient<IGitHubBadgeService, ServerGitHubBadgeService>();
+        services.AddTransient<IGitHubBadgeService, GitHubBadgeService>();
         services.AddAppHook<ServerBadgeSystemAppHook>();
         services.AddTransient<ILearnerService, ServerLearnerService>();
     }
