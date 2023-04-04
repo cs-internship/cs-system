@@ -14,12 +14,6 @@ namespace CrystallineSociety.Server.Api.Test
 
         private IHost _testHost = default!;
 
-        private string? TestOrgName { get; set; }
-
-        private string? TestRepoName { get; set; }
-
-        private string? TestBranchName { get; set; }
-
         [TestInitialize]
         public void TestInitialize()
         {
@@ -46,7 +40,7 @@ namespace CrystallineSociety.Server.Api.Test
             var githubService = _testHost.Services.GetRequiredService<IGitHubBadgeService>();
 
             var badgeUrl =
-                $"https://github.com/{TestOrgName}/{TestRepoName}/tree/{TestBranchName}/src/CrystallineSociety/Shared/CrystallineSociety.Shared.Test/BadgeSystem/SampleBadgeDocs/serialization-badge-sample";
+                "https://github.com/hootanht/cs-system/tree/feature/initial-get-badge-system/src/CrystallineSociety/Shared/CrystallineSociety.Shared.Test/BadgeSystem/SampleBadgeDocs/serialization-badge-sample";
             var badge = await githubService.GetBadgeAsync(badgeUrl);
 
             Assert.IsNotNull(badge);
@@ -60,7 +54,7 @@ namespace CrystallineSociety.Server.Api.Test
             var factory = _testHost.Services.GetRequiredService<BadgeSystemFactory>();
 
             var badgesFolderUrl =
-                $"https://github.com/{TestOrgName}/{TestRepoName}/tree/{TestBranchName}/src/CrystallineSociety/Shared/CrystallineSociety.Shared.Test/BadgeSystem/SampleBadgeDocs/github-sample-folder";
+                "https://github.com/cs-internship/cs-system/tree/feature/initial-get-badge-system/src/CrystallineSociety/Shared/CrystallineSociety.Shared.Test/BadgeSystem/SampleBadgeDocs/github-sample-folder";
             var badges = await githubService.GetBadgesAsync(badgesFolderUrl);
 
             Assert.IsNotNull(badges);
@@ -75,7 +69,7 @@ namespace CrystallineSociety.Server.Api.Test
             var githubService = _testHost.Services.GetRequiredService<IGitHubBadgeService>();
 
             var badgeUrl =
-                $"https://github.com/{TestOrgName}/{TestRepoName}/tree/{TestBranchName}/src/CrystallineSociety/Shared/CrystallineSociety.Shared.Test/BadgeSystem/SampleBadgeDocs/serialization-badge-sample";
+                "https://github.com/hootanht/cs-system/tree/feature-initial-get-badge-system/src/CrystallineSociety/Shared/CrystallineSociety.Shared.Test/BadgeSystem/SampleBadgeDocs/serialization-badge-sample";
 
             var ex = await Assert.ThrowsExceptionAsync<ResourceNotFoundException>(async () =>
             {
@@ -92,7 +86,7 @@ namespace CrystallineSociety.Server.Api.Test
             var githubService = _testHost.Services.GetRequiredService<IGitHubBadgeService>();
 
             var badgeUrl =
-                $"https://github.com/{TestOrgName}/{TestRepoName}/tree/{TestBranchName}/src/CrystallineSociety/Shared/CrystallineSociety.Shared.Test/BadgeSystem/SampleBadgeDocs/serialization-badge-sample";
+                "https://github.com/hootanhtbug/cs-system/tree/feature/initial-get-badge-system/src/CrystallineSociety/Shared/CrystallineSociety.Shared.Test/BadgeSystem/SampleBadgeDocs/serialization-badge-sample";
 
             var ex = await Assert.ThrowsExceptionAsync<NotFoundException>(async () =>
             {
@@ -109,7 +103,7 @@ namespace CrystallineSociety.Server.Api.Test
             var githubService = _testHost.Services.GetRequiredService<IGitHubBadgeService>();
 
             var badgeUrl =
-                $"https://github.com/{TestOrgName}/{TestRepoName}/tree/{TestBranchName}/src/CrystallineSociety/Shared/CrystallineSociety.Shared.Test/BadgeSystem/SampleBadgeDocs/serialization-badge-sample/spec.json";
+                "https://github.com/hootanht/cs-system/tree/feature/initial-get-badge-system/src/CrystallineSociety/Shared/CrystallineSociety.Shared.Test/BadgeSystem/SampleBadgeDocs/serialization-badge-sample/spec.json";
 
             var exception = await Assert.ThrowsExceptionAsync<FileNotFoundException>(async () =>
             {
@@ -126,7 +120,7 @@ namespace CrystallineSociety.Server.Api.Test
             var githubService = _testHost.Services.GetRequiredService<IGitHubBadgeService>();
 
             var badgeUrl =
-                $"https://github.com/{TestOrgName}/{TestRepoName}/tree/{TestBranchName}/src/CrystallineSociety/Shared/CrystallineSociety.Shared.Test/BadgeSystem/SampleBadgeDocs/serialization-badge-sample/spec-empty-badge.json";
+                "https://github.com/hootanht/cs-system/tree/feature/initial-get-badge-system/src/CrystallineSociety/Shared/CrystallineSociety.Shared.Test/BadgeSystem/SampleBadgeDocs/serialization-badge-sample/spec-empty-badge.json";
 
             var exception = await Assert.ThrowsExceptionAsync<FormatException>(async () =>
             {

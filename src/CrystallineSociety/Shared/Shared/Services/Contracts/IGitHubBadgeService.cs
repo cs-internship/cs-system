@@ -26,5 +26,10 @@ namespace CrystallineSociety.Shared.Services.Contracts
         /// <exception cref="FileNotFoundException">If the given badgeUrl contains no valid badge file.</exception>
         /// <exception cref="FileContentIsNullException">If the badge file content is null.</exception>
         Task<BadgeDto> GetBadgeAsync(string badgeUrl);
+
+        Task<List<BadgeDto>> GetLightBadgesAsync(string url);
+
+        Task<BadgeDto> GetBadgeAsync(long repositoryId, string sha);
+
     }
 }

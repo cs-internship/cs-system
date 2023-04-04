@@ -10,15 +10,17 @@ namespace CrystallineSociety.Server.Api.Services.Implementations
     {
         [AutoInject] public IBadgeUtilService BadgeUtilService { get; set; }
         [AutoInject] public GitHubClient GitHubClient { get; set; }
+
         public async Task<List<BadgeDto>> GetBadgesAsync(string folderUrl)
         {
             var lightBadges = await GetLightBadgesAsync(folderUrl);
 
             var badges = new List<BadgeDto>();
 
+            // ToDo: Ask about throwing an exception for any problematic item or just pass to the next item?
             foreach (var lightBadge in lightBadges)
             {
-                if (Path.GetExtension(lightBadge.Url) != ".json")
+                if (lightBadge.Url is null || !lightBadge.Url.EndsWith("-badge.json"))
                     continue;
 
                 var badgeDto = await GetBadgeAsync(
@@ -34,13 +36,18 @@ namespace CrystallineSociety.Server.Api.Services.Implementations
 
         public async Task<List<BadgeDto>> GetLightBadgesAsync(string url)
         {
-            var repos = await GitHubClient.Repository.GetAllForOrg("cs-internship");
-            var repo = repos.First(r => r.Name == "cs-system");
+            var (orgName, repoName) = GetRepoAndOrgNameFromUrl(url);
+            var repos = await GitHubClient.Repository.GetAllForOrg(orgName);
+            var repo = repos.First(r => r.Name == repoName);
+
             var lastSegment = GetLastSegmentFromUrl(url, out var parentFolderPath);
             var repositoryId = repo.Id;
+
+            // ToDo: Handle if the given url is a file url instead of a folder url which is required here.
             var folderContents = await GitHubClient.Repository.Content.GetAllContents(repositoryId, parentFolderPath);
             var folderSha = folderContents?.First(f => f.Name == lastSegment).Sha;
             var allContents = await GitHubClient.Git.Tree.GetRecursive(repositoryId, folderSha);
+
             return allContents.Tree
                             .Select(t => new BadgeDto { RepoId = repositoryId, Sha = t.Sha, Url = t.Url })
                             .ToList();
@@ -64,12 +71,12 @@ namespace CrystallineSociety.Server.Api.Services.Implementations
         public async Task<BadgeDto> GetBadgeAsync(string badgeUrl)
         {
             var (orgName, repoName) = GetRepoAndOrgNameFromUrl(badgeUrl);
-
             var repo = await GitHubClient.Repository.Get(orgName, repoName);
 
             var refs = await GitHubClient.Git.Reference.GetAll(repo.Id);
             var branchName = GetBranchNameFromUrl(badgeUrl, refs) ??
                              throw new ResourceNotFoundException($"Unable to locate branchName: {badgeUrl}");
+
             var branchRef = refs.First(r => r.Ref.Contains($"refs/heads/{branchName}"));
             var folderPath = GetRelativeFolderPath(badgeUrl);
             var folderContents =
@@ -78,6 +85,7 @@ namespace CrystallineSociety.Server.Api.Services.Implementations
             var badgeFilePath =
                 folderContents.FirstOrDefault(x => x.Name.EndsWith("-badge.json"))?.Path
                 ?? throw new FileNotFoundException($"Badge file not found in: {badgeUrl}");
+
             var contents = await GitHubClient.Repository.Content.GetAllContentsByRef(repo.Id, badgeFilePath, branchRef.Ref);
             var badgeFile = contents!.First();
             
@@ -97,6 +105,7 @@ namespace CrystallineSociety.Server.Api.Services.Implementations
 
         private static string GetRelativeFolderPath(string url)
         {
+            // ToDo: Remove src dependence. 
             var urlSrcIndex = url.IndexOf("src", StringComparison.Ordinal);
             var folderPath = url[urlSrcIndex..];
             return folderPath;
@@ -108,7 +117,6 @@ namespace CrystallineSociety.Server.Api.Services.Implementations
             var afterTreeSegments = String.Join("", uri.Segments[4..]);
             foreach (var reference in refs)
             {
-
                 var branchInRefWithEndingSlash = $"{Regex.Replace(reference.Ref, @"^[^/]+/[^/]+/", "")}/";
                 if (afterTreeSegments.StartsWith(branchInRefWithEndingSlash))
                 {
@@ -125,6 +133,7 @@ namespace CrystallineSociety.Server.Api.Services.Implementations
             var lastSegment = uri.Segments.Last().TrimEnd('/');
             var parentFolderUrl = uri.GetLeftPart(UriPartial.Authority) +
                                   string.Join("", uri.Segments.Take(uri.Segments.Length - 1));
+            // ToDo: Remove src dependence. 
             var urlSrcIndex = parentFolderUrl.IndexOf("src", StringComparison.Ordinal);
             parentFolderPath = parentFolderUrl[urlSrcIndex..];
 
