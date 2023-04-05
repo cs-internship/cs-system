@@ -9,7 +9,8 @@ using CrystallineSociety.Server.Api;
 using CrystallineSociety.Server.Api.AppHooks;
 using CrystallineSociety.Server.Api.Models.Account;
 using CrystallineSociety.Server.Api.Services.Implementations;
-//using Octokit;
+using Octokit;
+using User = CrystallineSociety.Server.Api.Models.Account.User;
 
 
 namespace Microsoft.Extensions.DependencyInjection;
@@ -22,7 +23,7 @@ public static class IServiceCollectionExtensions
         services.AddAppHook<ServerBadgeSystemAppHook>();
         services.AddTransient<ILearnerService, ServerLearnerService>();
         // ToDo: Complete.
-        // services.AddTransient<GitHubClient>();
+        services.AddTransient(CreateGitHubClient);
     }
 
     public static void AddIdentity(this IServiceCollection services, IConfiguration configuration)
@@ -179,5 +180,11 @@ public static class IServiceCollectionExtensions
                     }
                 });
         }
+    }
+
+    private static GitHubClient CreateGitHubClient(IServiceProvider serviceProvider)
+    {
+        var productHeaderValue = new ProductHeaderValue("CS-System");
+        return new GitHubClient(productHeaderValue);
     }
 }
