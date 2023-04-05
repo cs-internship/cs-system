@@ -1,8 +1,6 @@
 using CrystallineSociety.Shared.Services.Implementations.BadgeSystem;
-
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
-
 using Octokit;
 
 namespace CrystallineSociety.Server.Api.Test
@@ -26,12 +24,6 @@ namespace CrystallineSociety.Server.Api.Test
                 ).Build();
 
             var configurationService = _testHost.Services.GetRequiredService<IConfiguration>();
-
-            TestOrgName = configurationService.GetSection("OrganizationName").Value;
-
-            TestRepoName = configurationService.GetSection("RepositoryName").Value;
-
-            TestBranchName = configurationService.GetSection("BranchName").Value;
         }
 
         [TestMethod]
@@ -39,12 +31,12 @@ namespace CrystallineSociety.Server.Api.Test
         {
             var githubService = _testHost.Services.GetRequiredService<IGitHubBadgeService>();
 
-            var badgeUrl =
-                "https://github.com/hootanht/cs-system/tree/feature/initial-get-badge-system/src/CrystallineSociety/Shared/CrystallineSociety.Shared.Test/BadgeSystem/SampleBadgeDocs/serialization-badge-sample";
+            var badgeUrl = 
+                "https://github.com/hootanht/cs-system/blob/feature/initial-get-badge-system/src/CrystallineSociety/Shared/CrystallineSociety.Shared.Test/BadgeSystem/SampleBadgeDocs/serialization-badge-sample/spec-badge.json";
+                //"https://github.com/hootanht/cs-system/blob/feature/initial-get-badge-system/src/CrystallineSociety/Shared/CrystallineSociety.Shared.Test/BadgeSystem/SampleBadgeDocs/serialization-badge-sample";
             var badge = await githubService.GetBadgeAsync(badgeUrl);
 
             Assert.IsNotNull(badge);
-
         }
 
         [TestMethod]

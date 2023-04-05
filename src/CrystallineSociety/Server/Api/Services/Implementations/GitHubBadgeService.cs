@@ -9,7 +9,9 @@ namespace CrystallineSociety.Server.Api.Services.Implementations
     public partial class GitHubBadgeService : IGitHubBadgeService
     {
         [AutoInject] public IBadgeUtilService BadgeUtilService { get; set; }
-        [AutoInject] public GitHubClient GitHubClient { get; set; }
+
+        //todo:REMOVE   [AutoInject] public GitHubClient GitHubClient { get; set; }
+        public GitHubClient GitHubClient { get; set; } = CreateClient();
 
         public async Task<List<BadgeDto>> GetBadgesAsync(string folderUrl)
         {
@@ -24,9 +26,9 @@ namespace CrystallineSociety.Server.Api.Services.Implementations
                     continue;
 
                 var badgeDto = await GetBadgeAsync(
-                    lightBadge.RepoId ?? throw new Exception("RepoId of light badge is null."), 
+                    lightBadge.RepoId ?? throw new Exception("RepoId of light badge is null."),
                     lightBadge.Sha ?? throw new Exception("Sha of light badge is null.")
-                    );
+                );
 
                 badges.Add(badgeDto);
             }
@@ -49,48 +51,29 @@ namespace CrystallineSociety.Server.Api.Services.Implementations
             var allContents = await GitHubClient.Git.Tree.GetRecursive(repositoryId, folderSha);
 
             return allContents.Tree
-                            .Select(t => new BadgeDto { RepoId = repositoryId, Sha = t.Sha, Url = t.Url })
-                            .ToList();
+                .Select(t => new BadgeDto {RepoId = repositoryId, Sha = t.Sha, Url = t.Url})
+                .ToList();
         }
-
-        public async Task<BadgeDto> GetBadgeAsync(long repositoryId, string sha)
-        {
-            var badgeBlob = await GitHubClient.Git.Blob.Get(repositoryId, sha);
-
-            var bytes = Convert.FromBase64String(badgeBlob.Content);
-            var badgeContent = Encoding.UTF8.GetString(bytes);
-            var badgeDto = BadgeUtilService.ParseBadge(badgeContent);
-            return badgeDto;
-        }
-
-        private static GitHubClient CreateClient()
-        {
-            return new GitHubClient(new ProductHeaderValue("CS-System"));
-        }
-
+        
         public async Task<BadgeDto> GetBadgeAsync(string badgeUrl)
         {
             var (orgName, repoName) = GetRepoAndOrgNameFromUrl(badgeUrl);
             var repo = await GitHubClient.Repository.Get(orgName, repoName);
-
             var refs = await GitHubClient.Git.Reference.GetAll(repo.Id);
             var branchName = GetBranchNameFromUrl(badgeUrl, refs) ??
                              throw new ResourceNotFoundException($"Unable to locate branchName: {badgeUrl}");
-
+            
             var branchRef = refs.First(r => r.Ref.Contains($"refs/heads/{branchName}"));
-            var folderPath = GetRelativeFolderPath(badgeUrl);
-            var folderContents =
-                await GitHubClient.Repository.Content.GetAllContentsByRef(repo.Id, folderPath, branchRef.Ref);
+            var badgeFilePath = GetRelativePath(badgeUrl.EndsWith("-badge.json")
+                ? badgeUrl
+                : throw new FileNotFoundException($"Badge file not found in: {badgeUrl}"));
 
-            var badgeFilePath =
-                folderContents.FirstOrDefault(x => x.Name.EndsWith("-badge.json"))?.Path
-                ?? throw new FileNotFoundException($"Badge file not found in: {badgeUrl}");
-
-            var contents = await GitHubClient.Repository.Content.GetAllContentsByRef(repo.Id, badgeFilePath, branchRef.Ref);
+            //ToDo: Check is there any method to get single file content?
+            var contents =
+                await GitHubClient.Repository.Content.GetAllContentsByRef(repo.Id, badgeFilePath, branchRef.Ref);
             var badgeFile = contents!.First();
-            
             var badgeFileContent = badgeFile.Content;
-            
+
             try
             {
                 var badge = BadgeUtilService.ParseBadge(badgeFileContent);
@@ -100,10 +83,24 @@ namespace CrystallineSociety.Server.Api.Services.Implementations
             {
                 throw new FormatException($"Can not parse badge with badgeUrl: '{badgeUrl}'", exception);
             }
+        }
+        
+        public async Task<BadgeDto> GetBadgeAsync(long repositoryId, string sha)
+        {
+            var badgeBlob = await GitHubClient.Git.Blob.Get(repositoryId, sha);
 
+            var bytes = Convert.FromBase64String(badgeBlob.Content);
+            var badgeContent = Encoding.UTF8.GetString(bytes);
+            var badgeDto = BadgeUtilService.ParseBadge(badgeContent);
+            return badgeDto;
+        }
+        
+        private static GitHubClient CreateClient()
+        {
+            return new GitHubClient(new ProductHeaderValue("CS-System"));
         }
 
-        private static string GetRelativeFolderPath(string url)
+        private static string GetRelativePath(string url)
         {
             // ToDo: Remove src dependence. 
             var urlSrcIndex = url.IndexOf("src", StringComparison.Ordinal);
