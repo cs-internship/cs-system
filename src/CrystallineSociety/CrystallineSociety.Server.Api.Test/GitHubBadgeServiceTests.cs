@@ -12,6 +12,7 @@ namespace CrystallineSociety.Server.Api.Test
     {
         public TestContext TestContext { get; set; } = default!;
 
+
         [TestMethod]
         public async Task GitHubBadge_LoadSimple()
         {
@@ -26,15 +27,15 @@ namespace CrystallineSociety.Server.Api.Test
             var githubService = testHost.Services.GetRequiredService<IGitHubBadgeService>();
 
             var badgeUrl =
-                "https://github.com/hootanht/cs-system/blob/feature/initial-get-badge-system/src/CrystallineSociety/Shared/CrystallineSociety.Shared.Test/BadgeSystem/SampleBadgeDocs/serialization-badge-sample/spec-badge.json";
-            //"https://github.com/hootanht/cs-system/blob/feature/initial-get-badge-system/src/CrystallineSociety/Shared/CrystallineSociety.Shared.Test/BadgeSystem/SampleBadgeDocs/serialization-badge-sample";
+            "https://github.com/hootanht/cs-system/blob/feature/initial-get-badge-system/src/CrystallineSociety/Shared/CrystallineSociety.Shared.Test/BadgeSystem/SampleBadgeDocs/serialization-badge-sample/spec-badge.json";
+
             var badge = await githubService.GetBadgeAsync(badgeUrl);
 
             Assert.IsNotNull(badge);
         }
 
         [TestMethod]
-        public async Task GitHubBadgesList_LoadSimple()
+        public async Task GitHubBadge_LoadByFolderAddress_FileNotFoundException()
         {
             var testHost = Host.CreateDefaultBuilder()
                 .ConfigureServices((_, services) =>
@@ -48,13 +49,16 @@ namespace CrystallineSociety.Server.Api.Test
             var factory = testHost.Services.GetRequiredService<BadgeSystemFactory>();
 
             var badgesFolderUrl =
-                "https://github.com/cs-internship/cs-system/tree/main/src/CrystallineSociety/Shared/CrystallineSociety.Shared.Test/BadgeSystem/SampleBadgeDocs/github-sample-folder";
-            var badges = await githubService.GetBadgesAsync(badgesFolderUrl);
+                "https://github.com/hootanht/cs-system/blob/feature/initial-get-badge-system/src/CrystallineSociety/Shared/CrystallineSociety.Shared.Test/BadgeSystem/SampleBadgeDocs/serialization-badge-sample";
 
-            Assert.IsNotNull(badges);
-            Assert.AreEqual(6, badges.Count);
 
-            var badgeSystem = factory.CreateNew(badges);
+            var exception = await Assert.ThrowsExceptionAsync<FileNotFoundException>(async () =>
+            {
+                await githubService.GetBadgeAsync(badgesFolderUrl);
+            });
+
+            Assert.IsNotNull(exception);
+            Assert.AreEqual($"Badge file not found in: {badgesFolderUrl}", exception.Message);
         }
 
         [TestMethod]
@@ -67,6 +71,7 @@ namespace CrystallineSociety.Server.Api.Test
                     services.AddServerServices();
                 }
                 ).Build();
+
             var githubService = testHost.Services.GetRequiredService<IGitHubBadgeService>();
 
             var badgeUrl =
@@ -153,7 +158,33 @@ namespace CrystallineSociety.Server.Api.Test
             });
 
             Assert.IsNotNull(exception);
-            Assert.AreEqual($"Can not parse badge with url: '{badgeUrl}'", exception.Message);
+            Assert.AreEqual($"Can not parse badge with badgeUrl: '{badgeUrl}'", exception.Message);
         }
+
+        [TestMethod]
+        public async Task GitHubBadgesList_LoadSimple()
+        {
+            var testHost = Host.CreateDefaultBuilder()
+                .ConfigureServices((_, services) =>
+                    {
+                        services.AddSharedServices();
+                        services.AddServerServices();
+                    }
+                ).Build();
+
+            var githubService = testHost.Services.GetRequiredService<IGitHubBadgeService>();
+            var factory = testHost.Services.GetRequiredService<BadgeSystemFactory>();
+
+            var badgesFolderUrl =
+                "https://github.com/hootanht/cs-system/tree/feature/initial-get-badge-system/src/CrystallineSociety/Shared/CrystallineSociety.Shared.Test/BadgeSystem/SampleBadgeDocs/github-sample-folder";
+            var badges = await githubService.GetBadgesAsync(badgesFolderUrl);
+
+            Assert.IsNotNull(badges);
+            Assert.AreEqual(6, badges.Count);
+
+            var badgeSystem = factory.CreateNew(badges);
+        }
+
+
     }
 }
