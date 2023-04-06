@@ -19,8 +19,7 @@ namespace CrystallineSociety.Server.Api.Services.Implementations
             var lightBadges = await GetLightBadgesAsync(folderUrl);
 
             var badges = new List<BadgeDto>();
-
-            // ToDo: Ask about throwing an exception for any problematic item or just pass to the next item?
+            
             foreach (var lightBadge in lightBadges)
             {
                 if (lightBadge.Url is null)
@@ -69,8 +68,7 @@ namespace CrystallineSociety.Server.Api.Services.Implementations
             var badgeFilePath = GetRelativePath(badgeUrl.EndsWith("-badge.json")
                 ? badgeUrl
                 : throw new FileNotFoundException($"Badge file not found in: {badgeUrl}"), refs);
-
-            //ToDo: Check is there any method to get single file content?
+            
             var badgeFileContentByte =
                 await GitHubClient.Repository.Content.GetRawContentByRef(orgName, repoName, badgeFilePath, branchRef.Ref);
 
@@ -131,14 +129,14 @@ namespace CrystallineSociety.Server.Api.Services.Implementations
             return null;
         }
 
-        private static string GetLastSegmentFromUrl(string url, IEnumerable<Reference> refs, out string parentFolderPath)
+        private static string GetLastSegmentFromUrl(string url, IEnumerable<Reference> refs, out string? parentFolderPath)
         {
             var uri = new Uri(url);
             var lastSegment = uri.Segments.Last().TrimEnd('/');
             var parentFolderUrl = uri.GetLeftPart(UriPartial.Authority) +
                                   string.Join("", uri.Segments.Take(uri.Segments.Length - 1));
-            // ToDo: write better message for here
-            parentFolderPath = GetRelativePath(parentFolderUrl, refs) ?? throw new InvalidOperationException("invalid operation");
+
+            parentFolderPath = GetRelativePath(parentFolderUrl, refs);
 
             return lastSegment;
         }
