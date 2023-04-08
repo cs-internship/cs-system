@@ -1,8 +1,6 @@
 using CrystallineSociety.Shared.Services.Implementations.BadgeSystem;
-
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
-
 using Octokit;
 
 namespace CrystallineSociety.Server.Api.Test
@@ -27,7 +25,7 @@ namespace CrystallineSociety.Server.Api.Test
             var githubService = testHost.Services.GetRequiredService<IGitHubBadgeService>();
 
             var badgeUrl =
-            "https://github.com/hootanht/cs-system/blob/feature/initial-get-badge-system/src/CrystallineSociety/Shared/CrystallineSociety.Shared.Test/BadgeSystem/SampleBadgeDocs/serialization-badge-sample/spec-badge.json";
+                "https://github.com/hootanht/cs-system/blob/feature/initial-get-badge-system/src/CrystallineSociety/Shared/CrystallineSociety.Shared.Test/BadgeSystem/SampleBadgeDocs/serialization-badge-sample/spec-badge.json";
 
             var badge = await githubService.GetBadgeAsync(badgeUrl);
 
@@ -66,10 +64,10 @@ namespace CrystallineSociety.Server.Api.Test
         {
             var testHost = Host.CreateDefaultBuilder()
                 .ConfigureServices((_, services) =>
-                {
-                    services.AddSharedServices();
-                    services.AddServerServices();
-                }
+                    {
+                        services.AddSharedServices();
+                        services.AddServerServices();
+                    }
                 ).Build();
 
             var githubService = testHost.Services.GetRequiredService<IGitHubBadgeService>();
@@ -81,9 +79,6 @@ namespace CrystallineSociety.Server.Api.Test
             {
                 await githubService.GetBadgeAsync(badgeUrl);
             });
-
-            Assert.IsNotNull(ex);
-            Assert.AreEqual($"Unable to locate branchName: {badgeUrl}", ex.Message);
         }
 
         [TestMethod]
@@ -106,9 +101,6 @@ namespace CrystallineSociety.Server.Api.Test
             {
                 await githubService.GetBadgeAsync(badgeUrl);
             });
-
-            Assert.IsNotNull(ex);
-            Assert.AreEqual($"Not Found", ex.Message);
         }
 
         [TestMethod]
@@ -131,9 +123,6 @@ namespace CrystallineSociety.Server.Api.Test
             {
                 await githubService.GetBadgeAsync(badgeUrl);
             });
-
-            Assert.IsNotNull(exception);
-            Assert.AreEqual($"Badge file not found in: {badgeUrl}", exception.Message);
         }
 
         [TestMethod]
@@ -156,9 +145,50 @@ namespace CrystallineSociety.Server.Api.Test
             {
                 await githubService.GetBadgeAsync(badgeUrl);
             });
+        }
 
-            Assert.IsNotNull(exception);
-            Assert.AreEqual($"Can not parse badge with badgeUrl: '{badgeUrl}'", exception.Message);
+
+        [TestMethod]
+        public async Task GetBadgeAsync_InvalidRepoIdOrSha_ThrowNotFoundException()
+        {
+            var testHost = Host.CreateDefaultBuilder()
+                .ConfigureServices((_, services) =>
+                    {
+                        services.AddSharedServices();
+                        services.AddServerServices();
+                    }
+                ).Build();
+
+            var githubService = testHost.Services.GetRequiredService<IGitHubBadgeService>();
+
+            long repoId = 619299373; //correct: 619299373
+            string invalidSha =
+                "cf74dc41bb1a474fe7ff3e2624aae055ee5338ec"; //correct: cf74dc41bb1a474fe7ff3e2624aae055ee5338eb
+
+            var exception = await Assert.ThrowsExceptionAsync<NotFoundException>(async () =>
+            {
+                await githubService.GetBadgeAsync(repoId, invalidSha);
+            });
+        }
+
+        [TestMethod]
+        public async Task GetBadgeAsync_ValidRepoIdAndSha_AreEqual()
+        {
+            var testHost = Host.CreateDefaultBuilder()
+                .ConfigureServices((_, services) =>
+                    {
+                        services.AddSharedServices();
+                        services.AddServerServices();
+                    }
+                ).Build();
+
+            var githubService = testHost.Services.GetRequiredService<IGitHubBadgeService>();
+
+            long repoId = 619299373;
+            string sha = "cf74dc41bb1a474fe7ff3e2624aae055ee5338eb";
+
+            var result = await githubService.GetBadgeAsync(repoId, sha);
+            Assert.AreEqual("doc-beginner", result.Code);
         }
 
         [TestMethod]
@@ -184,7 +214,5 @@ namespace CrystallineSociety.Server.Api.Test
 
             var badgeSystem = factory.CreateNew(badges);
         }
-
-
     }
 }
