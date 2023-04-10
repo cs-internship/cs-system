@@ -1,9 +1,22 @@
-﻿@if (BadgeCodes != null)
+﻿@using CrystallineSociety.Shared.Dtos.BadgeSystem
+@*@if (BadgeCodes != null)
 {
     @foreach (var badeCode in BadgeCodes)
     {
         <div>@badeCode</div>
     }
-}
+}*@
 
-<BitButton OnClick="Test">test</BitButton>
+@if (BadgeCodes != null)
+{
+    <BitBasicList TItem="BadgeDto"
+                  ItemSize="4"
+                  Items="BadgeCodes"
+                  Style="border: 1px #a19f9d solid; border-radius: 3px; height: auto;">
+        <RowTemplate Context="badge">
+            <div style="border-bottom: 1px #8a8886 solid; padding: 5px 20px;">
+                <div class="badge-name-color">Name: <strong>@badge.Code</strong></div>
+            </div>
+        </RowTemplate>
+    </BitBasicList>
+}

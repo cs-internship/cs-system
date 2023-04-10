@@ -12,23 +12,15 @@ namespace CrystallineSociety.Client.Shared.Components
     {
         [Parameter] public BadgeBundleDto? BadgeBundleDto { get; set; }
 
-        private string?[]? BadgeCodes { get; set; }
+        private List<BadgeDto>? BadgeCodes { get; set; }
 
-        protected override Task OnAfterRenderAsync(bool firstRender)
-        {
-            if (BadgeBundleDto != null && firstRender)
-            {
-                BadgeCodes = BadgeBundleDto.Badges.Select(b => b.Code).ToArray();
-            }
-            return base.OnAfterRenderAsync(firstRender);
-        }
-
-        private void Test()
+        protected override Task OnParametersSetAsync()
         {
             if (BadgeBundleDto != null)
             {
-                BadgeCodes = BadgeBundleDto.Badges.Select(b => b.Code).ToArray();
+                BadgeCodes = BadgeBundleDto.Badges.ToList();
             }
+            return base.OnParametersSetAsync();
         }
     }
 }
