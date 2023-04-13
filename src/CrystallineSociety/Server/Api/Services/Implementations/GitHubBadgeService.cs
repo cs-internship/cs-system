@@ -123,6 +123,12 @@ namespace CrystallineSociety.Server.Api.Services.Implementations
             return badgeDto;
         }
 
+        /// <summary>
+        /// The relative path is created by eliminating the URL segments from the left up to the branch name. Branch name is exclude.
+        /// </summary>
+        /// <param name="url">A GitHub URL pointing to a file/folder.</param>
+        /// <param name="refs">Octokit references to the GitHub repo.</param>
+        /// <returns>The relative path.</returns>
         private static string? GetRelativePath(string url, IEnumerable<Reference> refs)
         {
             var uri = new Uri(url);
@@ -141,6 +147,12 @@ namespace CrystallineSociety.Server.Api.Services.Implementations
             return null;
         }
 
+        /// <summary>
+        /// Get the branch name from a GitHub URL.
+        /// </summary>
+        /// <param name="url">A GitHub URL.</param>
+        /// <param name="refs">Octokit references to the GitHub repo.</param>
+        /// <returns>The branch name.</returns>
         private static string? GetBranchNameFromUrl(string url, IEnumerable<Reference> refs)
         {
             var uri = new Uri(url);
@@ -157,6 +169,13 @@ namespace CrystallineSociety.Server.Api.Services.Implementations
             return null;
         }
 
+        /// <summary>
+        /// Extract the last segment of a GitHub URL pointing to a folder.
+        /// </summary>
+        /// <param name="url">A GitHub URL pointing to a folder.</param>
+        /// <param name="refs">Octokit references to the GitHub repo.</param>
+        /// <param name="parentFolderPath">Extracted parent folder of the given GitHub URL.</param>
+        /// <returns>The last segment of a GitHub URL.</returns>
         private static string GetLastSegmentFromUrl(string url, IEnumerable<Reference> refs, out string? parentFolderPath)
         {
             var uri = new Uri(url);
@@ -169,6 +188,11 @@ namespace CrystallineSociety.Server.Api.Services.Implementations
             return lastSegment;
         }
 
+        /// <summary>
+        /// Retrieves a repository and organization/owner name from GitHub URL.
+        /// </summary>
+        /// <param name="url">A GitHub URL</param>
+        /// <returns>The repository and organization/owner name.</returns>
         private static (string org, string repo) GetRepoAndOrgNameFromUrl(string url)
         {
             var uri = new Uri(url);
