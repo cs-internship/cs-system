@@ -108,6 +108,17 @@ ActivityStatus | Enum.ActivityStatus | Pending, Approved, Rejected
 Approver | Learner
 ApproveDateTime | DateTimeOffset
 
+# EducationProgram
+An education program is a program designed in the system that is ruled by a badge system and may contain several courses. CS Internship is the first program loaded into the system.
+| Property | Type | Description |
+---|---|---
+Code | String | used inthe url like: cscore.net/p/cs-internship
+Title | String
+Description | String | Having this badge indicates these qualities
+IsActive | Boolean
+BadgeSystemUrlsList | String | Where it's badge system is located on github
+PageUrl | String | Where the program page md file is located on github
+
 # Praisal System
 The Praisal System is designed to specify the requirements to pick a learner for a specific situation.
 ## RequirementSet
