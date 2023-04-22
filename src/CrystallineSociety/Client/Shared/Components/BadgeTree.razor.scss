@@ -1,9 +1,21 @@
-.badge-name-color {
-    color: white;
-}
-
 .list {
     border: 1px #a19f9d solid;
     border-radius: 3px;
     height: auto;
+}
+
+.badge-row {
+
+    &:hover {
+        cursor: pointer;
+        background-color: lightskyblue;
+    }
+
+    .badge-name-color {
+        color: white;
+
+        &:hover {
+            color: black
+        }
+    }
 }

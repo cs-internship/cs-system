@@ -2,10 +2,14 @@
 @using CrystallineSociety.Shared.Dtos.BadgeSystem
 @inherits AppComponentBase
 
-<div>
-    <BitLabel>GitHub URL:</BitLabel>
-    <BitTextField @bind-Value="GitHubUrl"/>
-    <BitButton OnClick="LoadBadgeSystem">Load Badge System</BitButton>
-    <BitLabel>@GitHubUrl</BitLabel>
+<div style="padding: 50px; width: 100%;">
+    <div style="width: 100%;">
+        <BitLabel Style="color: white;">GitHub URL:</BitLabel>
+        <div style="display: flex;">
+            <BitTextField Style="width: 100%" @bind-Value="GitHubUrl" />
+            <BitIconButton Style="color:white; background-color: transparent;" IconName="BitIconName.Search" OnClick="LoadBadgeSystem" />
+        </div>
+    </div>
+    <BitLabel Style="color: white; margin: 20px 0;">@GitHubUrl</BitLabel>
     <BadgeSystem Bundle="Bundle"></BadgeSystem>
 </div>
