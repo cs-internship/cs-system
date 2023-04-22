@@ -11,16 +11,22 @@ namespace CrystallineSociety.Client.Shared.Components
     public partial class BadgeTree
     {
         [Parameter] public BadgeBundleDto? BadgeBundleDto { get; set; }
+        [Parameter] public EventCallback<BadgeDto> BadgeDtoCallBack { get; set; }
 
-        private List<BadgeDto>? BadgeCodes { get; set; }
+        private List<BadgeDto>? Badges { get; set; }
 
-        protected override Task OnParametersSetAsync()
+        protected override Task OnParamsSetAsync()
         {
             if (BadgeBundleDto != null)
             {
-                BadgeCodes = BadgeBundleDto.Badges.ToList();
+                Badges = BadgeBundleDto.Badges.ToList();
             }
-            return base.OnParametersSetAsync();
+            return base.OnParamsSetAsync();
+        }
+
+        private async Task OnBadgeClick(BadgeDto badgeDto)
+        {
+            await BadgeDtoCallBack.InvokeAsync(badgeDto);
         }
     }
 }

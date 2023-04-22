@@ -1,3 +1,7 @@
-﻿<div>
-    <BadgeTree BadgeBundleDto="Bundle"></BadgeTree>
+﻿@using CrystallineSociety.Shared.Dtos.BadgeSystem
+@inherits AppComponentBase
+
+<div>
+    <BadgeTree BadgeBundleDto="Bundle" BadgeDtoCallBack=@GetBadge></BadgeTree>
+    <BadgeContent Badge="BadgeDto"></BadgeContent>
 </div>
