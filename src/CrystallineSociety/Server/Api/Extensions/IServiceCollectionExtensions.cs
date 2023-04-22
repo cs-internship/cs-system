@@ -187,8 +187,10 @@ public static class IServiceCollectionExtensions
         var productHeaderValue = new ProductHeaderValue("CS-System");
         var gitHubToken = serviceProvider.GetRequiredService<IConfiguration>().GetSection("GitHub")["GitHubAccessToken"];
         var tokenAuth = new Credentials(gitHubToken);
-        var client = new GitHubClient(productHeaderValue);
-        client.Credentials = tokenAuth;
+        var client = new GitHubClient(productHeaderValue)
+        {
+            Credentials = tokenAuth
+        };
         return client;
     }
 }
