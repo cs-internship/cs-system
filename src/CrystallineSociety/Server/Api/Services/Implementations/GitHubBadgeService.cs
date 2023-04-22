@@ -14,6 +14,14 @@ namespace CrystallineSociety.Server.Api.Services.Implementations
 
         [AutoInject] public GitHubClient GitHubClient { get; set; }
 
+        /// <summary>
+        /// Retrieves <see cref="BadgeDto"/> objects from badge files located at the GitHub URL provided.
+        /// This method performs a recursive search for files and selects those whose filename ends with `-badge.json`.
+        /// </summary>
+        /// <param name="folderUrl">GitHub folder URL containing badge files.</param>
+        /// <returns>A list of parsed badge files.</returns>
+        /// <exception cref="Exception">When the RepoId of light badge is null.</exception>
+        /// <exception cref="Exception">When the Sha of light badge is null.</exception>
         public async Task<List<BadgeDto>> GetBadgesAsync(string folderUrl)
         {
             var lightBadges = await GetLightBadgesAsync(folderUrl);
@@ -24,7 +32,8 @@ namespace CrystallineSociety.Server.Api.Services.Implementations
             {
                 if (lightBadge.Url is null)
                     continue;
-
+                
+                //todo Replace Exception with NullReferenceException or another relevant one 
                 var badgeDto = await GetBadgeAsync(
                     lightBadge.RepoId ?? throw new Exception("RepoId of light badge is null."),
                     lightBadge.Sha ?? throw new Exception("Sha of light badge is null.")
@@ -36,6 +45,11 @@ namespace CrystallineSociety.Server.Api.Services.Implementations
             return badges;
         }
 
+        /// <summary>
+        /// Recursively loads and parses a lightweight version of badges specifications from a GitHub URL.
+        /// </summary>
+        /// <param name="url">The GitHub URL pointing to a folder containing badge file(s). All badge files will load recursively. Badge filename must ends with `-badge.json`.</param>
+        /// <returns>A list of lightweight version of <see cref="BadgeDto"/>s.</returns>
         public async Task<List<BadgeDto>> GetLightBadgesAsync(string url)
         {
             var (orgName, repoName) = GetRepoAndOrgNameFromUrl(url);
@@ -56,6 +70,14 @@ namespace CrystallineSociety.Server.Api.Services.Implementations
                 .ToList();
         }
 
+        /// <summary>
+        /// Loads a badge specification from the given <paramref name="badgeUrl"/> and parses it.
+        /// </summary>
+        /// <param name="badgeUrl">The badge file GitHub URL. Badge filename must ends with `-badge.json`.</param>
+        /// <returns>The parsed badge object.</returns>
+        /// <exception cref="ResourceNotFoundException">When unable to locate the GitHub repo branchName.</exception>
+        /// <exception cref="FileNotFoundException">When the given <paramref name="badgeUrl"/> is not a valid badge file URL.</exception>
+        /// <exception cref="FormatException">When the loaded badge file has an incorrect format and cannot be parsed.</exception>
         public async Task<BadgeDto> GetBadgeAsync(string badgeUrl)
         {
             var (orgName, repoName) = GetRepoAndOrgNameFromUrl(badgeUrl);
@@ -85,6 +107,12 @@ namespace CrystallineSociety.Server.Api.Services.Implementations
             }
         }
 
+        /// <summary>
+        /// Loads and parses a badge specification from a badge file on GitHub identified by the <paramref name="repositoryId"/> and <paramref name="sha"/> parameters.
+        /// </summary>
+        /// <param name="repositoryId">The Id of the repository on GtiHub.</param>
+        /// <param name="sha">The SHA Id of the file in the repository on GtiHub.</param>
+        /// <returns>The parsed badge object.</returns>
         public async Task<BadgeDto> GetBadgeAsync(long repositoryId, string sha)
         {
             var badgeBlob = await GitHubClient.Git.Blob.Get(repositoryId, sha);
@@ -95,6 +123,12 @@ namespace CrystallineSociety.Server.Api.Services.Implementations
             return badgeDto;
         }
 
+        /// <summary>
+        /// The relative path is created by eliminating the URL segments from the left up to the branch name. Branch name is exclude.
+        /// </summary>
+        /// <param name="url">A GitHub URL pointing to a file/folder.</param>
+        /// <param name="refs">Octokit references to the GitHub repo.</param>
+        /// <returns>The relative path.</returns>
         private static string? GetRelativePath(string url, IEnumerable<Reference> refs)
         {
             var uri = new Uri(url);
@@ -113,6 +147,12 @@ namespace CrystallineSociety.Server.Api.Services.Implementations
             return null;
         }
 
+        /// <summary>
+        /// Get the branch name from a GitHub URL.
+        /// </summary>
+        /// <param name="url">A GitHub URL.</param>
+        /// <param name="refs">Octokit references to the GitHub repo.</param>
+        /// <returns>The branch name.</returns>
         private static string? GetBranchNameFromUrl(string url, IEnumerable<Reference> refs)
         {
             var uri = new Uri(url);
@@ -129,6 +169,13 @@ namespace CrystallineSociety.Server.Api.Services.Implementations
             return null;
         }
 
+        /// <summary>
+        /// Extract the last segment of a GitHub URL pointing to a folder.
+        /// </summary>
+        /// <param name="url">A GitHub URL pointing to a folder.</param>
+        /// <param name="refs">Octokit references to the GitHub repo.</param>
+        /// <param name="parentFolderPath">Extracted parent folder of the given GitHub URL.</param>
+        /// <returns>The last segment of a GitHub URL.</returns>
         private static string GetLastSegmentFromUrl(string url, IEnumerable<Reference> refs, out string? parentFolderPath)
         {
             var uri = new Uri(url);
@@ -141,6 +188,11 @@ namespace CrystallineSociety.Server.Api.Services.Implementations
             return lastSegment;
         }
 
+        /// <summary>
+        /// Retrieves a repository and organization/owner name from GitHub URL.
+        /// </summary>
+        /// <param name="url">A GitHub URL</param>
+        /// <returns>The repository and organization/owner name.</returns>
         private static (string org, string repo) GetRepoAndOrgNameFromUrl(string url)
         {
             var uri = new Uri(url);
