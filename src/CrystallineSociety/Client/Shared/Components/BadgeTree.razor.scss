@@ -9,13 +9,13 @@
     &:hover {
         cursor: pointer;
         background-color: lightskyblue;
+
+        div {
+            color: black;
+        }
     }
 
     .badge-name-color {
         color: white;
-
-        &:hover {
-            color: black
-        }
     }
 }
