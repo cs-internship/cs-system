@@ -116,7 +116,13 @@ Code | String | used inthe url like: cscore.net/p/cs-internship
 Title | String
 Description | String | Having this badge indicates these qualities
 IsActive | Boolean
-BadgeSystemUrlsList | String | Where it's badge system is located on github
+BadgeSystemConfigJson | String | Where it's badge system is located on github
+AzureBoardConfigJson | String | Where activities should be synced with
+LinkedInConfigJson | String | 
+TwitterConfigJson | String |
+TelegramConfigJson | String |
+SharePointConfigJson | String |
+MicrosoftTeamsConfigJson | String |
 PageUrl | String | Where the program page md file is located on github
 
 # Praisal System
