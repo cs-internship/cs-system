@@ -7,11 +7,22 @@ jobs:
 
 - job: build_blazor_api_wasm
   displayName: 'build blazor api + web assembly'
-
+  
   pool:
     vmImage: 'ubuntu-latest'
 
   steps:
+  
+  - task: bleddynrichards.Assembly-Info-Task.Assembly-Info-NetCore.Assembly-Info-NetCore@2
+    displayName: 'Set Assembly Manifest Data'
+    inputs:
+      Company: MelkRadar
+      Product: Bot
+      VersionNumber: '$(Build.BuildNumber)'
+      FileVersionNumber: '$(Build.BuildNumber)'
+      InformationalVersion: '$(Build.BuildNumber)'
+      PackageVersion: '$(Build.BuildNumber)'
+
   - task: UseDotNet@2
     displayName: 'Setup .NET'
     inputs:
