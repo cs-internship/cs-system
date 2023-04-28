@@ -1,5 +1,4 @@
-trigger:
-- main
+name: $(version).$(Build.BuildId)
 
 variables:
   WEB_APP_DEPLOYMENT_TYPE: 'DefaultDeploymentType'
