@@ -34,14 +34,14 @@ jobs:
     displayName: 'Switch to blazor web assembly'
     inputs:
       targetType: 'inline'
-      script: sed -i 's/Microsoft.NET.Sdk.Web/Microsoft.NET.Sdk.BlazorWebAssembly/g' src/Client/Web/CrystallineSociety.Client.Web.csproj
+      script: sed -i 's/Microsoft.NET.Sdk.Web/Microsoft.NET.Sdk.BlazorWebAssembly/g' src/CrystallineSociety/Client/Web/CrystallineSociety.Client.Web.csproj
   - task: Bash@3
     displayName: 'Build migrations bundle'
     inputs:
       targetType: 'inline'
       script: |
         dotnet tool install --global dotnet-ef --version 7.0.0
-        dotnet ef migrations bundle --self-contained -r linux-x64 --project src/Server/Api/CrystallineSociety.Server.Api.csproj
+        dotnet ef migrations bundle --self-contained -r linux-x64 --project src/CrystallineSociety/Server/Api/CrystallineSociety.Server.Api.csproj
       failOnStderr: true
   - task: Bash@3
     displayName: 'Install wasm-tools'
@@ -53,13 +53,13 @@ jobs:
     displayName: 'Build (To generate CSS/JS files)'
     inputs:
       targetType: 'inline'
-      script: 'dotnet build src/Client/Web/CrystallineSociety.Client.Web.csproj -p:Configuration=Release -p:BlazorMode=BlazorWebAssembly -p:WebAppDeploymentType="${{ variables.WEB_APP_DEPLOYMENT_TYPE }}"'
+      script: 'dotnet build src/CrystallineSociety/Client/Web/CrystallineSociety.Client.Web.csproj -p:Configuration=Release -p:BlazorMode=BlazorWebAssembly -p:WebAppDeploymentType="${{ variables.WEB_APP_DEPLOYMENT_TYPE }}"'
 
   - task: Bash@3
     displayName: 'Publish'
     inputs:
       targetType: 'inline'
-      script: 'dotnet publish src/Server/Api/CrystallineSociety.Server.Api.csproj -p:BlazorMode=BlazorWebAssembly -p:WebAppDeploymentType="${{ variables.WEB_APP_DEPLOYMENT_TYPE }}" -p:Configuration=Release -o api-web'
+      script: 'dotnet publish src/CrystallineSociety/Server/Api/CrystallineSociety.Server.Api.csproj -p:BlazorMode=BlazorWebAssembly -p:WebAppDeploymentType="${{ variables.WEB_APP_DEPLOYMENT_TYPE }}" -p:Configuration=Release -o api-web'
 
   - task: PublishPipelineArtifact@1
     displayName: Upload api-web artifact
