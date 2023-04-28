@@ -12,8 +12,8 @@ jobs:
     vmImage: 'ubuntu-latest'
 
   steps:
-  
-  - task: bleddynrichards.Assembly-Info-Task.Assembly-Info-NetCore.Assembly-Info-NetCore@2
+
+  - task: Assembly-Info-NetCore@3
     displayName: 'Set Assembly Manifest Data'
     inputs:
       Company: MelkRadar
