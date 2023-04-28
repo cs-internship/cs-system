@@ -84,3 +84,9 @@ jobs:
       targetPath: 'efbundle'
       artifact: 'migrations-bundle'
       publishLocation: 'pipeline'
+  - task: PublishPipelineArtifact@1
+    inputs:
+      targetPath: 'Dockerfile'
+      artifact: 'Docker'
+      publishLocation: 'pipeline'
+   
