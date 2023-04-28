@@ -16,8 +16,8 @@ jobs:
   - task: Assembly-Info-NetCore@3
     displayName: 'Set Assembly Manifest Data'
     inputs:
-      Company: MelkRadar
-      Product: Bot
+      Company: Cs Internship
+      Product: Cs System
       VersionNumber: '$(Build.BuildNumber)'
       FileVersionNumber: '$(Build.BuildNumber)'
       InformationalVersion: '$(Build.BuildNumber)'
