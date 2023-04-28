@@ -28,7 +28,7 @@ jobs:
     displayName: 'Restore workloads'
     inputs:
       targetType: 'inline'
-      script: 'dotnet workload restore src/Client/Web/CrystallineSociety.Client.Web.csproj -p:BlazorMode=BlazorWebAssembly'
+      script: 'dotnet workload restore src/CrystallineSociety/Client/Web/CrystallineSociety.Client.Web.csproj -p:BlazorMode=BlazorWebAssembly'
 
   - task: Bash@3
     displayName: 'Switch to blazor web assembly'
