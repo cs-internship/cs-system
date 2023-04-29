@@ -503,6 +503,15 @@ namespace CrystallineSociety.Shared.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to File content is null..
+        /// </summary>
+        public static string FileContentIsNullException {
+            get {
+                return ResourceManager.GetString("FileContentIsNullException", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The {0} field only accepts files with the following extensions: {1}.
         /// </summary>
         public static string FileExtensionsAttribute_Invalid {

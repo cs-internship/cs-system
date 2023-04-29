@@ -1,6 +1,7 @@
-﻿<div>
-    Tada from Badge System
+﻿@using CrystallineSociety.Shared.Dtos.BadgeSystem
+@inherits AppComponentBase
+
+<div style="display: flex; gap: 15px;align-items: center;">
+    <BadgeTree BadgeBundleDto="Bundle" BadgeDtoCallBack=@GetBadge></BadgeTree>
+    <BadgeContent Badge="BadgeDto"></BadgeContent>
 </div>
-<pre>
-    @GetBundleText(Bundle)
-</pre>

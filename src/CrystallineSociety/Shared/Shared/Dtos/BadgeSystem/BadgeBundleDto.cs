@@ -8,6 +8,9 @@ namespace CrystallineSociety.Shared.Dtos.BadgeSystem
 {
     public class BadgeBundleDto
     {
+        public List<BadgeDto> Badges { get; set; } = new();
+        public List<BadgeSystemValidationDto>? Validations { get; set; }
+
         public BadgeBundleDto()
         {
             
@@ -18,9 +21,6 @@ namespace CrystallineSociety.Shared.Dtos.BadgeSystem
             Badges = badges;
         }
 
-        public List<BadgeDto> Badges { get; set; } = new();
-        public List<BadgeSystemValidationDto>? Validations { get; set; }
-        
         public bool BadgeExists(string badgeCode)
         {
             return Badges.Any(b => b.Code == badgeCode);

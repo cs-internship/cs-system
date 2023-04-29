@@ -1,0 +1,16 @@
+﻿@using CrystallineSociety.Shared.Dtos.BadgeSystem
+@inherits AppComponentBase
+
+@if (Badges != null)
+{
+    <BitBasicList TItem="BadgeDto"
+                  ItemSize="4"
+                  Items="Badges"
+                  Style="border: 1px #a19f9d solid; border-radius: 10px; height: auto; width: 50%">
+        <RowTemplate Context="badge">
+            <div style="border-bottom: 1px #8a8886 solid; padding: 5px 20px;" class="badge-row" @onclick="() => OnBadgeClick(badge)">
+                <div class="badge-name-color">Name: <strong>@badge.Code</strong></div>
+            </div>
+        </RowTemplate>
+    </BitBasicList>
+}

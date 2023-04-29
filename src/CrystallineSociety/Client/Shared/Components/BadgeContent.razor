@@ -1,0 +1,15 @@
+﻿@using CrystallineSociety.Shared.Dtos.BadgeSystem
+@inherits AppComponentBase
+
+@if (Badge != null)
+{
+    <div style="background-color: lightskyblue; width: 50%; border-radius: 10px; padding: 5px;">
+        <h3 style="margin: 0 0 5px; padding: 0px;">Badge Content</h3>
+        <p>Badge Code : @Badge.Code</p>
+        <br />
+        <p>Badge Level : @Badge.Level</p>
+        <br />
+        <p>Badge Description : @Badge.Description</p>
+    </div>
+}
+
