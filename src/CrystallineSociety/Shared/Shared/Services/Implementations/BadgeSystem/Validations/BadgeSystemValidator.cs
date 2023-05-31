@@ -9,12 +9,12 @@ namespace CrystallineSociety.Shared.Services.Implementations.BadgeSystem.Validat
 {
     public abstract class BadgeSystemValidator : IBadgeSystemValidator
     {
-        public virtual List<BadgeSystemValidationDto> ValidateSystem(BadgeBundleDto badgeBundle)
+        public virtual List<BadgeSystemValidationDto> ValidateBundle(BadgeBundleDto badgeBundle)
         {
             return new List<BadgeSystemValidationDto>();
         }
 
-        public virtual List<BadgeSystemValidationDto> ValidateBadge(BadgeDto badge, BadgeBundleDto badgeBundle)
+        public virtual List<BadgeSystemValidationDto> ValidateBadge(BadgeDto badge, BadgeBundleDto containingBundle)
         {
             return new List<BadgeSystemValidationDto>();
         }
@@ -22,7 +22,7 @@ namespace CrystallineSociety.Shared.Services.Implementations.BadgeSystem.Validat
 
     public interface IBadgeSystemValidator
     {
-        List<BadgeSystemValidationDto> ValidateSystem(BadgeBundleDto badgeBundle);
-        List<BadgeSystemValidationDto> ValidateBadge(BadgeDto badge, BadgeBundleDto badgeBundle);
+        List<BadgeSystemValidationDto> ValidateBundle(BadgeBundleDto badgeBundle);
+        List<BadgeSystemValidationDto> ValidateBadge(BadgeDto badge, BadgeBundleDto containingBundle);
     }
 }

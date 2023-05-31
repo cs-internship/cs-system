@@ -1,5 +1,6 @@
 ﻿using CrystallineSociety.Shared.Dtos.BadgeSystem;
 using CrystallineSociety.Shared.Services.Implementations.BadgeSystem;
+using CrystallineSociety.Shared.Test.Fake;
 using CrystallineSociety.Shared.Test.Infrastructure;
 using CrystallineSociety.Shared.Test.Utils;
 using Microsoft.Extensions.Hosting;
@@ -12,48 +13,54 @@ public class BadgeSystemValidationTests : TestBase
     public TestContext TestContext { get; set; } = default!;
 
     [TestMethod]
-    public void RequirementsHaveValidBadgesValidation_MustWork()
+    public void RequirementsHaveBadgesValidation_MustWork()
     {
-        var specJson =
+        var badge1 =
             """
+            {
+              "code": "doc-guru-badge-sample",
+              "description": "Description for doc-guru-badge-sample",
+              "level": "Gold",
+              "info": {
+                "en": "info_en.md",
+                "fa": "info_fa.md"
+              },
+              "appraisal-methods": [
                 {
-                  "code": "doc-guru-badge-sample",
-                  "description": "Description for doc-guru-badge-sample",
-                  "level": "Gold",
-                  "info": {
-                    "en": "info_en.md",
-                    "fa": "info_fa.md"
-                  },
-                  "appraisal-methods": [
+                  "title": "Main Method",
+                  "badge-requirements": [
+                    "requirement-badge-code-B"
+                  ],
+                  "approving-steps": [
                     {
-                      "title": "Main Method",
-                      "badge-requirements": [
-                        "requirement-badge-code-B"
+                      "step": 1,
+                      "title": "Initial Approval",
+                      "approver-required-badges": [
+                        "requirement-badge-code-A*2",
+                        "requirement-badge-code-C*2|requirement-badge-code-D"
                       ],
-                      "approving-steps": [
-                        {
-                          "step": 1,
-                          "title": "Initial Approval",
-                          "approver-required-badges": [
-                            "requirement-badge-code-A*2",
-                            "requirement-badge-code-C*2|requirement-badge-code-D"
-                          ],
-                          "required-approval-count": 2
-                        }
-                      ]
+                      "required-approval-count": 2
                     }
                   ]
                 }
-                """;
+              ]
+            }
+            """;
 
-        var badgeSystem = CreateBadgeSystem(specJson);
+        var badge2 =
+            """
+               {
+                    "code": "requirement-badge-code-A"
+                }
+            """;
+
+        var badgeSystem = CreateBadgeSystem(new[] { badge1, badge2 });
 
         Assert.IsNotNull(badgeSystem.Validations);
         Assert.IsTrue(badgeSystem.Errors.Any(v => v.Title.Contains("requirement-badge-code-B")));
-        Assert.IsTrue(badgeSystem.Errors.Any(v => v.Title.Contains("requirement-badge-code-A")));
         Assert.IsTrue(badgeSystem.Errors.Any(v => v.Title.Contains("requirement-badge-code-C")));
         Assert.IsTrue(badgeSystem.Errors.Any(v => v.Title.Contains("requirement-badge-code-D")));
-
+        Assert.IsTrue(badgeSystem.Errors.Any(v => !v.Title.Contains("requirement-badge-code-A")));
     }
 
     [TestMethod]
@@ -71,7 +78,7 @@ public class BadgeSystemValidationTests : TestBase
         var badgeSystem = CreateBadgeSystem(specJson);
 
         Assert.IsNotNull(badgeSystem.Validations);
-        Assert.AreEqual(4, badgeSystem.Errors.Count(v => v.Title.Contains("Invalid badge name")));
+        Assert.AreEqual(5, badgeSystem.Errors.Count(v => v.Title.Contains("Invalid badge name")));
     }
 
     [TestMethod]
@@ -237,7 +244,11 @@ public class BadgeSystemValidationTests : TestBase
     private static IBadgeSystemService CreateBadgeSystem(IEnumerable<string> specJsons)
     {
         var testHost = Host.CreateDefaultBuilder()
-                           .ConfigureServices((_, services) => { services.AddSharedServices(); }
+                           .ConfigureServices((_, services) =>
+                               {
+                                   services.AddSharedServices();
+                                   services.AddSingleton<ILearnerService>(new FakeLearnerService(new List<LearnerDto>()));
+                               }
                            ).Build();
 
         var badgeService = testHost.Services.GetRequiredService<IBadgeUtilService>();

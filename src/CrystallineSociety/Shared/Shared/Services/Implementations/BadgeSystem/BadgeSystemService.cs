@@ -39,7 +39,7 @@ namespace CrystallineSociety.Shared.Services.Implementations.BadgeSystem
 
             foreach (var validation in BadgeValidators)
             {
-                var list = validation.ValidateSystem(BadgeBundle);
+                var list = validation.ValidateBundle(BadgeBundle);
                 validations.AddRange(list);
             }
 
