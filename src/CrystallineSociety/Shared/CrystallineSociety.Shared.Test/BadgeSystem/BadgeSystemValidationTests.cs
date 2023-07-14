@@ -3,6 +3,7 @@ using CrystallineSociety.Shared.Services.Implementations.BadgeSystem;
 using CrystallineSociety.Shared.Test.Fake;
 using CrystallineSociety.Shared.Test.Infrastructure;
 using CrystallineSociety.Shared.Test.Utils;
+
 using Microsoft.Extensions.Hosting;
 
 namespace CrystallineSociety.Shared.Test.BadgeSystem;
@@ -209,6 +210,54 @@ public class BadgeSystemValidationTests : TestBase
         var badgeSystem = CreateBadgeSystem(specJsons);
 
         Assert.IsNotNull(badgeSystem.Validations);
+        Assert.AreEqual(
+            1,
+            badgeSystem.Errors.Count(v =>
+                v.Title.Contains("Repeating dependency")
+                && v.Title.Contains("badge-b")
+            ));
+    }
+
+    [TestMethod]
+    public void RepeatingDependencyValidationWithMultipleAppraisalMethod_MustWork()
+    {
+        var specJsons = new List<string>()
+        {
+            """
+            {
+              "code": "badge-a",
+              "appraisal-methods": [
+                {
+                  "title": "Main Method",
+                  "badge-requirements": [
+                    "badge-b",
+                    "badge-c",
+                    "badge-b"
+                  ]
+                },
+                {
+                  "title": "Second Method",
+                  "badge-requirements": [
+                    "badge-d",
+                    "badge-c",
+                    "badge-e"
+                  ]
+                }
+              ]
+            }
+            """
+        };
+
+        var badgeSystem = CreateBadgeSystem(specJsons);
+
+        Assert.IsNotNull(badgeSystem.Validations);
+        Assert.AreEqual(
+            1,
+            badgeSystem.Errors.Count(v =>
+                v.Title.Contains("Repeating dependency")
+                && v.Title.Contains("badge-c")
+            ));
+
         Assert.AreEqual(
             1,
             badgeSystem.Errors.Count(v =>
