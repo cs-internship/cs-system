@@ -204,7 +204,7 @@ namespace CrystallineSociety.Server.Api.Test
 
             var githubService = testHost.Services.GetRequiredService<IGitHubBadgeService>();
             var badgesFolderUrl =
-                "https://github.com/hootanht/cs-system/blob/feature/initial-get-badge-system/src/CrystallineSociety/Shared/CrystallineSociety.Shared.Test/BadgeSystem/SampleBadgeDocs/serialization-badge-sample/spec-badge.json";
+                "https://github.com/hootanht/cs-system/blob/feature/initial-get-badge-system/src/CrystallineSociety/Shared/CrystallineSociety.Shared.Test/BadgeSystem/SampleBadgeDoc";
 
             var exception = await Assert.ThrowsExceptionAsync<InvalidOperationException>(async () =>
             {
