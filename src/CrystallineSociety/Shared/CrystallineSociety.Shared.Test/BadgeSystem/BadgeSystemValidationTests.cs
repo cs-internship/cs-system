@@ -232,7 +232,8 @@ public class BadgeSystemValidationTests : TestBase
                   "badge-requirements": [
                     "badge-b",
                     "badge-c",
-                    "badge-b"
+                    "badge-b",
+                    "badge-f"
                   ]
                 },
                 {
@@ -240,7 +241,8 @@ public class BadgeSystemValidationTests : TestBase
                   "badge-requirements": [
                     "badge-d",
                     "badge-c",
-                    "badge-c"
+                    "badge-c",
+                    "badge-f"
                   ]
                 }
               ]
@@ -263,6 +265,13 @@ public class BadgeSystemValidationTests : TestBase
             badgeSystem.Errors.Count(v =>
                 v.Title.Contains("Repeating dependency")
                 && v.Title.Contains("badge-b")
+            ));
+
+        Assert.AreEqual(
+            0,
+            badgeSystem.Errors.Count(v =>
+                v.Title.Contains("Repeating dependency")
+                && v.Title.Contains("badge-f")
             ));
     }
 
