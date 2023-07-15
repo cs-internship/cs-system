@@ -12,15 +12,9 @@ namespace CrystallineSociety.Shared.Services.Implementations.BadgeSystem.Validat
     {
         public override List<BadgeSystemValidationDto> ValidateBundle(BadgeBundleDto badgeBundle)
         {
-            var requiredBadgesCode = GetAllBadgeDependenciesCode(badgeBundle);
+            var repeatedRequiredBadgesCode = GetAllBadgeRepeatedDependenciesCode(badgeBundle);
 
-            var repeatedItems = requiredBadgesCode
-                .GroupBy(x => x)
-                .Where(g => g.Count() > 1)
-                .Select(g => g.Key)
-                .ToList();
-
-            return repeatedItems.Select(repeatedItem =>
+            return repeatedRequiredBadgesCode.Select(repeatedItem =>
                     BadgeSystemValidationDto.Error($"Repeating dependency badge: {repeatedItem}",
                         $"Badge names should be unique",
                         refBadge: repeatedItem))
@@ -32,7 +26,7 @@ namespace CrystallineSociety.Shared.Services.Implementations.BadgeSystem.Validat
         /// </summary>
         /// <param name="badgeBundle">The bundle of badges to iterate through.</param>
         /// <returns>An enumerable list of the required badges code.</returns>
-        private static IEnumerable<string> GetAllBadgeDependenciesCode(BadgeBundleDto badgeBundle)
+        private static IEnumerable<string> GetAllBadgeRepeatedDependenciesCode(BadgeBundleDto badgeBundle)
         {
             var requiredBadgesCode = new List<string>();
 
@@ -41,9 +35,17 @@ namespace CrystallineSociety.Shared.Services.Implementations.BadgeSystem.Validat
                 if (badge.AppraisalMethods == null)
                     continue;
 
-                foreach (var appraisalMethod in badge.AppraisalMethods)
+                foreach (var t in badge.AppraisalMethods)
                 {
-                    appraisalMethod.BadgeRequirements.ForEach(x => requiredBadgesCode.Add(x.RequirementStr));
+                    var badgesForEach = t.BadgeRequirements;
+
+                    var repeatedItems = badgesForEach
+                        .GroupBy(x => x.RequirementStr)
+                        .Where(g => g.Count() > 1)
+                        .Select(g => g.Key)
+                        .ToList();
+
+                    repeatedItems.ForEach(x => requiredBadgesCode.Add(x));
                 }
             }
 

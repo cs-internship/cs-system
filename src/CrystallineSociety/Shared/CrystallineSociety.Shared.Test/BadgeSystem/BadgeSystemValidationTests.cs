@@ -240,7 +240,7 @@ public class BadgeSystemValidationTests : TestBase
                   "badge-requirements": [
                     "badge-d",
                     "badge-c",
-                    "badge-e"
+                    "badge-c"
                   ]
                 }
               ]
