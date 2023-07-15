@@ -232,7 +232,8 @@ public class BadgeSystemValidationTests : TestBase
                   "badge-requirements": [
                     "badge-b",
                     "badge-c",
-                    "badge-b"
+                    "badge-b",
+                    "badge-f"
                   ]
                 },
                 {
@@ -240,7 +241,8 @@ public class BadgeSystemValidationTests : TestBase
                   "badge-requirements": [
                     "badge-d",
                     "badge-c",
-                    "badge-c"
+                    "badge-c",
+                    "badge-f"
                   ]
                 }
               ]
