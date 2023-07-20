@@ -69,17 +69,23 @@ public class BadgeSystemValidationTests : TestBase
     {
         var specJson = new List<string>()
         {
-            """{"code": "doc-*g"}""",
-            """{"code": "doc-/g"}""",
-            """{"code": "doc-+g"}""",
-            """{"code": "doc-?g"}""",
-            """{"code": "doc-|g"}""",
+            """{"code": "doc-beginner-badge"}""",
+            """{"code": "doc-*guru-badge"}""",
+            """{"code": "doc-/guru-badge"}""",
+            """{"code": "doc-+guru-badge"}""",
+            """{"code": "doc-?guru-badge"}""",
+            """{"code": "doc-|guru-badge"}""",
+            """{"code": "doc-!guru-badge"}""",
+            """{"code": "doc-,guru-badge"}""",
+            """{"code": "doc-^guru-badge"}""",
+            """{"code": "doc-master"}""",
         };
 
         var badgeSystem = CreateBadgeSystem(specJson);
 
         Assert.IsNotNull(badgeSystem.Validations);
-        Assert.AreEqual(5, badgeSystem.Errors.Count(v => v.Title.Contains("Invalid badge name")));
+        Assert.AreEqual(9, badgeSystem.Errors.Count(v => v.Title.Contains("Invalid badge name")));
+        Assert.AreEqual(1, badgeSystem.Errors.Count(v => v.Title.Contains("Invalid badge name format")));
     }
 
     [TestMethod]
