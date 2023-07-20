@@ -1,0 +1,13 @@
+﻿@using CrystallineSociety.Shared.Dtos.BadgeSystem
+@inherits AppComponentBase
+
+<div>
+    @if (BadgeBundle is not null && BadgeBundle.Validations is not null)
+    {
+        foreach (var validation in BadgeBundle.Validations)
+        {
+            <p> @validation.Title </p>
+            <p> @validation.Description </p>
+        }
+    }
+</div>

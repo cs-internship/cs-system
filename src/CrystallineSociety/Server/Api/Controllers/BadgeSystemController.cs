@@ -16,19 +16,22 @@ public partial class BadgeSystemController : AppControllerBase
     [AutoInject]
     public IGitHubBadgeService GitHubBadgeService { get; set; }
 
-    public IBadgeSystemService BadgeSystemService => BadgeSystemFactory.Default();
+    public IBadgeSystemService LiveBadgeSystemService => BadgeSystemFactory.Default();
 
     [HttpGet]
     public async Task<BadgeBundleDto> GetDefaultBadgeBundle(CancellationToken cancellationToken)
     {
-        return BadgeSystemService.BadgeBundle;
+        return LiveBadgeSystemService.BadgeBundle;
     }
 
     [HttpGet]
     public async Task<BadgeBundleDto> GetBadgeBundleFromGitHub(string url, CancellationToken cancellationToken)
     {
         var badges = await GitHubBadgeService.GetBadgesAsync(url);
-        return new BadgeBundleDto(badges);
+        var bundle = new BadgeBundleDto(badges);
+        var githubBadgeSystem = BadgeSystemFactory.CreateNew(bundle);
+
+        return githubBadgeSystem.BadgeBundle;
     }
 
     [HttpGet]
@@ -48,6 +51,6 @@ public partial class BadgeSystemController : AppControllerBase
     [HttpGet]
     public async Task<List<BadgeCountDto>> GetEarnedBadgesAsync(string username)
     {
-        return await BadgeSystemService.GetEarnedBadgesAsync(username);
+        return await LiveBadgeSystemService.GetEarnedBadgesAsync(username);
     }
 }
