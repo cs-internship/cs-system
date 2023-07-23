@@ -1,13 +1,18 @@
 ﻿@using CrystallineSociety.Shared.Dtos.BadgeSystem
 @inherits AppComponentBase
 
-<div>
-    @if (BadgeBundle is not null && BadgeBundle.Validations is not null)
-    {
-        foreach (var validation in BadgeBundle.Validations)
-        {
-            <p> @validation.Title </p>
-            <p> @validation.Description </p>
-        }
-    }
-</div>
+@if (BadgeBundle?.Validations != null)
+{
+    <BitBasicList TItem="BadgeSystemValidationDto"
+                  ItemSize="4"
+                  Items="BadgeBundle.Validations"
+                  Style="border: 1px #a19f9d solid; border-radius: 3px; max-height:300px;">
+        <RowTemplate Context="badgeValidation">
+            <div style="border-bottom: 1px #8a8886 solid; padding: 5px 20px; margin: 10px;">
+                <div class="@(badgeValidation.Level.ToString())">Level: @badgeValidation.Level </div>
+                <div class="@(badgeValidation.Level.ToString())">Title: @badgeValidation.Title </div>
+                <div class="@(badgeValidation.Level.ToString())">Description: @badgeValidation.Description </div>
+            </div>
+        </RowTemplate>
+    </BitBasicList>
+}
