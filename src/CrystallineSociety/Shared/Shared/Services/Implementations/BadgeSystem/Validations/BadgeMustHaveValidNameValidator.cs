@@ -23,15 +23,6 @@ namespace CrystallineSociety.Shared.Services.Implementations.BadgeSystem.Validat
                     ));
             }
 
-            if (!badge.Code?.EndsWith("-badge") ?? true)
-            {
-                validations.Add(BadgeSystemValidationDto.Error(
-                    $"Invalid badge name format: {badge.Code}",
-                    $"Badge name must end with -badge",
-                    refBadge: badge.Code
-                    ));
-            }
-
             return validations;
         }
     }
