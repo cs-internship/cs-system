@@ -11,9 +11,18 @@ public partial class BadgeSystemSyncService : IBadgeSystemSyncService
     [AutoInject]
     protected IGitHubBadgeService GitHubBadgeService { get; set; }
 
-    public async Task SyncBadgeSystemAsync(EducationProgram educationProgram, CancellationToken cancellationToken)
+    public async Task SyncBadgeSystemAsync(string educationProgramCode, CancellationToken cancellationToken)
     {
-        var oldBadges = AppDbContext.Badges.Where(b => b.EducationProgram.Code == educationProgram.Code);
+        AppDbContext.ChangeTracker.AutoDetectChangesEnabled = false;
+        AppDbContext.ChangeTracker.QueryTrackingBehavior = QueryTrackingBehavior.NoTracking;
+        var educationProgram = await AppDbContext.EducationPrograms.FirstOrDefaultAsync(ep => ep.Code == educationProgramCode, cancellationToken);
+
+        if (educationProgram == null)
+        {
+            throw new Exception($"Education program with code {educationProgramCode} not found!");
+        }
+
+        var oldBadges = AppDbContext.Badges.Where(b => b.EducationProgram.Code == educationProgramCode);
         AppDbContext.RemoveRange(oldBadges);
         await AppDbContext.SaveChangesAsync(cancellationToken);
 
@@ -25,16 +34,16 @@ public partial class BadgeSystemSyncService : IBadgeSystemSyncService
             newBadges.Add(new Badge()
             {
                 // ToDo: Handle exception in case of Code or Title being null
-                Id = new Guid(),
+                Id = Guid.NewGuid(),
                 Code = badgeDto.Code ?? throw new Exception("Code in badgeDto is null!"),
-                Title = badgeDto.Title ?? throw new Exception("Title in badgeDto is null!"),
-                EducationProgram = educationProgram,
+                Title = badgeDto.Code,
+                EducationProgramId = educationProgram.Id,
                 Description = badgeDto.Description
                 //Prerequisites = badgeDto.
             });
         }
 
-        AppDbContext.AddRange(newBadges);
+        AppDbContext.Set<Badge>().AddRange(newBadges);
         await AppDbContext.SaveChangesAsync(cancellationToken);
     }
 

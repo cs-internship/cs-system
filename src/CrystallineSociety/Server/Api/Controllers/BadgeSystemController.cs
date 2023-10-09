@@ -60,8 +60,8 @@ public partial class BadgeSystemController : AppControllerBase
     }
 
     [HttpPost]
-    public async Task SyncEducationProgramBadgesAsync(EducationProgram educationProgram, CancellationToken cancellationToken)
+    public async Task SyncEducationProgramBadgesAsync(string educationProgramCode, CancellationToken cancellationToken)
     {
-        await BadgeSystemSyncService.SyncBadgeSystemAsync(educationProgram, cancellationToken);
+        await BadgeSystemSyncService.SyncBadgeSystemAsync(educationProgramCode, cancellationToken);
     }
 }

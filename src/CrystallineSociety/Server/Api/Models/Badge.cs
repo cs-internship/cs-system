@@ -16,5 +16,8 @@ public class Badge
     public virtual bool IsApprovalRequired { get; set; }
 
 
-    public virtual required EducationProgram EducationProgram { get; set; }
+    [ForeignKey(nameof(EducationProgramId))]
+    public virtual EducationProgram? EducationProgram { get; set; }
+
+    public virtual required Guid EducationProgramId { get; set; }
 }

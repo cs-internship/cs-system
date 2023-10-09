@@ -4,6 +4,7 @@ using CrystallineSociety.Server.Api.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CrystallineSociety.Server.Api.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20231009170900_RemoveRequiredFromId")]
+    partial class RemoveRequiredFromId
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -151,7 +154,7 @@ namespace CrystallineSociety.Server.Api.Migrations
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<Guid>("EducationProgramId")
+                    b.Property<Guid?>("EducationProgramId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<bool>("IsApprovalRequired")
@@ -177,7 +180,7 @@ namespace CrystallineSociety.Server.Api.Migrations
 
                     b.HasIndex("EducationProgramId");
 
-                    b.ToTable("Badges", (string)null);
+                    b.ToTable("Badges");
                 });
 
             modelBuilder.Entity("CrystallineSociety.Server.Api.Models.EducationProgram", b =>
@@ -209,7 +212,7 @@ namespace CrystallineSociety.Server.Api.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("EducationPrograms", (string)null);
+                    b.ToTable("EducationPrograms");
                 });
 
             modelBuilder.Entity("CrystallineSociety.Server.Api.Models.TodoItem.TodoItem", b =>
@@ -236,7 +239,7 @@ namespace CrystallineSociety.Server.Api.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("TodoItems", (string)null);
+                    b.ToTable("TodoItems");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<int>", b =>
@@ -346,9 +349,7 @@ namespace CrystallineSociety.Server.Api.Migrations
                 {
                     b.HasOne("CrystallineSociety.Server.Api.Models.EducationProgram", "EducationProgram")
                         .WithMany("Badges")
-                        .HasForeignKey("EducationProgramId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("EducationProgramId");
 
                     b.Navigation("EducationProgram");
                 });

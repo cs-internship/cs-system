@@ -7,7 +7,8 @@ public interface IBadgeSystemSyncService
     /// <summary>
     /// Sync current badge system associated with the given education program with source (GitHub)
     /// </summary>
-    /// <param name="educationProgram"></param>
+    /// <param name="educationProgramCode"></param>
+    /// <param name="cancellationToken"></param>
     /// <returns></returns>
-    Task SyncBadgeSystemAsync(EducationProgram educationProgram, CancellationToken cancellationToken);
+    Task SyncBadgeSystemAsync(string educationProgramCode, CancellationToken cancellationToken);
 }
