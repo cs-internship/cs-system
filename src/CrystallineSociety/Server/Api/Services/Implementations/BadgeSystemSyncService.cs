@@ -13,8 +13,6 @@ public partial class BadgeSystemSyncService : IBadgeSystemSyncService
 
     public async Task SyncBadgeSystemAsync(string educationProgramCode, CancellationToken cancellationToken)
     {
-        AppDbContext.ChangeTracker.AutoDetectChangesEnabled = false;
-        AppDbContext.ChangeTracker.QueryTrackingBehavior = QueryTrackingBehavior.NoTracking;
         var educationProgram = await AppDbContext.EducationPrograms.FirstOrDefaultAsync(ep => ep.Code == educationProgramCode, cancellationToken);
 
         if (educationProgram == null)
