@@ -1,7 +1,9 @@
-﻿using CrystallineSociety.Server.Api.Models.TodoItem;
+﻿using CrystallineSociety.Server.Api.Models;
+using CrystallineSociety.Server.Api.Models.TodoItem;
 using CrystallineSociety.Shared.Dtos.BadgeSystem;
 using CrystallineSociety.Shared.Dtos.TodoItem;
 using CrystallineSociety.Shared.Services.Implementations.BadgeSystem;
+using Microsoft.VisualBasic;
 
 namespace CrystallineSociety.Server.Api.Controllers;
 
@@ -15,6 +17,9 @@ public partial class BadgeSystemController : AppControllerBase
 
     [AutoInject]
     public IGitHubBadgeService GitHubBadgeService { get; set; }
+
+    [AutoInject]
+    public IBadgeSystemSyncService BadgeSystemSyncService { get; set; }
 
     public IBadgeSystemService LiveBadgeSystemService => BadgeSystemFactory.Default();
 
@@ -52,5 +57,11 @@ public partial class BadgeSystemController : AppControllerBase
     public async Task<List<BadgeCountDto>> GetEarnedBadgesAsync(string username)
     {
         return await LiveBadgeSystemService.GetEarnedBadgesAsync(username);
+    }
+
+    [HttpPost]
+    public async Task SyncEducationProgramBadgesAsync(EducationProgram educationProgram, CancellationToken cancellationToken)
+    {
+        await BadgeSystemSyncService.SyncBadgeSystemAsync(educationProgram, cancellationToken);
     }
 }
