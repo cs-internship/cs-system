@@ -1,4 +1,5 @@
 ﻿using System.Collections.ObjectModel;
+using System.Runtime.InteropServices;
 
 namespace CrystallineSociety.Server.Api.Models;
 
@@ -13,5 +14,5 @@ public class EducationProgram
     public virtual string? LastCommitHash { get; set; }
     public virtual bool IsActive { get; set; }
 
-    public virtual ObservableCollection<Badge>? Badges { get; set; }
+    public virtual Collection<Badge>? Badges { get; set; }
 }

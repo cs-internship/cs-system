@@ -1,7 +1,10 @@
-﻿using CrystallineSociety.Server.Api.Models.TodoItem;
+﻿using CrystallineSociety.Server.Api.Models;
+using CrystallineSociety.Server.Api.Models.TodoItem;
 using CrystallineSociety.Shared.Dtos.BadgeSystem;
+using CrystallineSociety.Shared.Dtos.EducationProgram;
 using CrystallineSociety.Shared.Dtos.TodoItem;
 using CrystallineSociety.Shared.Services.Implementations.BadgeSystem;
+using Microsoft.VisualBasic;
 
 namespace CrystallineSociety.Server.Api.Controllers;
 
@@ -15,6 +18,9 @@ public partial class BadgeSystemController : AppControllerBase
 
     [AutoInject]
     public IGitHubBadgeService GitHubBadgeService { get; set; }
+
+    [AutoInject]
+    public IEducationProgramService EducationProgramService { get; set; }
 
     public IBadgeSystemService LiveBadgeSystemService => BadgeSystemFactory.Default();
 
@@ -52,5 +58,23 @@ public partial class BadgeSystemController : AppControllerBase
     public async Task<List<BadgeCountDto>> GetEarnedBadgesAsync(string username)
     {
         return await LiveBadgeSystemService.GetEarnedBadgesAsync(username);
+    }
+
+    [HttpPost]
+    public async Task SyncEducationProgramBadgesAsync(EducationProgramDto? educationProgram, CancellationToken cancellationToken)
+    {
+        if (educationProgram?.EducationProgramCode is null)
+        {
+            return;
+        }
+
+        await EducationProgramService.SyncBadgeSystemAsync(educationProgram.EducationProgramCode, cancellationToken);
+    }
+
+    [HttpGet]
+    // ToDo: Add mapper in project and use it here
+    public async Task<List<EducationProgram>> GetEducationProgramsAsync(CancellationToken cancellationToken)
+    {
+       return await EducationProgramService.GetAllEducationProgramsAsync(cancellationToken);
     }
 }

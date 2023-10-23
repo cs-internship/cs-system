@@ -10,6 +10,7 @@ namespace CrystallineSociety.Shared.Dtos.BadgeSystem
     public class BadgeDto
     {
         public string? Code { get; set; } = default!;
+        public string? Title { get; set; }
         public string? Description { get; set; }
         public BadgeLevel? Level { get; set; }
         public Dictionary<string, string>? Info { get; set; } = new();

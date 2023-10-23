@@ -27,11 +27,14 @@ namespace CrystallineSociety.Shared.Services.Implementations.BadgeSystem
         public BadgeDto ParseBadge(string specJson)
         {
             var badge = JsonSerializer.Deserialize<BadgeDto>(specJson, BadgeSerializerOptions);
-            
+
+
             if (badge is null)
                 throw new InvalidOperationException("Can not create badge from spec.");
 
-            return badge;
+            badge.Title ??= badge.Code;
+
+           return badge;
         }
 
         public string SerializeBadge(BadgeDto badge)
