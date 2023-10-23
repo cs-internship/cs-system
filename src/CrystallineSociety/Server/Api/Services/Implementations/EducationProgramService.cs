@@ -3,7 +3,7 @@ using CrystallineSociety.Shared.Dtos.BadgeSystem;
 
 namespace CrystallineSociety.Server.Api.Services.Implementations;
 
-public partial class BadgeSystemSyncService : IBadgeSystemSyncService
+public partial class EducationProgramService : IEducationProgramService
 {
     [AutoInject]
     protected AppDbContext AppDbContext = default;
@@ -34,10 +34,9 @@ public partial class BadgeSystemSyncService : IBadgeSystemSyncService
                 // ToDo: Handle exception in case of Code or Title being null
                 Id = Guid.NewGuid(),
                 Code = badgeDto.Code ?? throw new Exception("Code in badgeDto is null!"),
-                Title = badgeDto.Code,
+                Title = badgeDto.Title ?? throw new Exception("Badge title is null!"),
                 EducationProgramId = educationProgram.Id,
                 Description = badgeDto.Description
-                //Prerequisites = badgeDto.
             });
         }
 
@@ -45,5 +44,19 @@ public partial class BadgeSystemSyncService : IBadgeSystemSyncService
         await AppDbContext.SaveChangesAsync(cancellationToken);
     }
 
+    public async Task<List<EducationProgram>> GetAllEducationProgramsAsync(CancellationToken cancellationToken)
+    {
+        return await AppDbContext.EducationPrograms.ToListAsync(cancellationToken);
+    }
 
+    public async Task<bool> IsEducationExistAsync(string educationProgramCode, CancellationToken cancellationToken)
+    {
+        return await AppDbContext.EducationPrograms.AnyAsync(ep => ep.Code == educationProgramCode, cancellationToken);
+    }
+
+    public async Task AddEducationAsync(EducationProgram educationProgram, CancellationToken cancellationToken)
+    {
+        await AppDbContext.EducationPrograms.AddAsync(educationProgram, cancellationToken);
+        await AppDbContext.SaveChangesAsync(cancellationToken);
+    }
 }

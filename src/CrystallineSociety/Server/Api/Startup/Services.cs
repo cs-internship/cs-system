@@ -96,7 +96,6 @@ public static class Services
 
         services.AddDbContext<AppDbContext>(options =>
         {
-            options.UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
             options
             .UseSqlServer(configuration.GetConnectionString("SqlServerConnectionString"), sqlOpt =>
             {

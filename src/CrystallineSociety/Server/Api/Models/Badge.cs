@@ -9,9 +9,8 @@ public class Badge
     public virtual required string Code { get; set; }
     public virtual required string Title { get; set; }
     public virtual string? Description { get; set; }
-    public virtual string? Prerequisites { get; set; }
-    public virtual string? PrerequisitesJsonSourceUrl { get; set; }
-    public virtual string? PrerequisitesJson { get; set; }
+    public virtual string? SpecJsonSourceUrl { get; set; }
+    public virtual string? SpecJson { get; set; }
     public virtual BadgeLevel Level { get; set; }
     public virtual bool IsApprovalRequired { get; set; }
 
