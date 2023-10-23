@@ -24,6 +24,7 @@ public static class IServiceCollectionExtensions
         services.AddTransient<ILearnerService, ServerLearnerService>();
         // ToDo: Complete.
         services.AddTransient(CreateGitHubClient);
+        services.AddTransient<IEducationProgramService, EducationProgramService>();
     }
 
     public static void AddIdentity(this IServiceCollection services, IConfiguration configuration)
@@ -185,7 +186,7 @@ public static class IServiceCollectionExtensions
     private static GitHubClient CreateGitHubClient(IServiceProvider serviceProvider)
     {
         var productHeaderValue = new ProductHeaderValue("CS-System");
-        var gitHubToken = "ghp_" + serviceProvider.GetRequiredService<IConfiguration>().GetSection("GitHub")["GitHubAccessToken"];
+        var gitHubToken = serviceProvider.GetRequiredService<IConfiguration>().GetSection("GitHub")["GitHubAccessToken"];
         var tokenAuth = new Credentials(gitHubToken);
         var client = new GitHubClient(productHeaderValue)
         {

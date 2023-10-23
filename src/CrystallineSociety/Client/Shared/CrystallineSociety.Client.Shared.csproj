@@ -13,6 +13,7 @@
         <Content Remove="compilerconfig.json" />
         <None Include="compilerconfig.json" />
         <None Include="Components\BadgeSystem.razor.scss" />
+        <None Include="Components\BadgeValidation.razor" />
         <None Include="Pages\GitHubBadgeSystemExplorerPage.razor.scss" />
         <None Include="Shared\LoadingComponent.razor.scss" />
 
@@ -94,6 +95,14 @@
 
     <ItemGroup>
       <Folder Include="AppHooks\" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <UpToDateCheckInput Remove="Components\BadgeValidation.razor" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <_ContentIncludedByDefault Remove="Components\BadgeValidation.razor" />
     </ItemGroup>
 
 </Project>

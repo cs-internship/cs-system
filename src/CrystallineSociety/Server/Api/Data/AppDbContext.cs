@@ -1,4 +1,5 @@
-﻿using CrystallineSociety.Server.Api.Models.Account;
+﻿using CrystallineSociety.Server.Api.Models;
+using CrystallineSociety.Server.Api.Models.Account;
 using CrystallineSociety.Server.Api.Models.TodoItem;
 
 namespace CrystallineSociety.Server.Api.Data;
@@ -44,6 +45,10 @@ public class AppDbContext : IdentityDbContext<User, Role, int>
     }
 
     public DbSet<TodoItem> TodoItems { get; set; }
+
+    public DbSet<Badge> Badges { get; set; }
+
+    public DbSet<EducationProgram> EducationPrograms { get; set; }
 
     private void ConfigIdentityTables(ModelBuilder builder)
     {

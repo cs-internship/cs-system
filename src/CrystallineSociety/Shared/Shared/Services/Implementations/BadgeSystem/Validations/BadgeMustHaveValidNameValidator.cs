@@ -9,12 +9,12 @@ namespace CrystallineSociety.Shared.Services.Implementations.BadgeSystem.Validat
 {
     public class BadgeMustHaveValidNameValidator : BadgeSystemValidator
     {
-        private static readonly string[] InvalidCharacters = { "*", "%", "+", "/", "?", "|" };
+        private static readonly string[] InvalidCharacters = { "*", "%", "+", "/", "?", "|", "!", ",", "^" };
 
         public override List<BadgeSystemValidationDto> ValidateBadge(BadgeDto badge, BadgeBundleDto containingBundle)
         {
             var validations = new List<BadgeSystemValidationDto>();
-            if (InvalidCharacters.Any(c=>badge.Code?.Contains(c)??false))
+            if (InvalidCharacters.Any(c => badge.Code?.Contains(c) ?? false))
             {
                 validations.Add(BadgeSystemValidationDto.Error(
                     $"Invalid badge name: {badge.Code}",
