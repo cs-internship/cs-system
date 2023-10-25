@@ -1,2 +1,2 @@
 # CS System
-This system is designed to help operating CS Internship
+This system is designed to help operate CS Internship.
