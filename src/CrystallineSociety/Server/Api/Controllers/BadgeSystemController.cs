@@ -8,28 +8,54 @@ using Microsoft.VisualBasic;
 
 namespace CrystallineSociety.Server.Api.Controllers;
 
+/// <summary>
+/// Controller for managing the badge system.
+/// </summary>
 [Route("api/[controller]/[action]")]
 [ApiController]
 [AllowAnonymous]
 public partial class BadgeSystemController : AppControllerBase
 {
+    /// <summary>
+    /// Badge system factory for creating new badge systems.
+    /// </summary>
     [AutoInject]
     public BadgeSystemFactory BadgeSystemFactory { get; set; }
 
+    /// <summary>
+    /// GitHub badge service for retrieving badges from GitHub.
+    /// </summary>
     [AutoInject]
     public IGitHubBadgeService GitHubBadgeService { get; set; }
 
+    /// <summary>
+    /// Education program service for syncing badge systems with education programs.
+    /// </summary>
     [AutoInject]
     public IEducationProgramService EducationProgramService { get; set; }
 
+    /// <summary>
+    /// Live badge system for managing badges.
+    /// </summary>
     public IBadgeSystemService LiveBadgeSystemService => BadgeSystemFactory.Default();
 
+    /// <summary>
+    /// Retrieves the default badge bundle.
+    /// </summary>
+    /// <param name="cancellationToken">Cancellation token.</param>
+    /// <returns>The default badge bundle.</returns>
     [HttpGet]
     public async Task<BadgeBundleDto> GetDefaultBadgeBundle(CancellationToken cancellationToken)
     {
         return LiveBadgeSystemService.BadgeBundle;
     }
 
+    /// <summary>
+    /// Retrieves a badge bundle from a GitHub repository.
+    /// </summary>
+    /// <param name="url">The URL of the GitHub repository.</param>
+    /// <param name="cancellationToken">Cancellation token.</param>
+    /// <returns>The badge bundle from the GitHub repository.</returns>
     [HttpGet]
     public async Task<BadgeBundleDto> GetBadgeBundleFromGitHub(string url, CancellationToken cancellationToken)
     {
@@ -40,6 +66,11 @@ public partial class BadgeSystemController : AppControllerBase
         return githubBadgeSystem.BadgeBundle;
     }
 
+    /// <summary>
+    /// Retrieves all badges.
+    /// </summary>
+    /// <param name="cancellationToken">Cancellation token.</param>
+    /// <returns>All badges.</returns>
     [HttpGet]
     public IEnumerable<BadgeDto> GetBadges(CancellationToken cancellationToken)
     {
@@ -47,6 +78,11 @@ public partial class BadgeSystemController : AppControllerBase
         return badgeService.Badges;
     }
 
+    /// <summary>
+    /// Retrieves all badge system validations.
+    /// </summary>
+    /// <param name="cancellationToken">Cancellation token.</param>
+    /// <returns>All badge system validations.</returns>
     [HttpGet]
     public IEnumerable<BadgeSystemValidationDto> GetBadgeValidations(CancellationToken cancellationToken)
     {
@@ -54,27 +90,36 @@ public partial class BadgeSystemController : AppControllerBase
         return badgeService.Validations;
     }
 
+    /// <summary>
+    /// Retrieves all earned badges for a given user.
+    /// </summary>
+    /// <param name="username">The username of the user.</param>
+    /// <returns>All earned badges for the user.</returns>
     [HttpGet]
     public async Task<List<BadgeCountDto>> GetEarnedBadgesAsync(string username)
     {
         return await LiveBadgeSystemService.GetEarnedBadgesAsync(username);
     }
 
+    /// <summary>
+    /// Syncs the badge system with an education program.
+    /// </summary>
+    /// <param name="educationProgram">The education program to sync.</param>
+    /// <param name="cancellationToken">Cancellation token.</param>
     [HttpPost]
-    public async Task SyncEducationProgramBadgesAsync(EducationProgramDto? educationProgram, CancellationToken cancellationToken)
+    public async Task SyncEducationProgramBadgesAsync(EducationProgramDto educationProgram, CancellationToken cancellationToken)
     {
-        if (educationProgram?.EducationProgramCode is null)
-        {
-            return;
-        }
-
-        await EducationProgramService.SyncBadgeSystemAsync(educationProgram.EducationProgramCode, cancellationToken);
+        await EducationProgramService.SyncBadgeSystemAsync(educationProgram.Code, cancellationToken);
     }
 
+    /// <summary>
+    /// Retrieves all education programs.
+    /// </summary>
+    /// <param name="cancellationToken">Cancellation token.</param>
+    /// <returns>All education programs.</returns>
     [HttpGet]
-    // ToDo: Add mapper in project and use it here
-    public async Task<List<EducationProgram>> GetEducationProgramsAsync(CancellationToken cancellationToken)
+    public async Task<List<EducationProgramDto>> GetEducationProgramsAsync(CancellationToken cancellationToken)
     {
-       return await EducationProgramService.GetAllEducationProgramsAsync(cancellationToken);
+        return Mapper.Map<List<EducationProgramDto>>(await EducationProgramService.GetAllEducationProgramsAsync(cancellationToken));
     }
 }
