@@ -21,7 +21,7 @@ public partial class EducationProgramService : IEducationProgramService
         }
 
         var oldBadges = AppDbContext.Badges.Where(b => b.EducationProgram.Code == educationProgramCode);
-        AppDbContext.RemoveRange(oldBadges);
+        await AppDbContext.Badges.ExecuteDeleteAsync(cancellationToken);
         await AppDbContext.SaveChangesAsync(cancellationToken);
 
         var badgeDtos = await GitHubBadgeService.GetBadgesAsync(educationProgram.BadgeSystemUrl);
@@ -40,7 +40,7 @@ public partial class EducationProgramService : IEducationProgramService
             });
         }
 
-        AppDbContext.Set<Badge>().AddRange(newBadges);
+        await AppDbContext.Badges.AddRangeAsync(newBadges, cancellationToken);
         await AppDbContext.SaveChangesAsync(cancellationToken);
     }
 

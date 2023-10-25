@@ -1,14 +1,20 @@
 @page "/education-program"
 @using CrystallineSociety.Shared.Dtos.BadgeSystem
+@using CrystallineSociety.Shared.Dtos.EducationProgram
 @inherits AppComponentBase
 
-@* <BitBasicList TItem="EducationProgram"
+<BitBasicList TItem="EducationProgramDto"
               ItemSize="4"
-              Items="Badges"
+              Items="EducationPrograms"
               Style="border: 1px #a19f9d solid; border-radius: 3px; height: auto; width: 50%;max-height:500px;">
-    <RowTemplate Context="badge">
-        <div style="border-bottom: 1px #8a8886 solid; padding: 5px 20px;" class="badge-row" @onclick="() => OnBadgeClick(badge)">
-            <div>Name: @badge.Code</div>
+    <RowTemplate Context="educationProgram">
+        <div @key="educationProgram.Code" style="@(EducationPrograms.Count>1 ? "border-bottom: 1px #8a8886 solid; padding: 5px 20px; margin: 10px;" : "")">
+            <div style="margin-left:3%; display: inline-block;">
+                <p>Education Program Name: <strong>@educationProgram.Title</strong></p>
+                <BitButton OnClick="WrapHandled(()=>HandelSyncAsync(educationProgram))">Sync
+                    <BitRollerLoading Size="@(IsSyncing ? 13 : 0)" />
+                </BitButton>
+            </div>
         </div>
     </RowTemplate>
-</BitBasicList> *@
+</BitBasicList>
