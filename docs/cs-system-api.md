@@ -1,4 +1,4 @@
-# REST API
+# REST
 All the available REST API on `https://cscore.net/api` are listed in this document.
 
 ```
