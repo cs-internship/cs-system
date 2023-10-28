@@ -24,7 +24,7 @@ jobs:
     - name: Setup .NET
       uses: actions/setup-dotnet@v3
       with:
-        global-json-file: src/CrystallineSociety/src/global.json
+        global-json-file: src/CrystallineSociety/global.json
       
     - name: Build
       run: dotnet build src/CrystallineSociety/src/Client/Web/CrystallineSociety.Client.Web.csproj -p:Configuration=Release -p:WebAppDeploymentType="${{ env.WEB_APP_DEPLOYMENT_TYPE }}"
@@ -41,7 +41,7 @@ jobs:
   #   - name: Setup .NET
   #     uses: actions/setup-dotnet@v3
   #     with:
-  #       global-json-file: src/CrystallineSociety/src/global.json
+  #       global-json-file: src/CrystallineSociety/global.json
 
   #   - name: Restore workloads
   #     run: dotnet workload restore src/CrystallineSociety/src/Client/App/CrystallineSociety.Client.App.csproj -p:BlazorMode=BlazorHybrid -f net7.0-android
@@ -61,7 +61,7 @@ jobs:
   #   - name: Setup .NET
   #     uses: actions/setup-dotnet@v3
   #     with:
-  #       global-json-file: src/CrystallineSociety/src/global.json
+  #       global-json-file: src/CrystallineSociety/global.json
 
   #   - name: Restore workloads
   #     run: dotnet workload restore src/CrystallineSociety/src/Client/App/CrystallineSociety.Client.App.csproj -p:BlazorMode=BlazorHybrid -f net7.0-windows10.0.19041.0
@@ -81,7 +81,7 @@ jobs:
   #   - name: Setup .NET
   #     uses: actions/setup-dotnet@v3
   #     with:
-  #       global-json-file: src/CrystallineSociety/src/global.json
+  #       global-json-file: src/CrystallineSociety/global.json
 
   #   - name: Restore workloads
   #     run: dotnet workload restore src/CrystallineSociety/src/Client/App/CrystallineSociety.Client.App.csproj -p:BlazorMode=BlazorHybrid -f net7.0-ios
@@ -101,7 +101,7 @@ jobs:
   #   - name: Setup .NET
   #     uses: actions/setup-dotnet@v3
   #     with:
-  #       global-json-file: src/CrystallineSociety/src/global.json
+  #       global-json-file: src/CrystallineSociety/global.json
 
   #   - name: Restore workloads
   #     run: dotnet workload restore src/CrystallineSociety/src/Client/App/CrystallineSociety.Client.App.csproj -p:BlazorMode=BlazorHybrid -f net7.0-maccatalyst
