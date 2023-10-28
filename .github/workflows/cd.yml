@@ -29,7 +29,7 @@ jobs:
     - name: Setup .NET
       uses: actions/setup-dotnet@v3
       with:
-        global-json-file: src/global.json
+        global-json-file: global.json
 
     - name: Install wasm-tools
       run: dotnet workload install wasm-tools
@@ -98,7 +98,7 @@ jobs:
       - name: Extract identity certificate from env
         uses: timheuer/base64-to-file@v1
         with:
-            fileDir: './'
+            fileDir: '/'
             fileName: 'IdentityCertificate.pfx'
             encodedString: ${{ secrets.API_IDENTITY_CERTIFICATE_FILE_BASE64 }}
 
@@ -129,12 +129,12 @@ jobs:
     - name: Setup .NET
       uses: actions/setup-dotnet@v3
       with:
-        global-json-file: src/global.json
+        global-json-file: global.json
   
     - name: Update appsettings.json api server address
       uses: microsoft/variable-substitution@v1 
       with:
-        files: 'src/Client/Shared/wwwroot/appsettings.json'
+        files: 'Client/Shared/wwwroot/appsettings.json'
       env:
         ApiServerAddress: ${{ env.API_SERVER_ADDRESS }}
   
@@ -151,7 +151,7 @@ jobs:
       uses: actions/upload-artifact@v2
       with:
         name: win-exe-bundle
-        path: src/Client/App/bin/release/net7.0-windows10.0.19041.0/win10-x86
+        path: Client/App/bin/release/net7.0-windows10.0.19041.0/win10-x86
   
   build_blazor_hybrid_android:
     name: build blazor hybrid (android)
@@ -165,7 +165,7 @@ jobs:
     - name: Setup .NET
       uses: actions/setup-dotnet@v3
       with:
-        global-json-file: src/global.json
+        global-json-file: global.json
   
     - name: Extract Android signing key from env
       uses: timheuer/base64-to-file@v1
@@ -177,7 +177,7 @@ jobs:
     - name: Update appsettings.json api server address
       uses: microsoft/variable-substitution@v1 
       with:
-        files: 'src/Client/Shared/wwwroot/appsettings.json'
+        files: 'Client/Shared/wwwroot/appsettings.json'
       env:
         ApiServerAddress: ${{ env.API_SERVER_ADDRESS }}
   
@@ -197,7 +197,7 @@ jobs:
       uses: actions/upload-artifact@v2
       with:
         name: android-bundle
-        path: src/Client/App/bin/release/net7.0-android/*-Signed.*
+        path: Client/App/bin/release/net7.0-android/*-Signed.*
   
   build_blazor_hybrid_maccatalyst:
      name: build blazor hybrid (maccatalyst)
@@ -211,12 +211,12 @@ jobs:
      - name: Setup .NET
        uses: actions/setup-dotnet@v3
        with:
-         global-json-file: src/global.json
+         global-json-file: global.json
    
      - name: Update appsettings.json api server address
        uses: microsoft/variable-substitution@v1 
        with:
-         files: 'src/Client/Shared/wwwroot/appsettings.json'
+         files: 'Client/Shared/wwwroot/appsettings.json'
        env:
          ApiServerAddress: ${{ env.API_SERVER_ADDRESS }}
    
@@ -233,7 +233,7 @@ jobs:
        uses: actions/upload-artifact@v2
        with:
          name: mac-pkg-bundle
-         path: src/Client/App/bin/release/net7.0-maccatalyst/*.pkg
+         path: Client/App/bin/release/net7.0-maccatalyst/*.pkg
   
   build_blazor_hybrid_iOS:
     name: build blazor hybrid (iOS)
@@ -247,7 +247,7 @@ jobs:
     - name: Setup .NET
       uses: actions/setup-dotnet@v3
       with:
-        global-json-file: src/global.json
+        global-json-file: global.json
   
     - name: Update appsettings.json api server address
       uses: microsoft/variable-substitution@v1 
@@ -294,4 +294,4 @@ jobs:
       uses: actions/upload-artifact@v2
       with:
         name: iOS-bundle
-        path: src/Client/App/bin/release/net7.0-ios
+        path: Client/App/bin/release/net7.0-ios
