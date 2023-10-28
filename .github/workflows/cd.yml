@@ -35,21 +35,21 @@ jobs:
       run: dotnet workload install wasm-tools
 
     - name: Switch to blazor web assembly
-      run:  sed -i 's/Microsoft.NET.Sdk.Web/Microsoft.NET.Sdk.BlazorWebAssembly/g' Client/Web/CrystallineSociety.Client.Web.csproj
+      run:  sed -i 's/Microsoft.NET.Sdk.Web/Microsoft.NET.Sdk.BlazorWebAssembly/g' src/Client/Web/CrystallineSociety.Client.Web.csproj
 
     - name: Restore workloads
-      run: dotnet workload restore Client/Web/CrystallineSociety.Client.Web.csproj -p:BlazorMode=BlazorWebAssembly -p:WebAppDeploymentType="${{ env.WEB_APP_DEPLOYMENT_TYPE }}"
+      run: dotnet workload restore src/Client/Web/CrystallineSociety.Client.Web.csproj -p:BlazorMode=BlazorWebAssembly -p:WebAppDeploymentType="${{ env.WEB_APP_DEPLOYMENT_TYPE }}"
       
     - name: Build (To generate CSS/JS files)
-      run: dotnet build Server/Api/CrystallineSociety.Server.Api.csproj -p:BlazorMode=BlazorWebAssembly -p:WebAppDeploymentType="${{ env.WEB_APP_DEPLOYMENT_TYPE }}" -p:Configuration=Release
+      run: dotnet build src/Server/Api/CrystallineSociety.Server.Api.csproj -p:BlazorMode=BlazorWebAssembly -p:WebAppDeploymentType="${{ env.WEB_APP_DEPLOYMENT_TYPE }}" -p:Configuration=Release
 
     - name: Publish
-      run: dotnet publish Server/Api/CrystallineSociety.Server.Api.csproj -p:BlazorMode=BlazorWebAssembly -p:WebAppDeploymentType="${{ env.WEB_APP_DEPLOYMENT_TYPE }}" -p:Configuration=Release --self-contained -r linux-x64 -o ${{env.DOTNET_ROOT}}/api-web
+      run: dotnet publish src/Server/Api/CrystallineSociety.Server.Api.csproj -p:BlazorMode=BlazorWebAssembly -p:WebAppDeploymentType="${{ env.WEB_APP_DEPLOYMENT_TYPE }}" -p:Configuration=Release --self-contained -r linux-x64 -o ${{env.DOTNET_ROOT}}/api-web
 
     - name: Build migrations bundle
       run: |
         dotnet tool install --global dotnet-ef --version 7.0.0
-        dotnet ef migrations bundle --self-contained -r linux-x64 --project Server/Api/CrystallineSociety.Server.Api.csproj
+        dotnet ef migrations bundle --self-contained -r linux-x64 --project src/Server/Api/CrystallineSociety.Server.Api.csproj
 
     - name: Upload ef migrations bundle
       uses: actions/upload-artifact@v3
