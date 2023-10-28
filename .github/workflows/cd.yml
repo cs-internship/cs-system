@@ -35,21 +35,21 @@ jobs:
       run: dotnet workload install wasm-tools
 
     - name: Switch to blazor web assembly
-      run:  sed -i 's/Microsoft.NET.Sdk.Web/Microsoft.NET.Sdk.BlazorWebAssembly/g' src/Client/Web/CrystallineSociety.Client.Web.csproj
+      run:  sed -i 's/Microsoft.NET.Sdk.Web/Microsoft.NET.Sdk.BlazorWebAssembly/g' Client/Web/CrystallineSociety.Client.Web.csproj
 
     - name: Restore workloads
-      run: dotnet workload restore src/Client/Web/CrystallineSociety.Client.Web.csproj -p:BlazorMode=BlazorWebAssembly -p:WebAppDeploymentType="${{ env.WEB_APP_DEPLOYMENT_TYPE }}"
+      run: dotnet workload restore Client/Web/CrystallineSociety.Client.Web.csproj -p:BlazorMode=BlazorWebAssembly -p:WebAppDeploymentType="${{ env.WEB_APP_DEPLOYMENT_TYPE }}"
       
     - name: Build (To generate CSS/JS files)
-      run: dotnet build src/Server/Api/CrystallineSociety.Server.Api.csproj -p:BlazorMode=BlazorWebAssembly -p:WebAppDeploymentType="${{ env.WEB_APP_DEPLOYMENT_TYPE }}" -p:Configuration=Release
+      run: dotnet build Server/Api/CrystallineSociety.Server.Api.csproj -p:BlazorMode=BlazorWebAssembly -p:WebAppDeploymentType="${{ env.WEB_APP_DEPLOYMENT_TYPE }}" -p:Configuration=Release
 
     - name: Publish
-      run: dotnet publish src/Server/Api/CrystallineSociety.Server.Api.csproj -p:BlazorMode=BlazorWebAssembly -p:WebAppDeploymentType="${{ env.WEB_APP_DEPLOYMENT_TYPE }}" -p:Configuration=Release --self-contained -r linux-x64 -o ${{env.DOTNET_ROOT}}/api-web
+      run: dotnet publish Server/Api/CrystallineSociety.Server.Api.csproj -p:BlazorMode=BlazorWebAssembly -p:WebAppDeploymentType="${{ env.WEB_APP_DEPLOYMENT_TYPE }}" -p:Configuration=Release --self-contained -r linux-x64 -o ${{env.DOTNET_ROOT}}/api-web
 
     - name: Build migrations bundle
       run: |
         dotnet tool install --global dotnet-ef --version 7.0.0
-        dotnet ef migrations bundle --self-contained -r linux-x64 --project src/Server/Api/CrystallineSociety.Server.Api.csproj
+        dotnet ef migrations bundle --self-contained -r linux-x64 --project Server/Api/CrystallineSociety.Server.Api.csproj
 
     - name: Upload ef migrations bundle
       uses: actions/upload-artifact@v3
@@ -139,13 +139,13 @@ jobs:
         ApiServerAddress: ${{ env.API_SERVER_ADDRESS }}
   
     - name: Restore workloads
-      run: dotnet workload restore src/Client/App/CrystallineSociety.Client.App.csproj -p:BlazorMode=BlazorHybrid -f net7.0-windows10.0.19041.0
+      run: dotnet workload restore Client/App/CrystallineSociety.Client.App.csproj -p:BlazorMode=BlazorHybrid -f net7.0-windows10.0.19041.0
   
     - name: Build (To generate CSS/JS files)
-      run: dotnet build src/Client/App/CrystallineSociety.Client.App.csproj -p:BlazorMode=BlazorHybrid -p:Configuration=Release -p:WindowsPackageType=None -p:SelfContained=true -p:WindowsAppSDKSelfContained=true -p:GenerateAppxPackageOnBuild=false -p:RuntimeIdentifier=win10-x86 -f net7.0-windows10.0.19041.0
+      run: dotnet build Client/App/CrystallineSociety.Client.App.csproj -p:BlazorMode=BlazorHybrid -p:Configuration=Release -p:WindowsPackageType=None -p:SelfContained=true -p:WindowsAppSDKSelfContained=true -p:GenerateAppxPackageOnBuild=false -p:RuntimeIdentifier=win10-x86 -f net7.0-windows10.0.19041.0
   
     - name: Build exe
-      run: dotnet build src/Client/App/CrystallineSociety.Client.App.csproj -p:BlazorMode=BlazorHybrid -p:Configuration=Release -p:WindowsPackageType=None -p:SelfContained=true -p:WindowsAppSDKSelfContained=true -p:GenerateAppxPackageOnBuild=false -p:RuntimeIdentifier=win10-x86 -f net7.0-windows10.0.19041.0
+      run: dotnet build Client/App/CrystallineSociety.Client.App.csproj -p:BlazorMode=BlazorHybrid -p:Configuration=Release -p:WindowsPackageType=None -p:SelfContained=true -p:WindowsAppSDKSelfContained=true -p:GenerateAppxPackageOnBuild=false -p:RuntimeIdentifier=win10-x86 -f net7.0-windows10.0.19041.0
   
     - name: Upload artifact
       uses: actions/upload-artifact@v2
@@ -182,16 +182,16 @@ jobs:
         ApiServerAddress: ${{ env.API_SERVER_ADDRESS }}
   
     - name: Restore workloads
-      run: dotnet workload restore src/Client/App/CrystallineSociety.Client.App.csproj -p:BlazorMode=BlazorHybrid -f net7.0-android
+      run: dotnet workload restore Client/App/CrystallineSociety.Client.App.csproj -p:BlazorMode=BlazorHybrid -f net7.0-android
   
     - name: Build (To generate CSS/JS files)
-      run: dotnet build src/Client/App/CrystallineSociety.Client.App.csproj -p:BlazorMode=BlazorHybrid -p:Configuration=Release -p:RunAOTCompilation=false -f net7.0-android
+      run: dotnet build Client/App/CrystallineSociety.Client.App.csproj -p:BlazorMode=BlazorHybrid -p:Configuration=Release -p:RunAOTCompilation=false -f net7.0-android
   
     - name: Build aab
-      run: dotnet build src/Client/App/CrystallineSociety.Client.App.csproj -p:BlazorMode=BlazorHybrid -p:Configuration=Release -p:AndroidPackageFormat=aab -p:AndroidKeyStore=true -p:AndroidSigningKeyStore="CrystallineSociety.keystore" -p:AndroidSigningKeyAlias=CrystallineSociety -p:AndroidSigningKeyPass="${{ secrets.ANDROID_RELEASE_KEYSTORE_PASSWORD }}" -p:AndroidSigningStorePass="${{ secrets.ANDROID_RELEASE_SIGNING_PASSWORD }}" -f net7.0-android
+      run: dotnet build Client/App/CrystallineSociety.Client.App.csproj -p:BlazorMode=BlazorHybrid -p:Configuration=Release -p:AndroidPackageFormat=aab -p:AndroidKeyStore=true -p:AndroidSigningKeyStore="CrystallineSociety.keystore" -p:AndroidSigningKeyAlias=CrystallineSociety -p:AndroidSigningKeyPass="${{ secrets.ANDROID_RELEASE_KEYSTORE_PASSWORD }}" -p:AndroidSigningStorePass="${{ secrets.ANDROID_RELEASE_SIGNING_PASSWORD }}" -f net7.0-android
   
     - name: Build apk
-      run: dotnet build src/Client/App/CrystallineSociety.Client.App.csproj -p:BlazorMode=BlazorHybrid -p:Configuration=Release -p:AndroidKeyStore=true -p:AndroidSigningKeyStore="CrystallineSociety.keystore" -p:AndroidSigningKeyAlias=CrystallineSociety -p:AndroidSigningKeyPass="${{ secrets.ANDROID_RELEASE_KEYSTORE_PASSWORD }}" -p:AndroidSigningStorePass="${{ secrets.ANDROID_RELEASE_SIGNING_PASSWORD }}" -f net7.0-android
+      run: dotnet build Client/App/CrystallineSociety.Client.App.csproj -p:BlazorMode=BlazorHybrid -p:Configuration=Release -p:AndroidKeyStore=true -p:AndroidSigningKeyStore="CrystallineSociety.keystore" -p:AndroidSigningKeyAlias=CrystallineSociety -p:AndroidSigningKeyPass="${{ secrets.ANDROID_RELEASE_KEYSTORE_PASSWORD }}" -p:AndroidSigningStorePass="${{ secrets.ANDROID_RELEASE_SIGNING_PASSWORD }}" -f net7.0-android
   
     - name: Upload artifact
       uses: actions/upload-artifact@v2
@@ -221,13 +221,13 @@ jobs:
          ApiServerAddress: ${{ env.API_SERVER_ADDRESS }}
    
      - name: Restore workloads
-       run: dotnet workload restore src/Client/App/CrystallineSociety.Client.App.csproj -p:BlazorMode=BlazorHybrid -f net7.0-maccatalyst
+       run: dotnet workload restore Client/App/CrystallineSociety.Client.App.csproj -p:BlazorMode=BlazorHybrid -f net7.0-maccatalyst
    
      - name: Build (To generate CSS/JS files)
-       run: dotnet build src/Client/App/CrystallineSociety.Client.App.csproj -p:BlazorMode=BlazorHybrid -p:Configuration=Release -p:CreatePackage=true -f net7.0-maccatalyst
+       run: dotnet build Client/App/CrystallineSociety.Client.App.csproj -p:BlazorMode=BlazorHybrid -p:Configuration=Release -p:CreatePackage=true -f net7.0-maccatalyst
    
      - name: Build pkg
-       run: dotnet build src/Client/App/CrystallineSociety.Client.App.csproj -p:BlazorMode=BlazorHybrid -p:Configuration=Release -p:CreatePackage=true -f net7.0-maccatalyst
+       run: dotnet build Client/App/CrystallineSociety.Client.App.csproj -p:BlazorMode=BlazorHybrid -p:Configuration=Release -p:CreatePackage=true -f net7.0-maccatalyst
    
      - name: Upload artifact
        uses: actions/upload-artifact@v2
@@ -282,13 +282,13 @@ jobs:
           cp $PP_PATH ~/Library/MobileDevice/Provisioning\ Profiles
   
     - name: Restore workloads
-      run: dotnet workload restore src/Client/App/CrystallineSociety.Client.App.csproj -p:BlazorMode=BlazorHybrid -f net7.0-ios
+      run: dotnet workload restore Client/App/CrystallineSociety.Client.App.csproj -p:BlazorMode=BlazorHybrid -f net7.0-ios
   
     - name: Build (To generate CSS/JS files)
-      run: dotnet build src/Client/App/CrystallineSociety.Client.App.csproj -p:BlazorMode=BlazorHybrid -p:Configuration=Release -p:RuntimeIdentifier=ios-arm64 -f net7.0-ios
+      run: dotnet build Client/App/CrystallineSociety.Client.App.csproj -p:BlazorMode=BlazorHybrid -p:Configuration=Release -p:RuntimeIdentifier=ios-arm64 -f net7.0-ios
   
     - name: Build ipa
-      run: dotnet build src/Client/App/CrystallineSociety.Client.App.csproj -p:BlazorMode=BlazorHybrid -p:Configuration=Release -p:RuntimeIdentifier=ios-arm64 -p:ArchiveOnBuild=true -f net7.0-ios
+      run: dotnet build Client/App/CrystallineSociety.Client.App.csproj -p:BlazorMode=BlazorHybrid -p:Configuration=Release -p:RuntimeIdentifier=ios-arm64 -p:ArchiveOnBuild=true -f net7.0-ios
   
     - name: Upload artifact
       uses: actions/upload-artifact@v2
