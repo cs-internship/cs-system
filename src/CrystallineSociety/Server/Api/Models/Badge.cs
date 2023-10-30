@@ -2,10 +2,16 @@
 
 namespace CrystallineSociety.Server.Api.Models;
 
-public class Badge
+public class Badge : EntityBase
 {
-    [Key]
-    public virtual required Guid Id { get; set; }
+    public Badge()
+    {
+    }
+
+    public Badge(bool initialize) : base(initialize)
+    {
+    }
+
     public virtual required string Code { get; set; }
     public virtual required string Title { get; set; }
     public virtual string? Description { get; set; }
@@ -16,7 +22,8 @@ public class Badge
 
 
     [ForeignKey(nameof(EducationProgramId))]
-    public virtual EducationProgram? EducationProgram { get; set; }
+    [NotMapped]
+    public virtual EducationProgram EducationProgram { get; set; }
 
     public virtual required Guid EducationProgramId { get; set; }
 }
