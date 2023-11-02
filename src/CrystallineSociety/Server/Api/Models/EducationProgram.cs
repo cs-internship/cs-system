@@ -3,10 +3,16 @@ using System.Runtime.InteropServices;
 
 namespace CrystallineSociety.Server.Api.Models;
 
-public class EducationProgram
+public class EducationProgram : EntityBase
 {
-    [Key]
-    public virtual required Guid Id { get; set; }
+    public EducationProgram()
+    {
+    }
+
+    public EducationProgram(bool initialize) : base(initialize)
+    {
+    }
+
     public virtual required string Code { get; set; }
     public virtual required string Title { get; set; }
     public virtual required string BadgeSystemUrl { get; set; }
@@ -14,5 +20,5 @@ public class EducationProgram
     public virtual string? LastCommitHash { get; set; }
     public virtual bool IsActive { get; set; }
 
-    public virtual Collection<Badge>? Badges { get; set; }
+    public virtual ObservableCollection<Badge>? Badges { get; set; }
 }
