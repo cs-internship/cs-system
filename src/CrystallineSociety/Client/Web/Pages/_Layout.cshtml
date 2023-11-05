@@ -41,6 +41,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="description" content="The CrystallineSociety is built with ASP.NET Core, Identity, Web API, and EF Core for the server-side, and Blazor for the client-side. It allows you to build Android, iOS, Windows, and Web applications from a single codebase." />
     <link rel="icon" href="~/favicon.ico" type="image/x-icon" asp-append-version="@shoudAddAspAppendVersion">
+    <link rel="stylesheet" href="~/lib/bootstrap-5.3.2-dist/css/bootstrap.min.css" asp-append-version="@shoudAddAspAppendVersion">
     <component type="typeof(HeadOutlet)" render-mode="@renderMode" />
     <link rel="apple-touch-icon" sizes="512x512" href="images/icons/bit-icon-512.png" />
     @if (isPwa)
@@ -108,6 +109,7 @@
         <script src="_content/Bit.BlazorUI/scripts/bit.blazorui.min.js" asp-append-version="@shoudAddAspAppendVersion"></script>
     }
     <script src="_content/CrystallineSociety.Client.Shared/scripts/app.js" asp-append-version="@shoudAddAspAppendVersion"></script>
+    <script src="~/lib/bootstrap-5.3.2-dist/js/bootstrap.min.js" asp-append-version="@shoudAddAspAppendVersion"></script>
 
     @if (isSsr)
     {
