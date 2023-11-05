@@ -8,6 +8,8 @@ public partial class EducationProgramService : IEducationProgramService
     [AutoInject]
     protected AppDbContext AppDbContext = default;
 
+    [AutoInject] protected IMapper Mapper = default!;
+
     [AutoInject]
     protected IGitHubBadgeService GitHubBadgeService { get; set; }
 
@@ -27,6 +29,7 @@ public partial class EducationProgramService : IEducationProgramService
         var badgeDtos = await GitHubBadgeService.GetBadgesAsync(educationProgram.BadgeSystemUrl);
         var newBadges = new List<Badge>();
 
+        //Mapper.Map(badgeDtos, newBadges);
         foreach (var badgeDto in badgeDtos)
         {
             newBadges.Add(new Badge()
@@ -36,7 +39,8 @@ public partial class EducationProgramService : IEducationProgramService
                 Code = badgeDto.Code ?? throw new Exception("Code in badgeDto is null!"),
                 Title = badgeDto.Title ?? throw new Exception("Badge title is null!"),
                 EducationProgramId = educationProgram.Id,
-                Description = badgeDto.Description
+                Description = badgeDto.Description,
+                Level = badgeDto.Level,
             });
         }
 

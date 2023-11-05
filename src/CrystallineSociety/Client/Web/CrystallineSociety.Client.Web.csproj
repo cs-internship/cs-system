@@ -50,4 +50,35 @@
         <ProjectReference Include="..\Shared\CrystallineSociety.Client.Shared.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <None Include="wwwroot\lib\bootstrap-5.3.2-dist\css\bootstrap-grid.css.map" />
+      <None Include="wwwroot\lib\bootstrap-5.3.2-dist\css\bootstrap-grid.min.css.map" />
+      <None Include="wwwroot\lib\bootstrap-5.3.2-dist\css\bootstrap-grid.rtl.css.map" />
+      <None Include="wwwroot\lib\bootstrap-5.3.2-dist\css\bootstrap-grid.rtl.min.css.map" />
+      <None Include="wwwroot\lib\bootstrap-5.3.2-dist\css\bootstrap-reboot.css.map" />
+      <None Include="wwwroot\lib\bootstrap-5.3.2-dist\css\bootstrap-reboot.min.css.map" />
+      <None Include="wwwroot\lib\bootstrap-5.3.2-dist\css\bootstrap-reboot.rtl.css.map" />
+      <None Include="wwwroot\lib\bootstrap-5.3.2-dist\css\bootstrap-reboot.rtl.min.css.map" />
+      <None Include="wwwroot\lib\bootstrap-5.3.2-dist\css\bootstrap-utilities.css.map" />
+      <None Include="wwwroot\lib\bootstrap-5.3.2-dist\css\bootstrap-utilities.min.css.map" />
+      <None Include="wwwroot\lib\bootstrap-5.3.2-dist\css\bootstrap-utilities.rtl.css.map" />
+      <None Include="wwwroot\lib\bootstrap-5.3.2-dist\css\bootstrap-utilities.rtl.min.css.map" />
+      <None Include="wwwroot\lib\bootstrap-5.3.2-dist\css\bootstrap.css.map" />
+      <None Include="wwwroot\lib\bootstrap-5.3.2-dist\css\bootstrap.min.css.map" />
+      <None Include="wwwroot\lib\bootstrap-5.3.2-dist\css\bootstrap.rtl.css.map" />
+      <None Include="wwwroot\lib\bootstrap-5.3.2-dist\css\bootstrap.rtl.min.css.map" />
+      <None Include="wwwroot\lib\bootstrap-5.3.2-dist\js\bootstrap.bundle.js" />
+      <None Include="wwwroot\lib\bootstrap-5.3.2-dist\js\bootstrap.bundle.js.map" />
+      <None Include="wwwroot\lib\bootstrap-5.3.2-dist\js\bootstrap.bundle.min.js" />
+      <None Include="wwwroot\lib\bootstrap-5.3.2-dist\js\bootstrap.bundle.min.js.map" />
+      <None Include="wwwroot\lib\bootstrap-5.3.2-dist\js\bootstrap.esm.js" />
+      <None Include="wwwroot\lib\bootstrap-5.3.2-dist\js\bootstrap.esm.js.map" />
+      <None Include="wwwroot\lib\bootstrap-5.3.2-dist\js\bootstrap.esm.min.js" />
+      <None Include="wwwroot\lib\bootstrap-5.3.2-dist\js\bootstrap.esm.min.js.map" />
+      <None Include="wwwroot\lib\bootstrap-5.3.2-dist\js\bootstrap.js" />
+      <None Include="wwwroot\lib\bootstrap-5.3.2-dist\js\bootstrap.js.map" />
+      <None Include="wwwroot\lib\bootstrap-5.3.2-dist\js\bootstrap.min.js" />
+      <None Include="wwwroot\lib\bootstrap-5.3.2-dist\js\bootstrap.min.js.map" />
+    </ItemGroup>
+
 </Project>
