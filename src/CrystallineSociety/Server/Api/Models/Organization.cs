@@ -3,13 +3,13 @@ using System.Runtime.InteropServices;
 
 namespace CrystallineSociety.Server.Api.Models;
 
-public class EducationProgram : EntityBase
+public class Organization : EntityBase
 {
-    public EducationProgram()
+    public Organization()
     {
     }
 
-    public EducationProgram(bool initialize) : base(initialize)
+    public Organization(bool initialize) : base(initialize)
     {
     }
 
