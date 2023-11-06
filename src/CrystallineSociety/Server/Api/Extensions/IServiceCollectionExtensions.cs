@@ -24,7 +24,7 @@ public static class IServiceCollectionExtensions
         services.AddTransient<ILearnerService, ServerLearnerService>();
         // ToDo: Complete.
         services.AddTransient(CreateGitHubClient);
-        services.AddTransient<IEducationProgramService, EducationProgramService>();
+        services.AddTransient<IOrganizationService, OrganizationService>();
     }
 
     public static void AddIdentity(this IServiceCollection services, IConfiguration configuration)

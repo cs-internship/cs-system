@@ -3,14 +3,11 @@
 
 @if (Badges != null)
 {
-    <BitBasicList TItem="BadgeDto"
-                  ItemSize="4"
-                  Items="Badges"
-                  Style="border: 1px #a19f9d solid; border-radius: 3px; height: auto; width: 50%;max-height:500px;">
-        <RowTemplate Context="badge">
-            <div style="border-bottom: 1px #8a8886 solid; padding: 5px 20px;" class="badge-row" @onclick="() => OnBadgeClick(badge)">
-                <div>Name: @badge.Code</div>
-            </div>
-        </RowTemplate>
-    </BitBasicList>
+    <ul class="list-group">
+        <li class="list-group-item active" aria-current="true">An active item</li>
+        @foreach (var badge in Badges)
+        {
+            <li class="list-group-item" @onclick="() => OnBadgeClick(badge)">@badge.Title</li>
+        }
+    </ul>
 }

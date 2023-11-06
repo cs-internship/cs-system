@@ -1,7 +1,7 @@
 ﻿using CrystallineSociety.Server.Api.Models;
 using CrystallineSociety.Server.Api.Models.TodoItem;
 using CrystallineSociety.Shared.Dtos.BadgeSystem;
-using CrystallineSociety.Shared.Dtos.EducationProgram;
+using CrystallineSociety.Shared.Dtos.Organization;
 using CrystallineSociety.Shared.Dtos.TodoItem;
 using CrystallineSociety.Shared.Services.Implementations.BadgeSystem;
 using Microsoft.VisualBasic;
@@ -32,7 +32,7 @@ public partial class BadgeSystemController : AppControllerBase
     /// Education program service for syncing badge systems with education programs.
     /// </summary>
     [AutoInject]
-    public IEducationProgramService EducationProgramService { get; set; }
+    public IOrganizationService OrganizationService { get; set; }
 
     /// <summary>
     /// Live badge system for managing badges.
@@ -99,27 +99,5 @@ public partial class BadgeSystemController : AppControllerBase
     public async Task<List<BadgeCountDto>> GetEarnedBadgesAsync(string username)
     {
         return await LiveBadgeSystemService.GetEarnedBadgesAsync(username);
-    }
-
-    /// <summary>
-    /// Syncs the badge system with an education program.
-    /// </summary>
-    /// <param name="educationProgram">The education program to sync.</param>
-    /// <param name="cancellationToken">Cancellation token.</param>
-    [HttpPost]
-    public async Task SyncEducationProgramBadgesAsync(EducationProgramDto educationProgram, CancellationToken cancellationToken)
-    {
-        await EducationProgramService.SyncBadgeSystemAsync(educationProgram.Code, cancellationToken);
-    }
-
-    /// <summary>
-    /// Retrieves all education programs.
-    /// </summary>
-    /// <param name="cancellationToken">Cancellation token.</param>
-    /// <returns>All education programs.</returns>
-    [HttpGet]
-    public async Task<List<EducationProgramDto>> GetEducationProgramsAsync(CancellationToken cancellationToken)
-    {
-        return Mapper.Map<List<EducationProgramDto>>(await EducationProgramService.GetAllEducationProgramsAsync(cancellationToken));
     }
 }
