@@ -23,7 +23,7 @@ public class Badge : EntityBase
 
     [ForeignKey(nameof(EducationProgramId))]
     [NotMapped]
-    public virtual EducationProgram EducationProgram { get; set; }
+    public virtual Organization Organization { get; set; }
 
     public virtual required Guid EducationProgramId { get; set; }
 }

@@ -48,7 +48,7 @@ public class AppDbContext : IdentityDbContext<User, Role, int>
 
     public DbSet<Badge> Badges { get; set; }
 
-    public DbSet<EducationProgram> EducationPrograms { get; set; }
+    public DbSet<Organization> Organizations { get; set; }
 
     private void ConfigIdentityTables(ModelBuilder builder)
     {
