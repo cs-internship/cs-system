@@ -1,59 +1,41 @@
 ﻿@namespace CrystallineSociety.Client.Shared
 @inherits AppComponentBase
 
-@* <header class="header">
-    <div class="header-contact">
-        @if (_isUserAuthenticated)
-        {
-            <BitIconButton Class="header-menu" IconName=BitIconName.CollapseMenu OnClick=ToggleMenu />
-        }
-        <a class="logo-lnk" href="/"></a>
-    </div>
-    <div class="header-contact">
-        <BitLink Class="header-item--privacy" Href="/privacy" Target="_self">@Localizer[nameof(AppStrings.Privacy)]</BitLink>
-        @if (!_isUserAuthenticated)
-        {
-            <BitActionButton Class="header-item" IconName="BitIconName.AddFriend" Href="/sign-up" Target="_self">@Localizer[nameof(AppStrings.SignUp)]</BitActionButton>
-            <BitActionButton Class="header-item" IconName="BitIconName.Signin" Href="/sign-in" Target="_self">@Localizer[nameof(AppStrings.SignIn)]</BitActionButton>
-        }
-    </div>
-</header> *@
-
-
 <header class="py-3 mb-3 border-bottom">
     <div class="container-fluid d-grid gap-3 align-items-center" style="grid-template-columns: 1fr 2fr;">
-      <div class="dropdown">
-          <a href="#" class="d-flex align-items-center col-lg-4 mb-2 mb-lg-0 link-body-emphasis text-decoration-none dropdown-toggle show" data-bs-toggle="dropdown" aria-expanded="true">
-              <svg class="bi me-2" width="40" height="32"><use xlink:href="#bootstrap"></use></svg>
-              <span class="fs-4">CS Internship (CSI)</span>
-          </a>
-            
-        <ul class="dropdown-menu text-small shadow show" data-popper-placement="bottom-start" style="position: absolute; inset: 0px auto auto 0px; margin: 0px; transform: translate(0px, 34px);">
-          <li><a class="dropdown-item active" href="#" aria-current="page">CS Internship</a></li>
-          <li><a class="dropdown-item" href="#">MelkRadar</a></li>
-          <li><a class="dropdown-item" href="#">CSX</a></li>
-          <li><hr class="dropdown-divider"></li>
-          <li><a class="dropdown-item" href="#">Organization Settings...</a></li>
-        </ul>
-      </div>
+        <div class="dropdown">
+            <a href="#" class="d-flex align-items-center col-lg-4 mb-2 mb-lg-0 link-body-emphasis text-decoration-none dropdown-toggle show" data-bs-toggle="dropdown" aria-expanded="true">
+                <svg class="bi me-2" width="40" height="32"><use xlink:href="#bootstrap"></use></svg>
+                <span class="fs-4">@(ActiveOrganization == null ? "Organizations" : $"{ActiveOrganization.Title} ({ActiveOrganization.Code})")</span>
+            </a>
 
-      <div class="d-flex align-items-center">
-        <form class="w-100 me-3" role="search">
-          <input type="search" class="form-control" placeholder="Search..." aria-label="Search">
-        </form>
-
-        <div class="flex-shrink-0 dropdown">
-          <a href="#" class="d-block link-body-emphasis text-decoration-none dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
-            <img src="https://github.com/mdo.png" alt="mdo" width="32" height="32" class="rounded-circle">
-          </a>
-          <ul class="dropdown-menu text-small shadow" style="">
-            <li><a class="dropdown-item" href="#">New project...</a></li>
-            <li><a class="dropdown-item" href="#">Settings</a></li>
-            <li><a class="dropdown-item" href="#">Profile</a></li>
-            <li><hr class="dropdown-divider"></li>
-            <li><a class="dropdown-item" href="#">Sign out</a></li>
-          </ul>
+            <ul class="dropdown-menu text-small shadow" data-popper-placement="bottom-start" style="position: absolute; inset: 0px auto auto 0px; margin: 0px; transform: translate(0px, 34px);">
+                @foreach (var organization in Organizations)
+                {
+                    <li @onclick="()=>HandleOrganizationClick(organization)"><a class="dropdown-item @(ActiveOrganization?.Code == organization.Code ?"active" :"")">@organization.Title</a></li>
+                }
+                <li><hr class="dropdown-divider"></li>
+                <li><a class="dropdown-item" href="#">Organization Settings...</a></li>
+            </ul>
         </div>
-      </div>
+
+        <div class="d-flex align-items-center">
+            <form class="w-100 me-3" role="search">
+                <input type="search" class="form-control" placeholder="Search..." aria-label="Search">
+            </form>
+
+            <div class="flex-shrink-0 dropdown">
+                <a href="#" class="d-block link-body-emphasis text-decoration-none dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                    <img src="https://github.com/mdo.png" alt="mdo" width="32" height="32" class="rounded-circle">
+                </a>
+                <ul class="dropdown-menu text-small shadow" style="">
+                    <li><a class="dropdown-item" href="#">New project...</a></li>
+                    <li><a class="dropdown-item" href="#">Settings</a></li>
+                    <li><a class="dropdown-item" href="#">Profile</a></li>
+                    <li><hr class="dropdown-divider"></li>
+                    <li><a class="dropdown-item" href="#">Sign out</a></li>
+                </ul>
+            </div>
+        </div>
     </div>
-  </header>
+</header>
