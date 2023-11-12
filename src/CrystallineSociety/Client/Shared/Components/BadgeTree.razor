@@ -4,10 +4,9 @@
 @if (Badges != null)
 {
     <ul class="list-group">
-        <li class="list-group-item active" aria-current="true">An active item</li>
         @foreach (var badge in Badges)
         {
-            <li class="list-group-item" @onclick="() => OnBadgeClick(badge)">@badge.Title</li>
+            <li class="list-group-item @(ActiveBadgeCode == badge.Code ? "active": "")" @onclick="() => OnBadgeClick(badge)">@badge.Title</li>
         }
     </ul>
 }

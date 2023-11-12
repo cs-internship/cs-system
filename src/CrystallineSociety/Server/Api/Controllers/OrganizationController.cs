@@ -37,6 +37,12 @@ public partial class OrganizationController : AppControllerBase
         return Mapper.Map<List<OrganizationDto>>(await OrganizationService.GetAllOrganizationAsync(cancellationToken));
     }
 
+    /// <summary>
+    /// Retrieves an organization by its code.
+    /// </summary>
+    /// <param name="code">The code of the organization to retrieve.</param>
+    /// <param name="cancellationToken">Cancellation token.</param>
+    /// <returns>The organization with the specified code.</returns>
     [HttpGet]
     public async Task<OrganizationDto> GetOrganizationByCodeAsync(string code, CancellationToken cancellationToken)
     {
