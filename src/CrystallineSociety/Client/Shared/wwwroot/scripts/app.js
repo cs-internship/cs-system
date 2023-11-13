@@ -18,5 +18,8 @@ var App = /** @class */ (function () {
     App.goBack = function () {
         window.history.back();
     };
+    App.removeParametersOfUrl = function (url) {
+        window.history.pushState(null, '', url);
+    };
     return App;
 }());

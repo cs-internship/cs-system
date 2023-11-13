@@ -7,7 +7,11 @@ public partial class Header : IDisposable
     private bool _disposed;
     private bool _isUserAuthenticated;
 
-    [Parameter] public EventCallback OnToggleMenu { get; set; }
+    [Parameter] 
+    public EventCallback OnToggleMenu { get; set; }
+
+    [CascadingParameter(Name = "AppState")]
+    public AppStateDto AppState { get; set; } = default!;
 
     private List<OrganizationDto> Organizations { get; set; } = new();
 
@@ -63,6 +67,7 @@ public partial class Header : IDisposable
     private void HandleOrganizationClick(OrganizationDto organization)
     {
         ActiveOrganization = organization;
+        AppState.Organization = ActiveOrganization;
         NavigationManager.NavigateTo($"/o/{organization.Code}",false);
     }
 }

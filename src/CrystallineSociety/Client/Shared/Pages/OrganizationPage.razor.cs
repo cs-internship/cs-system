@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.NetworkInformation;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -14,14 +15,27 @@ namespace CrystallineSociety.Client.Shared.Pages
         [Parameter]
         public string? OrganizationCode { get; set; }
 
+        [Parameter]
+        public string? NavTitle { get; set; }
+
         private OrganizationDto Organization { get; set; } = default!;
 
         private BadgeBundleDto? Bundle { get; set; }
 
+        private OrganizationNavLink ActiveOrganizationNavLink { get; set; } = OrganizationNavLink.Home;
+
         protected override async Task OnInitAsync()
         {
-            await LoadOrganizationAsync();
-            await LoadBadgeSystem();
+            if (NavTitle != null)
+            {
+                await HandleNavMenuClickAsync(NavTitle);
+            }
+
+            else
+            {
+                await HandleNavMenuClickAsync("Home");
+            }
+
             await base.OnInitAsync();
         }
 
@@ -33,6 +47,34 @@ namespace CrystallineSociety.Client.Shared.Pages
         private async Task LoadBadgeSystem()
         {
             Bundle = await HttpClient.GetFromJsonAsync($"BadgeSystem/GetBadgeBundleFromGitHub?url={Organization.BadgeSystemUrl}", AppJsonContext.Default.BadgeBundleDto);
+        }
+
+        private async Task HandleNavMenuClickAsync(string navTitle)
+        {
+            ActiveOrganizationNavLink = navTitle.ToLower().Trim() switch
+            {
+                "home" => OrganizationNavLink.Home,
+                "docs" => OrganizationNavLink.Docs,
+                "learners" => OrganizationNavLink.Learners,
+                "badges" => OrganizationNavLink.Badges,
+                "feed" => OrganizationNavLink.Feed,
+                _ => throw new NotImplementedException()
+            };
+
+            var url = $"/o/{OrganizationCode}/{navTitle.ToLower().Trim()}";
+
+            await JSRuntime.InvokeVoidAsync("App.removeParametersOfUrl", url);
+
+            if (ActiveOrganizationNavLink == OrganizationNavLink.Badges)
+            {
+                await LoadBadgesAsync();
+            }
+        }
+
+        private async Task LoadBadgesAsync()
+        {
+            await LoadOrganizationAsync();
+            await LoadBadgeSystem();
         }
     }
 }

@@ -1,4 +1,4 @@
-@page "/o/{OrganizationCode}"
+@page "/o/{OrganizationCode}/{NavTitle?}"
 @inherits AppComponentBase
 
 
@@ -11,24 +11,42 @@
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
             <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                 <li class="nav-item">
-                    <a class="nav-link active" aria-current="page" href="#">Home</a>
+                    <a class="nav-link @(ActiveOrganizationNavLink == OrganizationNavLink.Home ? "active" : "")" @onclick="@(()=>HandleNavMenuClickAsync("Home"))">Home</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="#">Docs</a>
+                    <a class="nav-link @(ActiveOrganizationNavLink == OrganizationNavLink.Docs ? "active" : "")" @onclick="@(()=>HandleNavMenuClickAsync("Docs"))">Docs</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="#">Learners</a>
+                    <a class="nav-link @(ActiveOrganizationNavLink == OrganizationNavLink.Learners ? "active" : "")" @onclick="@(()=>HandleNavMenuClickAsync("Learners"))">Learners</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="#">Badges</a>
+                    <a class="nav-link @(ActiveOrganizationNavLink == OrganizationNavLink.Badges ? "active" : "")" @onclick="@(()=>HandleNavMenuClickAsync("Badges"))">Badges</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="#">Feed</a>
+                    <a class="nav-link @(ActiveOrganizationNavLink == OrganizationNavLink.Feed ? "active" : "")" @onclick="@(()=>HandleNavMenuClickAsync("Feed"))">Feed</a>
                 </li>
             </ul>
         </div>
     </div>
 </nav>
 
-
-<OrganizationBadges Organization=Organization Bundle="Bundle"></OrganizationBadges>
+@switch (ActiveOrganizationNavLink)
+{
+    case OrganizationNavLink.Home:
+        <OrganizationHome></OrganizationHome>
+        break;
+    case OrganizationNavLink.Badges:
+        <OrganizationBadges Organization=Organization Bundle="Bundle"></OrganizationBadges>
+        break;
+    case OrganizationNavLink.Docs:
+        <OrganizationDocs></OrganizationDocs>
+        break;
+    case OrganizationNavLink.Learners:
+        <OrganizationLearners></OrganizationLearners>
+        break;
+    case OrganizationNavLink.Feed:
+        <OrganizationFeeds></OrganizationFeeds>
+        break;
+    default:
+        break;
+}
