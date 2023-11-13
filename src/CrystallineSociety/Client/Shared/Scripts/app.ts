@@ -17,4 +17,8 @@
     public static goBack(): void {
         window.history.back();
     }
+
+    public static removeParametersOfUrl(url: any) {
+        window.history.pushState(null, '', url);
+    }
 }
