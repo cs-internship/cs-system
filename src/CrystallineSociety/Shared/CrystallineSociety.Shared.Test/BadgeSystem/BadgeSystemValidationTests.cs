@@ -2,7 +2,6 @@
 using CrystallineSociety.Shared.Services.Implementations.BadgeSystem;
 using CrystallineSociety.Shared.Test.Fake;
 using CrystallineSociety.Shared.Test.Infrastructure;
-using CrystallineSociety.Shared.Test.Utils;
 using Microsoft.Extensions.Hosting;
 
 namespace CrystallineSociety.Shared.Test.BadgeSystem;
@@ -11,6 +10,317 @@ namespace CrystallineSociety.Shared.Test.BadgeSystem;
 public class BadgeSystemValidationTests : TestBase
 {
     public TestContext TestContext { get; set; } = default!;
+
+    [TestMethod]
+    public void RepeatedAppraisalMethodValidator_NoErrors()
+    {
+        var badge1 = """
+                    {
+                      "code": "doc-guru",
+                      "description": "Description for doc-guru",
+                      "level": "Gold",
+                      "appraisal-methods": [
+                        {
+                          "title": "Main Method",
+                          "activity-requirements": [
+                            "requirement-activity-code-A",
+                            "requirement-activity-code-B:1",
+                            "requirement-activity-code-C|requirement-activity-code-D:2"
+                          ],
+
+                        "approving-steps": [
+                            {
+                              "step": 1,
+                              "title": "First Approval",
+                              "approver-required-badges": [
+                                "doc-guru"
+                              ],
+                              "required-approval-count": 4
+                            },
+                            {
+                              "step": 2,
+                              "title": "Last Approval",
+                              "approver-required-badges": [
+                                "doc-guru"
+                              ],
+                              "required-approval-count": 3 
+                            }
+                          ]
+                        }
+                      ]
+                    }      
+                    """;
+        var badgeSystem = CreateBadgeSystem(new[] { badge1 });
+
+        Assert.IsNotNull(badgeSystem.Validations);
+        Assert.AreEqual(
+            0,
+            badgeSystem.Errors.Count());
+    }
+
+    [TestMethod]
+    public void
+       RepeatedAppraisalMethodValidator_BadgeBundleContainingSingleInvalidBadge_ListOfErrorsForTheBadgeWithRepeatedTitlesInTheirAppraisalMethod()
+    {
+        var badge1 = """
+                    {
+                      "code": "doc-guru",
+                      "description": "Description for doc-guru",
+                      "level": "Gold",
+                      "appraisal-methods": [
+                        {
+                          "title": "Main Method",
+                          "activity-requirements": [
+                            "requirement-activity-code-A",
+                            "requirement-activity-code-B:1",
+                            "requirement-activity-code-C|requirement-activity-code-D:2"
+                          ]
+                          
+                        },
+                        {
+                          "title": "Main Method",
+                          "activity-requirements": [
+                            "requirement-activity-code-A",
+                            "requirement-activity-code-B:1",
+                            "requirement-activity-code-C|requirement-activity-code-D:2"
+                          ]
+                          
+                        }
+                      ]
+                   
+                    }      
+                    """;
+
+
+        var badgeSystem = CreateBadgeSystem(new[] { badge1 });
+
+        Assert.IsNotNull(badgeSystem.Validations);
+        Assert.AreEqual(
+            1,
+            badgeSystem.Errors.Count(e =>
+                e.Title.Equals(
+                    "Repeated appraisal method: Main Method")));
+
+        Assert.AreEqual("Main Method", badgeSystem.Errors.Find(t => t.Title.Equals("Repeated appraisal method: Main Method")).RefBadge);
+
+        Assert.AreEqual(
+            "Main Method", badgeSystem.Errors.Find(t =>
+                    t.Title.Equals(
+                        "Repeated appraisal method: Main Method"))
+                .RefBadge);
+    }
+
+    [TestMethod]
+    public void
+       RepeatedAppraisalMethodValidator_BadgeBundleContainingMultipleInvalidBadge_ListOfErrorsForTheBadgeWithRepeatedTitlesInTheirAppraisalMethod()
+    {
+        var badge1 = """
+                    {
+                      "code": "doc-guru",
+                      "description": "Description for doc-guru",
+                      "level": "Gold",
+                      "appraisal-methods": [
+                        {
+                          "title": "Main Method",
+                          "activity-requirements": [
+                            "requirement-activity-code-A",
+                            "requirement-activity-code-B:1",
+                            "requirement-activity-code-C|requirement-activity-code-D:2"
+                          ]
+                          
+                        },
+                        {
+                          "title": "Main Method",
+                          "activity-requirements": [
+                            "requirement-activity-code-A",
+                            "requirement-activity-code-B:1",
+                            "requirement-activity-code-C|requirement-activity-code-D:2"
+                          ]
+                          
+                        }
+                      ]
+                   
+                    }      
+                    """;
+
+        var badge2 = """
+                    {
+                      "code": "doc-guru",
+                      "description": "Description for doc-guru",
+                      "level": "Gold",
+                      "appraisal-methods": [
+                        {
+                          "title": "Main Method",
+                          "activity-requirements": [
+                            "requirement-activity-code-A",
+                            "requirement-activity-code-B:1",
+                            "requirement-activity-code-C|requirement-activity-code-D:2"
+                          ]
+                          
+                        },
+                        {
+                          "title": "Main Method",
+                          "activity-requirements": [
+                            "requirement-activity-code-A",
+                            "requirement-activity-code-B:1",
+                            "requirement-activity-code-C|requirement-activity-code-D:2"
+                          ]
+                          
+                        }
+                      ]
+                   
+                    }      
+                    """;
+
+        var badgeSystem = CreateBadgeSystem(new[] { badge1, badge2 });
+
+        Assert.IsNotNull(badgeSystem.Validations);
+        Assert.AreEqual(
+            2,
+            badgeSystem.Errors.Count(e =>
+                e.Title.Equals(
+                    "Repeated appraisal method: Main Method")));
+
+        Assert.AreEqual("Main Method", badgeSystem.Errors.Find(t => t.Title.Equals("Repeated appraisal method: Main Method")).RefBadge);
+
+        Assert.AreEqual(
+            "Main Method", badgeSystem.Errors.Find(t =>
+                    t.Title.Equals(
+                        "Repeated appraisal method: Main Method"))
+                .RefBadge);
+    }
+
+
+
+    [TestMethod]
+    public void RepeatedActivityRequirementValidator_NoErrors()
+    {
+        var badge1 = """
+                    {
+                      "code": "doc-guru",
+                      "description": "Description for doc-guru",
+                      "level": "Gold",
+                      "appraisal-methods": [
+                        {
+                          "title": "Main Method",
+                          "activity-requirements": [
+                            "requirement-activity-code-A",
+                            "requirement-activity-code-B:1",
+                            "requirement-activity-code-C|requirement-activity-code-D:2"
+                          ]
+                        }
+                      ]
+                    }      
+                    """;
+        var badgeSystem = CreateBadgeSystem(new[] { badge1 });
+
+        Assert.IsNotNull(badgeSystem.Validations);
+        Assert.AreEqual(
+            0,
+            badgeSystem.Errors.Count());
+    }
+
+    [TestMethod]
+    public void
+       RepeatedActivityRequirementValidator_BadgeBundleContainingSingleInvalidBadge_ListOfErrorsForTheBadgeWithRepeatedTitlesInTheirActivityRequirement()
+    {
+        var badge1 = """
+                    {
+                      "code": "doc-guru",
+                      "description": "Description for doc-guru",
+                      "level": "Gold",
+                      "appraisal-methods": [
+                        {
+                          "title": "Main Method",
+                          "activity-requirements": [
+                            "requirement-activity-code-A",
+                            "requirement-activity-code-A",
+                            "requirement-activity-code-B:1",
+                            "requirement-activity-code-C|requirement-activity-code-D:2"
+                          ]   
+                        }
+                      ]
+                    }      
+                    """;
+
+
+        var badgeSystem = CreateBadgeSystem(new[] { badge1 });
+
+        Assert.IsNotNull(badgeSystem.Validations);
+        Assert.AreEqual(
+            1,
+            badgeSystem.Errors.Count(e =>
+                e.Title.Equals(
+                    "Repeated titles in activity requirements of doc-guru badge found. Activity requirements are not unique.")));
+
+        Assert.AreEqual("doc-guru", badgeSystem.Errors.Find(t => t.Title.Equals("Repeated titles in activity requirements of doc-guru badge found. Activity requirements are not unique.")).RefBadge);
+
+        Assert.AreEqual(
+            "doc-guru", badgeSystem.Errors.Find(t =>
+                    t.Title.Equals(
+                        "Repeated titles in activity requirements of doc-guru badge found. Activity requirements are not unique."))
+                .RefBadge);
+    }
+
+    [TestMethod]
+    public void
+       RepeatedActivityRequirementValidator_BadgeBundleContainingMultipleInvalidBadge_ListOfErrorsForTheBadgeWithRepeatedTitlesInTheirActivityRequirement()
+    {
+        var badge1 = """
+                    {
+                      "code": "doc-guru",
+                      "description": "Description for doc-guru",
+                      "level": "Gold",
+                      "appraisal-methods": [
+                        {
+                          "title": "Main Method",
+                          "activity-requirements": [
+                            "requirement-activity-code-A",
+                            "requirement-activity-code-A",
+                            "requirement-activity-code-B:1",
+                            "requirement-activity-code-C|requirement-activity-code-D:2"
+                          ]   
+                        }
+                      ]
+                    }      
+                    """;
+
+        var badge2 = """
+                    {
+                      "code": "doc-guru",
+                      "description": "Description for doc-guru",
+                      "level": "Gold",
+                      "appraisal-methods": [
+                        {
+                          "title": "Main Method",
+                          "activity-requirements": [
+                            "requirement-activity-code-A",
+                            "requirement-activity-code-B:1",
+                            "requirement-activity-code-B:1",
+                            "requirement-activity-code-C|requirement-activity-code-D:2"
+                          ]
+                        }
+                      ]
+                    }      
+                    """;
+
+        var badgeSystem = CreateBadgeSystem(new[] { badge1, badge2 });
+
+        Assert.IsNotNull(badgeSystem.Validations);
+        Assert.AreEqual(
+            2,
+            badgeSystem.Errors.Count(e =>
+                e.Title.Equals(
+                    "Repeated titles in activity requirements of doc-guru badge found. Activity requirements are not unique.")));
+
+        Assert.AreEqual("doc-guru", badgeSystem.Errors.Find(t => t.Title.Equals("Repeated titles in activity requirements of doc-guru badge found. Activity requirements are not unique.")).RefBadge);
+
+        Assert.AreEqual(
+            "doc-guru", badgeSystem.Errors.Find(t =>
+                    t.Title.Equals(
+                        "Repeated titles in activity requirements of doc-guru badge found. Activity requirements are not unique."))
+                .RefBadge);
+    }
 
     [TestMethod]
     public void RepeatedApprovingStepsValidator_BadgeBundleContainingSingleValidBadge_NoErrors()
@@ -38,7 +348,7 @@ public class BadgeSystemValidationTests : TestBase
                     }      
                     """;
 
-        var badgeSystem = CreateBadgeSystem(new[] {badge1});
+        var badgeSystem = CreateBadgeSystem(new[] { badge1 });
 
         Assert.IsNotNull(badgeSystem.Validations);
         Assert.AreEqual(
@@ -81,7 +391,7 @@ public class BadgeSystemValidationTests : TestBase
                     }      
                     """;
 
-        var badgeSystem = CreateBadgeSystem(new[] {badge1});
+        var badgeSystem = CreateBadgeSystem(new[] { badge1 });
 
         Assert.IsNotNull(badgeSystem.Validations);
         Assert.AreEqual(
@@ -162,7 +472,7 @@ public class BadgeSystemValidationTests : TestBase
                     }      
                     """;
 
-        var badgeSystem = CreateBadgeSystem(new[] {badge1, badge2});
+        var badgeSystem = CreateBadgeSystem(new[] { badge1, badge2 });
 
         Assert.IsNotNull(badgeSystem.Validations);
         Assert.AreEqual(
@@ -231,7 +541,7 @@ public class BadgeSystemValidationTests : TestBase
                 }
             """;
 
-        var badgeSystem = CreateBadgeSystem(new[] {badge1, badge2});
+        var badgeSystem = CreateBadgeSystem(new[] { badge1, badge2 });
 
         Assert.IsNotNull(badgeSystem.Validations);
         Assert.IsTrue(badgeSystem.Errors.Any(v => v.Title.Contains("requirement-badge-code-B")));
