@@ -23,6 +23,7 @@ public static class IServiceCollectionExtensions
         services.AddTransient<IBadgeSystemValidator, BadgeMustHaveValidNameValidator>();
         services.AddTransient<IBadgeSystemValidator, RepeatDependencyValidator>();
         services.AddTransient<IBadgeSystemValidator, RepeatedApprovingStepsValidator>();
+        services.AddTransient<IBadgeSystemValidator, RepeatedAppraisalMethodValidator>();
         services.AddSingleton<AppStateDto, AppStateDto>();
     }
 
