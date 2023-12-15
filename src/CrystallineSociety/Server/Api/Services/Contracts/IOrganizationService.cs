@@ -22,7 +22,7 @@ public interface IOrganizationService
     /// </summary>
     /// <param name="cancellationToken">The cancellation token.</param>
     /// <returns>A task representing the asynchronous operation.</returns>
-    Task<List<Organization>> GetAllOrganizationAsync(CancellationToken cancellationToken);
+    Task<List<Organization?>> GetAllOrganizationAsync(CancellationToken cancellationToken);
 
     /// <summary>
     /// Determines whether an education program exists with the specified code.
@@ -39,9 +39,9 @@ public interface IOrganizationService
     /// <param name="organization">The education program to add.</param>
     /// <param name="cancellationToken">The cancellation token.</param>
     /// <returns>A task representing the asynchronous operation.</returns>
-    Task AddOrganizationAsync(Organization organization,
+    Task AddOrganizationAsync(Organization? organization,
         CancellationToken cancellationToken);
 
-    Task<Organization> GetOrganizationAsync(string organizationCode,
+    Task<Organization?> GetOrganizationAsync(string organizationCode,
         CancellationToken cancellationToken);
 }

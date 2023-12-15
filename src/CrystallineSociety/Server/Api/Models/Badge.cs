@@ -21,9 +21,9 @@ public class Badge : EntityBase
     public virtual bool IsApprovalRequired { get; set; }
 
 
-    [ForeignKey(nameof(EducationProgramId))]
+    [ForeignKey(nameof(OrganizationId))]
     [NotMapped]
     public virtual Organization Organization { get; set; }
 
-    public virtual required Guid EducationProgramId { get; set; }
+    public virtual required Guid OrganizationId { get; set; }
 }
