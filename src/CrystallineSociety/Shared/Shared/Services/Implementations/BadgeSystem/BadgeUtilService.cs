@@ -33,6 +33,7 @@ namespace CrystallineSociety.Shared.Services.Implementations.BadgeSystem
                 throw new InvalidOperationException("Can not create badge from spec.");
 
             badge.Title ??= badge.Code;
+            badge.SpecJson = specJson;
 
            return badge;
         }

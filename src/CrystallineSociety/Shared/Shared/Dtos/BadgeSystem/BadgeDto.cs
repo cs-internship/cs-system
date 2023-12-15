@@ -15,6 +15,7 @@ namespace CrystallineSociety.Shared.Dtos.BadgeSystem
         public BadgeLevel Level { get; set; }
         public Dictionary<string, string>? Info { get; set; } = new();
         public List<AppraisalMethod>? AppraisalMethods { get; set; } = new();
+        public string? SpecJson { get; set; }
 
         public string? Sha { get; set; }
         public string? Url { get; set; }

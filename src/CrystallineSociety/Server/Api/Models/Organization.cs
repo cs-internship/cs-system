@@ -16,9 +16,11 @@ public class Organization : EntityBase
     public virtual required string Code { get; set; }
     public virtual required string Title { get; set; }
     public virtual required string BadgeSystemUrl { get; set; }
+    public virtual required string ProgramDocumentUrl { get; set; }
     public virtual DateTimeOffset LastSyncDateTime { get; set; }
     public virtual string? LastCommitHash { get; set; }
     public virtual bool IsActive { get; set; }
 
     public virtual ObservableCollection<Badge>? Badges { get; set; }
+    public virtual ObservableCollection<ProgramDocument>? ProgramDocuments { get; set; }
 }

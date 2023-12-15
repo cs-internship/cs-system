@@ -50,6 +50,8 @@ public class AppDbContext : IdentityDbContext<User, Role, int>
 
     public DbSet<Organization> Organizations { get; set; }
 
+    public DbSet<ProgramDocument> ProgramDocument { get; set; }
+
     private void ConfigIdentityTables(ModelBuilder builder)
     {
         //Config Asp Identity table name

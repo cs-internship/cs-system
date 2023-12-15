@@ -6,7 +6,7 @@ namespace CrystallineSociety.Server.Api.Services.Implementations;
 public partial class OrganizationService : IOrganizationService
 {
     [AutoInject]
-    protected AppDbContext AppDbContext = default;
+    protected AppDbContext AppDbContext = default!;
 
     [AutoInject] protected IMapper Mapper = default!;
 
@@ -15,9 +15,9 @@ public partial class OrganizationService : IOrganizationService
 
     public async Task SyncBadgeSystemAsync(string educationProgramCode, CancellationToken cancellationToken)
     {
-        var educationProgram = await AppDbContext.Organizations.FirstOrDefaultAsync(ep => ep.Code == educationProgramCode, cancellationToken);
+        var organization = await AppDbContext.Organizations.FirstOrDefaultAsync(ep => ep.Code == educationProgramCode, cancellationToken);
 
-        if (educationProgram == null)
+        if (organization == null)
         {
             throw new Exception($"Education program with code {educationProgramCode} not found!");
         }
@@ -26,7 +26,7 @@ public partial class OrganizationService : IOrganizationService
         await AppDbContext.Badges.ExecuteDeleteAsync(cancellationToken);
         await AppDbContext.SaveChangesAsync(cancellationToken);
 
-        var badgeDtos = await GitHubBadgeService.GetBadgesAsync(educationProgram.BadgeSystemUrl);
+        var badgeDtos = await GitHubBadgeService.GetBadgesAsync(organization.BadgeSystemUrl);
         var newBadges = new List<Badge>();
 
         //Mapper.Map(badgeDtos, newBadges);
@@ -38,8 +38,10 @@ public partial class OrganizationService : IOrganizationService
                 Id = Guid.NewGuid(),
                 Code = badgeDto.Code ?? throw new Exception("Code in badgeDto is null!"),
                 Title = badgeDto.Title ?? throw new Exception("Badge title is null!"),
-                EducationProgramId = educationProgram.Id,
+                OrganizationId = organization.Id,
                 Description = badgeDto.Description,
+                SpecJsonSourceUrl = badgeDto.Url,
+                SpecJson = badgeDto.SpecJson,
                 Level = badgeDto.Level,
             });
         }
@@ -48,24 +50,24 @@ public partial class OrganizationService : IOrganizationService
         await AppDbContext.SaveChangesAsync(cancellationToken);
     }
 
-    public async Task<List<Organization>> GetAllOrganizationAsync(CancellationToken cancellationToken)
+    public async Task<List<Organization?>> GetAllOrganizationAsync(CancellationToken cancellationToken)
     {
         return await AppDbContext.Organizations.ToListAsync(cancellationToken);
     }
 
     public async Task<bool> IsOrganizationExistAsync(string educationProgramCode, CancellationToken cancellationToken)
     {
-        return await AppDbContext.Organizations.AnyAsync(ep => ep.Code == educationProgramCode, cancellationToken);
+        return await AppDbContext.Organizations.AnyAsync(ep => ep != null && ep.Code == educationProgramCode, cancellationToken);
     }
 
-    public async Task AddOrganizationAsync(Organization organization, CancellationToken cancellationToken)
+    public async Task AddOrganizationAsync(Organization? organization, CancellationToken cancellationToken)
     {
         await AppDbContext.Organizations.AddAsync(organization, cancellationToken);
         await AppDbContext.SaveChangesAsync(cancellationToken);
     }
 
-    public async Task<Organization> GetOrganizationAsync(string organizationCode,CancellationToken cancellationToken)
+    public async Task<Organization?> GetOrganizationAsync(string organizationCode,CancellationToken cancellationToken)
     {
-        return await AppDbContext.Organizations.FirstAsync(o=>o.Code == organizationCode, cancellationToken);
+        return await AppDbContext.Organizations.FirstOrDefaultAsync(o=>o.Code == organizationCode, cancellationToken);
     }
 }

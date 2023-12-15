@@ -43,5 +43,7 @@ namespace CrystallineSociety.Shared.Services.Contracts
         /// <param name="folderUrl">The GitHub URL pointing to a folder containing badge file(s). All badge files will load recursively. Badge filename must ends with `-badge.json`.</param>
         /// <returns>A task that represents a list of lightweight version of <see cref="BadgeDto"/>s.</returns>
         Task<List<BadgeDto>> GetLightBadgesAsync(string folderUrl);
+
+        Task<List<ProgramDocumentDto>> GetProgramDocumentsAsync(string folderUrl);
     }
 }
