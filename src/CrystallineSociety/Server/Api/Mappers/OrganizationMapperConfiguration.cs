@@ -5,9 +5,9 @@ using CrystallineSociety.Shared.Dtos.TodoItem;
 
 namespace CrystallineSociety.Server.Api.Mappers;
 
-public class EducationProgramMapperConfiguration : Profile
+public class OrganizationMapperConfiguration : Profile
 {
-    public EducationProgramMapperConfiguration()
+    public OrganizationMapperConfiguration()
     {
         CreateMap<Organization, OrganizationDto>().ReverseMap();
     }

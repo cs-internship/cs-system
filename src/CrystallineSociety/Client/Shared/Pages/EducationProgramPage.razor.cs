@@ -23,6 +23,7 @@ public partial class EducationProgramPage
     {
         IsSyncing = true;
         await HttpClient.PostAsJsonAsync("Organization/SyncOrganizationBadges", organization);
+        await HttpClient.PostAsJsonAsync("ProgramDocument/SyncOrganizationProgramDocuments", organization);
         IsSyncing = false;
     }
 }

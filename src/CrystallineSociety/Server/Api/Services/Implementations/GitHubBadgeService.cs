@@ -1,8 +1,15 @@
 ﻿using System.Reflection.Metadata;
 using System.Text;
+using System.Text.Json;
 using System.Text.RegularExpressions;
 
+using CrystallineSociety.Server.Api.Models;
 using CrystallineSociety.Shared.Dtos.BadgeSystem;
+using CrystallineSociety.Shared.Json.Converters;
+using CrystallineSociety.Shared.Utils;
+
+using Markdig;
+using Markdig.Syntax;
 
 using Octokit;
 
@@ -10,9 +17,11 @@ namespace CrystallineSociety.Server.Api.Services.Implementations
 {
     public partial class GitHubBadgeService : IGitHubBadgeService
     {
-        [AutoInject] public IBadgeUtilService BadgeUtilService { get; set; }
+        [AutoInject] public IBadgeUtilService BadgeUtilService { get; set; } = default!;
 
-        [AutoInject] public GitHubClient GitHubClient { get; set; }
+        [AutoInject] public IProgramDocumentUtilService ProgramDocumentUtilService { get; set; } = default!;
+
+        [AutoInject] public GitHubClient GitHubClient { get; set; } = default!;
 
         /// <summary>
         /// Asynchronously retrieves <see cref="BadgeDto"/> objects from badge files located at the GitHub URL provided.
@@ -27,17 +36,19 @@ namespace CrystallineSociety.Server.Api.Services.Implementations
             var lightBadges = await GetLightBadgesAsync(folderUrl);
 
             var badges = new List<BadgeDto>();
-            
+
             foreach (var lightBadge in lightBadges)
             {
                 if (lightBadge.Url is null)
                     continue;
-                
+
                 //todo Replace Exception with NullReferenceException or another relevant one 
                 var badgeDto = await GetBadgeAsync(
                     lightBadge.RepoId ?? throw new Exception("RepoId of light badge is null."),
                     lightBadge.Sha ?? throw new Exception("Sha of light badge is null.")
                 );
+
+                badgeDto.Url = lightBadge.Url;
 
                 badges.Add(badgeDto);
             }
@@ -56,15 +67,15 @@ namespace CrystallineSociety.Server.Api.Services.Implementations
             var repo = await GitHubClient.Repository.Get(orgName, repoName);
             var refs = await GitHubClient.Git.Reference.GetAll(repo.Id);
 
-            var lastSegment = GetLastSegmentFromUrl(folderUrl,refs,out var parentFolderPath);
+            var lastSegment = GetLastSegmentFromUrl(folderUrl, refs, out var parentFolderPath);
             var repositoryId = repo.Id;
-            
+
             var folderContents = await GitHubClient.Repository.Content.GetAllContents(repositoryId, parentFolderPath);
             var folderSha = folderContents?.First(f => f.Name == lastSegment).Sha;
             var allContents = await GitHubClient.Git.Tree.GetRecursive(repositoryId, folderSha);
 
             return allContents.Tree
-                .Where(t=>t.Type == TreeType.Blob )
+                .Where(t => t.Type == TreeType.Blob)
                 .Select(t => new BadgeDto { RepoId = repositoryId, Sha = t.Sha, Url = t.Url })
                 .ToList();
         }
@@ -89,7 +100,7 @@ namespace CrystallineSociety.Server.Api.Services.Implementations
             var badgeFilePath = GetRelativePath(badgeUrl.EndsWith("-badge.json")
                 ? badgeUrl
                 : throw new FileNotFoundException($"Badge file not found in: {badgeUrl}"), refs);
-            
+
             var badgeFileContentByte =
                 await GitHubClient.Repository.Content.GetRawContentByRef(orgName, repoName, badgeFilePath, branchRef.Ref);
 
@@ -120,6 +131,120 @@ namespace CrystallineSociety.Server.Api.Services.Implementations
             var badgeContent = Encoding.UTF8.GetString(bytes);
             var badgeDto = BadgeUtilService.ParseBadge(badgeContent);
             return badgeDto;
+        }
+
+        public async Task<List<ProgramDocumentDto>> GetProgramDocumentsAsync(string folderUrl)
+        {
+            var lightProgramDocuments = await GetLightProgramDocumentsAsync(folderUrl);
+
+            var programDocuments = new List<ProgramDocumentDto>();
+
+            foreach (var lightProgramDocument in lightProgramDocuments)
+            {
+                if (lightProgramDocument.Url is null)
+                    continue;
+
+                var programDocumentDto = await GetProgramDocumentAsync(lightProgramDocument.RepoId ?? throw new NullReferenceException("RepoId of light parsedProgramDocument is null.")
+                    , lightProgramDocument.Sha ?? throw new NullReferenceException("Sha of light parsedProgramDocument is null."));
+
+                programDocumentDto.Url = lightProgramDocument.Url;
+
+                programDocuments.Add(programDocumentDto);
+            }
+
+            return programDocuments;
+        }
+
+        public async Task<List<ProgramDocumentDto>> GetLightProgramDocumentsAsync(string folderUrl)
+        {
+            var (orgName, repoName) = GetRepoAndOrgNameFromUrl(folderUrl);
+            var repo = await GitHubClient.Repository.Get(orgName, repoName);
+            var refs = await GitHubClient.Git.Reference.GetAll(repo.Id);
+
+            var lastSegment = GetLastSegmentFromUrl(folderUrl, refs, out var parentFolderPath);
+            var repositoryId = repo.Id;
+
+            var folderContents = await GitHubClient.Repository.Content.GetAllContents(repositoryId, parentFolderPath);
+            var folderSha = folderContents?.First(f => f.Name == lastSegment).Sha;
+            var allContents = await GitHubClient.Git.Tree.GetRecursive(repositoryId, folderSha);
+
+            return allContents.Tree
+                .Where(t => t.Type == TreeType.Blob)
+                .Select(t => new ProgramDocumentDto { RepoId = repositoryId, Sha = t.Sha, Url = t.Url })
+                .ToList();
+        }
+
+        public async Task<ProgramDocumentDto> GetProgramDocumentAsync(string programDocumentUrl)
+        {
+            var (orgName, repoName) = GetRepoAndOrgNameFromUrl(programDocumentUrl);
+
+            var repo = await GitHubClient.Repository.Get(orgName, repoName);
+            var refs = await GitHubClient.Git.Reference.GetAll(repo.Id);
+            var branchName = GetBranchNameFromUrl(programDocumentUrl, refs) ??
+                             throw new ResourceNotFoundException($"Unable to locate branchName: {programDocumentUrl}");
+
+            var branchRef = refs.First(r => r.Ref.Contains($"refs/heads/{branchName}"));
+            var programDocumentPath = GetRelativePath(programDocumentUrl.EndsWith(".md")
+                ? programDocumentUrl
+                : throw new FileNotFoundException($"ProgramDocument file not found in: {programDocumentUrl}"), refs);
+
+            var programDocumentContentByte =
+                await GitHubClient.Repository.Content.GetRawContentByRef(orgName, repoName, programDocumentPath, branchRef.Ref);
+
+            var programDocumentContent = Encoding.UTF8.GetString(programDocumentContentByte);
+
+            try
+            {
+                var parsedProgramDocument = ProgramDocumentUtilService.ParseProgramDocument(programDocumentContent);
+                return parsedProgramDocument;
+            }
+            catch (Exception exception)
+            {
+                throw new FormatException($"Can not parse parsedProgramDocument with ProgramDocumentUrl: '{programDocumentUrl}'", exception);
+            }
+        }
+
+        public async Task<ProgramDocumentDto> GetProgramDocumentAsync(long repositoryId, string sha)
+        {
+            var programDocumentBlob = await GitHubClient.Git.Blob.Get(repositoryId, sha);
+
+            var bytes = Convert.FromBase64String(programDocumentBlob.Content);
+            var programDocumentContent = Encoding.UTF8.GetString(bytes);
+
+            var htmlContent = Markdown.ToHtml(programDocumentContent);
+            string title = string.Empty;
+
+            if (htmlContent is not null)
+            {
+                string pattern = @"<h1>(.*?)<\/h1>";
+                Match match = Regex.Match(htmlContent, pattern);
+
+                if (match.Success)
+                {
+                    title = match.Groups[1].Value;
+                }
+            }
+            var tempProgramDocumentDto = new ProgramDocumentDto
+            {
+                Code = title,
+                Title = title,
+                HtmlContent = htmlContent,
+                RepoId = repositoryId,
+                Sha = sha,
+            };
+
+            var option = new JsonSerializerOptions
+            {
+                PropertyNamingPolicy = KebabCaseNamingPolicy.Instance,
+                WriteIndented = true,
+                Converters =
+                {
+                    new JsonStringEnumConverter()
+                }};
+
+            var programDocumentDto = ProgramDocumentUtilService.ParseProgramDocument(JsonSerializer.Serialize(tempProgramDocumentDto, option));
+
+            return programDocumentDto;
         }
 
         /// <summary>

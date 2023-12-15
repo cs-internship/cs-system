@@ -1,6 +1,8 @@
 ﻿using CrystallineSociety.Shared.Services.Implementations;
 using CrystallineSociety.Shared.Services.Implementations.BadgeSystem;
 using CrystallineSociety.Shared.Services.Implementations.BadgeSystem.Validations;
+using CrystallineSociety.Shared.Services.Implementations.ProgramDocument;
+
 using System.Net.Http;
 
 namespace Microsoft.Extensions.DependencyInjection;
@@ -17,6 +19,7 @@ public static class IServiceCollectionExtensions
 
         services.AddSingleton<IDateTimeProvider, DateTimeProvider>();
         services.AddTransient<IBadgeUtilService, BadgeUtilService>();
+        services.AddTransient<IProgramDocumentUtilService,ProgramDocumentUtilService>();
         services.AddTransient<IBadgeSystemService, BadgeSystemService>();
         services.AddSingleton<BadgeSystemFactory>();
         services.AddTransient<IBadgeSystemValidator, RequirementsHaveValidBadgesValidator>();
