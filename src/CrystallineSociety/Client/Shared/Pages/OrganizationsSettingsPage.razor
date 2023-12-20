@@ -10,7 +10,7 @@
     <RowTemplate Context="Organization">
         <div @key="Organization.Code" style="@(Organizations.Count > 1 ? "border-bottom: 1px #8a8886 solid; padding: 5px 20px; margin: 10px;" : "")">
             <div style="margin-left:3%; display: inline-block;">
-                <p>Education Program Name: <strong>@Organization.Title</strong></p>
+                <p>Organization Name: <strong>@Organization.Title</strong></p>
                 <BitButton OnClick="WrapHandled(()=>HandelSyncAsync(Organization))">
                     Sync
                     <BitRollerLoading Size="@(IsSyncing ? 13 : 0)" />
