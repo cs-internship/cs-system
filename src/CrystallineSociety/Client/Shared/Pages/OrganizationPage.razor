@@ -30,23 +30,26 @@
     </div>
 </nav>
 
-@switch (ActiveOrganizationNavLink)
+@if (Organization is not null)
 {
-    case OrganizationNavLink.Home:
-        <OrganizationHome></OrganizationHome>
-        break;
-    case OrganizationNavLink.Badges:
-        <OrganizationBadges Organization=Organization Bundle="Bundle"></OrganizationBadges>
-        break;
-    case OrganizationNavLink.Docs:
-        <OrganizationDocs></OrganizationDocs>
-        break;
-    case OrganizationNavLink.Learners:
-        <OrganizationLearners></OrganizationLearners>
-        break;
-    case OrganizationNavLink.Feed:
-        <OrganizationFeeds></OrganizationFeeds>
-        break;
-    default:
-        break;
+    @switch (ActiveOrganizationNavLink)
+    {
+        case OrganizationNavLink.Home:
+            <OrganizationHome></OrganizationHome>
+            break;
+        case OrganizationNavLink.Badges:
+            <OrganizationBadges Organization=Organization Bundle="Bundle"></OrganizationBadges>
+            break;
+        case OrganizationNavLink.Docs:
+            <OrganizationDocs Organization="Organization"></OrganizationDocs>
+            break;
+        case OrganizationNavLink.Learners:
+            <OrganizationLearners></OrganizationLearners>
+            break;
+        case OrganizationNavLink.Feed:
+            <OrganizationFeeds></OrganizationFeeds>
+            break;
+        default:
+            break;
+    }
 }

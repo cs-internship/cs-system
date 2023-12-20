@@ -13,15 +13,15 @@ public partial class ProgramDocumentController : AppControllerBase
     public IProgramDocumentService ProgramDocumentService { get; set; } = default!;
 
     [HttpGet]
-    public async Task<List<ProgramDocumentDto>> GetProgramDocumentsAsync(CancellationToken cancellationToken)
+    public async Task<List<ProgramDocumentDto>> GetProgramDocumentsAsync(string organizationCode, CancellationToken cancellationToken)
     {
-        return Mapper.Map<List<ProgramDocumentDto>>( await ProgramDocumentService.GetAllProgramDocumentsAsync(cancellationToken));
+        return Mapper.Map<List<ProgramDocumentDto>>(await ProgramDocumentService.GetAllProgramDocumentsAsync(organizationCode, cancellationToken));
     }
 
     [HttpPost]
     public async Task CreateProgramDocumentAsync(ProgramDocument document, CancellationToken cancellationToken)
     {
-       await ProgramDocumentService.AddProgramDocumentAsync(document,cancellationToken);
+        await ProgramDocumentService.AddProgramDocumentAsync(document, cancellationToken);
     }
 
     [HttpPost]
@@ -31,7 +31,7 @@ public partial class ProgramDocumentController : AppControllerBase
     }
 
     [HttpPut("{id}")]
-    public async Task UpdateProgramDocumentAsync(ProgramDocument document,CancellationToken cancellationToken)
+    public async Task UpdateProgramDocumentAsync(ProgramDocument document, CancellationToken cancellationToken)
     {
         await ProgramDocumentService.UpdateProgramDocumentAsync(document, cancellationToken);
     }
@@ -39,6 +39,6 @@ public partial class ProgramDocumentController : AppControllerBase
     [HttpDelete("{id}")]
     public async Task DeleteProgramDocumentAsync(Guid id, CancellationToken cancellationToken)
     {
-        await ProgramDocumentService.DeleteProgramDocumentAsync(id,cancellationToken);
+        await ProgramDocumentService.DeleteProgramDocumentAsync(id, cancellationToken);
     }
 }

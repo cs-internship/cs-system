@@ -24,6 +24,8 @@ namespace CrystallineSociety.Shared.Dtos;
 [JsonSerializable(typeof(ResetPasswordRequestDto))]
 [JsonSerializable(typeof(BadgeBundleDto))]
 [JsonSerializable(typeof(OrganizationDto))]
+[JsonSerializable(typeof(ProgramDocumentDto))]
+[JsonSerializable(typeof(List<ProgramDocumentDto>))]
 public partial class AppJsonContext : JsonSerializerContext
 {
 }

@@ -13,7 +13,7 @@ namespace CrystallineSociety.Client.Shared.Components
         [Parameter] public BadgeBundleDto? BadgeBundleDto { get; set; }
         [Parameter] public EventCallback<BadgeDto> BadgeDtoCallBack { get; set; }
 
-        private string? ActiveBadgeCode { get; set; }
+        private string? ActiveBadgeUrl { get; set; }
 
         private List<BadgeDto>? Badges { get; set; }
 
@@ -28,7 +28,7 @@ namespace CrystallineSociety.Client.Shared.Components
 
         private async Task OnBadgeClick(BadgeDto badgeDto)
         {
-            ActiveBadgeCode = badgeDto.Code;
+            ActiveBadgeUrl = badgeDto.Url;
             await BadgeDtoCallBack.InvokeAsync(badgeDto);
         }
     }

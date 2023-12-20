@@ -169,7 +169,7 @@ namespace CrystallineSociety.Server.Api.Services.Implementations
             var allContents = await GitHubClient.Git.Tree.GetRecursive(repositoryId, folderSha);
 
             return allContents.Tree
-                .Where(t => t.Type == TreeType.Blob)
+                .Where(t => t.Type == TreeType.Blob && t.Path.EndsWith(".md"))
                 .Select(t => new ProgramDocumentDto { RepoId = repositoryId, Sha = t.Sha, Url = t.Url })
                 .ToList();
         }

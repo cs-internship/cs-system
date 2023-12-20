@@ -1,0 +1,9 @@
+@using CrystallineSociety.Shared.Dtos.BadgeSystem
+@inherits AppComponentBase
+
+<ul class="list-group">
+    @foreach (var programDocument in ProgramDocuments)
+    {
+        <li class="list-group-item @(ActiveProgramDocumentUrl == programDocument.Url ? "active": "")" @onclick="() => OnProgramDocumentClick(programDocument)">@programDocument.Title</li>
+    }
+</ul>

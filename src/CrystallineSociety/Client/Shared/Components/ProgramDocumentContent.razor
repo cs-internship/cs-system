@@ -1,0 +1,18 @@
+@using CrystallineSociety.Shared.Dtos.BadgeSystem
+@inherits AppComponentBase
+
+@if (ProgramDocument != null)
+{
+    <div class="row align-items-center m-0 p-2 pb-3">
+        <h1 class="display-5 col-10">@ProgramDocument.Title</h1>
+        <button type="button" class="btn btn-primary col-2">Edit</button>
+    </div>
+    <div class="overflow-auto max-height-500">
+        <BitLabel>ProgramDocument Code : @ProgramDocument.Code</BitLabel>
+        <BitLabel>ProgramDocument Content</BitLabel>
+        <div class="w-100">
+            @(new MarkupString(ProgramDocument.HtmlContent ?? string.Empty))
+        </div>
+    </div>
+}
+
