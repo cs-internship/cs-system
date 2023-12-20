@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using CrystallineSociety.Shared.Dtos.Organization;
 
 namespace CrystallineSociety.Client.Shared.Pages;
-public partial class EducationProgramPage
+public partial class OrganizationsSettingsPage
 {
     private List<OrganizationDto> Organizations = new();
     private bool IsSyncing = false;
