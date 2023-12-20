@@ -36,6 +36,8 @@ namespace CrystallineSociety.Client.Shared.Pages
                 await HandleNavMenuClickAsync("Home");
             }
 
+            await LoadOrganizationAsync();
+
             await base.OnInitAsync();
         }
 
@@ -67,14 +69,12 @@ namespace CrystallineSociety.Client.Shared.Pages
 
             if (ActiveOrganizationNavLink == OrganizationNavLink.Badges)
             {
-                await LoadBadgesAsync();
+                await LoadBadgeSystem();
             }
-        }
-
-        private async Task LoadBadgesAsync()
-        {
-            await LoadOrganizationAsync();
-            await LoadBadgeSystem();
+            else if (ActiveOrganizationNavLink == OrganizationNavLink.Docs)
+            {
+                await LoadOrganizationAsync();
+            }
         }
     }
 }

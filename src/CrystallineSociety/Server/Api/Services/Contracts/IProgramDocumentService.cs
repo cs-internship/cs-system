@@ -19,7 +19,7 @@ public interface IProgramDocumentService
     /// </summary>
     /// <param name="cancellationToken">The cancellation token.</param>
     /// <returns>A list of program documents.</returns>
-    Task<List<ProgramDocument>> GetAllProgramDocumentsAsync(CancellationToken cancellationToken);
+    Task<List<ProgramDocument>> GetAllProgramDocumentsAsync(string organizationCode, CancellationToken cancellationToken);
 
     /// <summary>
     /// Checks if a program document exists asynchronously.

@@ -19,7 +19,7 @@ public partial class ProgramDocumentService : IProgramDocumentService
     protected IProgramDocumentUtilService ProgramDocumentUtilService { get; set; } = default!;
 
     [AutoInject]
-    protected IOrganizationService OrganizationService { get;set; } = default!;
+    protected IOrganizationService OrganizationService { get; set; } = default!;
 
     [AutoInject] public GitHubClient GitHubClient { get; set; } = default!;
 
@@ -68,9 +68,16 @@ public partial class ProgramDocumentService : IProgramDocumentService
         await SaveChangesAsync(cancellationToken);
     }
 
-    public async Task<List<ProgramDocument>> GetAllProgramDocumentsAsync(CancellationToken cancellationToken)
+    public async Task<List<ProgramDocument>> GetAllProgramDocumentsAsync(string organizationCode, CancellationToken cancellationToken)
     {
-        return await AppDbContext.ProgramDocument.ToListAsync(cancellationToken);
+        var organization = await OrganizationService.GetOrganizationAsync(organizationCode, cancellationToken);
+
+        if (organization is null)
+        {
+            throw new Exception($"Organization with code {organizationCode} not found");
+        }
+
+        return await AppDbContext.ProgramDocument.Where(p => p.OrganizationId == organization.Id).ToListAsync(cancellationToken);
     }
 
     public async Task<bool> IsProgramDocumentExistForOrganizationAsync(string folderUrl, CancellationToken cancellationToken)

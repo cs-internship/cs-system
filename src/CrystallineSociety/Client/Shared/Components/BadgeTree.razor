@@ -6,7 +6,7 @@
     <ul class="list-group">
         @foreach (var badge in Badges)
         {
-            <li class="list-group-item @(ActiveBadgeCode == badge.Code ? "active": "")" @onclick="() => OnBadgeClick(badge)">@badge.Title</li>
+            <li class="list-group-item @(ActiveBadgeUrl == badge.Url ? "active": "")" @onclick="() => OnBadgeClick(badge)">@badge.Title</li>
         }
     </ul>
 }
