@@ -6,6 +6,7 @@
         <MvcRazorExcludeRefAssembliesFromPublish>false</MvcRazorExcludeRefAssembliesFromPublish>
         <PreserveCompilationReferences>true</PreserveCompilationReferences>
         <PreserveCompilationContext>true</PreserveCompilationContext>
+        <UserSecretsId>2c584977-74d5-4876-8f5d-71edcbe6369f</UserSecretsId>
         <!-- For razor light cshtml files -->
     </PropertyGroup>
 
