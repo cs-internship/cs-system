@@ -11,9 +11,7 @@ Before you can run a .NET application, you need to install the .NET SDK. To inst
 - Click on the download link and run the installer.
 - Follow the instructions in the installer.
 
-You can verify the installation by opening a new command prompt or terminal window and running the command `dotnet --version`. This should display the version of the .NET SDK that you installed. If you installed it correctly, it should show a version number starting with `7.0`.
-
-You can verify the installation by opening a new command prompt or terminal window and running the command `dotnet --version`. This should display the version of the .NET SDK that you installed.
+You can verify the installation by opening a new command prompt or terminal window and running the command `dotnet --version`. This should display the version of the .NET SDK that you installed. If you installed it correctly, it should show a version number starting with `7.X.X`.
 
 ### Development Environment
 You have the flexibility to develop this project using one of the recommended IDEs below, or feel free to use your preferred IDE:
