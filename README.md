@@ -22,8 +22,6 @@ You have the flexibility to develop this project using one of the recommended ID
 
 - **Visual Studio Code**: This is a lightweight but powerful source code editor which runs on your desktop and is available for Windows, macOS, and Linux. You can download it from the official [Visual Studio Code](https://code.visualstudio.com/download) page.
 - After installing Visual Studio Code, open the project folder by clicking on `File -> Open Folder`.
-- Open the terminal in Visual Studio Code by clicking on `Terminal -> New Terminal`.
-- Run the application by typing `dotnet run` in the terminal.
 
 ## Visual Studio
 
