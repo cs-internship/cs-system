@@ -2,11 +2,3 @@
 @import '../Styles/abstracts/_colors.scss';
 @import '../Styles/abstracts/_functions.scss';
 
-.home-actions {
-    width: 100%;
-    display: flex;
-    flex-flow: row wrap;
-    justify-content: center; 
-    align-items: center;
-    gap: 1rem;
-}
