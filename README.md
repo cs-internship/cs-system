@@ -4,8 +4,9 @@ CS System is a versatile software designed to run the CS Internship program. How
 
 ## Roadmap
 Here is the roadmap for CS System features. We welcome your ideas and suggestions for the roadmap. If you have any feedback or feature requests, please submit an issue on our GitHub repository.
- - [CS System v0.2](/docs/roadmap/cs-system-v02.md)
- - [CS System v0.3](/docs/roadmap/cs-system-v03.md)
+ - [CS System v0.2](/docs/roadmap/cs-system-v0.2.md)
+ - [CS System v0.3](/docs/roadmap/cs-system-v0.3.md)
+ - [CS System v0.4](/docs/roadmap/cs-system-v0.4.md)
 
 ## Documentats
 
