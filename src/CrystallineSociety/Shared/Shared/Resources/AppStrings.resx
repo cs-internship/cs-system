@@ -648,4 +648,7 @@ Please confirm your email by clicking on the link.</value>
   <data name="FileContentIsNullException" xml:space="preserve">
     <value>File content is null.</value>
   </data>
+  <data name="CSSystemIntrodution" xml:space="preserve">
+    <value>CS System is a versatile software designed to run the CS Internship program. However, its flexibility allows it to be used for any education program. Companies and organizations can easily integrate their own documentation and policies into CS System, making it a comprehensive solution for managing educational programs.</value>
+  </data>
 </root>

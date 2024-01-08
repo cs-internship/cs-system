@@ -260,6 +260,15 @@ namespace CrystallineSociety.Shared.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to CS System is a versatile software designed to run the CS Internship program. However, its flexibility allows it to be used for any education program. Companies and organizations can easily integrate their own documentation and policies into CS System, making it a comprehensive solution for managing educational programs..
+        /// </summary>
+        public static string CSSystemIntrodution {
+            get {
+                return ResourceManager.GetString("CSSystemIntrodution", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The CustomValidationAttribute method &apos;{0}&apos; in type &apos;{1}&apos; must return System.ComponentModel.DataAnnotations.ValidationResult.  Use System.ComponentModel.DataAnnotations.ValidationResult.Success to represent success..
         /// </summary>
         public static string CustomValidationAttribute_Method_Must_Return_ValidationResult {
