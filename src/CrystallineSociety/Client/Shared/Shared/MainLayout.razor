@@ -2,6 +2,20 @@
 @inherits LayoutComponentBase
 
 <CascadingValue Value="@_appStateDto" Name="AppState">
+    <div class="main text-bg-light">
+        <Header OnToggleMenu=ToggleMenuHandler />
+        <div class="page-wrapper py-5 px-3">
+            <AppErrorBoundary>
+                @Body
+            </AppErrorBoundary>
+        </div>
+        <Footer />
+    </div>
+
+    <MessageBox />
+</CascadingValue>
+
+@* <CascadingValue Value="@_appStateDto" Name="AppState">
     <Header OnToggleMenu=ToggleMenuHandler />
 
     @if (_isUserAuthenticated)
@@ -19,4 +33,4 @@
     </div>
 
     <MessageBox />
-</CascadingValue>
+</CascadingValue> *@
