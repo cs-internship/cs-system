@@ -8,7 +8,7 @@ Here is the roadmap for CS System features. We welcome your ideas and suggestion
  - [CS System v0.3](/docs/roadmap/cs-system-v0.3.md)
  - [CS System v0.4](/docs/roadmap/cs-system-v0.4.md)
 
-## Documentats
+## Documents
 
 The CS System documentation is organized as follows:
 
