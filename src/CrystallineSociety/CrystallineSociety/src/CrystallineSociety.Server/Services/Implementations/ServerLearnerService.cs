@@ -1,4 +1,5 @@
 ﻿using CrystallineSociety.Shared.Dtos.BadgeSystem;
+using ILearnerService = CrystallineSociety.Server.Services.Contracts.ILearnerService;
 
 namespace CrystallineSociety.Server.Api.Services.Implementations
 {

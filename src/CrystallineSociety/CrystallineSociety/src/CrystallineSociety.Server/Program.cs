@@ -1,4 +1,6 @@
-﻿var builder = WebApplication.CreateBuilder(args);
+﻿using IAppHook = CrystallineSociety.Server.Services.Contracts.IAppHook;
+
+var builder = WebApplication.CreateBuilder(args);
 
 builder.Configuration.AddClientConfigurations();
 

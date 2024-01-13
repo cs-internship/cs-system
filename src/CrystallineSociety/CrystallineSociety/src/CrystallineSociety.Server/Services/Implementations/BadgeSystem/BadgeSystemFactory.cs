@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using CrystallineSociety.Shared.Dtos.BadgeSystem;
 using Microsoft.Extensions.DependencyInjection;
+using IBadgeSystemService = CrystallineSociety.Server.Services.Contracts.IBadgeSystemService;
 
 namespace CrystallineSociety.Shared.Services.Implementations.BadgeSystem;
 

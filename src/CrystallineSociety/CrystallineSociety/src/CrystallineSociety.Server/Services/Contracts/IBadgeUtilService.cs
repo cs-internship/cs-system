@@ -1,6 +1,6 @@
 ﻿using CrystallineSociety.Shared.Dtos.BadgeSystem;
 
-namespace CrystallineSociety.Shared.Services.Contracts;
+namespace CrystallineSociety.Server.Services.Contracts;
 
 public interface IBadgeUtilService
 {

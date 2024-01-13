@@ -1,5 +1,4 @@
-﻿
-using CrystallineSociety.Server.Api.Services.Contracts;
+﻿using CrystallineSociety.Server.Services.Contracts;
 using CrystallineSociety.Shared;
 using CrystallineSociety.Shared.Dtos.Organization;
 

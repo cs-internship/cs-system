@@ -1,5 +1,5 @@
 ﻿using CrystallineSociety.Server.Api.Models;
-using CrystallineSociety.Server.Api.Services.Contracts;
+using CrystallineSociety.Server.Services.Contracts;
 using CrystallineSociety.Shared.Dtos.Organization;
 
 namespace CrystallineSociety.Server.Controllers;

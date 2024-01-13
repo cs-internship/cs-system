@@ -5,6 +5,9 @@ using CrystallineSociety.Shared.Dtos.BadgeSystem;
 using CrystallineSociety.Shared.Utils;
 using Markdig;
 using Octokit;
+using IBadgeUtilService = CrystallineSociety.Server.Services.Contracts.IBadgeUtilService;
+using IGitHubBadgeService = CrystallineSociety.Server.Services.Contracts.IGitHubBadgeService;
+using IProgramDocumentUtilService = CrystallineSociety.Server.Services.Contracts.IProgramDocumentUtilService;
 
 namespace CrystallineSociety.Server.Services.Implementations
 {

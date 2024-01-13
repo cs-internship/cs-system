@@ -5,6 +5,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using IBadgeSystemService = CrystallineSociety.Server.Services.Contracts.IBadgeSystemService;
+using ILearnerService = CrystallineSociety.Server.Services.Contracts.ILearnerService;
 
 namespace CrystallineSociety.Shared.Services.Implementations.BadgeSystem
 {

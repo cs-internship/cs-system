@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using CrystallineSociety.Shared.Dtos.BadgeSystem;
 using CrystallineSociety.Shared.Json.Converters;
 using CrystallineSociety.Shared.Utils;
+using IBadgeUtilService = CrystallineSociety.Server.Services.Contracts.IBadgeUtilService;
 
 namespace CrystallineSociety.Shared.Services.Implementations.BadgeSystem
 {

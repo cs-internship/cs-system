@@ -1,6 +1,7 @@
 ﻿using System.Reflection;
 using Microsoft.JSInterop;
 using CrystallineSociety.Client.Core.Services;
+using IAuthTokenProvider = CrystallineSociety.Server.Services.Contracts.IAuthTokenProvider;
 
 namespace CrystallineSociety.Server.Services;
 

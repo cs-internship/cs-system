@@ -1,6 +1,6 @@
 ﻿using CrystallineSociety.Server.Api.Models;
 
-namespace CrystallineSociety.Server.Api.Services.Contracts;
+namespace CrystallineSociety.Server.Services.Contracts;
 
 
 /// <summary>

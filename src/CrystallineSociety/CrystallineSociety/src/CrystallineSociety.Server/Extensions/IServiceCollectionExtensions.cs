@@ -1,20 +1,21 @@
 ﻿using System.Security.Cryptography.X509Certificates;
 using CrystallineSociety.Server;
 using CrystallineSociety.Server.Api.AppHooks;
-using CrystallineSociety.Server.Api.Services.Contracts;
 using CrystallineSociety.Server.Api.Services.Implementations;
 using CrystallineSociety.Server.Models.Identity;
 using CrystallineSociety.Server.Services;
+using CrystallineSociety.Server.Services.Implementations;
+
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Octokit;
 using Swashbuckle.AspNetCore.SwaggerGen;
-using GitHubBadgeService = CrystallineSociety.Server.Services.Implementations.GitHubBadgeService;
-using OrganizationService = CrystallineSociety.Server.Services.Implementations.OrganizationService;
-using ProductHeaderValue = System.Net.Http.Headers.ProductHeaderValue;
-using ProgramDocumentService = CrystallineSociety.Server.Services.Implementations.ProgramDocumentService;
-using User = CrystallineSociety.Server.Models.Identity.User;
+using CrystallineSociety.Server.Models.Identity;
+using CrystallineSociety.Server.Services.Contracts;
+using IAuthTokenProvider = CrystallineSociety.Server.Services.Contracts.IAuthTokenProvider;
+using IGitHubBadgeService = CrystallineSociety.Server.Services.Contracts.IGitHubBadgeService;
+using ILearnerService = CrystallineSociety.Server.Services.Contracts.ILearnerService;
 
 namespace Microsoft.Extensions.DependencyInjection;
 
@@ -23,7 +24,7 @@ public static class IServiceCollectionExtensions
     public static void AddServerServices(this IServiceCollection services)
     {
         services.AddTransient<IGitHubBadgeService, GitHubBadgeService>();
-        services.AddAppHook<ServerBadgeSystemAppHook>();
+        //services.AddAppHook<ServerBadgeSystemAppHook>();
         services.AddTransient<ILearnerService, ServerLearnerService>();
         // ToDo: Complete.
         services.AddTransient(CreateGitHubClient);
@@ -71,7 +72,7 @@ public static class IServiceCollectionExtensions
             .PersistKeysToDbContext<AppDbContext>()
             .ProtectKeysWithCertificate(certificate);
 
-        services.AddIdentity<User, Role>(options =>
+        services.AddIdentity<CrystallineSociety.Server.Models.Identity.User, Role>(options =>
         {
             options.User.RequireUniqueEmail = settings.RequireUniqueEmail;
             options.SignIn.RequireConfirmedEmail = true;

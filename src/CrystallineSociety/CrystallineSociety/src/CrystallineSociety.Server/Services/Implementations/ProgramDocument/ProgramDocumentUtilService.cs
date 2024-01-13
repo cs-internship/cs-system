@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using CrystallineSociety.Shared.Json.Converters;
 
 using CrystallineSociety.Shared.Utils;
+using IProgramDocumentUtilService = CrystallineSociety.Server.Services.Contracts.IProgramDocumentUtilService;
 
 namespace CrystallineSociety.Shared.Services.Implementations.ProgramDocument;
 public class ProgramDocumentUtilService : IProgramDocumentUtilService
