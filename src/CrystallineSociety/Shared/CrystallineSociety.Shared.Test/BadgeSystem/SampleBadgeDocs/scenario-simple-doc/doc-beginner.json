@@ -1,0 +1,30 @@
+{
+  "code": "doc-beginner",
+  "description": "Description for doc-beginner",
+  "level": "Bronze",
+  "appraisal-methods": [
+    {
+      "title": "Main Method",
+      "badge-requirements": [ ],
+      "activity-requirements": [ ],
+      "approving-steps": [
+        {
+          "step": 1,
+          "title": "Initial Approval",
+          "approver-required-badges": [
+            "doc-master"
+          ],
+          "required-approval-count": 2
+        },
+        {
+          "step": 2,
+          "title": "Final Approval",
+          "approver-required-badges": [
+            "doc-guru"
+          ],
+          "required-approval-count": 1
+        }
+      ]
+    }
+  ]
+}

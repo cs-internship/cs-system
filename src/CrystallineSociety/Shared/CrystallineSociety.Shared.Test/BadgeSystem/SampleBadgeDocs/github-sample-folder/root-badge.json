@@ -1,0 +1,13 @@
+{
+  "code": "root-badge",
+  "description": "Description for root-badge",
+  "level": "Bronze",
+  "appraisal-methods": [
+    {
+      "title": "Main Method",
+      "badge-requirements": [],
+      "activity-requirements": [],
+      "approving-steps": []
+    }
+  ]
+}
