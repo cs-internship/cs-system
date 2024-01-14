@@ -1,5 +1,15 @@
 {
     "profiles": {
+        "CrystallineSociety.Server-Website": {
+            "commandName": "Project",
+            "launchBrowser": true,
+            "launchUrl": "",
+            "environmentVariables": {
+                "ASPNETCORE_ENVIRONMENT": "Development"
+            },
+            "dotnetRunMessages": true,
+            "applicationUrl": "http://localhost:5030"
+        },
         "CrystallineSociety.Server-Swagger": {
             "commandName": "Project",
             "launchBrowser": true,
