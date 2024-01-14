@@ -21,11 +21,11 @@ jobs:
     - name: Setup .NET
       uses: actions/setup-dotnet@v3
       with:
-        global-json-file: global.json
+        global-json-file: src/CrystallineSociety/global.json
 
     - uses: actions/setup-node@v3
       with:
         node-version: 18
       
     - name: Build
-      run: dotnet build CrystallineSociety.sln -c Release -p:EnableWindowsTargeting=true
+      run: dotnet build src/CrystallineSociety/CrystallineSociety.sln -c Release -p:EnableWindowsTargeting=true
