@@ -29,6 +29,12 @@ jobs:
 
     - name: Install wasm and maui
       run:  cd src/CrystallineSociety && dotnet workload install maui-android wasm-tools wasm-experimental
+
+    - name: Setup Android SDK Tools
+    # You may pin to the exact commit or the version.
+    # uses: android-actions/setup-android@07976c6290703d34c16d382cb36445f98bb43b1f
+      uses: android-actions/setup-android@v3.2.0
+          
       
     - name: Build
       run: dotnet build src/CrystallineSociety/CrystallineSociety.sln -c Release -p:EnableWindowsTargeting=true
