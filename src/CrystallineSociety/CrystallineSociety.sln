@@ -25,14 +25,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CrystallineSociety.Client.W
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CrystallineSociety.Client.Maui", "Client\CrystallineSociety.Client.Maui\CrystallineSociety.Client.Maui.csproj", "{22816913-64D5-4AE8-9B34-6F188B71FAD1}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".github", ".github", "{3E577755-186F-4E63-8153-B8DE890015C9}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "workflows", "workflows", "{2347E3B2-FDDE-427E-A0AE-E4DCD47C2989}"
-	ProjectSection(SolutionItems) = preProject
-		.github\workflows\cd.yml = .github\workflows\cd.yml
-		.github\workflows\ci.yml = .github\workflows\ci.yml
-	EndProjectSection
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Shared", "Shared", "{4FDF894E-E171-455F-92BB-327457F46920}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Server", "Server", "{19FD15E8-35CE-4AA6-8A6A-5388D2F7E4A3}"
@@ -42,6 +34,13 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CrystallineSociety.Shared.Test", "Shared\CrystallineSociety.Shared.Test\CrystallineSociety.Shared.Test.csproj", "{5D1C2731-7AAB-4E87-8719-D5368E458025}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CrystallineSociety.Server.Api.Test", "Server\CrystallineSociety.Server.Api.Test\CrystallineSociety.Server.Api.Test.csproj", "{1D88DEF8-8C48-4EDC-BFD9-318031032BA2}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".github", ".github", "{3DEE5360-9038-4207-896B-04B4924C6459}"
+	ProjectSection(SolutionItems) = preProject
+		..\..\.github\workflows\cd.yml = ..\..\.github\workflows\cd.yml
+		..\..\.github\workflows\ci.yml = ..\..\.github\workflows\ci.yml
+		..\..\.github\workflows\pr-develop.yml = ..\..\.github\workflows\pr-develop.yml
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -94,10 +93,9 @@ Global
 		{FC60C68D-8E8D-494B-8D60-0C8D83A472E7} = {248D8229-BABD-4F0A-A9C6-0417B464507B}
 		{13D6A40B-8B8B-41F0-AB62-3F5F1CB58A1B} = {248D8229-BABD-4F0A-A9C6-0417B464507B}
 		{22816913-64D5-4AE8-9B34-6F188B71FAD1} = {248D8229-BABD-4F0A-A9C6-0417B464507B}
-		{3E577755-186F-4E63-8153-B8DE890015C9} = {5CF43F76-BB71-4B5B-B4DF-1C753E042A8F}
-		{2347E3B2-FDDE-427E-A0AE-E4DCD47C2989} = {3E577755-186F-4E63-8153-B8DE890015C9}
 		{5D1C2731-7AAB-4E87-8719-D5368E458025} = {4FDF894E-E171-455F-92BB-327457F46920}
 		{1D88DEF8-8C48-4EDC-BFD9-318031032BA2} = {19FD15E8-35CE-4AA6-8A6A-5388D2F7E4A3}
+		{3DEE5360-9038-4207-896B-04B4924C6459} = {5CF43F76-BB71-4B5B-B4DF-1C753E042A8F}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {61F7FB11-1E47-470C-91E2-47F8143E1572}

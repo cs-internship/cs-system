@@ -5,14 +5,14 @@ This document is for developers who want to contribute.
 
 ## Install .NET SDK
 
-Before you can run a .NET application, you need to install the .NET SDK. To install the latest .NET 7 SDK, follow these steps:
+Before you can run a .NET application, you need to install the .NET SDK. To install the latest .NET 8 SDK, follow these steps:
 
-- Visit the [.NET 7 SDK](https://dotnet.microsoft.com/download/dotnet/7.0) download page.
+- Visit the [.NET 8 SDK](https://dotnet.microsoft.com/download/dotnet/8.0) download page.
 - Choose the SDK that corresponds to your operating system.
 - Click on the download link and run the installer.
 - Follow the instructions in the installer.
 
-You can verify the installation by opening a new command prompt or terminal window and running the command `dotnet --version`. This should display the version of the .NET SDK that you installed. If you installed it correctly, it should show a version number starting with `7.X.X`.
+You can verify the installation by opening a new command prompt or terminal window and running the command `dotnet --version`. This should display the version of the .NET SDK that you installed. If you installed it correctly, it should show a version number starting with `8.X.X`.
 
 ### Development Environment
 You have the flexibility to develop this project using one of the recommended IDEs below, or feel free to use your preferred IDE:
@@ -41,9 +41,7 @@ You have the flexibility to develop this project using one of the recommended ID
 
 2. **Navigate to the project directory**: Use the `cd` command followed by the path of the directory. For example, if the project is in a directory named `src/CrystallineSociety`, you would use the command `cd src/CrystallineSociety`.
 
-3. **Run the web app**: Navigate to the `Client/App` directory within the project directory. Use the `dotnet run` command to start the web app. This command will build the project and start running the web server.
-
-4. **Run the API app**: Navigate to the `Server` directory within the project directory. Use the `dotnet run` command to start the API app. This command will build the project and start running the API server.
+3. **Run the web app**: Navigate to the `Server/CrystallineSociety.Server` directory within the project directory. Use the `dotnet run` command to start the web app. This command will build the project and start running the web server.
 
 # Managing Secrets with User-Secrets
 
@@ -57,10 +55,10 @@ Here's how you can use the secrets manager:
 dotnet tool install --global dotnet-user-secrets
 ```
 
-2. **Navigate to your API project directory**: Use the `cd` command to navigate to the directory of your API project. If your API project is located in a folder named `Server` inside the `src/CrystallineSociety` directory, you would use the following command:
+2. **Navigate to your API project directory**: Use the `cd` command to navigate to the directory of your API project. If your API project is located in a folder named `Server/CrystallineSociety.Server` inside the `src/CrystallineSociety` directory, you would use the following command:
 
 ```bash
-cd src/CrystallineSociety/Server
+cd src/CrystallineSociety/Server/CrystallineSociety.Server
 ```
 
 3. **Initialize the secrets storage**: Run the following command:
