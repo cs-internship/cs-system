@@ -28,7 +28,7 @@ jobs:
         node-version: 18
 
     - name: Install wasm and maui
-      run:  cd src/CrystallineSociety && dotnet workload install maui-android wasm-tools wasm-experimental
+      run:  cd src && dotnet workload install maui-android wasm-tools wasm-experimental
           
     - name: Build
-      run: dotnet build src/CrystallineSociety/CrystallineSociety.sln -c Release -p:EnableWindowsTargeting=true
+      run: dotnet build CrystallineSociety.sln -c Release -p:EnableWindowsTargeting=true
