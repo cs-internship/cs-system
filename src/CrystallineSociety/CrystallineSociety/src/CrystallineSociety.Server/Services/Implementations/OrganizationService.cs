@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using CrystallineSociety.Server.Api.Models;
+using CrystallineSociety.Server.Models;
 using CrystallineSociety.Server.Services.Contracts;
 
 namespace CrystallineSociety.Server.Services.Implementations;

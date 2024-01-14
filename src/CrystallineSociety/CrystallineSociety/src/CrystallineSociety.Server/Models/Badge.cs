@@ -1,6 +1,7 @@
-﻿using CrystallineSociety.Shared.Dtos.BadgeSystem;
+﻿using CrystallineSociety.Server.Api.Models;
+using CrystallineSociety.Shared.Dtos.BadgeSystem;
 
-namespace CrystallineSociety.Server.Api.Models;
+namespace CrystallineSociety.Server.Models;
 
 public class Badge : EntityBase
 {

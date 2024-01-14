@@ -1,10 +1,8 @@
 ﻿using System.ComponentModel;
-
 using Bit.Model.Contracts;
 using CrystallineSociety.Server.Extensions;
-using CrystallineSociety.Shared.Utils;
 
-namespace CrystallineSociety.Server.Api.Models
+namespace CrystallineSociety.Server.Models
 {
     // ToDo: check if INotifyPropertyChanged is needed
     public abstract class EntityBase : IEntity, IEquatable<EntityBase>, INotifyPropertyChanging

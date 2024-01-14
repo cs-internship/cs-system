@@ -1,5 +1,6 @@
 ﻿using CrystallineSociety.Shared.Dtos.Organization;
 using CrystallineSociety.Shared.Dtos.Identity;
+using CrystallineSociety.Client.Core.Controllers;
 
 namespace CrystallineSociety.Client.Core.Components.Layout;
 
@@ -10,6 +11,9 @@ public partial class Header : IDisposable
 
     [Parameter] 
     public EventCallback OnToggleMenu { get; set; }
+
+    [AutoInject]
+    public required IOrganizationController OrganizationController { get; set; }
 
     [CascadingParameter(Name = "AppState")]
     public AppStateDto AppState { get; set; } = default!;

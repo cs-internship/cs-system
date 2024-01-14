@@ -1,4 +1,7 @@
-﻿namespace CrystallineSociety.Server.Api.Models;
+﻿using CrystallineSociety.Server.Api.Models;
+using CrystallineSociety.Server.Models;
+
+namespace CrystallineSociety.Server.Models;
 
 public class ProgramDocument : EntityBase
 {

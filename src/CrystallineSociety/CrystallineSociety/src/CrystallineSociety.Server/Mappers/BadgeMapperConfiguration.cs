@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using CrystallineSociety.Server.Api.Models;
+using CrystallineSociety.Server.Models;
 using CrystallineSociety.Shared.Dtos.BadgeSystem;
 
 namespace CrystallineSociety.Server.Mappers;

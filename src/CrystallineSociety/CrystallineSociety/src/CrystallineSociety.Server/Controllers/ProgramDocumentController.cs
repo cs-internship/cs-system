@@ -1,4 +1,5 @@
 ﻿using CrystallineSociety.Server.Api.Models;
+using CrystallineSociety.Server.Models;
 using CrystallineSociety.Server.Services.Contracts;
 using CrystallineSociety.Shared.Dtos.Organization;
 

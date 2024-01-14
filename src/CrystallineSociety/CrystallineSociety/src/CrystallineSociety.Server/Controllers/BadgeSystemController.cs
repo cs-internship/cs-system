@@ -49,13 +49,13 @@ public partial class BadgeSystemController : AppControllerBase
     /// <summary>
     /// Retrieves a badge bundle from a GitHub repository.
     /// </summary>
-    /// <param name="url">The URL of the GitHub repository.</param>
+    /// <param name="repositoryUrl">The URL of the GitHub repository.</param>
     /// <param name="cancellationToken">Cancellation token.</param>
     /// <returns>The badge bundle from the GitHub repository.</returns>
     [HttpGet]
-    public async Task<BadgeBundleDto> GetBadgeBundleFromGitHub(string url, CancellationToken cancellationToken)
+    public async Task<BadgeBundleDto> GetBadgeBundleFromGitHub(string repositoryUrl, CancellationToken cancellationToken)
     {
-        var badges = await GitHubBadgeService.GetBadgesAsync(url);
+        var badges = await GitHubBadgeService.GetBadgesAsync(repositoryUrl);
         var bundle = new BadgeBundleDto(badges);
         var githubBadgeSystem = BadgeSystemFactory.CreateNew(bundle);
 

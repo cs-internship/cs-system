@@ -1,5 +1,6 @@
 ﻿using System.Collections.ObjectModel;
 using System.Runtime.InteropServices;
+using CrystallineSociety.Server.Models;
 
 namespace CrystallineSociety.Server.Api.Models;
 

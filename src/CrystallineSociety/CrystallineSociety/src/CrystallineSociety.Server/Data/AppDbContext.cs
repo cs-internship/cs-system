@@ -1,4 +1,5 @@
 ﻿using CrystallineSociety.Server.Api.Models;
+using CrystallineSociety.Server.Models;
 using CrystallineSociety.Server.Models.Identity;
 using Microsoft.AspNetCore.DataProtection.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
