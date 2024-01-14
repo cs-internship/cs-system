@@ -12,7 +12,7 @@ public partial class DefaultBadgeSystemPage
 
     protected override async Task OnInitAsync()
     {
-        await LoadDefaultBundleAsync();
+        await PrerenderStateService.GetValue(async() => LoadDefaultBundleAsync());
     }
 
     private async Task LoadDefaultBundleAsync()

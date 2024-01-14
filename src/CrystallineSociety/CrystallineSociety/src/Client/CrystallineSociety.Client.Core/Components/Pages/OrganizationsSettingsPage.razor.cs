@@ -10,7 +10,7 @@ public partial class OrganizationsSettingsPage
     protected override async Task OnInitAsync()
     {
         // Todo : complete this code to return dto not entity.
-        Organizations = await HttpClient.GetFromJsonAsync<List<OrganizationDto>>("Organization/GetOrganizations");
+        Organizations = await PrerenderStateService.GetValue(async () => await HttpClient.GetFromJsonAsync<List<OrganizationDto>>("Organization/GetOrganizations")) ?? new();
         await base.OnInitAsync();
     }
 

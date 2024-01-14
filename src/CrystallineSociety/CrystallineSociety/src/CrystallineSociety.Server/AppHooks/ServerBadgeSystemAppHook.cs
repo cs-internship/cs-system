@@ -1,7 +1,5 @@
 ﻿using CrystallineSociety.Shared.Dtos.BadgeSystem;
 using CrystallineSociety.Shared.Services.Implementations.BadgeSystem;
-using IAppHook = CrystallineSociety.Server.Services.Contracts.IAppHook;
-using IBadgeUtilService = CrystallineSociety.Server.Services.Contracts.IBadgeUtilService;
 
 namespace CrystallineSociety.Server.Api.AppHooks
 {

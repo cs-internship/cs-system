@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.OData;
 using Microsoft.AspNetCore.ResponseCompression;
+using AutoMapper;
 
 namespace CrystallineSociety.Server.Startup;
 
@@ -23,6 +24,8 @@ public static class Services
 
         
         services.AddCors();
+
+        services.AddServerServices();
 
         services
             .AddControllers()
@@ -69,6 +72,8 @@ public static class Services
         services.AddTransient(sp => sp.GetRequiredService<IOptionsSnapshot<AppSettings>>().Value);
 
         services.AddEndpointsApiExplorer();
+        
+        services.AddAutoMapper(typeof(Program).Assembly);
 
         services.AddSwaggerGen();
 

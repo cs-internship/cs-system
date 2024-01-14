@@ -13,7 +13,7 @@ namespace CrystallineSociety.Client.Core.Components
 
         protected override async Task OnInitAsync()
         {
-            _programDocuments = await HttpClient.GetFromJsonAsync($"ProgramDocument/GetProgramDocuments?organizationCode={Organization.Code}", AppJsonContext.Default.ListProgramDocumentDto) ?? _programDocuments;
+            _programDocuments = await PrerenderStateService.GetValue(async () => await HttpClient.GetFromJsonAsync($"ProgramDocument/GetProgramDocuments?organizationCode={Organization.Code}", AppJsonContext.Default.ListProgramDocumentDto)) ?? _programDocuments;
             await base.OnInitAsync();
         }
 

@@ -1,8 +1,6 @@
 ﻿using CrystallineSociety.Server.Services.Contracts;
 using CrystallineSociety.Shared.Dtos.BadgeSystem;
 using CrystallineSociety.Shared.Services.Implementations.BadgeSystem;
-using IBadgeSystemService = CrystallineSociety.Server.Services.Contracts.IBadgeSystemService;
-using IGitHubBadgeService = CrystallineSociety.Server.Services.Contracts.IGitHubBadgeService;
 
 namespace CrystallineSociety.Server.Controllers;
 

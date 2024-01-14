@@ -20,6 +20,8 @@ public static class IServiceCollectionExtensions
         services.TryAddTransient<RetryDelegatingHandler>();
         services.TryAddTransient<ExceptionDelegatingHandler>();
         services.TryAddTransient<HttpClientHandler>();
+        
+        services.TryAddTransient<ILearnerService, ClientLearnerService>();
 
         services.AddScoped<AuthenticationStateProvider, AuthenticationManager>();
         services.AddScoped(sp => (AuthenticationManager)sp.GetRequiredService<AuthenticationStateProvider>());

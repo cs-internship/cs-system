@@ -29,7 +29,7 @@ namespace CrystallineSociety.Client.Core.Components.Pages
                 await HandleNavMenuClickAsync("Home");
             }
 
-            await LoadOrganizationAsync();
+            await PrerenderStateService.GetValue(async () => LoadOrganizationAsync());
 
             await base.OnInitAsync();
         }

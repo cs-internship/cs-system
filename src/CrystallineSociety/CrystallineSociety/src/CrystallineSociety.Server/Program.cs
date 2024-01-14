@@ -1,6 +1,4 @@
-﻿using IAppHook = CrystallineSociety.Server.Services.Contracts.IAppHook;
-
-var builder = WebApplication.CreateBuilder(args);
+﻿var builder = WebApplication.CreateBuilder(args);
 
 builder.Configuration.AddClientConfigurations();
 
@@ -14,8 +12,6 @@ CrystallineSociety.Server.Startup.Services.Add(builder.Services, builder.Environ
 
 var app = builder.Build();
 
-var hooks = app.Services.GetRequiredService<IEnumerable<IAppHook>>();
-
-await Task.WhenAll(from hook in hooks select hook.OnStartup());
+CrystallineSociety.Server.Startup.Middlewares.Use(app, builder.Environment, builder.Configuration);
 
 app.Run();

@@ -13,9 +13,6 @@ using Octokit;
 using Swashbuckle.AspNetCore.SwaggerGen;
 using CrystallineSociety.Server.Models.Identity;
 using CrystallineSociety.Server.Services.Contracts;
-using IAuthTokenProvider = CrystallineSociety.Server.Services.Contracts.IAuthTokenProvider;
-using IGitHubBadgeService = CrystallineSociety.Server.Services.Contracts.IGitHubBadgeService;
-using ILearnerService = CrystallineSociety.Server.Services.Contracts.ILearnerService;
 
 namespace Microsoft.Extensions.DependencyInjection;
 
@@ -137,8 +134,8 @@ public static class IServiceCollectionExtensions
     {
         services.AddSwaggerGen(options =>
         {
-            options.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, "CSTest.Server.xml"));
-            options.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, "CSTest.Shared.xml"));
+            options.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, "CrystallineSociety.Server.xml"));
+            options.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, "CrystallineSociety.Shared.xml"));
 
             options.OperationFilter<ODataOperationFilter>();
 

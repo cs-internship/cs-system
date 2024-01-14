@@ -2,8 +2,6 @@
 using CrystallineSociety.Server.Api.Models;
 using CrystallineSociety.Server.Services.Contracts;
 using Octokit;
-using IGitHubBadgeService = CrystallineSociety.Server.Services.Contracts.IGitHubBadgeService;
-using IProgramDocumentUtilService = CrystallineSociety.Server.Services.Contracts.IProgramDocumentUtilService;
 
 namespace CrystallineSociety.Server.Services.Implementations;
 

@@ -1,7 +1,6 @@
 ﻿using AutoMapper;
 using CrystallineSociety.Server.Api.Models;
 using CrystallineSociety.Server.Services.Contracts;
-using IGitHubBadgeService = CrystallineSociety.Server.Services.Contracts.IGitHubBadgeService;
 
 namespace CrystallineSociety.Server.Services.Implementations;
 
