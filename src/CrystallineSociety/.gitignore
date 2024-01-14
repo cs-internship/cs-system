@@ -213,10 +213,12 @@ ModelManifest.xml
 # VS Code
 .vscode
 
+# .NET Meteor
+.meteor
+
 # Rider
 .idea
 
-dotnet-tools.json
 profile.arm.json
 
 # CrystallineSociety
@@ -225,7 +227,12 @@ profile.arm.json
 /**/*.css
 custom.aprof
 
-/src/Server/Api/Attachments/**/*.*
+/src/CrystallineSociety.Server/Attachments/**/*.*
 
-/src/Client/Shared/wwwroot/scripts/app*.js
-/src/Client/Web/appsettings.json
+/src/Client/CrystallineSociety.Client.Core/wwwroot/scripts/app*.js
+
+/src/CrystallineSociety.Server/*.db*
+
+# Ignore bootstrap folder in web Project
+!/src/Client/CrystallineSociety.Client.Web/wwwroot/lib/js/*.js
+!/src/Client/CrystallineSociety.Client.Web/wwwroot/lib/js/*.css
