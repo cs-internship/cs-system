@@ -1,4 +1,5 @@
-﻿using CrystallineSociety.Server.Services.Contracts;
+﻿using CrystallineSociety.Client.Core.Controllers;
+using CrystallineSociety.Server.Services.Contracts;
 using CrystallineSociety.Shared.Dtos.BadgeSystem;
 using CrystallineSociety.Shared.Services.Implementations.BadgeSystem;
 
@@ -10,7 +11,7 @@ namespace CrystallineSociety.Server.Controllers;
 [Route("api/[controller]/[action]")]
 [ApiController]
 [AllowAnonymous]
-public partial class BadgeSystemController : AppControllerBase
+public partial class BadgeSystemController : AppControllerBase, IBadgeSystemController
 {
     /// <summary>
     /// Badge system factory for creating new badge systems.
@@ -68,10 +69,10 @@ public partial class BadgeSystemController : AppControllerBase
     /// <param name="cancellationToken">Cancellation token.</param>
     /// <returns>All badges.</returns>
     [HttpGet]
-    public IEnumerable<BadgeDto> GetBadges(CancellationToken cancellationToken)
+    public async Task<IEnumerable<BadgeDto>> GetBadges(CancellationToken cancellationToken)
     {
         var badgeService = BadgeSystemFactory.Default();
-        return badgeService.Badges;
+        return await Task.FromResult(badgeService.Badges);
     }
 
     /// <summary>
@@ -80,10 +81,10 @@ public partial class BadgeSystemController : AppControllerBase
     /// <param name="cancellationToken">Cancellation token.</param>
     /// <returns>All badge system validations.</returns>
     [HttpGet]
-    public IEnumerable<BadgeSystemValidationDto> GetBadgeValidations(CancellationToken cancellationToken)
+    public async Task<IEnumerable<BadgeSystemValidationDto>> GetBadgeValidations(CancellationToken cancellationToken)
     {
         var badgeService = BadgeSystemFactory.Default();
-        return badgeService.Validations;
+        return await Task.FromResult(badgeService.Validations);
     }
 
     /// <summary>

@@ -17,7 +17,7 @@ public partial class DefaultBadgeSystemPage
 
     private async Task LoadDefaultBundleAsync()
     {
-        DefaultBundle = await HttpClient.GetFromJsonAsync("BadgeSystem/GetDefaultBadgeBundle", AppJsonContext.Default.BadgeBundleDto);
+        DefaultBundle = await HttpClient.GetFromJsonAsync("api/BadgeSystem/GetDefaultBadgeBundle", AppJsonContext.Default.BadgeBundleDto);
         StateHasChanged();
     }
 }

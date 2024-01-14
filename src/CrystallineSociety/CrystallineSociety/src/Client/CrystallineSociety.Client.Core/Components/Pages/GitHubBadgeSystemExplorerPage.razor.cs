@@ -14,7 +14,7 @@ namespace CrystallineSociety.Client.Core.Components.Pages
 
         private async Task LoadBadgeSystem()
         {
-            Bundle = await HttpClient.GetFromJsonAsync($"BadgeSystem/GetBadgeBundleFromGitHub?url={GitHubUrl}", AppJsonContext.Default.BadgeBundleDto);
+            Bundle = await HttpClient.GetFromJsonAsync($"api/BadgeSystem/GetBadgeBundleFromGitHub?url={GitHubUrl}", AppJsonContext.Default.BadgeBundleDto);
         }
     }
 }

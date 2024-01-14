@@ -52,5 +52,5 @@ public interface IBadgeSystemController : IAppController
     /// <param name="username">The username of the user.</param>
     /// <returns>All earned badges for the user.</returns>
     [HttpGet]
-    Task<List<BadgeCountDto>> GetEarnedBadges(string username);
+    Task<List<BadgeCountDto>> GetEarnedBadgesAsync(string username);
 }

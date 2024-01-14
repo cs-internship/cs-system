@@ -3,6 +3,14 @@
         cssClasses?.forEach(c => document.body.classList.add(c));
         Object.keys(cssVariables).forEach(key => document.body.style.setProperty(key, cssVariables[key]));
     }
+
+    public static goBack(): void {
+        window.history.back();
+    }
+
+    public static removeParametersOfUrl(url: any) {
+        window.history.pushState(null, '', url);
+    }
 }
 
 declare class BitTheme { static init(options: any): void; };

@@ -12,7 +12,7 @@ namespace CrystallineSociety.Client.Core.Controllers;
 public interface IOrganizationController : IAppController
 {
     [HttpPost]
-     Task SyncOrganizationBadges(OrganizationDto organization, CancellationToken cancellationToken = default);
+     Task SyncOrganizationBadgesAsync(OrganizationDto organization, CancellationToken cancellationToken = default);
 
     /// <summary>
     /// Retrieves all education programs.
@@ -20,7 +20,7 @@ public interface IOrganizationController : IAppController
     /// <param name="cancellationToken">Cancellation token.</param>
     /// <returns>All education programs.</returns>
     [HttpGet]
-    Task<List<OrganizationDto>> GetOrganizations(CancellationToken cancellationToken = default);
+    Task<List<OrganizationDto>> GetOrganizationsAsync(CancellationToken cancellationToken = default);
 
     /// <summary>
     /// Retrieves an organization by its code.
@@ -29,5 +29,5 @@ public interface IOrganizationController : IAppController
     /// <param name="cancellationToken">Cancellation token.</param>
     /// <returns>The organization with the specified code.</returns>
     [HttpGet]
-     Task<OrganizationDto> GetOrganizationByCode(string code, CancellationToken cancellationToken = default);
+     Task<OrganizationDto> GetOrganizationByCodeAsync(string code, CancellationToken cancellationToken = default);
 }

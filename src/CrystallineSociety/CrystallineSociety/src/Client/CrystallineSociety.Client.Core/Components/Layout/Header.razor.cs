@@ -24,7 +24,7 @@ public partial class Header : IDisposable
 
     protected override async Task OnInitAsync()
     {
-        Organizations = await PrerenderStateService.GetValue(async () => await HttpClient.GetFromJsonAsync<List<OrganizationDto>>("Organization/GetOrganizations")) ?? new();
+        Organizations = await PrerenderStateService.GetValue(async () => await HttpClient.GetFromJsonAsync<List<OrganizationDto>>("api/Organization/GetOrganizations")) ?? new();
     }
 
     private async Task ToggleMenu()

@@ -12,17 +12,17 @@ namespace CrystallineSociety.Client.Core.Controllers;
 public interface IProgramDocumentController : IAppController
 {
     [HttpGet]
-     Task<List<ProgramDocumentDto>> GetProgramDocuments(string organizationCode, CancellationToken cancellationToken = default);
+     Task<List<ProgramDocumentDto>> GetProgramDocumentsAsync(string organizationCode, CancellationToken cancellationToken = default);
 
     //[HttpPost]
     //Task CreateProgramDocumentAsync(ProgramDocument document, CancellationToken cancellationToken);
 
     [HttpPost]
-     Task SyncOrganizationProgramDocuments(OrganizationDto organization, CancellationToken cancellationToken = default);
+     Task SyncOrganizationProgramDocumentsAsync(OrganizationDto organization, CancellationToken cancellationToken = default);
 
     //[HttpPut("{id}")]
     // Task UpdateProgramDocumentAsync(ProgramDocument document, CancellationToken cancellationToken);
 
     [HttpDelete("{id}")]
-     Task DeleteProgramDocument(Guid id, CancellationToken cancellationToken = default);
+     Task DeleteProgramDocumentAsync(Guid id, CancellationToken cancellationToken = default);
 }

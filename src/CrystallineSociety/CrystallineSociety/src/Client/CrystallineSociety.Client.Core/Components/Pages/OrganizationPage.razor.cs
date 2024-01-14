@@ -36,12 +36,12 @@ namespace CrystallineSociety.Client.Core.Components.Pages
 
         private async Task LoadOrganizationAsync()
         {
-            Organization = await HttpClient.GetFromJsonAsync($"Organization/GetOrganizationByCode?code={OrganizationCode}", AppJsonContext.Default.OrganizationDto);
+            Organization = await HttpClient.GetFromJsonAsync($"api/Organization/GetOrganizationByCode?code={OrganizationCode}", AppJsonContext.Default.OrganizationDto);
         }
 
         private async Task LoadBadgeSystem()
         {
-            Bundle = await HttpClient.GetFromJsonAsync($"BadgeSystem/GetBadgeBundleFromGitHub?url={Organization.BadgeSystemUrl}", AppJsonContext.Default.BadgeBundleDto);
+            Bundle = await HttpClient.GetFromJsonAsync($"api/BadgeSystem/GetBadgeBundleFromGitHub?repositoryUrl={Organization.BadgeSystemUrl}", AppJsonContext.Default.BadgeBundleDto);
         }
 
         private async Task HandleNavMenuClickAsync(string navTitle)

@@ -10,15 +10,15 @@ public partial class OrganizationsSettingsPage
     protected override async Task OnInitAsync()
     {
         // Todo : complete this code to return dto not entity.
-        Organizations = await PrerenderStateService.GetValue(async () => await HttpClient.GetFromJsonAsync<List<OrganizationDto>>("Organization/GetOrganizations")) ?? new();
+        Organizations = await PrerenderStateService.GetValue(async () => await HttpClient.GetFromJsonAsync<List<OrganizationDto>>("api/Organization/GetOrganizations")) ?? new();
         await base.OnInitAsync();
     }
 
     private async Task HandelSyncAsync(OrganizationDto organization)
     {
         IsSyncing = true;
-        await HttpClient.PostAsJsonAsync("Organization/SyncOrganizationBadges", organization);
-        await HttpClient.PostAsJsonAsync("ProgramDocument/SyncOrganizationProgramDocuments", organization);
+        await HttpClient.PostAsJsonAsync("api/Organization/SyncOrganizationBadges", organization);
+        await HttpClient.PostAsJsonAsync("api/ProgramDocument/SyncOrganizationProgramDocuments", organization);
         IsSyncing = false;
     }
 }
