@@ -1,7 +1,24 @@
 @using CrystallineSociety.Shared.Dtos.BadgeSystem
 @inherits AppComponentBase
 
-<div class="container-fluid pb-3">
+<div class="container-fluid pb-6">
+
+    <div class="mt-1 mb-4">
+        <div class="row justify-content-start">
+            <div class="col-md-6" style="max-width: 567px;">
+                <form class="d-flex">
+                    <input class="form-control me-2"
+                           type="search"
+                           placeholder="Search"
+                           aria-label="Search" />
+                    <button class="btn btn-outline-primary" type="submit">
+                        Search
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
     <div class="d-grid gap-3" style="grid-template-columns: 1fr 2fr;">
         <div class="bg-body-tertiary border rounded-3">
             <ProgramDocumentTree ProgramDocuments="_programDocuments" ProgramDocumentCallBack="@GetProgramDocument"></ProgramDocumentTree>
