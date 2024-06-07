@@ -12,10 +12,10 @@ Here is the roadmap for CS System features. We welcome your ideas and suggestion
 
 The CS System documentation is organized as follows:
 
-- [Architecture](/docs/architecture.md): Provides an overview of the overall architecture of CS System.
-- [API](/docs/cs-system-api.md): Describes the REST API that can be used to interact with CS System.
-- [Setup Development Environment](/docs/setup-dev-environment.md): Guides developers on configuring their development environment to contribute to the project.
-- [Models](/docs/models.md): Explains the entity models used in the system.
+- [Architecture](/docs/technical/architecture.md): Provides an overview of the overall architecture of CS System.
+- [API](/docs/technical/cs-system-api.md): Describes the REST API that can be used to interact with CS System.
+- [Setup Development Environment](/docs/technical/setup-dev-environment.md): Guides developers on configuring their development environment to contribute to the project.
+- [Models](/docs/technical/models.md): Explains the entity models used in the system.
 
 Feel free to explore these documents to gain a deeper understanding of CS System.
 
@@ -30,6 +30,6 @@ We welcome contributors to the CS System project! If you're interested in contri
 5. Commit and push your changes to your forked repository.
 6. Submit a pull request to the main repository.
 
-For instructions on setting up your development environment, please refer to the [Setup Development Environment](/docs/setup-dev-environment.md) document.
+For instructions on setting up your development environment, please refer to the [Setup Development Environment](/docs/technical/setup-dev-environment.md) document.
 
 We appreciate your contributions and look forward to working with you!
