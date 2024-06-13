@@ -16,45 +16,66 @@
 <div class="accordion">
     <div class="card">
         <div class="card-header d-flex justify-content-between align-items-center" @onclick="() => ToggleCollapse(1)">
-            <span>۱</span>
-            <span class="icon">@((MarkupString)((activeItem == 1 && !collapsed) ? "<i class='fas fa-angle-up'></i>" : "<i class='fas fa-angle-down'></i>"))</span>
+            <span class="icon-left">@((MarkupString)((activeItem == 1 && !collapsed) ? "<i class='fas fa-angle-up'></i>" : "<i class='fas fa-angle-down'></i>"))</span>
+            <span>Gold</span>
         </div>
         <div class="collapse-container @GetCollapseClass(1)" id="item1">
             <div class="collapse-content card-body">
-                <ul class="sub-items">
-                    <li>۱.۱</li>
-                    <li>۱.۲</li>
-                </ul>
+                @if (Badges != null)
+                {
+                    <ul class="list-group">
+                        @foreach (var badge in Badges)
+                        {
+                             @if(badge.Level.ToString() == "Gold"){
+                             <li class="list-group-item @(ActiveBadgeUrl == badge.Url ? "active": "")" @onclick="() => OnBadgeClick(badge)">@badge.Title</li>
+                            }
+                        }
+                    </ul>
+                }
             </div>
         </div>
     </div>
 
     <div class="card">
         <div class="card-header d-flex justify-content-between align-items-center" @onclick="() => ToggleCollapse(2)">
-            <span>۲</span>
-            <span class="icon">@((MarkupString)((activeItem == 2 && !collapsed) ? "<i class='fas fa-angle-up'></i>" : "<i class='fas fa-angle-down'></i>"))</span>
+            <span class="icon-left">@((MarkupString)((activeItem == 2 && !collapsed) ? "<i class='fas fa-angle-up'></i>" : "<i class='fas fa-angle-down'></i>"))</span>
+            <span>Silver</span>
         </div>
         <div class="collapse-container @GetCollapseClass(2)" id="item2">
             <div class="collapse-content card-body">
-                <ul class="sub-items">
-                    <li>۲.۱</li>
-                    <li>۲.۲</li>
-                </ul>
+                @if (Badges != null)
+                {
+                    <ul class="list-group">
+                        @foreach (var badge in Badges)
+                        {
+                             @if(badge.Level.ToString() == "Silver"){
+                             <li class="list-group-item @(ActiveBadgeUrl == badge.Url ? "active": "")" @onclick="() => OnBadgeClick(badge)">@badge.Title</li>
+                            }
+                        }
+                    </ul>
+                }
             </div>
         </div>
     </div>
 
     <div class="card">
         <div class="card-header d-flex justify-content-between align-items-center" @onclick="() => ToggleCollapse(3)">
-            <span>۳</span>
-            <span class="icon">@((MarkupString)((activeItem == 3 && !collapsed) ? "<i class='fas fa-angle-up'></i>" : "<i class='fas fa-angle-down'></i>"))</span>
+            <span class="icon-left">@((MarkupString)((activeItem == 3 && !collapsed) ? "<i class='fas fa-angle-up'></i>" : "<i class='fas fa-angle-down'></i>"))</span>
+            <span>Bronze</span>
         </div>
         <div class="collapse-container @GetCollapseClass(3)" id="item3">
             <div class="collapse-content card-body">
-                <ul class="sub-items">
-                    <li>۳.۱</li>
-                    <li>۳.۲</li>
-                </ul>
+                @if (Badges != null)
+                {
+                    <ul class="list-group">
+                        @foreach (var badge in Badges)
+                        {
+                            @if(badge.Level.ToString() == "Bronze"){
+                             <li class="list-group-item @(ActiveBadgeUrl == badge.Url ? "active": "")" @onclick="() => OnBadgeClick(badge)">@badge.Title</li>
+                            }
+                        }
+                    </ul>
+                }
             </div>
         </div>
     </div>
@@ -80,5 +101,11 @@
     private string GetCollapseClass(int itemNumber)
     {
         return activeItem == itemNumber && !collapsed ? "show" : "";
+    }
+
+    private void OnSubItemClick(int parentItem, int subItem)
+    {
+        // Handle sub-item click event
+        System.Console.WriteLine($"Parent Item: {parentItem}, Sub Item: {subItem}");
     }
 }

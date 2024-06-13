@@ -18,6 +18,21 @@
     padding-left: 25px; /* Add more space for sub-items */
     list-style-type: disc;
     font-size: 1.1rem; /* Increase bullet size */
+    margin-bottom: 10px; /* Increase the space between sub-items */
+}
+
+.sub-items li {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    padding: 5px 0;
+}
+
+.sub-items li::before {
+    content: '\2022'; /* Unicode for bullet point */
+    color: gray;
+    font-size: 1.5rem; /* Increase bullet size */
+    margin-right: 10px;
 }
 
 .list-group-item {
@@ -39,6 +54,9 @@
     color: black;
     padding: 10px 15px;
     cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
 }
 
 .card-header:hover {
@@ -48,4 +66,9 @@
 .icon {
     font-size: 1.2rem;
     margin-left: auto;
+}
+
+.icon-left {
+    margin-right: 10px;
+    font-size: 1.2rem;
 }
