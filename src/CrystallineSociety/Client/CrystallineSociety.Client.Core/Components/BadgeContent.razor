@@ -6,28 +6,9 @@
     <div class="d-flex align-items-center m-0 p-2 pb-3">
         <h1 class="display-5 col-10 d-flex align-items-center">
             @Badge.Title
-            @if (Badge.Level.ToString() == "Gold")
-            {
-                <i class="fas fa-medal ml-2" style="color: gold;"></i>
-                <h1 class="ml-2">G</h1>
-            }
-            else if (Badge.Level.ToString() == "Silver")
-            {
-                <i class="fas fa-medal ml-2" style="color: silver;"></i>
-                <h1 class="ml-2">S</h1>
-            }
-            else if (Badge.Level.ToString() == "Bronze")
-            {
-                <i class="fas fa-medal ml-2" style="color: #cd7f32;"></i>
-                <h1 class="ml-2">B</h1>
-            }
         </h1>
         
         <div class="d-flex align-items-center ml-auto">
-            <i class="uil uil-bell mr-2"></i>
-            <span class="badge badge-light mr-2">2</span>
-            <i class="fas fa-medal mr-2" style="color: gold;"></i>
-            <i class="fas fa-medal mr-2" style="color: gold; font-size: 24px;"></i>
             <button type="button" class="btn btn-primary">Edit</button>
         </div>
     </div>

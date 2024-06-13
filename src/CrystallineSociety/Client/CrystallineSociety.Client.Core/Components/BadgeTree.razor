@@ -1,15 +1,5 @@
 ﻿@using CrystallineSociety.Shared.Dtos.BadgeSystem
 @inherits AppComponentBase
-
-<!-- @if (Badges != null)
-{
-    <ul class="list-group">
-        @foreach (var badge in Badges)
-        {
-            <li class="list-group-item @(ActiveBadgeUrl == badge.Url ? "active": "")" @onclick="() => OnBadgeClick(badge)">@badge.Title</li>
-        }
-    </ul>
-} -->
 @page "/accordion"
 @using Microsoft.AspNetCore.Components.Web
 
