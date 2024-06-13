@@ -9,3 +9,15 @@
 .Information {
     color: skyblue;
 }
+
+@media (max-width: 768px) {
+    .badge-container {
+        flex-direction: column;
+    }
+
+    .badge-list,
+    .badge-details {
+        width: 100%;
+    }
+}
+

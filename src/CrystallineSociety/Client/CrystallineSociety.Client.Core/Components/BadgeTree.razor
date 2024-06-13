@@ -1,7 +1,7 @@
 ﻿@using CrystallineSociety.Shared.Dtos.BadgeSystem
 @inherits AppComponentBase
 
-@if (Badges != null)
+<!-- @if (Badges != null)
 {
     <ul class="list-group">
         @foreach (var badge in Badges)
@@ -9,4 +9,76 @@
             <li class="list-group-item @(ActiveBadgeUrl == badge.Url ? "active": "")" @onclick="() => OnBadgeClick(badge)">@badge.Title</li>
         }
     </ul>
+} -->
+@page "/accordion"
+@using Microsoft.AspNetCore.Components.Web
+
+<div class="accordion">
+    <div class="card">
+        <div class="card-header d-flex justify-content-between align-items-center" @onclick="() => ToggleCollapse(1)">
+            <span>۱</span>
+            <span class="icon">@((MarkupString)((activeItem == 1 && !collapsed) ? "<i class='fas fa-angle-up'></i>" : "<i class='fas fa-angle-down'></i>"))</span>
+        </div>
+        <div class="collapse-container @GetCollapseClass(1)" id="item1">
+            <div class="collapse-content card-body">
+                <ul class="sub-items">
+                    <li>۱.۱</li>
+                    <li>۱.۲</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-header d-flex justify-content-between align-items-center" @onclick="() => ToggleCollapse(2)">
+            <span>۲</span>
+            <span class="icon">@((MarkupString)((activeItem == 2 && !collapsed) ? "<i class='fas fa-angle-up'></i>" : "<i class='fas fa-angle-down'></i>"))</span>
+        </div>
+        <div class="collapse-container @GetCollapseClass(2)" id="item2">
+            <div class="collapse-content card-body">
+                <ul class="sub-items">
+                    <li>۲.۱</li>
+                    <li>۲.۲</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-header d-flex justify-content-between align-items-center" @onclick="() => ToggleCollapse(3)">
+            <span>۳</span>
+            <span class="icon">@((MarkupString)((activeItem == 3 && !collapsed) ? "<i class='fas fa-angle-up'></i>" : "<i class='fas fa-angle-down'></i>"))</span>
+        </div>
+        <div class="collapse-container @GetCollapseClass(3)" id="item3">
+            <div class="collapse-content card-body">
+                <ul class="sub-items">
+                    <li>۳.۱</li>
+                    <li>۳.۲</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    private int activeItem = -1;
+    private bool collapsed = true;
+
+    private void ToggleCollapse(int itemNumber)
+    {
+        if (activeItem == itemNumber)
+        {
+            collapsed = !collapsed;
+        }
+        else
+        {
+            activeItem = itemNumber;
+            collapsed = false;
+        }
+    }
+
+    private string GetCollapseClass(int itemNumber)
+    {
+        return activeItem == itemNumber && !collapsed ? "show" : "";
+    }
 }

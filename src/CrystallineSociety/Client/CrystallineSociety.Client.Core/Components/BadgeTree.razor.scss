@@ -1,0 +1,51 @@
+.collapse-container {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.5s ease, padding 0.5s ease;
+    padding: 0 15px;
+}
+
+.collapse-container.show {
+    max-height: 500px; /* Set a maximum height large enough to contain the content */
+    padding: 10px 15px;
+}
+
+.collapse-content {
+    padding: 0.5rem 0;
+}
+
+.sub-items {
+    padding-left: 25px; /* Add more space for sub-items */
+    list-style-type: disc;
+    font-size: 1.1rem; /* Increase bullet size */
+}
+
+.list-group-item {
+    cursor: pointer;
+    padding: 10px 15px;
+    border: none;
+}
+
+.card {
+    margin-bottom: 1rem;
+    border: none;
+    border-bottom: 1px solid lightgray; /* Separate items with a light gray line */
+    background-color: white; /* White background */
+    border-radius: 0;
+}
+
+.card-header {
+    background-color: white; /* White background */
+    color: black;
+    padding: 10px 15px;
+    cursor: pointer;
+}
+
+.card-header:hover {
+    background-color: #f8f9fa; /* Slightly darker on hover */
+}
+
+.icon {
+    font-size: 1.2rem;
+    margin-left: auto;
+}

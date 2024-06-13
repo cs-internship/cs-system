@@ -1,10 +1,20 @@
 ﻿@using CrystallineSociety.Shared.Dtos.BadgeSystem
 @inherits AppComponentBase
-
+<!-- 
 <div style="display: flex; gap: 15px;align-items: start;">
     <BadgeTree BadgeBundleDto="Bundle" BadgeDtoCallBack=@GetBadge></BadgeTree>
     <BadgeContent Badge="BadgeDto"></BadgeContent>
 </div>
 <div>
     <BadgeValidation BadgeBundle="Bundle"></BadgeValidation>
+</div> -->
+
+<div class="main-container">
+    <div class="content-container">
+        <BadgeTree BadgeBundleDto="Bundle" BadgeDtoCallBack="@GetBadge"></BadgeTree>
+        <BadgeContent Badge="BadgeDto"></BadgeContent>
+    </div>
+    <div class="validation-container">
+        <BadgeValidation BadgeBundle="Bundle"></BadgeValidation>
+    </div>
 </div>
