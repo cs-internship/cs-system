@@ -4,38 +4,10 @@
 @using Microsoft.AspNetCore.Components.Web
 
 <div class="accordion">
-    <div class="card">
-        <div class="card-header d-flex justify-content-between align-items-center" @onclick="() => ToggleCollapse(1)">
+    <div class="card rounded-0 border-0 border-bottom border-4 mb-3">
+        <div class="card-header bg-white" @onclick="() => ToggleCollapseAccordion(1)">
             <span class="item-label">Gold</span>
-            <span class="icon-right">@((MarkupString)((activeItem == 1 && !collapsed) ? 
-            @"<svg xmlns='http://www.w3.org/2000/svg' height='17' width='10.5' viewBox='0 0 320 512'>
-            <path fill='#c6c5c9' d='M182.6 137.4c-12.5-12.5-32.8-12.5-45.3 0L9.4 265.4c-9.2 9.2-11.9 22.9-6.9 34.9s16.6 19.8 29.6 19.8H288c12.9 0 24.6-7.8 29.6-19.8s2.2-25.7-6.9-34.9L182.6 137.4z'/>
-            </svg>" :
-            @"<svg xmlns='http://www.w3.org/2000/svg' height='17' width='10.5' viewBox='0 0 320 512'>
-            <path fill='#c6c5c9' d='M137.4 374.6c12.5 12.5 32.8 12.5 45.3 0l128-128c9.2-9.2 11.9-22.9 6.9-34.9s-16.6-19.8-29.6-19.8L32 192c-12.9 0-24.6 7.8-29.6 19.8s-2.2 25.7 6.9 34.9l128 128z'/>
-            </svg>" ))</span>
-        </div>
-        <div class="collapse-container @GetCollapseClass(1)" id="item1">
-            <div class="collapse-content card-body">
-                @if (Badges != null)
-                {
-                    <ul class="list-group">
-                        @foreach (var badge in Badges)
-                        {
-                             @if(badge.Level.ToString() == "Gold"){
-                             <li class="list-group-item @(ActiveBadgeUrl == badge.Url ? "active": "")" @onclick="() => OnBadgeClick(badge)">@badge.Title</li>
-                            }
-                        }
-                    </ul>
-                }
-            </div>
-        </div>
-    </div>
-
-    <div class="card">
-        <div class="card-header d-flex justify-content-between align-items-center" @onclick="() => ToggleCollapse(2)">
-            <span class="item-label">Silver</span>
-            <span class="icon-right">@((MarkupString)((activeItem == 2 && !collapsed) ? 
+            <span class="icon-right">@((MarkupString)((activeAccordionItem == 1 && !accordionCollapsed) ? 
             @"<svg xmlns='http://www.w3.org/2000/svg' height='17' width='10.5' viewBox='0 0 320 512'>
             <path fill='#c6c5c9' d='M182.6 137.4c-12.5-12.5-32.8-12.5-45.3 0L9.4 265.4c-9.2 9.2-11.9 22.9-6.9 34.9s16.6 19.8 29.6 19.8H288c12.9 0 24.6-7.8 29.6-19.8s2.2-25.7-6.9-34.9L182.6 137.4z'/>
             </svg>" :
@@ -43,16 +15,14 @@
             <path fill='#c6c5c9' d='M137.4 374.6c12.5 12.5 32.8 12.5 45.3 0l128-128c9.2-9.2 11.9-22.9 6.9-34.9s-16.6-19.8-29.6-19.8L32 192c-12.9 0-24.6 7.8-29.6 19.8s-2.2 25.7 6.9 34.9l128 128z'/>
             </svg>"))</span>
         </div>
-        <div class="collapse-container @GetCollapseClass(2)" id="item2">
-            <div class="collapse-content card-body">
+        <div class="collapse @GetAccordionCollapseClass(1)" id="item1">
+            <div class="card-body px-2 py-2">
                 @if (Badges != null)
                 {
-                    <ul class="list-group">
-                        @foreach (var badge in Badges)
+                    <ul class="list-group border-0">
+                        @foreach (var badge in Badges.Where(b => b.Level == BadgeLevel.Gold))
                         {
-                             @if(badge.Level.ToString() == "Silver"){
-                             <li class="list-group-item @(ActiveBadgeUrl == badge.Url ? "active": "")" @onclick="() => OnBadgeClick(badge)">@badge.Title</li>
-                            }
+                            <li class="list-group-item rounded border-0 @(ActiveBadgeUrl == badge.Url ? "active": "")" @onclick="() => OnBadgeClick(badge)">@badge.Title</li>
                         }
                     </ul>
                 }
@@ -60,27 +30,51 @@
         </div>
     </div>
 
-    <div class="card">
-        <div class="card-header d-flex justify-content-between align-items-center" @onclick="() => ToggleCollapse(3)">
-            <span class="item-label">Bronze</span>
-            <span class="icon-right">@((MarkupString)((activeItem == 3 && !collapsed) ? 
+    <div class="card rounded-0 border-0 border-bottom border-4 mb-3">
+        <div class="card-header bg-white" @onclick="() => ToggleCollapseAccordion(2)">
+            <span class="item-label">Silver</span>
+            <span class="icon-right">@((MarkupString)((activeAccordionItem == 2 && !accordionCollapsed) ? 
             @"<svg xmlns='http://www.w3.org/2000/svg' height='17' width='10.5' viewBox='0 0 320 512'>
             <path fill='#c6c5c9' d='M182.6 137.4c-12.5-12.5-32.8-12.5-45.3 0L9.4 265.4c-9.2 9.2-11.9 22.9-6.9 34.9s16.6 19.8 29.6 19.8H288c12.9 0 24.6-7.8 29.6-19.8s2.2-25.7-6.9-34.9L182.6 137.4z'/>
             </svg>" :
             @"<svg xmlns='http://www.w3.org/2000/svg' height='17' width='10.5' viewBox='0 0 320 512'>
             <path fill='#c6c5c9' d='M137.4 374.6c12.5 12.5 32.8 12.5 45.3 0l128-128c9.2-9.2 11.9-22.9 6.9-34.9s-16.6-19.8-29.6-19.8L32 192c-12.9 0-24.6 7.8-29.6 19.8s-2.2 25.7 6.9 34.9l128 128z'/>
-            </svg>" ))</span>
+            </svg>"))</span>
         </div>
-        <div class="collapse-container @GetCollapseClass(3)" id="item3">
-            <div class="collapse-content card-body">
+        <div class="collapse @GetAccordionCollapseClass(2)" id="item2">
+            <div class="card-body px-2 py-2">
                 @if (Badges != null)
                 {
-                    <ul class="list-group">
-                        @foreach (var badge in Badges)
+                    <ul class="list-group border-0">
+                        @foreach (var badge in Badges.Where(b => b.Level == BadgeLevel.Silver))
                         {
-                             @if(badge.Level.ToString() == "Bronze"){
-                             <li class="list-group-item @(ActiveBadgeUrl == badge.Url ? "active": "")" @onclick="() => OnBadgeClick(badge)">@badge.Title</li>
-                            }
+                            <li class="list-group-item rounded border-0 @(ActiveBadgeUrl == badge.Url ? "active": "")" @onclick="() => OnBadgeClick(badge)">@badge.Title</li>
+                        }
+                    </ul>
+                }
+            </div>
+        </div>
+    </div>
+
+    <div class="card rounded-0 border-0 border-bottom border-4 mb-3">
+        <div class="card-header bg-white" @onclick="() => ToggleCollapseAccordion(3)">
+            <span class="item-label">Bronze</span>
+            <span class="icon-right">@((MarkupString)((activeAccordionItem == 3 && !accordionCollapsed) ? 
+            @"<svg xmlns='http://www.w3.org/2000/svg' height='17' width='10.5' viewBox='0 0 320 512'>
+            <path fill='#c6c5c9' d='M182.6 137.4c-12.5-12.5-32.8-12.5-45.3 0L9.4 265.4c-9.2 9.2-11.9 22.9-6.9 34.9s16.6 19.8 29.6 19.8H288c12.9 0 24.6-7.8 29.6-19.8s2.2-25.7-6.9-34.9L182.6 137.4z'/>
+            </svg>" :
+            @"<svg xmlns='http://www.w3.org/2000/svg' height='17' width='10.5' viewBox='0 0 320 512'>
+            <path fill='#c6c5c9' d='M137.4 374.6c12.5 12.5 32.8 12.5 45.3 0l128-128c9.2-9.2 11.9-22.9 6.9-34.9s-16.6-19.8-29.6-19.8L32 192c-12.9 0-24.6 7.8-29.6 19.8s-2.2 25.7 6.9 34.9l128 128z'/>
+            </svg>"))</span>
+        </div>
+        <div class="collapse @GetAccordionCollapseClass(3)" id="item3">
+            <div class="card-body px-2 py-2">
+                @if (Badges != null)
+                {
+                    <ul class="list-group border-0">
+                        @foreach (var badge in Badges.Where(b => b.Level == BadgeLevel.Bronze))
+                        {
+                            <li class="list-group-item rounded border-0 @(ActiveBadgeUrl == badge.Url ? "active": "")" @onclick="() => OnBadgeClick(badge)">@badge.Title</li>
                         }
                     </ul>
                 }
@@ -90,30 +84,24 @@
 </div>
 
 @code {
-    private int activeItem = -1;
-    private bool collapsed = true;
+    private int activeAccordionItem = -1;
+    private bool accordionCollapsed = true;
 
-    private void ToggleCollapse(int itemNumber)
+    private void ToggleCollapseAccordion(int itemNumber)
     {
-        if (activeItem == itemNumber)
+        if (activeAccordionItem == itemNumber)
         {
-            collapsed = !collapsed;
+            accordionCollapsed = !accordionCollapsed;
         }
         else
         {
-            activeItem = itemNumber;
-            collapsed = false;
+            activeAccordionItem = itemNumber;
+            accordionCollapsed = false;
         }
     }
 
-    private string GetCollapseClass(int itemNumber)
+    private string GetAccordionCollapseClass(int itemNumber)
     {
-        return activeItem == itemNumber && !collapsed ? "show" : "";
-    }
-
-    private void OnSubItemClick(int parentItem, int subItem)
-    {
-        // Handle sub-item click event
-        System.Console.WriteLine($"Parent Item: {parentItem}, Sub Item: {subItem}");
+        return activeAccordionItem == itemNumber && !accordionCollapsed ? "show" : "";
     }
 }
