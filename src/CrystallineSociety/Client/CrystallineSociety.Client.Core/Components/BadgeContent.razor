@@ -3,14 +3,41 @@
 
 @if (Badge != null)
 {
-    <div class="row align-items-center m-0 p-2 pb-3">
-        <h1 class="display-5 col-10">@Badge.Title</h1>
-        <button type="button" class="btn btn-primary col-2">Edit</button>
-    </div>
-    <div style="overflow:auto;width: 50%;max-height:500px;">
-        <BitLabel>Badge Code : @Badge.Code</BitLabel>
-        <BitLabel>Badge Level : @Badge.Level</BitLabel>
-        <BitLabel>Badge Description : @Badge.Description</BitLabel>
+    <div class="bg-body-tertiary border rounded-3 position-relative p-2 ms-0 ms-md-5">
+    <button class="btn btn-primary position-absolute top-0 end-0 m-2">Edit</button>
+
+        <div class="container">
+            <div class="row">
+                <div class="col-12 d-flex justify-content-center">
+                    <div style="background-image: url('https://png.pngtree.com/element_our/20200702/ourmid/pngtree-golden-red-ribbon-badge-illustration-image_2286597.jpg'); background-size: cover; background-position: center; height: 300px; width: 300px;" >
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="d-flex align-items-center justify-content-center">
+            <div class="ml-2 d-flex align-items-center">
+                <h1 class="display-10">@Badge.Title</h1>
+                @RenderSvg(Badge.Level.ToString())
+            </div>
+        </div>
+        <h3 class="p-4 display-10 d-flex align-items-center justify-content-center">
+            @Badge.Description
+        </h3>
     </div>
 }
 
+@code {
+    private RenderFragment RenderSvg(string level) => level switch
+    {
+        "Gold" => @<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" height="20" width="20" class="ms-2 mt-2">
+                        <path fill="#fbc709" d="M211 7.3C205 1 196-1.4 187.6 .8s-14.9 8.9-17.1 17.3L154.7 80.6l-62-17.5c-8.4-2.4-17.4 0-23.5 6.1s-8.5 15.1-6.1 23.5l17.5 62L18.1 170.6c-8.4 2.1-15 8.7-17.3 17.1S1 205 7.3 211l46.2 45L7.3 301C1 307-1.4 316 .8 324.4s8.9 14.9 17.3 17.1l62.5 15.8-17.5 62c-2.4 8.4 0 17.4 6.1 23.5s15.1 8.5 23.5 6.1l62-17.5 15.8 62.5c2.1 8.4 8.7 15 17.1 17.3s17.3-.2 23.4-6.4l45-46.2 45 46.2c6.1 6.2 15 8.7 23.4 6.4s14.9-8.9 17.1-17.3l15.8-62.5 62 17.5c8.4 2.4 17.4 0 23.5-6.1s8.5-15.1 6.1-23.5l-17.5-62 62.5-15.8c8.4-2.1 15-8.7 17.3-17.1s-.2-17.4-6.4-23.4l-46.2-45 46.2-45c6.2-6.1 8.7-15 6.4-23.4s-8.9-14.9-17.3-17.1l-62.5-15.8 17.5-62c2.4-8.4 0-17.4-6.1-23.5s-15.1-8.5-23.5-6.1l-62 17.5L341.4 18.1c-2.1-8.4-8.7-15-17.1-17.3S307 1 301 7.3L256 53.5 211 7.3z"/>
+                    </svg>,
+        "Silver" => @<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" height="20" width="20" class="ms-2 mt-2">
+                        <path fill="#c7c6c6" d="M211 7.3C205 1 196-1.4 187.6 .8s-14.9 8.9-17.1 17.3L154.7 80.6l-62-17.5c-8.4-2.4-17.4 0-23.5 6.1s-8.5 15.1-6.1 23.5l17.5 62L18.1 170.6c-8.4 2.1-15 8.7-17.3 17.1S1 205 7.3 211l46.2 45L7.3 301C1 307-1.4 316 .8 324.4s8.9 14.9 17.3 17.1l62.5 15.8-17.5 62c-2.4 8.4 0 17.4 6.1 23.5s15.1 8.5 23.5 6.1l62-17.5 15.8 62.5c2.1 8.4 8.7 15 17.1 17.3s17.3-.2 23.4-6.4l45-46.2 45 46.2c6.1 6.2 15 8.7 23.4 6.4s14.9-8.9 17.1-17.3l15.8-62.5 62 17.5c8.4 2.4 17.4 0 23.5-6.1s8.5-15.1 6.1-23.5l-17.5-62 62.5-15.8c8.4-2.1 15-8.7 17.3-17.1s-.2-17.4-6.4-23.4l-46.2-45 46.2-45c6.2-6.1 8.7-15 6.4-23.4s-8.9-14.9-17.3-17.1l-62.5-15.8 17.5-62c2.4-8.4 0-17.4-6.1-23.5s-15.1-8.5-23.5-6.1l-62 17.5L341.4 18.1c-2.1-8.4-8.7-15-17.1-17.3S307 1 301 7.3L256 53.5 211 7.3z"/>
+                    </svg>,
+        "Bronze" => @<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" height="20" width="20" class="ms-2 mt-2">
+                        <path fill="#d37536" d="M211 7.3C205 1 196-1.4 187.6 .8s-14.9 8.9-17.1 17.3L154.7 80.6l-62-17.5c-8.4-2.4-17.4 0-23.5 6.1s-8.5 15.1-6.1 23.5l17.5 62L18.1 170.6c-8.4 2.1-15 8.7-17.3 17.1S1 205 7.3 211l46.2 45L7.3 301C1 307-1.4 316 .8 324.4s8.9 14.9 17.3 17.1l62.5 15.8-17.5 62c-2.4 8.4 0 17.4 6.1 23.5s15.1 8.5 23.5 6.1l62-17.5 15.8 62.5c2.1 8.4 8.7 15 17.1 17.3s17.3-.2 23.4-6.4l45-46.2 45 46.2c6.1 6.2 15 8.7 23.4 6.4s14.9-8.9 17.1-17.3l15.8-62.5 62 17.5c8.4 2.4 17.4 0 23.5-6.1s8.5-15.1 6.1-23.5l-17.5-62 62.5-15.8c8.4-2.1 15-8.7 17.3-17.1s-.2-17.4-6.4-23.4l-46.2-45 46.2-45c6.2-6.1 8.7-15 6.4-23.4s-8.9-14.9-17.3-17.1l-62.5-15.8 17.5-62c2.4-8.4 0-17.4-6.1-23.5s-15.1-8.5-23.5-6.1l-62 17.5L341.4 18.1c-2.1-8.4-8.7-15-17.1-17.3S307 1 301 7.3L256 53.5 211 7.3z"/>
+                    </svg>,
+        _ => null
+    };
+}

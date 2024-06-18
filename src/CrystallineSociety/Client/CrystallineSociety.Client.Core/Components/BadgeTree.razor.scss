@@ -1,0 +1,15 @@
+.accordion .collapse {
+    transition: height 0.3s ease;
+}
+.list-group-item {
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.list-group-item:hover {
+    background-color: #f7f2fa;
+}
+
+.list-group-item.active:hover {
+    background-color: #007bff;
+    cursor: default;
+}
