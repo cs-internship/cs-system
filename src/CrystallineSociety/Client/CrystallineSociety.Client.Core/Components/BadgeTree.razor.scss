@@ -2,7 +2,7 @@
     transition: height 0.3s ease;
 }
 .list-group-item {
-    transition: background-color 0.3s ease, color 0.3s ease;
+    transition: background-color 0.15s ease, color 0.15s ease;
 }
 
 .list-group-item:hover {
@@ -14,7 +14,7 @@
     cursor: default;
 }
 .container {
-    min-height: 400px;
+    height: 400px;
     overflow-y: auto;
 }
 

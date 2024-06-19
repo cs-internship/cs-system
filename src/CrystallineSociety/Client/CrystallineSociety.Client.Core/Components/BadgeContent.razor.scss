@@ -1,3 +1,19 @@
-﻿.min-h-100 {
-    min-height: 400px;
+﻿.badge-container {
+    height: 400px;
+    overflow-y: auto;
+}
+
+.badge-image {
+    width: 300px;
+    height: 300px;
+}
+
+.Gold{
+    background: url("images/icons/Gold.png") center/cover no-repeat;
+}
+.Silver {
+    background: url("images/icons/Silver.png") center/cover no-repeat;
+}
+.Bronze {
+    background: url("images/icons/Bronze.png") center/cover no-repeat;
 }
