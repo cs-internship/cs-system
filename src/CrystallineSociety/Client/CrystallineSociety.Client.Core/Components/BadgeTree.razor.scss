@@ -18,6 +18,22 @@
     overflow-y: auto;
 }
 
+.custom-bold {
+    font-weight: bold;
+}
+
+.cursor-pointer {
+    cursor: pointer;
+}
+
 .custom-bg-color {
-    background-color: #f2f2f2 !important;
-  }
+    background-color: #f8f9fa;
+}
+
+.custom-bg-color:hover {
+    background-color: #e0e0e0;
+    transition: background-color 0.3s;
+}
+
+
+
