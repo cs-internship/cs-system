@@ -1,24 +1,22 @@
 ﻿@using CrystallineSociety.Shared.Dtos.BadgeSystem
 @inherits AppComponentBase
 
-<div class="bg-body-tertiary border rounded-3 position-relative p-2 ms-0 ms-md-5 min-h-100">
-<button class="btn btn-primary position-absolute top-0 end-0 m-2">Edit</button>
+<div class="bg-body-tertiary border rounded-3 position-relative p-2 ms-0 ms-md-5 badge-container">
 
     @if (Badge != null)
     {
+        <button class="btn btn-primary position-absolute top-0 end-0 m-2">Edit</button>
         <div class="container">
-            <div class="row">
-                <div class="col-12 d-flex justify-content-center">
-                    <div style="background-image: url('https://png.pngtree.com/element_our/20200702/ourmid/pngtree-golden-red-ribbon-badge-illustration-image_2286597.jpg'); background-size: cover; background-position: center; height: 300px; width: 300px;" >
-                    </div>
+            <div class="col-12 d-flex justify-content-center">
+                <div class="badge-image @(Badge.Level)">
                 </div>
             </div>
         </div>
         <div class="d-flex align-items-center justify-content-center">
             <div class="ml-2 d-flex align-items-center">
 
-                <h1 class="display-10">@Badge.Title</h1>
-                @RenderSvg(Badge.Level.ToString())
+                <h1 class="display-10">@RenderSvg(Badge.Level.ToString())@Badge.Title</h1>
+                
             </div>
         </div>
         <h3 class="p-4 display-10 d-flex align-items-center justify-content-center">
