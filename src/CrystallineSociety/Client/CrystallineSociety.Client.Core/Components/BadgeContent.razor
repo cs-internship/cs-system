@@ -1,11 +1,11 @@
 ﻿@using CrystallineSociety.Shared.Dtos.BadgeSystem
 @inherits AppComponentBase
 
-@if (Badge != null)
-{
-    <div class="bg-body-tertiary border rounded-3 position-relative p-2 ms-0 ms-md-5">
-    <button class="btn btn-primary position-absolute top-0 end-0 m-2">Edit</button>
+<div class="bg-body-tertiary border rounded-3 position-relative p-2 ms-0 ms-md-5 min-h-100">
+<button class="btn btn-primary position-absolute top-0 end-0 m-2">Edit</button>
 
+    @if (Badge != null)
+    {
         <div class="container">
             <div class="row">
                 <div class="col-12 d-flex justify-content-center">
@@ -16,6 +16,7 @@
         </div>
         <div class="d-flex align-items-center justify-content-center">
             <div class="ml-2 d-flex align-items-center">
+
                 <h1 class="display-10">@Badge.Title</h1>
                 @RenderSvg(Badge.Level.ToString())
             </div>
@@ -23,8 +24,11 @@
         <h3 class="p-4 display-10 d-flex align-items-center justify-content-center">
             @Badge.Description
         </h3>
-    </div>
-}
+   
+    } 
+</div>
+    
+
 
 @code {
     private RenderFragment RenderSvg(string level) => level switch
