@@ -6,7 +6,7 @@
 <div class="accordion">
     <div class="bg-body-tertiary border rounded-3 container px-0">
         <div class="card rounded-0 border-0 border-bottom border-4 mb-3 mt-1">
-            <div class="card-header bg-light d-flex justify-content-between" @onclick="() => ToggleCollapseAccordion(1)">
+            <div class="card-header custom-bg-color d-flex justify-content-between" @onclick="() => ToggleCollapseAccordion(1)">
                 <span class="item-label">Gold</span>
                 <span class="icon-right">
                     @((MarkupString)(accordionCollapsed[1] ?
@@ -20,13 +20,13 @@
                 </span>
             </div>
             <div class="collapse @GetAccordionCollapseClass(1)" id="item1">
-                <div class="card-body px-2 py-2">
+                <div class="card-body p-2 pb-0">
                     @if (Badges != null)
                     {
                         <ul class="list-group border-0">
                             @foreach (var badge in Badges.Where(b => b.Level == BadgeLevel.Gold))
                             {
-                                <li class="list-group-item rounded border-0 @(ActiveBadgeUrl == badge.Url ? "active": "")" @onclick="() => OnBadgeClick(badge)">@badge.Title</li>
+                                <li class="list-group-item rounded border-0 mb-2 @(ActiveBadgeUrl == badge.Url ? "active": "")" @onclick="() => OnBadgeClick(badge)">@badge.Title</li>
                             }
 
                         </ul>
@@ -36,7 +36,7 @@
         </div>
 
         <div class="card rounded-0 border-0 border-bottom border-4 mb-3">
-            <div class="card-header bg-light d-flex justify-content-between" @onclick="() => ToggleCollapseAccordion(2)">
+            <div class="card-header custom-bg-color d-flex justify-content-between" @onclick="() => ToggleCollapseAccordion(2)">
                 <span class="item-label">Silver</span>
                 <span class="icon-right">
                     @((MarkupString)(accordionCollapsed[2] ?
@@ -50,13 +50,13 @@
                 </span>
             </div>
             <div class="collapse @GetAccordionCollapseClass(2)" id="item2">
-                <div class="card-body px-2 py-2">
+                <div class="card-body p-2 pb-0">
                     @if (Badges != null)
                     {
                         <ul class="list-group border-0">
                             @foreach (var badge in Badges.Where(b => b.Level == BadgeLevel.Silver))
                             {
-                                <li class="list-group-item rounded border-0 @(ActiveBadgeUrl == badge.Url ? "active": "")" @onclick="() => OnBadgeClick(badge)">@badge.Title</li>
+                                <li class="list-group-item rounded border-0 mb-2 @(ActiveBadgeUrl == badge.Url ? "active": "")" @onclick="() => OnBadgeClick(badge)">@badge.Title</li>
                             }
 
                         </ul>
@@ -66,7 +66,7 @@
         </div>
 
 <div class="card rounded-0 border-0 border-bottom border-4 mb-1">
-            <div class="card-header bg-light d-flex justify-content-between" @onclick="() => ToggleCollapseAccordion(3)">
+            <div class="card-header custom-bg-color d-flex justify-content-between" @onclick="() => ToggleCollapseAccordion(3)">
                 <span class="item-label">Bronze</span>
                 <span class="icon-right">@((MarkupString)(accordionCollapsed[3] ? 
                 @"<svg xmlns='http://www.w3.org/2000/svg' height='17' width='10.5' viewBox='0 0 320 512'>
@@ -77,10 +77,10 @@
                 </svg>"))</span>
             </div>
             <div class="collapse @GetAccordionCollapseClass(3)" id="item3">
-                <div class="card-body px-2 py-2">
+                <div class="card-body p-2 pb-0">
                     @if (Badges != null)
                     {
-                        <ul class="list-group border-0">
+                        <ul class="list-group border-0 mb-2">
                             @foreach (var badge in Badges.Where(b => b.Level == BadgeLevel.Bronze))
                             {
                                 <li class="list-group-item rounded border-0 @(ActiveBadgeUrl == badge.Url ? "active": "")" @onclick="() => OnBadgeClick(badge)">@badge.Title</li>
