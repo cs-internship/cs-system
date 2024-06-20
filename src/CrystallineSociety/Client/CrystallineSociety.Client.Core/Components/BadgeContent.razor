@@ -9,14 +9,13 @@
         <div class="row d-flex align-items-center">
             <div class="container">
                 <div class="col-12 d-flex justify-content-center">
-                    <div class="badge-image @(Badge.Level)">
-                    </div>
+                    <div class="badge-image @(Badge.Level)"></div>
                 </div>
             </div>
             <div class="d-flex align-items-center justify-content-center">
                 <div class="ml-2 d-flex align-items-center">
                     @RenderSvg(Badge.Level.ToString())
-                    <h1>@Badge.Title</h1>
+                    <h1 class="display-4 fw-bold">@Badge.Title</h1>
                 </div>
             </div>
         </div>

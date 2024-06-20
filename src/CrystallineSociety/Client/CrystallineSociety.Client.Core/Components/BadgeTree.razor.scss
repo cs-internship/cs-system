@@ -1,6 +1,7 @@
 .accordion .collapse {
     transition: height 0.3s ease;
 }
+
 .list-group-item {
     transition: background-color 0.15s ease, color 0.15s ease;
 }
@@ -13,13 +14,10 @@
     background-color: #007bff;
     cursor: default;
 }
+
 .container {
     height: 400px;
     overflow-y: auto;
-}
-
-.custom-bold {
-    font-weight: bold;
 }
 
 .cursor-pointer {
@@ -27,13 +25,68 @@
 }
 
 .custom-bg-color {
-    background-color: #f8f9fa;
+    background-color: #f0f0f0;
+    transition: background-color 0.2s;
 }
 
 .custom-bg-color:hover {
-    background-color: #e0e0e0;
-    transition: background-color 0.3s;
+    background-color: #eaeaea;
 }
 
+.card {
+    border-radius: 0 !important;
+    border: none;
+}
 
+.card-header {
+    border-radius: 0 !important;
+}
 
+/*.arrow-up {
+    margin-top: 6px;
+    width: 12px;
+    height: 12px;
+    background: url("./images/icons/arrow-up.svg") center/cover no-repeat;
+}
+
+.arrow-down {
+    margin-top: 6px;
+    width: 12px;
+    height: 12px;
+    background: url("./images/icons/arrow-down.svg") center/cover no-repeat;
+}*/
+
+.collapse {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.5s ease-out;
+}
+
+.collapse.show {
+    max-height: 500px;
+}
+.arrow {
+    margin-top: 6px;
+    width: 12px;
+    height: 12px;
+    background: url("./images/icons/arrow-down.svg") center/cover no-repeat;
+    transition: transform 0.3s;
+}
+
+.arrow-down {
+    transform: rotate(0deg);
+}
+
+.arrow-up {
+    transform: rotate(180deg);
+}
+
+.collapse {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.5s ease-out;
+}
+
+.collapse.show {
+    max-height: 500px; /* Adjust this value based on your content */
+}
