@@ -2,8 +2,8 @@
 @page "/accordion"
 @using Microsoft.AspNetCore.Components.Web
 
-<div class="accordion">
-    <div class="bg-body-tertiary border rounded-3 container px-0">
+<div class="border rounded-3" style="height: 400px; overflow: auto">
+    <div class="accordion br">
         @if (Badges == null)
         {
             <div class="d-flex justify-content-center align-items-center" style="height: 100px;">
@@ -14,62 +14,42 @@
         }
         else
         {
-            <div class="card border-bottom cursor-pointer">
-                <div class="card-header custom-bg-color d-flex justify-content-between" @onclick="() => ToggleCollapseAccordion(1)">
-                    <span class="item-label fw-bold">Gold</span>
-                    <span class="icon-right">
-                        <div class="arrow @(accordionCollapsed[1] ? "arrow-down" : "arrow-up")"></div>
-                    </span>
-                </div>
-                <div class="collapse @(GetAccordionCollapseClass(1))" id="item1">
-                    <div class="card-body p-2 pb-0">
-                        <ul class="list-group border-0">
-                            @foreach (var badge in Badges.Where(b => b.Level == BadgeLevel.Gold))
-                            {
-                                <li class="list-group-item rounded border-0 mt-0 mb-2 cursor-pointer @(ActiveBadgeUrl == badge.Url ? "active": "")" @onclick="() => OnBadgeClick(badge)">@badge.Title</li>
-                            }
-                        </ul>
-                    </div>
-                </div>
-            </div>
+            @foreach (var level in BadgeLevels.Select((value, index) => new { value, index }))
+            {
+                var levelName = Enum.GetName(typeof(BadgeLevel), level.value);
+                var levelId = level.index + 1;
 
-            <div class="card rounded-0 border-bottom cursor-pointer">
-                <div class="card-header custom-bg-color d-flex justify-content-between" @onclick="() => ToggleCollapseAccordion(2)">
-                    <span class="item-label fw-bold">Silver</span>
-                    <span class="icon-right">
-                        <div class="arrow @(accordionCollapsed[2] ? "arrow-down" : "arrow-up")"></div>
-                    </span>
-                </div>
-                <div class="collapse @(GetAccordionCollapseClass(2))" id="item2">
-                    <div class="card-body p-2 pb-0">
-                        <ul class="list-group border-0">
-                            @foreach (var badge in Badges.Where(b => b.Level == BadgeLevel.Silver))
-                            {
-                                <li class="list-group-item rounded border-0 mt-0 mb-2 cursor-pointer @(ActiveBadgeUrl == badge.Url ? "active": "")" @onclick="() => OnBadgeClick(badge)">@badge.Title</li>
-                            }
-                        </ul>
+                <div class="accordion-item" style="border-bottom-left-radius: 0; border-bottom-right-radius: 0;">
+                    <h2 class="accordion-header" id="heading@(levelId)" style="border-bottom-left-radius: 0; border-bottom-right-radius: 0;">
+                        <button class="accordion-button collapsed"
+                                style="border-bottom-left-radius: 0; border-bottom-right-radius: 0;"
+                                type="button"
+                                data-bs-toggle="collapse"
+                                data-bs-target="#collapse@(levelId)"
+                                aria-expanded="false"
+                                aria-controls="collapse@(levelId)">
+                            <div class="fw-bold">@levelName</div>
+                        </button>
+                    </h2>
+                    <div id="collapse@(levelId)"
+                         class="accordion-collapse collapse"
+                         aria-labelledby="heading@(levelId)"
+                         data-bs-parent="#accordionExample">
+                        <div class="accordion-body p-2 pb-1">
+                            <ul class="list-group border-0">
+                                @foreach (var badge in Badges.Where(b => b.Level == level.value))
+                                {
+                                    <li class="list-group-item rounded border-0 mt-0 mb-1 cursor-pointer @(ActiveBadgeUrl == badge.Url ? "active" : "")"
+                                        @onclick="() => OnBadgeClick(badge)"
+                                        style="cursor: @(ActiveBadgeUrl == badge.Url ? "default" : "pointer"); transition: 0.2s">
+                                        @badge.Title
+                                    </li>
+                                }
+                            </ul>
+                        </div>
                     </div>
                 </div>
-            </div>
-
-            <div class="card rounded-0 border-bottom cursor-pointer">
-                <div class="card-header custom-bg-color d-flex justify-content-between" @onclick="() => ToggleCollapseAccordion(3)">
-                    <span class="item-label fw-bold">Bronze</span>
-                    <span class="icon-right">
-                        <div class="arrow @(accordionCollapsed[3] ? "arrow-down" : "arrow-up")"></div>
-                    </span>
-                </div>
-                <div class="collapse @(GetAccordionCollapseClass(3))" id="item3">
-                    <div class="card-body p-2 pb-0">
-                        <ul class="list-group border-0 mb-2">
-                            @foreach (var badge in Badges.Where(b => b.Level == BadgeLevel.Bronze))
-                            {
-                                <li class="list-group-item rounded border-0 mt-0 mb-2 cursor-pointer @(ActiveBadgeUrl == badge.Url ? "active": "")" @onclick="() => OnBadgeClick(badge)">@badge.Title</li>
-                            }
-                        </ul>
-                    </div>
-                </div>
-            </div>
+            }
         }
     </div>
 </div>

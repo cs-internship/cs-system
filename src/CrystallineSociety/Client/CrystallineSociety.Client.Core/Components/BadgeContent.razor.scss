@@ -1,19 +1,37 @@
 ﻿.badge-container {
     height: 400px;
+    overflow-y: auto;
+    overflow-x: hidden;
 }
 
-.badge-image {
+.badge-img {
     width: 200px;
     height: 200px;
-    margin-bottom: 40px;
+    margin: 10px 0 10px;
 }
 
-.Gold {
-    background: url("images/icons/Gold.png") center/cover no-repeat;
+.badge-icon {
+    width: 30px;
+    height: 30px;
+    margin: 16px 6px 0 0;
 }
-.Silver {
-    background: url("images/icons/Silver.png") center/cover no-repeat;
+
+.Gold-img {
+    background: url("images/icons/gold-img.png") center/cover no-repeat;
 }
-.Bronze {
-    background: url("images/icons/Bronze.png") center/cover no-repeat;
+.Silver-img {
+    background: url("images/icons/silver-img.png") center/cover no-repeat;
+}
+.Bronze-img {
+    background: url("images/icons/bronze-img.png") center/cover no-repeat;
+}
+
+.Gold-icon {
+    background: url("images/icons/gold-icon.svg") center/cover no-repeat;
+}
+.Silver-icon {
+    background: url("images/icons/silver-icon.svg") center/cover no-repeat;
+}
+.Bronze-icon {
+    background: url("images/icons/bronze-icon.svg") center/cover no-repeat;
 }
