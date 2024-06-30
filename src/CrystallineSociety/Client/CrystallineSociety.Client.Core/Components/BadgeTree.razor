@@ -3,90 +3,70 @@
 @page "/accordion"
 @using Microsoft.AspNetCore.Components.Web
 
-<div class="accordion">
-    <div class="bg-body-tertiary border rounded-3 container px-0">
-        <div class="card rounded-0 border-0 border-bottom border-4 mb-3 cursor-pointer">
-            <div class="card-header custom-bg-color d-flex justify-content-between" @onclick="() => ToggleCollapseAccordion(1)">
-                <span class="item-label custom-bold">Gold</span>
-                <span class="icon-right">
-                    @((MarkupString)(accordionCollapsed[1] ?
-                    @"<svg xmlns='http://www.w3.org/2000/svg' height='17' width='10.5' viewBox='0 0 320 512'>
-                    <path fill='#c6c5c9' d='M137.4 374.6c12.5 12.5 32.8 12.5 45.3 0l128-128c9.2-9.2 11.9-22.9 6.9-34.9s-16.6-19.8-29.6-19.8L32 192c-12.9 0-24.6 7.8-29.6 19.8s-2.2 25.7 6.9 34.9l128 128z'/>
-                    </svg>":
-                    @"<svg xmlns='http://www.w3.org/2000/svg' height='17' width='10.5' viewBox='0 0 320 512'>
-                    <path fill='#c6c5c9' d='M182.6 137.4c-12.5-12.5-32.8-12.5-45.3 0L9.4 265.4c-9.2 9.2-11.9 22.9-6.9 34.9s16.6 19.8 29.6 19.8H288c12.9 0 24.6-7.8 29.6-19.8s2.2-25.7-6.9-34.9L182.6 137.4z'/>
-                    </svg>"
-                    ))
-                </span>
-            </div>
-            <div class="collapse @GetAccordionCollapseClass(1)" id="item1">
-                <div class="card-body p-2 pb-0">
-                    @if (Badges != null)
-                    {
-                        <ul class="list-group border-0">
-                            @foreach (var badge in Badges.Where(b => b.Level == BadgeLevel.Gold))
-                            {
-                                <li class="list-group-item rounded border-0 mb-2 cursor-pointer @(ActiveBadgeUrl == badge.Url ? "active": "")" @onclick="() => OnBadgeClick(badge)">@badge.Title</li>
-                            }
-                        </ul>
-                    }
-                </div>
-            </div>
-        </div>
-
-        <div class="card rounded-0 border-0 border-bottom border-4 mb-3 cursor-pointer">
-            <div class="card-header custom-bg-color d-flex justify-content-between" @onclick="() => ToggleCollapseAccordion(2)">
-                <span class="item-label custom-bold">Silver</span>
-                <span class="icon-right">
-                    @((MarkupString)(accordionCollapsed[2] ?
-                    @"<svg xmlns='http://www.w3.org/2000/svg' height='17' width='10.5' viewBox='0 0 320 512'>
-                    <path fill='#c6c5c9' d='M137.4 374.6c12.5 12.5 32.8 12.5 45.3 0l128-128c9.2-9.2 11.9-22.9 6.9-34.9s-16.6-19.8-29.6-19.8L32 192c-12.9 0-24.6 7.8-29.6 19.8s-2.2 25.7 6.9 34.9l128 128z'/>
-                    </svg>" :
-                     @"<svg xmlns='http://www.w3.org/2000/svg' height='17' width='10.5' viewBox='0 0 320 512'>
-                    <path fill='#c6c5c9' d='M182.6 137.4c-12.5-12.5-32.8-12.5-45.3 0L9.4 265.4c-9.2 9.2-11.9 22.9-6.9 34.9s16.6 19.8 29.6 19.8H288c12.9 0 24.6-7.8 29.6-19.8s2.2-25.7-6.9-34.9L182.6 137.4z'/>
-                    </svg>"
-                    ))
-                </span>
-            </div>
-            <div class="collapse @GetAccordionCollapseClass(2)" id="item2">
-                <div class="card-body p-2 pb-0">
-                    @if (Badges != null)
-                    {
-                        <ul class="list-group border-0">
-                            @foreach (var badge in Badges.Where(b => b.Level == BadgeLevel.Silver))
-                            {
-                                <li class="list-group-item rounded border-0 mb-2 cursor-pointer @(ActiveBadgeUrl == badge.Url ? "active": "")" @onclick="() => OnBadgeClick(badge)">@badge.Title</li>
-                            }
-                        </ul>
-                    }
-                </div>
-            </div>
-        </div>
-
-        <div class="card rounded-0 border-0 border-bottom border-4 mb-1 cursor-pointer">
-            <div class="card-header custom-bg-color d-flex justify-content-between" @onclick="() => ToggleCollapseAccordion(3)">
-                <span class="item-label custom-bold">Bronze</span>
-                <span class="icon-right">@((MarkupString)(accordionCollapsed[3] ? 
-                @"<svg xmlns='http://www.w3.org/2000/svg' height='17' width='10.5' viewBox='0 0 320 512'>
-                <path fill='#c6c5c9' d='M137.4 374.6c12.5 12.5 32.8 12.5 45.3 0l128-128c9.2-9.2 11.9-22.9 6.9-34.9s-16.6-19.8-29.6-19.8L32 192c-12.9 0-24.6 7.8-29.6 19.8s-2.2 25.7 6.9 34.9l128 128z'/>
-                </svg>":
-                @"<svg xmlns='http://www.w3.org/2000/svg' height='17' width='10.5' viewBox='0 0 320 512'>
-                <path fill='#c6c5c9' d='M182.6 137.4c-12.5-12.5-32.8-12.5-45.3 0L9.4 265.4c-9.2 9.2-11.9 22.9-6.9 34.9s16.6 19.8 29.6 19.8H288c12.9 0 24.6-7.8 29.6-19.8s2.2-25.7-6.9-34.9L182.6 137.4z'/>
-                </svg>"))</span>
-            </div>
-            <div class="collapse @GetAccordionCollapseClass(3)" id="item3">
-                <div class="card-body p-2 pb-0">
-                    @if (Badges != null)
-                    {
-                        <ul class="list-group border-0 mb-2">
-                            @foreach (var badge in Badges.Where(b => b.Level == BadgeLevel.Bronze))
-                            {
-                                <li class="list-group-item rounded border-0 mb-2 cursor-pointer @(ActiveBadgeUrl == badge.Url ? "active": "")" @onclick="() => OnBadgeClick(badge)">@badge.Title</li>
-                            }
-                                                 </ul>
-                    }
-                </div>
-            </div>
-        </div>
+<div class="accordion accordion-flush" id="accordionFlushExample">
+  <form class="d-flex mb-3">
+      <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search" />
+      <button class="btn btn-outline-primary" type="submit">
+          Search
+      </button>
+  </form>
+  <div class="accordion-item">
+    <h2 class="accordion-header d-flex justify-content-between align-items-center">
+      <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapseOne" aria-expanded="false" aria-controls="flush-collapseOne">
+        Folder #1
+      </button>
+      <i class="fas fa-chevron-right"></i>
+    </h2>
+    <div id="flush-collapseOne" class="accordion-collapse collapse" data-bs-parent="#accordionFlushExample">
+      @if (Badges != null)
+      {
+          <ul class="list-group list-group-flush">
+              @foreach (var badge in Badges.Where(b => b.Level == BadgeLevel.Gold))
+              {
+                  <li class="list-group-item @(ActiveBadgeUrl == badge.Url ? "active": "")" @onclick="() => OnBadgeClick(badge)">@badge.Title</li>
+              }
+          </ul>
+      }
     </div>
+  </div>
+  <div class="accordion-item">
+    <h2 class="accordion-header d-flex justify-content-between align-items-center">
+      <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapseTwo" aria-expanded="false" aria-controls="flush-collapseTwo">
+        Folder #2
+      </button>
+      <i class="fas fa-chevron-right"></i>
+    </h2>
+    <div id="flush-collapseTwo" class="accordion-collapse collapse" data-bs-parent="#accordionFlushExample">
+      @if (Badges != null)
+      {
+          <ul class="list-group list-group-flush">
+              @foreach (var badge in Badges.Where(b => b.Level == BadgeLevel.Gold))
+              {
+                  <li class="list-group-item @(ActiveBadgeUrl == badge.Url ? "active": "")" @onclick="() => OnBadgeClick(badge)">@badge.Title</li>
+              }
+          </ul>
+      }
+    </div>
+  </div>
+  <div class="accordion-item">
+    <h2 class="accordion-header d-flex justify-content-between align-items-center">
+      <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapseThree" aria-expanded="false" aria-controls="flush-collapseThree">
+        Folder #3
+      </button>
+      <i class="fas fa-chevron-right"></i>
+    </h2>
+    <div id="flush-collapseThree" class="accordion-collapse collapse" data-bs-parent="#accordionFlushExample">
+      @if (Badges != null)
+      {
+          <ul class="list-group list-group-flush">
+              @foreach (var badge in Badges.Where(b => b.Level == BadgeLevel.Gold))
+              {
+                  <li class="list-group-item @(ActiveBadgeUrl == badge.Url ? "active": "")" @onclick="() => OnBadgeClick(badge)">@badge.Title</li>
+              }
+          </ul>
+      }
+    </div>
+  </div>
 </div>
+
+
