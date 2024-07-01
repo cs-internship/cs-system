@@ -1,13 +1,10 @@
-﻿@using CrystallineSociety.Shared.Dtos.BadgeSystem
-@inherits AppComponentBase
-
-<div class="bg-body-tertiary border rounded-3 position-relative p-2 ms-0 ms-md-2 badge-container">
+﻿<div class="bg-body-tertiary border rounded-3 position-relative p-2 ms-0 ms-md-2 badge-container" style="overflow: hidden;">
     @if (Badge != null)
     {
         <div class="position-sticky top-0 bg-body-tertiary pb-3">
             <div class="d-flex pt-1">
                 <span class="badge-image @(Badge.Level)"></span>
-                <span>Title Description</span>
+                <h5>@Badge.Title . @Badge.Description</h5>
             </div>
             <hr class="p-0">
 
@@ -25,12 +22,21 @@
                     <a class="nav-link disabled" aria-disabled="true">Disabled</a>
                 </li>
             </ul>
+
+            <ul class="nav nav-pills pt-3">
+                <li class="nav-item">
+                    <a class="nav-link active" aria-current="page" href="#">Main Method</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link disabled" aria-disabled="true">Super Method</a>
+                </li>
+            </ul>
         </div>
 
-        <div class="content-container" style="height: calc(100vh - 350px); overflow-y: auto; overflow-x: hidden;">
+        <div class="content-container pt-3" style="height: calc(100vh - 350px); overflow-y: auto; overflow-x: hidden;">
             <div class="row">
                 <div class="col-md-6">
-                    <div class="p-3 border bg-light mb-3">
+                    <div class="p-3 border bg-light mb-3" style="height: 100%;">
                         <h5>Row 1 of Column 1</h5>
                         <p>This is the first row of the first column.</p>
                         <p>This is the first row of the first column.</p>
@@ -41,13 +47,13 @@
                         <p>This is the first row of the first column.</p>
                         <p>This is the first row of the first column.</p>
                     </div>
-                    <div class="p-3 border bg-light">
+                    <div class="p-3 border bg-light" style="height: 100%;">
                         <h5>Row 2 of Column 1</h5>
                         <p>This is the second row of the first column.</p>
                     </div>
                 </div>
                 <div class="col-md-6">
-                    <div class="p-3 border bg-light">
+                    <div class="p-3 border bg-light" style="height: 100%;">
                         <h5>Column 2</h5>
                         <p>This is the content of the second column.</p>
                     </div>
