@@ -1,4 +1,5 @@
 ﻿using CrystallineSociety.Shared.Dtos.BadgeSystem;
+using Microsoft.AspNetCore.Components;
 
 namespace CrystallineSociety.Client.Core.Components
 {
