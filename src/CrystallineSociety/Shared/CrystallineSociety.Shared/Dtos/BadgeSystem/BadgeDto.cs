@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 
 namespace CrystallineSociety.Shared.Dtos.BadgeSystem
 {
@@ -29,30 +24,26 @@ namespace CrystallineSociety.Shared.Dtos.BadgeSystem
     public class AppraisalMethod
     {
         public string Title { get; set; } = "Default";
-
         public List<BadgeRequirement> BadgeRequirements { get; set; } = new();
-
         public List<ActivityRequirement> ActivityRequirements { get; set; } = new();
         public List<ApprovingStep> ApprovingSteps { get; set; } = new();
     }
 
-    public class ApprovingStep
+    public class ApprovingStep : IRequirement
     {
         public int Step { get; set; }
         public string Title { get; set; } = default!;
-
         public List<BadgeRequirement> ApproverRequiredBadges { get; set; } = new();
         public int RequiredApprovalCount { get; set; }
-
+        public string RequirementStr { get; set; } = default!;
     }
 
-    public class ActivityRequirement
+    public class ActivityRequirement : IRequirement
     {
         public ActivityRequirement(string requirementStr, Dictionary<string, int> requirementOptions)
         {
             RequirementStr = requirementStr;
             RequirementOptions = requirementOptions;
-
         }
 
         public string RequirementStr { get; set; }
@@ -60,7 +51,7 @@ namespace CrystallineSociety.Shared.Dtos.BadgeSystem
         public Dictionary<string, int> RequirementOptions { get; set; }
     }
 
-    public class BadgeRequirement
+    public class BadgeRequirement : IRequirement
     {
         public BadgeRequirement(string requirementStr, Dictionary<string, int> requirementOptions)
         {
@@ -70,11 +61,15 @@ namespace CrystallineSociety.Shared.Dtos.BadgeSystem
 
         public string RequirementStr { get; set; }
         [JsonIgnore]
-        public Dictionary<string, int> RequirementOptions { get; set; }
+        public Dictionary<string, int> RequirementOptions { get; set; } = new();
     }
 
     public enum BadgeLevel
     {
         Bronze, Silver, Gold
     }
+}
+public interface IRequirement
+{
+    string RequirementStr { get; }
 }

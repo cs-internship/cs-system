@@ -1,4 +1,5 @@
 ﻿@using CrystallineSociety.Shared.Dtos.BadgeSystem
+@using CrystallineSociety.Client.Core.Components
 @inherits AppComponentBase
 
 <div class="border rounded-3 position-relative p-2 ms-0 ms-md-5 badge-container" style="background: @(Badge?.Title == null ? "#f8f9fa" : "#fff")">
@@ -21,5 +22,59 @@
                 <h3 class="p-4 text-center">@Badge.Description</h3>
             </div>
         </div>
+
+        @foreach (var appraisalMethod in Badge?.AppraisalMethods ?? [])
+        {
+            <div class="appraisal-method">
+                <h3>@appraisalMethod.Title</h3>
+
+                <div class="badge-requirements">
+                    <h5>Badge Requirements:</h5>
+                    <ul>
+                        @foreach (var badgeRequirement in appraisalMethod.BadgeRequirements)
+                        {
+                            <BadgeRequirement Requirement="badgeRequirement" />
+                        }
+                    </ul>
+                </div>
+                <hr />
+
+                <div class="activity-requirements">
+                    <h5>Activity Requirements:</h5>
+                    <ul>
+                        @foreach (var activityRequirement in appraisalMethod.ActivityRequirements)
+                        {
+                            <BadgeRequirement Requirement="activityRequirement" />
+                        }
+                    </ul>
+                    
+                </div>
+                <hr />
+
+                <div class="approving-steps">
+                    <h5>Approving Steps:</h5>
+                    @foreach (var approvingStep in appraisalMethod.ApprovingSteps)
+                    {
+                        <div class="approving-step">
+                            <div>Step: @approvingStep.Step</div>
+                            <div>Title: @approvingStep.Title</div>
+
+                            <div class="approver-required-badges">
+                                <h6>Approver Required Badges:</h6>
+                                <ul>
+                                    @foreach (var approverBadge in approvingStep.ApproverRequiredBadges)
+                                    {
+                                        <BadgeRequirement Requirement="approverBadge" />
+                                    }
+                                </ul>
+                            </div>
+
+                            <div>Required Approval Count: @approvingStep.RequiredApprovalCount</div>
+                        </div>
+                    }
+                </div>
+            </div>
+            <hr />
+        }
     }
 </div>
