@@ -1,39 +1,37 @@
-﻿@using CrystallineSociety.Shared.Dtos.BadgeSystem
-@page "/accordion"
+﻿@page "/badge-tree"
+@using CrystallineSociety.Shared.Dtos.BadgeSystem
 @using Microsoft.AspNetCore.Components.Web
 
 <div class="border rounded-3">
-  <div class="accordion accordion-flush" id="accordionFlushExample">
-    <form class="d-flex mb-3">
-        <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search" />
-        <button class="btn btn-outline-primary" type="submit">
-            Search
-        </button>
-    </form>
-    <hr>
-    <div  style="max-height: 54vh; overflow-y: auto;">
-      @for (int i = 1; i <= 30; i++)
-      {
-        <div class="accordion-item">
-          <h2 class="accordion-header d-flex justify-content-between align-items-center">
-            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapseTwo" aria-expanded="false" aria-controls="flush-collapseTwo">
-              Folder @i
-            </button>
-            <i class="fas fa-chevron-right"></i>
-          </h2>
-          <div id="flush-collapseTwo" class="accordion-collapse collapse" data-bs-parent="#accordionFlushExample">
-            @if (Badges != null)
+    <div class="accordion accordion-flush" id="accordionFlushExample">
+        <form class="d-flex mb-3">
+            <input class="form-control" type="search" placeholder="Search" aria-label="Search" />
+        </form>
+        <hr>
+        <div style="max-height: 54vh; overflow-y: auto;">
+            @for (int i = 1; i <= 30; i++)
             {
-                <ul class="list-group list-group-flush" style="max-height: 200px;">
-                    @foreach (var badge in Badges)
-                    {
-                        <li class="list-group-item @(ActiveBadgeUrl == badge.Url ? "active": "")" @onclick="() => OnBadgeClick(badge)">@badge.Title</li>
-                    }
-                </ul>
+                <div class="accordion-item">
+                    <h2 class="accordion-header d-flex justify-content-between align-items-center">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapseTwo-@i" aria-expanded="false" aria-controls="flush-collapseTwo-@i">
+                            Folder @i
+                        </button>
+                        <i class="fas fa-chevron-right"></i>
+                    </h2>
+                    <div id="flush-collapseTwo-@i" class="accordion-collapse collapse" data-bs-parent="#accordionFlushExample">
+                        @if (Badges != null)
+                        {
+                            <ul class="list-group list-group-flush" style="max-height: 200px;">
+                                @foreach (var badge in Badges)
+                                {
+                                    <li class="list-group-item @(ActiveBadgeUrl == badge.Url ? "active" : "")" @onclick="() => OnBadgeClick(badge)">@badge.Title
+                                    </li>
+                                }
+                            </ul>
+                        }
+                    </div>
+                </div>
             }
-          </div>
         </div>
-      }
     </div>
-  </div>
 </div>
