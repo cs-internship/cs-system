@@ -30,4 +30,6 @@ namespace CrystallineSociety.Client.Core.Components
             BadgeDto = badgeDto;
         }
     }
+
+
 }
