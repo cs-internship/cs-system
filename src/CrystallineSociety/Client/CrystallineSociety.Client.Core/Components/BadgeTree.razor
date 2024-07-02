@@ -2,54 +2,38 @@
 @page "/accordion"
 @using Microsoft.AspNetCore.Components.Web
 
-<div class="border rounded-3" style="height: 400px; overflow: auto">
-    <div class="accordion br">
-        @if (Badges == null)
-        {
-            <div class="d-flex justify-content-center align-items-center" style="height: 100px;">
-                <div class="spinner-border" role="status">
-                    <span class="visually-hidden">Loading...</span>
-                </div>
-            </div>
-        }
-        else
-        {
-            @foreach (var level in BadgeLevels.Select((value, index) => new { value, index }))
+<div class="border rounded-3">
+  <div class="accordion accordion-flush" id="accordionFlushExample">
+    <form class="d-flex mb-3">
+        <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search" />
+        <button class="btn btn-outline-primary" type="submit">
+            Search
+        </button>
+    </form>
+    <hr>
+    <div  style="max-height: 54vh; overflow-y: auto;">
+      @for (int i = 1; i <= 30; i++)
+      {
+        <div class="accordion-item">
+          <h2 class="accordion-header d-flex justify-content-between align-items-center">
+            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapseTwo" aria-expanded="false" aria-controls="flush-collapseTwo">
+              Folder @i
+            </button>
+            <i class="fas fa-chevron-right"></i>
+          </h2>
+          <div id="flush-collapseTwo" class="accordion-collapse collapse" data-bs-parent="#accordionFlushExample">
+            @if (Badges != null)
             {
-                var levelName = Enum.GetName(typeof(BadgeLevel), level.value);
-                var levelId = level.index + 1;
-
-                <div class="accordion-item" style="border-bottom-left-radius: 0; border-bottom-right-radius: 0;">
-                    <h2 class="accordion-header" id="heading@(levelId)" style="border-bottom-left-radius: 0; border-bottom-right-radius: 0;">
-                        <button class="accordion-button collapsed"
-                                style="border-bottom-left-radius: 0; border-bottom-right-radius: 0;"
-                                type="button"
-                                data-bs-toggle="collapse"
-                                data-bs-target="#collapse@(levelId)"
-                                aria-expanded="false"
-                                aria-controls="collapse@(levelId)">
-                            <div class="fw-bold">@levelName</div>
-                        </button>
-                    </h2>
-                    <div id="collapse@(levelId)"
-                         class="accordion-collapse collapse"
-                         aria-labelledby="heading@(levelId)"
-                         data-bs-parent="#accordionExample">
-                        <div class="accordion-body p-2 pb-1">
-                            <ul class="list-group border-0">
-                                @foreach (var badge in Badges.Where(b => b.Level == level.value))
-                                {
-                                    <li class="list-group-item rounded border-0 mt-0 mb-1 cursor-pointer @(ActiveBadgeUrl == badge.Url ? "active" : "")"
-                                        @onclick="() => OnBadgeClick(badge)"
-                                        style="cursor: @(ActiveBadgeUrl == badge.Url ? "default" : "pointer"); transition: 0.2s">
-                                        @badge.Title
-                                    </li>
-                                }
-                            </ul>
-                        </div>
-                    </div>
-                </div>
+                <ul class="list-group list-group-flush" style="max-height: 200px;">
+                    @foreach (var badge in Badges)
+                    {
+                        <li class="list-group-item @(ActiveBadgeUrl == badge.Url ? "active": "")" @onclick="() => OnBadgeClick(badge)">@badge.Title</li>
+                    }
+                </ul>
             }
-        }
+          </div>
+        </div>
+      }
     </div>
+  </div>
 </div>

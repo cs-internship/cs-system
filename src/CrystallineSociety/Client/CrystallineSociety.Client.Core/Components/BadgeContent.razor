@@ -1,25 +1,67 @@
-﻿@using CrystallineSociety.Shared.Dtos.BadgeSystem
+@using CrystallineSociety.Shared.Dtos.BadgeSystem
 @using CrystallineSociety.Client.Core.Components
 @inherits AppComponentBase
 
 <div class="border rounded-3 position-relative p-2 ms-0 ms-md-5 badge-container" style="background: @(Badge?.Title == null ? "#f8f9fa" : "#fff")">
     @if (Badge != null)
     {
-        <button class="btn btn-primary position-absolute top-0 end-0 m-2">Edit</button>
-        <div class="row d-flex align-items-center">
-            <div class="container">
-                <div class="col-12 d-flex justify-content-center">
-                    <div class="badge-img @(Badge.Level)-img"></div>
-                </div>
+        <div class="position-sticky top-0 bg-body-tertiary pb-3">
+            <div class="d-flex pt-1">
+                <span class="badge-image @(Badge.Level)"></span>
+                <h5>@Badge.Title . @Badge.Description</h5>
             </div>
-            <div class="col-12 d-flex align-items-center justify-content-center">
-                <div class="badge-icon @(Badge.Level)-icon"></div>
-                <h1 class="display-4 fw-medium">@Badge.Title</h1>
-            </div>
+            <hr class="p-0">
+
+            <ul class="nav nav-pills nav-fill">
+                <li class="nav-item">
+                    <a class="nav-link active">Approval Method</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link disabled" aria-disabled="true">Disabled</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link disabled" aria-disabled="true">Disabled</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link disabled" aria-disabled="true">Disabled</a>
+                </li>
+            </ul>
+
+            <ul class="nav nav-pills pt-3">
+                <li class="nav-item">
+                    <a class="nav-link active" aria-current="page" href="#">Main Method</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link disabled" aria-disabled="true">Super Method</a>
+                </li>
+            </ul>
         </div>
-        <div class="row">
-            <div class="col-12">
-                <h3 class="p-4 text-center">@Badge.Description</h3>
+
+        <div class="content-container pt-3" style="height: calc(100vh - 350px); overflow-y: auto; overflow-x: hidden;">
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="p-3 border bg-light mb-3" style="height: 100%;">
+                        <h5>Row 1 of Column 1</h5>
+                        <p>This is the first row of the first column.</p>
+                        <p>This is the first row of the first column.</p>
+                        <p>This is the first row of the first column.</p>
+                        <p>This is the first row of the first column.</p>
+                        <p>This is the first row of the first column.</p>
+                        <p>This is the first row of the first column.</p>
+                        <p>This is the first row of the first column.</p>
+                        <p>This is the first row of the first column.</p>
+                    </div>
+                    <div class="p-3 border bg-light" style="height: 100%;">
+                        <h5>Row 2 of Column 1</h5>
+                        <p>This is the second row of the first column.</p>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="p-3 border bg-light" style="height: 100%;">
+                        <h5>Column 2</h5>
+                        <p>This is the content of the second column.</p>
+                    </div>
+                </div>
             </div>
         </div>
 
