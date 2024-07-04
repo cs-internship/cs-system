@@ -13,19 +13,21 @@
             {
                 <ul class="list-unstyled ps-0">
                     <li class="mb-1">
-                        <div class="d-flex align-items-center">
-                            <span class="badge-image @arrowClass"></span>
-                            <button class="btn font-weight-bold btn-toggle d-inline-flex align-items-center rounded border-0 ps-1 collapsed" @onclick="ToggleHomeCollapse" aria-expanded="@isHomeExpanded">
-                                Folder @i
-                            </button>
-                        </div>
+                        <button class="btn btn-light btn mb-1 d-flex align-items-center">
+                                <span class="badge-image @arrowClass"></span>
+                                <div class="btn font-weight-bold btn-toggle d-inline-flex align-items-center rounded border-0 ps-1 collapsed" @onclick="ToggleHomeCollapse" aria-expanded="@isHomeExpanded">
+                                    Folder @i
+                                </div>
+                        </button>
                         <div class="collapse @homeCollapseClass" id="home-collapse">
                             @if (Badges != null)
                             {
                                 <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 ps-3 small">
                                     @foreach (var badge in Badges)
                                     {
-                                        <li class="link-dark d-inline-flex text-decoration-none rounded @(ActiveBadgeUrl == badge.Url ? "active" : "")" @onclick="() => OnBadgeClick(badge)">@badge.Title
+                                        <li>
+                                            <button class="btn btn-light mb-1 font-weight-bold btn-toggle d-inline-flex align-items-center rounded border-0 ps-1 collapsed @(ActiveBadgeUrl == badge.Url ? "active" : "")" @onclick="() => OnBadgeClick(badge)">@badge.Title
+                                            </button>
                                         </li>
                                     }
                                 </ul>
