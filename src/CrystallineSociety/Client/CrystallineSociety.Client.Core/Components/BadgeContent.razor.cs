@@ -7,13 +7,17 @@ namespace CrystallineSociety.Client.Core.Components
     public partial class BadgeContent : ComponentBase
     {
         [Parameter] public BadgeDto? Badge { get; set; }
-        private AppraisalMethod selectedAppraisalMethod;
+        private AppraisalMethod? selectedAppraisalMethod;
 
-        protected override void OnInitialized()
+        protected override void OnParametersSet()
         {
             if (Badge?.AppraisalMethods?.Any() == true)
             {
                 selectedAppraisalMethod = Badge.AppraisalMethods.First();
+            }
+            else
+            {
+                selectedAppraisalMethod = null;
             }
         }
 

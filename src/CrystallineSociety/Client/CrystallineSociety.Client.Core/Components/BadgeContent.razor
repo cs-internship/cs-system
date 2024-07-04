@@ -2,88 +2,106 @@
 @using CrystallineSociety.Shared.Dtos.BadgeSystem
 @using CrystallineSociety.Client.Core.Components
 
-<div class="border rounded-3 p-2 pt-5 ms-0 ms-md-5 badge-container" style="background: @(Badge?.Title == null ? "#f8f9fa" : "#fff")">
-    @if (Badge != null)
-    {
-        <div class="bg-body-tertiary">
-            <div class="p-3 position-absolute bg-body-tertiary" style="width: 95%; background: white; top: 10px">
-                <span class="badge-image @(Badge.Level)"></span>
-                <h5>@Badge.Title . @Badge.Description</h5>
-            </div>
-            <hr class="p-0">
-
-            <ul class="nav nav-pills nav-fill">
-                <li class="nav-item">
-                    <span class="nav-link active">Approval Method</span>
-                </li>
-                <li class="nav-item">
-                    <span class="nav-link disabled" aria-disabled="true">Disabled</span>
-                </li>
-                <li class="nav-item">
-                    <span class="nav-link disabled" aria-disabled="true">Disabled</span>
-                </li>
-                <li class="nav-item">
-                    <span class="nav-link disabled" aria-disabled="true">Disabled</span>
-                </li>
-            </ul>
-
-            <ul class="nav nav-pills pt-3">
-                @foreach (var appraisalMethod in Badge?.AppraisalMethods ?? [])
-                {
-                    <li class="nav-item">
-                        <button class="nav-link @(selectedAppraisalMethod == appraisalMethod ? "active" : "")" 
-                                @onclick="() => SelectAppraisalMethod(appraisalMethod)">
-                            @appraisalMethod.Title
-                        </button>
-                    </li>
-                }
-            </ul>
+@if (Badge != null)
+{
+    <div class="border rounded-3 p-2 ms-0 ms-md-5 badge-container bg-white shadow-sm">
+        <div class="d-flex bg-body-tertiary p-3 align-items-center">
+            <span class="badge-image @(Badge.Level) me-2"></span>
+            <h5 class="ps-2 mb-0">@Badge.Title - @Badge.Description</h5>
         </div>
+        <hr class="p-0">
 
-        <div class="content-container pt-3">
+        <ul class="nav nav-pills nav-fill mb-3">          
+            <li class="nav-item">
+                <span class="nav-link active">Approval Method</span>
+            </li>
+            <li class="nav-item">
+                <span class="nav-link disabled" aria-disabled="true">Disabled</span>
+            </li>
+            <li class="nav-item">
+                <span class="nav-link disabled" aria-disabled="true">Disabled</span>
+            </li>
+            <li class="nav-item">
+                <span class="nav-link disabled" aria-disabled="true">Disabled</span>
+            </li>
+        </ul>
+
+        <ul class="nav nav-pills pt-3 pb-3">
+            @foreach (var appraisalMethod in Badge?.AppraisalMethods ?? new List<AppraisalMethod>())
+            {
+                <li class="nav-item">
+                    <button class="nav-link @(selectedAppraisalMethod == appraisalMethod ? "active" : "")" 
+                            @onclick="() => SelectAppraisalMethod(appraisalMethod)">
+                        @appraisalMethod.Title
+                    </button>
+                </li>
+            }
+        </ul>
+
+        <div class="content-container">
             @if (selectedAppraisalMethod != null)
             {
-                <div class="p-3 border bg-light mb-2 rounded-2">
-                    <h5>Badge Requirements</h5>
-                    <ul>
-                        @foreach (var badgeRequirement in selectedAppraisalMethod.BadgeRequirements)
-                        {
-                            <BadgeRequirement Requirement="badgeRequirement" />
-                        }
-                    </ul>
+                <div class="card mb-3">
+                    <div class="card-header">
+                        <h5 class="mb-0">Badge Requirements</h5>
+                    </div>
+                    <div class="card-body">
+                        <ul class="list-unstyled">
+                            @foreach (var badgeRequirement in selectedAppraisalMethod.BadgeRequirements)
+                            {
+                                <BadgeRequirement Requirement="badgeRequirement" />
+                            }
+                        </ul>
+                    </div>
                 </div>
-                <div class="p-3 border bg-light mb-2 rounded-2">
-                    <h5>Activity Requirements</h5>
-                    <ul>
-                        @foreach (var activityRequirement in selectedAppraisalMethod.ActivityRequirements)
-                        {
-                            <BadgeRequirement Requirement="activityRequirement" />
-                        }
-                    </ul>
-                </div>
-                <div class="p-3 border bg-light mb-2 rounded-2">
-                    <h5>Approving Steps</h5>
-                    @foreach (var approvingStep in selectedAppraisalMethod.ApprovingSteps)
-                    {
-                        <div class="approving-step mb-3">
-                            <div>Step: @approvingStep.Step</div>
-                            <div>Title: @approvingStep.Title</div>
 
-                            <div class="approver-required-badges">
-                                <h6>Approver Required Badges:</h6>
-                                <ul>
-                                    @foreach (var approverBadge in approvingStep.ApproverRequiredBadges)
-                                    {
-                                        <BadgeRequirement Requirement="approverBadge" />
-                                    }
-                                </ul>
+                <div class="card mb-3">
+                    <div class="card-header">
+                        <h5 class="mb-0">Activity Requirements</h5>
+                    </div>
+                    <div class="card-body">
+                        <ul class="list-unstyled">
+                            @foreach (var activityRequirement in selectedAppraisalMethod.ActivityRequirements)
+                            {
+                                <BadgeRequirement Requirement="activityRequirement" />
+                            }
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="card mb-3">
+                    <div class="card-header">
+                        <h5 class="mb-0">Approving Steps</h5>
+                    </div>
+                    <div class="card-body">
+                        @foreach (var approvingStep in selectedAppraisalMethod.ApprovingSteps)
+                        {
+                            <div class="approving-step mb-3">
+                                <div><strong>Step:</strong> @approvingStep.Step</div>
+                                <div><strong>Title:</strong> @approvingStep.Title</div>
+
+                                <div class="approver-required-badges mt-2">
+                                    <h6>Approver Required Badges:</h6>
+                                    <ul class="list-unstyled">
+                                        @foreach (var approverBadge in approvingStep.ApproverRequiredBadges)
+                                        {
+                                            <BadgeRequirement Requirement="approverBadge" />
+                                        }
+                                    </ul>
+                                </div>
+
+                                <div><strong>Required Approval Count:</strong> @approvingStep.RequiredApprovalCount</div>
                             </div>
-
-                            <div>Required Approval Count: @approvingStep.RequiredApprovalCount</div>
-                        </div>
-                    }
+                        }
+                    </div>
                 </div>
             }
         </div>
-    }
-</div>
+    </div>
+}
+else
+{
+    <div class="border rounded-3 p-2 pt-5 ms-0 ms-md-5 badge-container" style="background: #f8f9fa;">
+        <p>No Badge Selected</p>
+    </div>
+}

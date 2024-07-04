@@ -1,39 +1,41 @@
-﻿@using CrystallineSociety.Shared.Dtos.BadgeSystem
-@page "/accordion"
+﻿@page "/badge-tree"
+@using CrystallineSociety.Shared.Dtos.BadgeSystem
 @using Microsoft.AspNetCore.Components.Web
 
 <div class="border rounded-3">
-  <div class="accordion accordion-flush" id="accordionFlushExample">
-    <form class="d-flex mb-3">
-        <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search" />
-        <button class="btn btn-outline-primary" type="submit">
-            Search
-        </button>
-    </form>
-    <hr>
-    <div  style="max-height: 54vh; overflow-y: auto;">
-      @for (int i = 1; i <= 30; i++)
-      {
-        <div class="accordion-item">
-          <h2 class="accordion-header d-flex justify-content-between align-items-center">
-            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapseTwo" aria-expanded="false" aria-controls="flush-collapseTwo">
-              Folder @i
-            </button>
-            <i class="fas fa-chevron-right"></i>
-          </h2>
-          <div id="flush-collapseTwo" class="accordion-collapse collapse" data-bs-parent="#accordionFlushExample">
-            @if (Badges != null)
+    <div class="accordion accordion-flush" id="accordionFlushExample">
+        <form class="d-flex mb-3">
+            <input class="form-control" type="search" placeholder="Search" aria-label="Search" />
+        </form>
+        <hr>
+        <div class="ps-3 height-scroll">
+            @for (int i = 1; i <= 30; i++)
             {
-                <ul class="list-group list-group-flush" style="max-height: 200px;">
-                    @foreach (var badge in Badges)
-                    {
-                        <li class="list-group-item @(ActiveBadgeUrl == badge.Url ? "active": "")" @onclick="() => OnBadgeClick(badge)">@badge.Title</li>
-                    }
+                <ul class="list-unstyled ps-0">
+                    <li class="mb-1">
+                        <button class="btn btn-light btn mb-1 d-flex align-items-center">
+                                <span class="badge-image @arrowClass"></span>
+                                <div class="btn font-weight-bold btn-toggle d-inline-flex align-items-center rounded border-0 ps-1 collapsed" @onclick="ToggleHomeCollapse" aria-expanded="@isHomeExpanded">
+                                    Folder @i
+                                </div>
+                        </button>
+                        <div class="collapse @homeCollapseClass" id="home-collapse">
+                            @if (Badges != null)
+                            {
+                                <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 ps-3 small">
+                                    @foreach (var badge in Badges)
+                                    {
+                                        <li>
+                                            <button class="btn btn-light mb-1 font-weight-bold btn-toggle d-inline-flex align-items-center rounded border-0 ps-1 collapsed @(ActiveBadgeUrl == badge.Url ? "active" : "")" @onclick="() => OnBadgeClick(badge)">@badge.Title
+                                            </button>
+                                        </li>
+                                    }
+                                </ul>
+                            }
+                        </div>
+                    </li>
                 </ul>
             }
-          </div>
         </div>
-      }
     </div>
-  </div>
 </div>

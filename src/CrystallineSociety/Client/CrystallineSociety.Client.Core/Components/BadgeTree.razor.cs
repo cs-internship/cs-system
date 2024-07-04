@@ -1,4 +1,5 @@
 ﻿using CrystallineSociety.Shared.Dtos.BadgeSystem;
+using Microsoft.AspNetCore.Components;
 
 namespace CrystallineSociety.Client.Core.Components
 {
@@ -11,6 +12,15 @@ namespace CrystallineSociety.Client.Core.Components
         private List<BadgeDto>? Badges { get; set; }
         private Dictionary<int, bool> accordionCollapsed = new Dictionary<int, bool>();
         private static readonly BadgeLevel[] BadgeLevels = { BadgeLevel.Gold, BadgeLevel.Silver, BadgeLevel.Bronze };
+        private bool isHomeExpanded = false;
+
+        private string arrowClass => isHomeExpanded ? "down-arrow" : "right-arrow";
+        private string homeCollapseClass => isHomeExpanded ? "show" : "";
+
+        private void ToggleHomeCollapse()
+        {
+            isHomeExpanded = !isHomeExpanded;
+        }
 
         protected override void OnParametersSet()
         {
