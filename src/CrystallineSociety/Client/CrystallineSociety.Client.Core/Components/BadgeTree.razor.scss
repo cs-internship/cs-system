@@ -1,0 +1,18 @@
+.badge-image {
+    width: 15px;
+    height: 15px;
+}
+
+.right-arrow{
+    background: url("images/icons/right-arrow.png") center/cover no-repeat;
+}
+
+.down-arrow{
+    background: url("images/icons/down-arrow.png") center/cover no-repeat;
+}
+
+.height-scroll {
+
+    max-height: 54vh;
+    overflow-y: auto;
+}

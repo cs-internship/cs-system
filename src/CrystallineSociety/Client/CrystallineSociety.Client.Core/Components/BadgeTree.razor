@@ -8,29 +8,31 @@
             <input class="form-control" type="search" placeholder="Search" aria-label="Search" />
         </form>
         <hr>
-        <div style="max-height: 54vh; overflow-y: auto;">
+        <div class="ps-3 height-scroll">
             @for (int i = 1; i <= 30; i++)
             {
-                <div class="accordion-item">
-                    <h2 class="accordion-header d-flex justify-content-between align-items-center">
-                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapseTwo-@i" aria-expanded="false" aria-controls="flush-collapseTwo-@i">
-                            Folder @i
-                        </button>
-                        <i class="fas fa-chevron-right"></i>
-                    </h2>
-                    <div id="flush-collapseTwo-@i" class="accordion-collapse collapse" data-bs-parent="#accordionFlushExample">
-                        @if (Badges != null)
-                        {
-                            <ul class="list-group list-group-flush" style="max-height: 200px;">
-                                @foreach (var badge in Badges)
-                                {
-                                    <li class="list-group-item @(ActiveBadgeUrl == badge.Url ? "active" : "")" @onclick="() => OnBadgeClick(badge)">@badge.Title
-                                    </li>
-                                }
-                            </ul>
-                        }
-                    </div>
-                </div>
+                <ul class="list-unstyled ps-0">
+                    <li class="mb-1">
+                        <div class="d-flex align-items-center">
+                            <span class="badge-image @arrowClass"></span>
+                            <button class="btn font-weight-bold btn-toggle d-inline-flex align-items-center rounded border-0 ps-1 collapsed" @onclick="ToggleHomeCollapse" aria-expanded="@isHomeExpanded">
+                                Folder @i
+                            </button>
+                        </div>
+                        <div class="collapse @homeCollapseClass" id="home-collapse">
+                            @if (Badges != null)
+                            {
+                                <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 ps-3 small">
+                                    @foreach (var badge in Badges)
+                                    {
+                                        <li class="link-dark d-inline-flex text-decoration-none rounded @(ActiveBadgeUrl == badge.Url ? "active" : "")" @onclick="() => OnBadgeClick(badge)">@badge.Title
+                                        </li>
+                                    }
+                                </ul>
+                            }
+                        </div>
+                    </li>
+                </ul>
             }
         </div>
     </div>
