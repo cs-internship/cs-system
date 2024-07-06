@@ -1,5 +1,6 @@
 ﻿using CrystallineSociety.Shared.Dtos.BadgeSystem;
 using CrystallineSociety.Shared.Dtos.Organization;
+using Microsoft.AspNetCore.Components;
 
 namespace CrystallineSociety.Client.Core.Components
 {
@@ -16,6 +17,7 @@ namespace CrystallineSociety.Client.Core.Components
         private void GetBadge(BadgeDto badgeDto)
         {
             BadgeDto = badgeDto;
+            StateHasChanged();
         }
     }
 }
