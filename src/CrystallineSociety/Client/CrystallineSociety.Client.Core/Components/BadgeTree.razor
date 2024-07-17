@@ -8,34 +8,44 @@
             <input class="form-control" type="search" placeholder="Search" aria-label="Search" />
         </form>
         <hr>
-        <div class="ps-3 height-scroll">
-            @for (int i = 1; i <= 30; i++)
-            {
-                <ul class="list-unstyled ps-0">
-                    <li class="mb-1">
-                        <button class="btn btn-light btn mb-1 d-flex align-items-center">
-                                <span class="badge-image @arrowClass"></span>
-                                <div class="btn font-weight-bold btn-toggle d-inline-flex align-items-center rounded border-0 ps-1 collapsed" @onclick="ToggleHomeCollapse" aria-expanded="@isHomeExpanded">
-                                    Folder @i
-                                </div>
-                        </button>
-                        <div class="collapse @homeCollapseClass" id="home-collapse">
-                            @if (Badges != null)
-                            {
-                                <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 ps-3 small">
-                                    @foreach (var badge in Badges)
-                                    {
-                                        <li>
-                                            <button class="btn btn-light mb-1 font-weight-bold btn-toggle d-inline-flex align-items-center rounded border-0 ps-1 collapsed @(ActiveBadgeUrl == badge.Url ? "active" : "")" @onclick="() => OnBadgeClick(badge)">@badge.Title
-                                            </button>
-                                        </li>
-                                    }
-                                </ul>
-                            }
-                        </div>
-                    </li>
-                </ul>
-            }
-        </div>
+        @if (Badges == null){
+            <div class="height-scroll">
+                <div class="vh-100 d-flex justify-content-center loading-box pt-4">
+                    <div class="spinner-border text-dark" role="status">
+                        <span class="visually-hidden"></span>
+                    </div>
+                </div>
+            </div>
+        } else {
+            <div class="ps-3 height-scroll">
+                @for (int i = 1; i <= 30; i++)
+                {
+                    <ul class="list-unstyled ps-0">
+                        <li class="mb-1">
+                            <button class="btn btn-light btn mb-1 d-flex align-items-center">
+                                    <span class="badge-image @arrowClass"></span>
+                                    <div class="btn font-weight-bold btn-toggle d-inline-flex align-items-center rounded border-0 ps-1 collapsed" @onclick="ToggleHomeCollapse" aria-expanded="@isHomeExpanded">
+                                        Folder @i
+                                    </div>
+                            </button>
+                            <div class="collapse @homeCollapseClass" id="home-collapse">
+                                @if (Badges != null)
+                                {
+                                    <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 ps-3 small">
+                                        @foreach (var badge in Badges)
+                                        {
+                                            <li>
+                                                <button class="btn btn-light mb-1 font-weight-bold btn-toggle d-inline-flex align-items-center rounded border-0 ps-1 collapsed @(ActiveBadgeUrl == badge.Url ? "active" : "")" @onclick="() => OnBadgeClick(badge)">@badge.Title
+                                                </button>
+                                            </li>
+                                        }
+                                    </ul>
+                                }
+                            </div>
+                        </li>
+                    </ul>
+                }
+            </div>
+        }
     </div>
 </div>
