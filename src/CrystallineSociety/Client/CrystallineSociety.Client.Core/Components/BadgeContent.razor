@@ -6,12 +6,13 @@
 {
     <div class="border rounded-3 p-2 ms-0 ms-md-5 badge-container bg-white shadow-sm">
         <div class="d-flex bg-body-tertiary p-3 align-items-center">
-            <span class="badge-image @(Badge.Level) me-2"></span>
-            <h5 class="ps-2 mb-0">@Badge.Title - @Badge.Description</h5>
+            <span class="badge-image flex-shrink-0 @(Badge.Level)"></span>
+            <h5 class="ps-2 mb-0 flex-grow-1 text-wrap">@Badge.Title - @Badge.Description
+            </h5>
         </div>
         <hr class="p-0">
 
-        <ul class="nav nav-pills nav-fill mb-3">          
+        <ul class="nav nav-tabs mb-3">          
             <li class="nav-item">
                 <span class="nav-link active">Approval Method</span>
             </li>
