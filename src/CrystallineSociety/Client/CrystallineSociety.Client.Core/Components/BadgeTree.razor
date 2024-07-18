@@ -23,8 +23,8 @@
                     <ul class="list-unstyled ps-0">
                         <li class="mb-1">
                             <button class="btn btn-light btn mb-1 d-flex align-items-center">
-                                    <span class="badge-image @arrowClass"></span>
-                                    <div class="btn font-weight-bold btn-toggle d-inline-flex align-items-center rounded border-0 ps-1 collapsed" @onclick="ToggleHomeCollapse" aria-expanded="@isHomeExpanded">
+                                    <span class="badge-image flex-shrink-0 @arrowClass"></span>
+                                    <div class="btn font-weight-bold btn-toggle d-inline-flex align-items-center rounded border-0 ps-1 collapsed flex-grow-1 text-wrap text-start text-break" @onclick="ToggleHomeCollapse" aria-expanded="@isHomeExpanded">
                                         Folder @i
                                     </div>
                             </button>
@@ -35,7 +35,7 @@
                                         @foreach (var badge in Badges)
                                         {
                                             <li>
-                                                <button class="btn btn-light mb-1 font-weight-bold btn-toggle d-inline-flex align-items-center rounded border-0 ps-1 collapsed text-start text-break lh-1 @(ActiveBadgeUrl == badge.Url ? "active" : "")" @onclick="() => OnBadgeClick(badge)">@badge.Title @badge.Title @badge.Title @badge.Title @badge.Title
+                                                <button class="btn btn-light mb-1 font-weight-bold btn-toggle d-inline-flex align-items-center rounded border-0 ps-1 collapsed text-start text-break lh-1 @(ActiveBadgeUrl == badge.Url ? "active" : "")" @onclick="() => OnBadgeClick(badge)">@badge.Title
                                                 </button>
                                             </li>
                                         }
