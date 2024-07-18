@@ -5,10 +5,11 @@
 <div class="border rounded-3 position-relative">
     <div class="accordion accordion-flush" id="accordionFlushExample">
         <form class="d-flex mb-3">
-            <input class="form-control" type="search" placeholder="Search" aria-label="Search" />
+            <input class="form-control form-control-sm" type="search" placeholder="Search" aria-label="Search" />
         </form>
         <hr>
-        @if (Badges == null){
+        @if (Badges == null)
+        {
             <div class="height-scroll">
                 <div class="vh-100 d-flex justify-content-center loading-box pt-4">
                     <div class="spinner-border text-dark position-fixed" role="status">
@@ -16,26 +17,29 @@
                     </div>
                 </div>
             </div>
-        } else {
+        }
+        else
+        {
             <div class="ps-3 height-scroll">
                 @for (int i = 1; i <= 30; i++)
                 {
-                    <ul class="list-unstyled ps-0">
+                    <ul class="list-unstyled ps-0 mb-0">
                         <li class="mb-1">
-                            <button class="btn btn-light btn mb-1 d-flex align-items-center">
-                                    <span class="badge-image flex-shrink-0 @arrowClass"></span>
-                                    <div class="btn font-weight-bold btn-toggle d-inline-flex align-items-center rounded border-0 ps-1 collapsed flex-grow-1 text-wrap text-start text-break" @onclick="ToggleHomeCollapse" aria-expanded="@isHomeExpanded">
-                                        Folder @i
-                                    </div>
+                            <button class="btn btn-light btn-sm d-flex align-items-center p-1">
+                                <span class="badge-image flex-shrink-0 @arrowClass"></span>
+                                <div class="btn btn-sm font-weight-bold btn-toggle d-inline-flex align-items-center rounded border-0 ps-1 collapsed flex-grow-1 text-wrap text-start text-break h6 mb-0" @onclick="ToggleHomeCollapse" aria-expanded="@isHomeExpanded">
+                                    Folder @i
+                                </div>
                             </button>
                             <div class="collapse @homeCollapseClass" id="home-collapse">
                                 @if (Badges != null)
                                 {
-                                    <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 ps-3 small">
+                                    <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 ps-3">
                                         @foreach (var badge in Badges)
                                         {
                                             <li>
-                                                <button class="btn btn-light mb-1 font-weight-bold btn-toggle d-inline-flex align-items-center rounded border-0 ps-1 collapsed text-start text-break lh-1 @(ActiveBadgeUrl == badge.Url ? "active" : "")" @onclick="() => OnBadgeClick(badge)">@badge.Title
+                                                <button class="btn btn-light btn-sm mb-1 font-weight-bold btn-toggle d-inline-flex align-items-center rounded border-0 ps-1 collapsed text-start text-break lh-1 @(ActiveBadgeUrl == badge.Url ? "active" : "")" @onclick="() => OnBadgeClick(badge)">
+                                                    @badge.Title
                                                 </button>
                                             </li>
                                         }
