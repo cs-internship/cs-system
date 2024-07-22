@@ -25,16 +25,16 @@
                 {
                     <ul class="list-unstyled ps-0 mb-0">
                         <li class="mb-1">
-                            <button class="btn btn-light btn-sm d-flex align-items-center p-1">
+                            <button class="btn btn-light btn-sm d-flex align-items-center p-1 collapsed">
                                 <span class="badge-image flex-shrink-0 @arrowClass"></span>
-                                <div class="btn btn-sm font-weight-bold btn-toggle d-inline-flex align-items-center rounded border-0 ps-1 collapsed flex-grow-1 text-wrap text-start text-break h6 mb-0" @onclick="ToggleHomeCollapse" aria-expanded="@isHomeExpanded">
+                                <div class="btn btn-sm font-weight-bold btn-toggle d-inline-flex align-items-center rounded border-0 ps-1 collapsed flex-grow-1 text-wrap text-start text-break h6 mb-0" @onclick="ToggleHomeCollapse" aria-expanded="@isHomeExpanded" data-bs-toggle="collapse" data-bs-target="#home-collapse">
                                     Folder @i
                                 </div>
                             </button>
                             <div class="collapse @homeCollapseClass" id="home-collapse">
                                 @if (Badges != null)
                                 {
-                                    <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 ps-3">
+                                    <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 ps-3" id="home-collapse">
                                         @foreach (var badge in Badges)
                                         {
                                             <li>
