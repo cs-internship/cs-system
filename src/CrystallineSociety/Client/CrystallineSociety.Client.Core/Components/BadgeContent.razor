@@ -5,10 +5,12 @@
 @if (Badge != null)
 {
     <div class="border rounded-3 p-2 ms-0 ms-md-5 badge-container bg-white shadow-sm">
-        <div class="d-flex bg-body-tertiary p-3 align-items-center">
+        <div class="p-3 align-items-start d-flex">
             <span class="badge-image flex-shrink-0 @(Badge.Level)"></span>
-            <h5 class="ps-2 mb-0 flex-grow-1 text-wrap">@Badge.Title - @Badge.Description
-            </h5>
+            <div>
+                <h5 class="ps-2 mb-0 flex-grow-1 text-wrap">@Badge.Title</h5>
+                <div class="ps-2 mb-0 flex-grow-1 text-wrap">@Badge.Description</div>
+            </div>
         </div>
         <hr class="p-0">
 
@@ -102,7 +104,7 @@
 }
 else
 {
-    <div class="border rounded-3 p-2 pt-5 ms-0 ms-md-5 badge-container" style="background: #f8f9fa;">
+    <div class="border rounded-3 p-2 pt-5 ms-0 ms-md-5 badge-container d-flex justify-content-center" style="background: #f8f9fa;">
         <p>No Badge Selected</p>
     </div>
 }
