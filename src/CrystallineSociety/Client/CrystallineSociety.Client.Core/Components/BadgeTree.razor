@@ -25,7 +25,7 @@
                 {
                     <ul class="list-unstyled ps-0 mb-0">
                         <li class="mb-1">
-                            <button class="btn btn-light btn-sm d-flex align-items-center p-1 collapsed">
+                            <button class="btn btn-light btn-sm d-flex align-items-center p-0 collapsed">
                                 <span class="badge-image flex-shrink-0 @arrowClass"></span>
                                 <div class="btn btn-sm font-weight-bold btn-toggle d-inline-flex align-items-center rounded border-0 ps-1 collapsed flex-grow-1 text-wrap text-start text-break h6 mb-0" @onclick="ToggleHomeCollapse" aria-expanded="@isHomeExpanded" data-bs-toggle="collapse" data-bs-target="#home-collapse">
                                     Folder @i
@@ -38,15 +38,15 @@
                                         @foreach (var badge in Badges)
                                         {
                                             <li>
-                                                <button class="btn btn-light btn-sm mb-1 font-weight-bold btn-toggle d-inline-flex align-items-center rounded border-0 ps-1 collapsed text-start text-break lh-1 @(ActiveBadgeUrl == badge.Url ? "active" : "")" @onclick="() => OnBadgeClick(badge)">
+                                                <button class="btn btn-light btn-sm font-weight-bold btn-toggle d-inline-flex align-items-center rounded ps-1 collapsed text-start text-break @(ActiveBadgeUrl == badge.Url ? "active" : "")" @onclick="() => OnBadgeClick(badge)">
                                                     @badge.Title
                                                 </button>
                                             </li>
                                             @for (int j = 1; j <= 3; j++)
                                             {
                                                 <ul class="list-unstyled ps-0 mb-0">
-                                                    <li class="mb-1">
-                                                        <button class="btn btn-light btn-sm d-flex align-items-center p-1">
+                                                    <li>
+                                                        <button class="btn btn-light btn-sm d-flex align-items-center p-0">
                                                             <span class="badge-image flex-shrink-0 @subFolderArrowClass"></span>
                                                             <div class="btn btn-sm font-weight-bold btn-toggle d-inline-flex align-items-center rounded border-0 ps-1 collapsed flex-grow-1 text-wrap text-start text-break h6 mb-0" @onclick="ToggleSubFolder" aria-expanded="@isSubFolderExpanded">
                                                                 SubFolder @j
@@ -55,11 +55,11 @@
                                                         <div class="collapse @subFolderCollapseClass" id="home-collapse">
                                                             @if (Badges != null)
                                                             {
-                                                                <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 ps-3">
+                                                                <ul class="btn-toggle-nav list-unstyled fw-normal ps-3">
                                                                     @for(int k = 1; k <= 2; k++)
                                                                     {
                                                                         <li>
-                                                                            <button class="btn btn-light btn-sm mb-1 font-weight-bold btn-toggle d-inline-flex align-items-center rounded border-0 ps-1 collapsed text-start text-break lh-1">
+                                                                            <button class="btn btn-light btn-sm font-weight-bold btn-toggle d-inline-flex align-items-center rounded ps-1 collapsed text-start text-break">
                                                                                 sub @k
                                                                             </button>
                                                                         </li>
