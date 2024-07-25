@@ -5,14 +5,14 @@
 @if (Badge != null)
 {
     <div class="border rounded-3 p-2 ms-0 ms-md-5 badge-container bg-white shadow-sm">
-        <div class="p-3 align-items-start d-flex">
-            <span class="badge-image flex-shrink-0 @(Badge.Level)"></span>
+        <div class="p-3 pt-2 align-items-start d-flex">
+            <span class="badge-image mt-1 flex-shrink-0 @(Badge.Level)"></span>
             <div>
                 <h5 class="ps-2 mb-0 flex-grow-1 text-wrap">@Badge.Title</h5>
                 <div class="ps-2 mb-0 flex-grow-1 text-wrap">@Badge.Description</div>
             </div>
         </div>
-        <hr class="p-0">
+        <hr class="m-0 pb-3">
 
         <ul class="nav nav-tabs">          
             <li class="nav-item">
@@ -28,7 +28,8 @@
                 <span class="nav-link disabled" aria-disabled="true">Disabled</span>
             </li>
         </ul>
-        <div class="border p-2 pt-0 border-top-0">
+        <div class="border p-2 pt-0 border-top-0 rounded-bottom">
+            <p class="ps-3">Different methods to obtain this badge</p>
             <ul class="nav nav-tabs pt-3">
                 @foreach (var appraisalMethod in Badge?.AppraisalMethods ?? new List<AppraisalMethod>())
                 {
@@ -40,7 +41,7 @@
                     </li>
                 }
             </ul>
-            <div class="border p-2 border-top-0 pt-3 pb-0">
+            <div class="border p-2 border-top-0 pt-3 pb-0 rounded-bottom">
                             <div class="content-container">
                 @if (selectedAppraisalMethod != null)
                 {
