@@ -11,13 +11,7 @@
     background: url("images/icons/down-arrow.png") center/cover no-repeat;
 }
 
-.height-scroll {
-
-    max-height: 54vh;
-    overflow-y: auto;
-}
-
 .badge-container {
     height: 70vh;
-    overflow-y: auto;
+    overflow-y: hidden;
 }
