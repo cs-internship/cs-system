@@ -15,3 +15,13 @@
     height: 70vh;
     overflow-y: hidden;
 }
+
+.customize-spacing  {
+    padding: 3px 6px !important;
+    line-height: 18px;
+    margin-bottom: 1px;
+    
+    div {
+        line-height: 10px;
+    }
+}

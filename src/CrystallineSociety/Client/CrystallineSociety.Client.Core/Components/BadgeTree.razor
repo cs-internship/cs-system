@@ -19,14 +19,14 @@
         }
         else
         {
-            <div class="ps-3 vh-100 overflow-auto">
+            <div class="ps-2 vh-100 overflow-auto">
                 @for (int i = 1; i <= 5; i++)
                 {
                     <ul class="list-unstyled ps-0 mb-0">
                         <li class="mb-1">
-                            <button class="btn btn-light btn-sm d-flex align-items-center p-0 collapsed">
+                            <button class="btn btn-light btn-sm d-flex align-items-center p-0 collapsed customize-spacing">
                                 <span class="badge-image flex-shrink-0 @arrowClass"></span>
-                                <div class="btn btn-sm font-weight-bold btn-toggle d-inline-flex align-items-center rounded border-0 ps-1 collapsed flex-grow-1 text-wrap text-start text-break h6 mb-0" @onclick="ToggleHomeCollapse" aria-expanded="@isHomeExpanded" data-bs-toggle="collapse" data-bs-target="#home-collapse">
+                                <div class="btn btn-sm font-weight-bold btn-toggle d-inline-flex align-items-center border-0 ps-1 collapsed flex-grow-1 text-wrap text-start text-break h6 mb-0" @onclick="ToggleHomeCollapse" aria-expanded="@isHomeExpanded" data-bs-toggle="collapse" data-bs-target="#home-collapse">
                                     Folder @i
                                 </div>
                             </button>
@@ -37,17 +37,19 @@
                                         @foreach (var badge in Badges)
                                         {
                                             <li>
-                                                <button class="btn btn-light btn-sm font-weight-bold btn-toggle d-inline-flex align-items-center rounded ps-1 collapsed text-start text-break @(ActiveBadgeUrl == badge.Url ? "active" : "")" @onclick="() => OnBadgeClick(badge)">
+                                                <button class="btn btn-light btn-sm font-weight-bold btn-toggle d-inline-flex align-items-center ps-1 collapsed text-start text-break customize-spacing @(ActiveBadgeUrl == badge.Url ? "active" : "")" @onclick="() => OnBadgeClick(badge)">
                                                     @badge.Title
                                                 </button>
                                             </li>
-                                            @for (int j = 1; j <= 3; j++)
+
+                                            // Temp code for SubFolder name
+                                            @for (int j = 1; j <= 3; j++) 
                                             {
                                                 <ul class="list-unstyled ps-0 mb-0">
                                                     <li>
-                                                        <button class="btn btn-light btn-sm d-flex align-items-center p-0">
+                                                        <button class="btn btn-light btn-sm d-flex align-items-center p-0 customize-spacing">
                                                             <span class="badge-image flex-shrink-0 @subFolderArrowClass"></span>
-                                                            <div class="btn btn-sm font-weight-bold btn-toggle d-inline-flex align-items-center rounded border-0 ps-1 collapsed flex-grow-1 text-wrap text-start text-break h6 mb-0" @onclick="ToggleSubFolder" aria-expanded="@isSubFolderExpanded">
+                                                            <div class="btn btn-sm font-weight-bold btn-toggle d-inline-flex align-items-center border-0 ps-1 collapsed flex-grow-1 text-wrap text-start text-break h6 mb-0" @onclick="ToggleSubFolder" aria-expanded="@isSubFolderExpanded">
                                                                 SubFolder @j
                                                             </div>
                                                         </button>
@@ -58,7 +60,7 @@
                                                                     @for(int k = 1; k <= 2; k++)
                                                                     {
                                                                         <li>
-                                                                            <button class="btn btn-light btn-sm font-weight-bold btn-toggle d-inline-flex align-items-center rounded ps-1 collapsed text-start text-break">
+                                                                            <button class="btn btn-light btn-sm font-weight-bold btn-toggle d-inline-flex align-items-center ps-1 collapsed text-start text-break customize-spacing">
                                                                                 sub @k
                                                                             </button>
                                                                         </li>
