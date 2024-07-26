@@ -22,19 +22,18 @@
             <div class="ps-2 vh-100 overflow-auto">
                 @for (int i = 1; i <= 5; i++)
                 {
-                    var homeCollapseId = $"home-collapse-{i}";
                     <ul class="list-unstyled ps-0 mb-0">
                         <li class="mb-1">
-                            <button class="btn btn-light btn-sm d-flex align-items-center p-0 collapsed customize-spacing" @onclick="() => ToggleHomeCollapse(i)">
-                                <span class="badge-image flex-shrink-0 @(accordionCollapsed.ContainsKey(i) && accordionCollapsed[i] ? "right-arrow" : "down-arrow")"></span>
-                                <div class="btn btn-sm font-weight-bold btn-toggle d-inline-flex align-items-center border-0 ps-1 collapsed flex-grow-1 text-wrap text-start text-break h6 mb-0" aria-expanded="@(accordionCollapsed.ContainsKey(i) && accordionCollapsed[i])" data-bs-toggle="collapse" data-bs-target="#@homeCollapseId">
+                            <button class="btn btn-light btn-sm d-flex align-items-center p-0 collapsed customize-spacing">
+                                <span class="badge-image flex-shrink-0 @arrowClass"></span>
+                                <div class="btn btn-sm font-weight-bold btn-toggle d-inline-flex align-items-center border-0 ps-1 collapsed flex-grow-1 text-wrap text-start text-break h6 mb-0" @onclick="ToggleHomeCollapse" aria-expanded="@isHomeExpanded" data-bs-toggle="collapse" data-bs-target="#home-collapse">
                                     Folder @i
                                 </div>
                             </button>
-                            <div class="collapse @(accordionCollapsed.ContainsKey(i) && accordionCollapsed[i] ? "" : "show")" id="@homeCollapseId">
+                            <div class="collapse @homeCollapseClass" id="home-collapse">
                                 @if (Badges != null)
                                 {
-                                    <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 ps-3">
+                                    <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 ps-3" id="home-collapse">
                                         @foreach (var badge in Badges)
                                         {
                                             <li>
@@ -46,16 +45,15 @@
                                             // Temp code for SubFolder name
                                             @for (int j = 1; j <= 3; j++) 
                                             {
-                                                var subFolderCollapseId = $"sub-folder-collapse-{i}-{j}";
                                                 <ul class="list-unstyled ps-0 mb-0">
                                                     <li>
-                                                        <button class="btn btn-light btn-sm d-flex align-items-center p-0 customize-spacing" @onclick="() => ToggleSubFolder(i, j)">
-                                                            <span class="badge-image flex-shrink-0 @(subFolderCollapsed.ContainsKey($"{i}-{j}") && subFolderCollapsed[$"{i}-{j}"] ? "right-arrow" : "down-arrow")"></span>
-                                                            <div class="btn btn-sm font-weight-bold btn-toggle d-inline-flex align-items-center border-0 ps-1 collapsed flex-grow-1 text-wrap text-start text-break h6 mb-0">
+                                                        <button class="btn btn-light btn-sm d-flex align-items-center p-0 customize-spacing">
+                                                            <span class="badge-image flex-shrink-0 @subFolderArrowClass"></span>
+                                                            <div class="btn btn-sm font-weight-bold btn-toggle d-inline-flex align-items-center border-0 ps-1 collapsed flex-grow-1 text-wrap text-start text-break h6 mb-0" @onclick="ToggleSubFolder" aria-expanded="@isSubFolderExpanded">
                                                                 SubFolder @j
                                                             </div>
                                                         </button>
-                                                        <div class="collapse @(subFolderCollapsed.ContainsKey($"{i}-{j}") && subFolderCollapsed[$"{i}-{j}"] ? "" : "show")" id="@subFolderCollapseId">
+                                                        <div class="collapse @subFolderCollapseClass" id="home-collapse">
                                                             @if (Badges != null)
                                                             {
                                                                 <ul class="btn-toggle-nav list-unstyled fw-normal ps-3">
