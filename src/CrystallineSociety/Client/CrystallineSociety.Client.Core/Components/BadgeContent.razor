@@ -42,65 +42,65 @@
                 }
             </ul>
             <div class="border p-2 border-top-0 pt-3 pb-0 rounded-bottom">
-                            <div class="content-container">
-                @if (selectedAppraisalMethod != null)
-                {
-                    <div class="card mb-3">
-                        <div class="card-header">
-                            <h5 class="mb-0">Badge Requirements</h5>
+                <div class="content-container">
+                    @if (selectedAppraisalMethod != null)
+                    {
+                        <div class="card mb-3">
+                            <div class="card-header">
+                                <h5 class="mb-0">Badge Requirements</h5>
+                            </div>
+                            <div class="card-body">
+                                <ul class="list-unstyled">
+                                    @foreach (var badgeRequirement in selectedAppraisalMethod.BadgeRequirements)
+                                    {
+                                        <BadgeRequirement Requirement="badgeRequirement" />
+                                    }
+                                </ul>
+                            </div>
                         </div>
-                        <div class="card-body">
-                            <ul class="list-unstyled">
-                                @foreach (var badgeRequirement in selectedAppraisalMethod.BadgeRequirements)
+
+                        <div class="card mb-3">
+                            <div class="card-header">
+                                <h5 class="mb-0">Activity Requirements</h5>
+                            </div>
+                            <div class="card-body">
+                                <ul class="list-unstyled">
+                                    @foreach (var activityRequirement in selectedAppraisalMethod.ActivityRequirements)
+                                    {
+                                        <BadgeRequirement Requirement="activityRequirement" />
+                                    }
+                                </ul>
+                            </div>
+                        </div>
+
+                        <div class="card mb-3">
+                            <div class="card-header">
+                                <h5 class="mb-0">Approving Steps</h5>
+                            </div>
+                            <div class="card-body">
+                                @foreach (var approvingStep in selectedAppraisalMethod.ApprovingSteps)
                                 {
-                                    <BadgeRequirement Requirement="badgeRequirement" />
-                                }
-                            </ul>
-                        </div>
-                    </div>
+                                    <div class="approving-step mb-3">
+                                        <div><strong>Step:</strong> @approvingStep.Step</div>
+                                        <div><strong>Title:</strong> @approvingStep.Title</div>
 
-                    <div class="card mb-3">
-                        <div class="card-header">
-                            <h5 class="mb-0">Activity Requirements</h5>
-                        </div>
-                        <div class="card-body">
-                            <ul class="list-unstyled">
-                                @foreach (var activityRequirement in selectedAppraisalMethod.ActivityRequirements)
-                                {
-                                    <BadgeRequirement Requirement="activityRequirement" />
-                                }
-                            </ul>
-                        </div>
-                    </div>
+                                        <div class="approver-required-badges mt-2">
+                                            <h6>Approver Required Badges:</h6>
+                                            <ul class="list-unstyled">
+                                                @foreach (var approverBadge in approvingStep.ApproverRequiredBadges)
+                                                {
+                                                    <BadgeRequirement Requirement="approverBadge" />
+                                                }
+                                            </ul>
+                                        </div>
 
-                    <div class="card mb-3">
-                        <div class="card-header">
-                            <h5 class="mb-0">Approving Steps</h5>
-                        </div>
-                        <div class="card-body">
-                            @foreach (var approvingStep in selectedAppraisalMethod.ApprovingSteps)
-                            {
-                                <div class="approving-step mb-3">
-                                    <div><strong>Step:</strong> @approvingStep.Step</div>
-                                    <div><strong>Title:</strong> @approvingStep.Title</div>
-
-                                    <div class="approver-required-badges mt-2">
-                                        <h6>Approver Required Badges:</h6>
-                                        <ul class="list-unstyled">
-                                            @foreach (var approverBadge in approvingStep.ApproverRequiredBadges)
-                                            {
-                                                <BadgeRequirement Requirement="approverBadge" />
-                                            }
-                                        </ul>
+                                        <div><strong>Required Approval Count:</strong> @approvingStep.RequiredApprovalCount</div>
                                     </div>
-
-                                    <div><strong>Required Approval Count:</strong> @approvingStep.RequiredApprovalCount</div>
-                                </div>
-                            }
+                                }
+                            </div>
                         </div>
-                    </div>
-                }
-            </div>
+                    }
+                </div>
             </div>
         </div>
     </div>

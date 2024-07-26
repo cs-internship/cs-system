@@ -1,5 +1,8 @@
 ﻿using CrystallineSociety.Shared.Dtos.BadgeSystem;
 using Microsoft.AspNetCore.Components;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace CrystallineSociety.Client.Core.Components
 {
@@ -11,24 +14,7 @@ namespace CrystallineSociety.Client.Core.Components
         private string? ActiveBadgeUrl { get; set; }
         private List<BadgeDto>? Badges { get; set; }
         private Dictionary<int, bool> accordionCollapsed = new Dictionary<int, bool>();
-        private static readonly BadgeLevel[] BadgeLevels = { BadgeLevel.Gold, BadgeLevel.Silver, BadgeLevel.Bronze };
-        private bool isHomeExpanded = false;
-        private bool isSubFolderExpanded = false;
-
-        private string arrowClass => isHomeExpanded ? "down-arrow" : "right-arrow";
-        private string subFolderArrowClass => isSubFolderExpanded ? "down-arrow" : "right-arrow";
-        private string homeCollapseClass => isHomeExpanded ? "show" : "";
-        private string subFolderCollapseClass => isSubFolderExpanded ? "show" : "";
-
-        private void ToggleHomeCollapse()
-        {
-            isHomeExpanded = !isHomeExpanded;
-        }
-
-        private void ToggleSubFolder()
-        {
-            isSubFolderExpanded = !isSubFolderExpanded;
-        }
+        private Dictionary<string, bool> subFolderCollapsed = new Dictionary<string, bool>();
 
         protected override void OnParametersSet()
         {
@@ -37,12 +23,48 @@ namespace CrystallineSociety.Client.Core.Components
                 Badges = BadgeBundleDto.Badges.ToList();
             }
 
-            for (int i = 0; i < BadgeLevels.Length; i++)
+            for (int i = 1; i <= 5; i++)
             {
-                if (!accordionCollapsed.ContainsKey(i + 1))
+                if (!accordionCollapsed.ContainsKey(i))
                 {
-                    accordionCollapsed[i + 1] = true;
+                    accordionCollapsed[i] = true;
                 }
+
+                for (int j = 1; j <= 3; j++)
+                {
+                    var key = $"{i}-{j}";
+                    if (!subFolderCollapsed.ContainsKey(key))
+                    {
+                        subFolderCollapsed[key] = true;
+                    }
+                }
+            }
+        }
+
+        private void ToggleHomeCollapse(int index)
+        {
+            if (accordionCollapsed.ContainsKey(index))
+            {
+                accordionCollapsed[index] = !accordionCollapsed[index];
+            }
+            else
+            {
+                // If the key does not exist, add it with a default value
+                accordionCollapsed[index] = true;
+            }
+        }
+
+        private void ToggleSubFolder(int homeIndex, int subIndex)
+        {
+            var key = $"{homeIndex}-{subIndex}";
+            if (subFolderCollapsed.ContainsKey(key))
+            {
+                subFolderCollapsed[key] = !subFolderCollapsed[key];
+            }
+            else
+            {
+                // If the key does not exist, add it with a default value
+                subFolderCollapsed[key] = true;
             }
         }
 
