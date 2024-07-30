@@ -13,13 +13,21 @@ namespace CrystallineSociety.Client.Core.Components
         private Dictionary<int, bool> accordionCollapsed = new Dictionary<int, bool>();
         private static readonly BadgeLevel[] BadgeLevels = { BadgeLevel.Gold, BadgeLevel.Silver, BadgeLevel.Bronze };
         private bool isHomeExpanded = false;
+        private bool isSubFolderExpanded = false;
 
         private string arrowClass => isHomeExpanded ? "down-arrow" : "right-arrow";
+        private string subFolderArrowClass => isSubFolderExpanded ? "down-arrow" : "right-arrow";
         private string homeCollapseClass => isHomeExpanded ? "show" : "";
+        private string subFolderCollapseClass => isSubFolderExpanded ? "show" : "";
 
         private void ToggleHomeCollapse()
         {
             isHomeExpanded = !isHomeExpanded;
+        }
+
+        private void ToggleSubFolder()
+        {
+            isSubFolderExpanded = !isSubFolderExpanded;
         }
 
         protected override void OnParametersSet()

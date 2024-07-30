@@ -1,6 +1,6 @@
 .badge-image {
-    width: 15px;
-    height: 15px;
+    width: 8px;
+    height: 8px;
 }
 
 .right-arrow{
@@ -11,8 +11,17 @@
     background: url("images/icons/down-arrow.png") center/cover no-repeat;
 }
 
-.height-scroll {
+.badge-container {
+    height: 70vh;
+    overflow-y: hidden;
+}
 
-    max-height: 54vh;
-    overflow-y: auto;
+.customize-spacing  {
+    padding: 3px 6px !important;
+    line-height: 18px;
+    margin-bottom: 1px;
+    
+    div {
+        line-height: 10px;
+    }
 }

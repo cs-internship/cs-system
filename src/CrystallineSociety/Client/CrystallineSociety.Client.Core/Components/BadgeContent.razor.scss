@@ -1,11 +1,11 @@
 ﻿.badge-container {
-    height: 400px;
+    height: 70vh;
     overflow-y: auto;
 }
 
 .badge-image {
-    width: 25px;
-    height: 25px;
+    width: 35px;
+    height: 35px;
 }
 
 .Gold{
@@ -21,4 +21,8 @@
 .content-container {
     overflow-y: auto;
     overflow-x: hidden;
+}
+
+.color-style {
+    color: black;
 }
