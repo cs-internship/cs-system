@@ -1,6 +1,27 @@
 ﻿@using CrystallineSociety.Shared.Dtos.BadgeSystem
 @inherits AppComponentBase
 
-<li>
-    @Requirement?.RequirementStr
-</li>
+
+
+    @{string[] parts = @Requirement?.RequirementStr.Split('*');}
+
+    @if (parts.Length > 1)
+    {
+        string textBeforeAsterisk = parts[0];
+        string textAfterAsterisk = parts[1];
+        <li>  
+            @textBeforeAsterisk 
+        </li>
+        <span class="badge bg-light text-dark ms-2 mt-1">@textAfterAsterisk</span>
+    }
+       else
+    {
+        string textBeforeAsterisk = parts[0];
+        string textAfterAsterisk = "1";
+        <li>  
+            @textBeforeAsterisk 
+        </li>
+        <span class="badge bg-light text-dark ms-2 mt-1">@textAfterAsterisk</span>
+    }
+
+
