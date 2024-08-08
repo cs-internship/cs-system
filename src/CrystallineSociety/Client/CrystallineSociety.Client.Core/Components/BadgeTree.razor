@@ -1,12 +1,84 @@
-﻿@using CrystallineSociety.Shared.Dtos.BadgeSystem
-@inherits AppComponentBase
+﻿@page "/badge-tree"
+@using CrystallineSociety.Shared.Dtos.BadgeSystem
+@using Microsoft.AspNetCore.Components.Web
 
-@if (Badges != null)
-{
-    <ul class="list-group">
-        @foreach (var badge in Badges)
+<div class="border rounded-3 position-relative badge-container">
+    <div class="accordion accordion-flush" id="accordionFlushExample">
+        <form class="d-flex mb-2">
+            <input class="form-control form-control-sm" type="search" placeholder="Search" aria-label="Search" />
+        </form>
+        @if (Badges == null)
         {
-            <li class="list-group-item @(ActiveBadgeUrl == badge.Url ? "active": "")" @onclick="() => OnBadgeClick(badge)">@badge.Title</li>
+            <div>
+                <div class="vh-100 d-flex justify-content-center loading-box pt-4">
+                    <div class="spinner-border text-secondary position-fixed" role="status">
+                        <span class="visually-hidden"></span>
+                    </div>
+                </div>
+            </div>
         }
-    </ul>
-}
+        else
+        {
+            <div class="ps-2 vh-100 overflow-auto">
+                @for (int i = 1; i <= 5; i++)
+                {
+                    <ul class="list-unstyled ps-0 mb-0">
+                        <li class="mb-1">
+                            <button class="btn btn-light btn-sm d-flex align-items-center p-0 collapsed customize-spacing">
+                                <span class="badge-image flex-shrink-0 @arrowClass"></span>
+                                <div class="btn btn-sm font-weight-bold btn-toggle d-inline-flex align-items-center border-0 ps-1 collapsed flex-grow-1 text-wrap text-start text-break h6 mb-0" @onclick="ToggleHomeCollapse" aria-expanded="@isHomeExpanded" data-bs-toggle="collapse" data-bs-target="#home-collapse">
+                                    Folder @i
+                                </div>
+                            </button>
+                            <div class="collapse @homeCollapseClass" id="home-collapse">
+                                @if (Badges != null)
+                                {
+                                    <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 ps-3" id="home-collapse">
+                                        @foreach (var badge in Badges)
+                                        {
+                                            <li>
+                                                <button class="btn btn-light btn-sm font-weight-bold btn-toggle d-inline-flex align-items-center ps-1 collapsed text-start text-break customize-spacing @(ActiveBadgeUrl == badge.Url ? "active" : "")" @onclick="() => OnBadgeClick(badge)">
+                                                    @badge.Title
+                                                </button>
+                                            </li>
+
+                                            // Temp code for SubFolder name
+                                            @for (int j = 1; j <= 3; j++) 
+                                            {
+                                                <ul class="list-unstyled ps-0 mb-0">
+                                                    <li>
+                                                        <button class="btn btn-light btn-sm d-flex align-items-center p-0 customize-spacing">
+                                                            <span class="badge-image flex-shrink-0 @subFolderArrowClass"></span>
+                                                            <div class="btn btn-sm font-weight-bold btn-toggle d-inline-flex align-items-center border-0 ps-1 collapsed flex-grow-1 text-wrap text-start text-break h6 mb-0" @onclick="ToggleSubFolder" aria-expanded="@isSubFolderExpanded">
+                                                                SubFolder @j
+                                                            </div>
+                                                        </button>
+                                                        <div class="collapse @subFolderCollapseClass" id="home-collapse">
+                                                            @if (Badges != null)
+                                                            {
+                                                                <ul class="btn-toggle-nav list-unstyled fw-normal ps-3">
+                                                                    @for(int k = 1; k <= 2; k++)
+                                                                    {
+                                                                        <li>
+                                                                            <button class="btn btn-light btn-sm font-weight-bold btn-toggle d-inline-flex align-items-center ps-1 collapsed text-start text-break customize-spacing">
+                                                                                sub @k
+                                                                            </button>
+                                                                        </li>
+                                                                    }
+                                                                </ul>
+                                                            }
+                                                        </div>
+                                                    </li>
+                                                </ul>
+                                            }
+                                        }
+                                    </ul>
+                                }
+                            </div>
+                        </li>
+                    </ul>
+                }
+            </div>
+        }
+    </div>
+</div>

@@ -1,0 +1,27 @@
+.badge-image {
+    width: 8px;
+    height: 8px;
+}
+
+.right-arrow{
+    background: url("images/icons/right-arrow.png") center/cover no-repeat;
+}
+
+.down-arrow{
+    background: url("images/icons/down-arrow.png") center/cover no-repeat;
+}
+
+.badge-container {
+    height: 70vh;
+    overflow-y: hidden;
+}
+
+.customize-spacing  {
+    padding: 3px 6px !important;
+    line-height: 18px;
+    margin-bottom: 1px;
+    
+    div {
+        line-height: 10px;
+    }
+}
