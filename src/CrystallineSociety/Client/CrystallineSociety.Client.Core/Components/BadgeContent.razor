@@ -4,17 +4,17 @@
 
 @if (Badge != null)
 {
-    <div class="border rounded-3 p-2 ms-0 ms-md-5 badge-container bg-white shadow-sm">
-        <div class="p-3 pt-2 align-items-start d-flex">
-            <span class="badge-image mt-1 flex-shrink-0 @(Badge.Level)"></span>
-            <div>
-                <h5 class="ps-2 mb-0 flex-grow-1 text-wrap">@Badge.Title</h5>
-                <div class="ps-2 mb-0 flex-grow-1 text-wrap">@Badge.Description</div>
+    <div class="badge-container p-2 d-flex flex-column border rounded-3 ms-md-6 bg-white shadow-sm">
+        <div class="d-flex align-items-start gap-3 p-3 pt-2">
+            <span class="badge-image flex-shrink-0 @(Badge.Level)"></span>
+            <div class="d-flex flex-column">
+                <h5 class="mb-0 text-wrap">@Badge.Title</h5>
+                <div class="text-wrap">@Badge.Description</div>
             </div>
         </div>
-        <hr class="m-0 pb-3">
+        <hr class="w-100 m-0 mb-2">
 
-        <ul class="nav nav-tabs">          
+        <ul class="nav nav-tabs">
             <li class="nav-item">
                 <span class="nav-link active">Approval Method</span>
             </li>
@@ -28,8 +28,9 @@
                 <span class="nav-link disabled" aria-disabled="true">Disabled</span>
             </li>
         </ul>
+
         <div class="border p-2 pt-0 border-top-0 rounded-bottom">
-            <p class="ps-2 pt-3 pb-2">Different methods to obtain this badge</p>
+            <p class="ps-3 pt-3">Different methods to obtain this badge.</p>
             <ul class="nav nav-tabs pt-3">
                 @foreach (var appraisalMethod in Badge?.AppraisalMethods ?? new List<AppraisalMethod>())
                 {
@@ -41,73 +42,120 @@
                     </li>
                 }
             </ul>
-            <div class="border p-2 border-top-0 pt-3 pb-0 rounded-bottom">
-                            <div class="content-container">
+            <div class="border border-top-0 rounded-bottom p-2 d-flex flex-column gap-3">
                 @if (selectedAppraisalMethod != null)
                 {
-                    <div class="card mb-3">
-                        <div class="card-header">
-                            <h5 class="mb-0">Badge Requirements</h5>
+                    <div class="d-flex flex-wrap gap-2">
+                        <div class="card flex-shrink-1 w-100 d-flex flex-column">
+                            <div class="card-header">
+                                <div class="mb-0">Badge Requirements</div>
+                            </div>
+                            <div class="card-body d-flex flex-column p-2 ms-2 gap-2">
+                                <ul class="list-unstyled d-flex gap-2 mt-3">
+                                    @{
+                                        var badgeRequirements = selectedAppraisalMethod.BadgeRequirements;
+                                    }
+
+                                    @if (badgeRequirements == null || !badgeRequirements.Any())
+                                    {
+                                        <div>No badge requirements.</div>
+                                    }
+                                    else
+                                    {
+                                        @foreach (var badgeRequirement in badgeRequirements)
+                                        {
+                                            <BadgeRequirement Requirement="@badgeRequirement" />
+                                        }
+                                    }
+                                </ul>
+                            </div>
                         </div>
-                        <div class="card-body">
-                            <ul class="list-unstyled">
-                                @foreach (var badgeRequirement in selectedAppraisalMethod.BadgeRequirements)
-                                {
-                                    <BadgeRequirement Requirement="badgeRequirement" />
+
+                        <div class="card w-100 d-flex flex-column">
+                            <div class="card-header">
+                                <div class="mb-0">Activity Requirements</div>
+                            </div>
+                            <div class="card-body d-flex flex-column gap-2 p-2 ms-2">
+                                <ul class="list-unstyled d-flex gap-2 mt-3">
+                                    @{
+                                        var activityRequirements = selectedAppraisalMethod?.ActivityRequirements;
+                                    }
+
+                                    @if (activityRequirements == null || !activityRequirements.Any())
+                                    {
+                                        <div>No activity requirements.</div>
+                                    }
+                                    else
+                                    {
+                                        @foreach (var activityRequirement in activityRequirements)
+                                        {
+                                            <BadgeRequirement Requirement="@activityRequirement" />
+                                        }
+                                    }
+                                </ul>
+                            </div>
+                        </div>
+
+                        <div class="card flex-shrink-1 w-100 d-flex flex-column">
+                            <div class="card-header">
+                                <div class="mb-0">Approving Steps</div>
+                            </div>
+                            <div class="card-body d-flex flex-column gap-2 p-2">
+                                @{
+                                    var approvingSteps = selectedAppraisalMethod?.ApprovingSteps;
                                 }
-                            </ul>
-                        </div>
-                    </div>
 
-                    <div class="card mb-3">
-                        <div class="card-header">
-                            <h5 class="mb-0">Activity Requirements</h5>
-                        </div>
-                        <div class="card-body">
-                            <ul class="list-unstyled">
-                                @foreach (var activityRequirement in selectedAppraisalMethod.ActivityRequirements)
+                                @if (approvingSteps == null || !approvingSteps.Any())
                                 {
-                                    <BadgeRequirement Requirement="activityRequirement" />
+                                    <div class="p-3 ps-2">No Approving Steps.</div>
                                 }
-                            </ul>
-                        </div>
-                    </div>
+                                else
+                                {
+                                    @foreach (var approvingStep in approvingSteps)
+                                    {
+                                        <div class="approver-required-badges d-flex flex-column gap-2">
+                                            <div class="card d-flex flex-column">
+                                                <div class="card-header">
+                                                    <div>Step @approvingStep.Step: @approvingStep.Title</div>
+                                                </div>
+                                                <div class="card-body d-flex flex-column gap-2">
+                                                    <div class="approver-required-badges">
+                                                        <div>Approver Required Badges:</div>
+                                                        <ul class="list-unstyled d-flex gap-2 mt-3">
+                                                            @{
+                                                                var approverBadges = approvingStep?.ApproverRequiredBadges;
+                                                            }
 
-                    <div class="card mb-3">
-                        <div class="card-header">
-                            <h5 class="mb-0">Approving Steps</h5>
-                        </div>
-                        <div class="card-body">
-                            @foreach (var approvingStep in selectedAppraisalMethod.ApprovingSteps)
-                            {
-                                <div class="approving-step mb-3">
-                                    <div><strong>Step:</strong> @approvingStep.Step</div>
-                                    <div><strong>Title:</strong> @approvingStep.Title</div>
-
-                                    <div class="approver-required-badges mt-2">
-                                        <h6>Approver Required Badges:</h6>
-                                        <ul class="list-unstyled">
-                                            @foreach (var approverBadge in approvingStep.ApproverRequiredBadges)
-                                            {
-                                                <BadgeRequirement Requirement="approverBadge" />
-                                            }
-                                        </ul>
-                                    </div>
-
-                                    <div><strong>Required Approval Count:</strong> @approvingStep.RequiredApprovalCount</div>
-                                </div>
-                            }
+                                                            @if (approverBadges == null || !approverBadges.Any())
+                                                            {
+                                                                <div>No Approver Required Badges.</div>
+                                                            }
+                                                            else
+                                                            {
+                                                                @foreach (var approverBadge in approverBadges)
+                                                                {
+                                                                    <BadgeRequirement Requirement="@approverBadge" />
+                                                                }
+                                                            }
+                                                        </ul>
+                                                        <div><span>Required Approval Count:</span> @approvingStep.RequiredApprovalCount</div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    }
+                                }
+                            </div>
                         </div>
                     </div>
                 }
-            </div>
             </div>
         </div>
     </div>
 }
 else
 {
-    <div class="border rounded-3 p-2 pt-5 ms-0 ms-md-5 badge-container d-flex justify-content-center" style="background: #f8f9fa;">
+    <div class="border rounded-3 p-2 pt-5 ms-md-6 badge-container d-flex justify-content-center" style="background: #f8f9fa;">
         <p>No Badge Selected</p>
     </div>
 }
