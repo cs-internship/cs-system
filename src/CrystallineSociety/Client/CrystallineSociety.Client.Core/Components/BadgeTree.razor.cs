@@ -1,5 +1,4 @@
 ﻿using CrystallineSociety.Shared.Dtos.BadgeSystem;
-using Microsoft.AspNetCore.Components;
 
 namespace CrystallineSociety.Client.Core.Components
 {
@@ -8,27 +7,11 @@ namespace CrystallineSociety.Client.Core.Components
         [Parameter] public BadgeBundleDto? BadgeBundleDto { get; set; }
         [Parameter] public EventCallback<BadgeDto> BadgeDtoCallBack { get; set; }
 
-        private string? ActiveBadgeUrl { get; set; }
+        private Dictionary<int, bool> homeCollapseState = new();
+        private Dictionary<(int, int, int), bool> subFolderCollapseState = new();
         private List<BadgeDto>? Badges { get; set; }
-        private Dictionary<int, bool> accordionCollapsed = new Dictionary<int, bool>();
-        private static readonly BadgeLevel[] BadgeLevels = { BadgeLevel.Gold, BadgeLevel.Silver, BadgeLevel.Bronze };
-        private bool isHomeExpanded = false;
-        private bool isSubFolderExpanded = false;
+        private string? ActiveBadgeUrl { get; set; }
 
-        private string arrowClass => isHomeExpanded ? "down-arrow" : "right-arrow";
-        private string subFolderArrowClass => isSubFolderExpanded ? "down-arrow" : "right-arrow";
-        private string homeCollapseClass => isHomeExpanded ? "show" : "";
-        private string subFolderCollapseClass => isSubFolderExpanded ? "show" : "";
-
-        private void ToggleHomeCollapse()
-        {
-            isHomeExpanded = !isHomeExpanded;
-        }
-
-        private void ToggleSubFolder()
-        {
-            isSubFolderExpanded = !isSubFolderExpanded;
-        }
 
         protected override void OnParametersSet()
         {
@@ -36,13 +19,30 @@ namespace CrystallineSociety.Client.Core.Components
             {
                 Badges = BadgeBundleDto.Badges.ToList();
             }
+        }
 
-            for (int i = 0; i < BadgeLevels.Length; i++)
+        private void ToggleHomeCollapse(int index)
+        {
+            if (homeCollapseState.ContainsKey(index))
             {
-                if (!accordionCollapsed.ContainsKey(i + 1))
-                {
-                    accordionCollapsed[i + 1] = true;
-                }
+                homeCollapseState[index] = !homeCollapseState[index];
+            }
+            else
+            {
+                homeCollapseState[index] = true;
+            }
+        }
+
+        private void ToggleSubFolder(int folderIndex, int badgeIndex, int subFolderIndex)
+        {
+            var key = (folderIndex, badgeIndex, subFolderIndex);
+            if (subFolderCollapseState.ContainsKey(key))
+            {
+                subFolderCollapseState[key] = !subFolderCollapseState[key];
+            }
+            else
+            {
+                subFolderCollapseState[key] = true;
             }
         }
 
@@ -51,5 +51,7 @@ namespace CrystallineSociety.Client.Core.Components
             ActiveBadgeUrl = badgeDto.Url;
             await BadgeDtoCallBack.InvokeAsync(badgeDto);
         }
+
+        private string GetArrowClass(bool isExpanded) => isExpanded ? "down-arrow" : "right-arrow";
     }
 }

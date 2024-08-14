@@ -25,10 +25,13 @@ jobs:
 
     - uses: actions/setup-node@v3
       with:
-        node-version: 18
+        node-version: 20.3.0
 
     - name: Install wasm and maui
       run:  cd src && dotnet workload install maui-android wasm-tools wasm-experimental
+
+    - name: Install Android Sdk platform tools
+      run: ${ANDROID_SDK_ROOT}/cmdline-tools/latest/bin/sdkmanager --sdk_root=$ANDROID_SDK_ROOT "platform-tools"
           
     - name: Build
-      run: dotnet build CrystallineSociety.sln -c Release -p:EnableWindowsTargeting=true
+      run: dotnet build src/CrystallineSociety/CrystallineSociety.sln -c Release -p:EnableWindowsTargeting=true
