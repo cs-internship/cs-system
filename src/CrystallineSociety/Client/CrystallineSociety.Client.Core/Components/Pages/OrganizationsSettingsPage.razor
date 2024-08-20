@@ -6,16 +6,103 @@
 <BitBasicList TItem="OrganizationDto"
               ItemSize="4"
               Items="Organizations"
-              Style="border: 1px #a19f9d solid; border-radius: 3px; height: auto; width: 50%;max-height:500px;">
+              Style="border: 1px #a19f9d solid; border-radius: 3px; height: auto; width: 100%;max-height:500px;">
     <RowTemplate Context="Organization">
-        <div @key="Organization.Code" style="@(Organizations.Count > 1 ? "border-bottom: 1px #8a8886 solid; padding: 5px 20px; margin: 10px;" : "")">
-            <div style="margin-left:3%; display: inline-block;">
-                <p>Organization Name: <strong>@Organization.Title</strong></p>
-                <BitButton OnClick="WrapHandled(()=>HandelSyncAsync(Organization))">
-                    Sync
-                    <BitRollerLoading Size="@(IsSyncing ? 13 : 0)" />
-                </BitButton>
+        <div class="container mt-5">
+            <div class="table-container">
+                <h3 class="mb-3">Manage organizations</h3>
+                <div class="d-flex justify-content-end mb-3">
+                    <button class="btn btn-outline-success">
+                        + Add new organization
+                    </button>
+                </div>
+                <table class="table table-bordered">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Organization name</th>
+                            <th>Organization actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>@Organization.Title</td>
+                            <td>
+                                <button class="btn btn-outline-success btn-sm" @onclick="async () => await HandelSyncAsync(Organization)" disabled="@(IsSyncing)">
+                                    @if (IsSyncing)
+                                    {
+                                        <div class="d-flex align-items-center">
+                                        <span class="spinner-border bg-white spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                                            Sync
+                                        </div>
+                                    }
+                                    else
+                                    {
+                                        <span>Sync</span>
+                                    }
+                                </button>
+                                <button class="btn btn-outline-primary btn-sm">
+                                    Edit
+                                </button>
+                                <button class="btn btn-outline-danger btn-sm">
+                                    Delete
+                                </button>
+                                <button class="btn btn-outline-danger btn-sm" @onclick="async () => await HandelSyncAsync(Organization)" disabled="@(IsSyncing)">
+                                    @if (IsSyncing)
+                                    {
+                                        <div class="d-flex align-items-center">
+                                        <span class="spinner-border bg-white spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                                            Delete
+                                        </div>
+                                    }
+                                    else
+                                    {
+                                        <span>Delete</span>
+                                    }
+                                </button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Melkradar</td>
+                            <td>
+                                <button class="btn btn-outline-success btn-sm">
+                                    <!-- <span
+                                        class="spinner-border spinner-border-sm"
+                                        role="status"
+                                        aria-hidden="true"
+                                    ></span> -->
+                                    Sync
+                                </button>
+                                <button class="btn btn-outline-primary btn-sm">
+                                    Edit
+                                </button>
+                                <button class="btn btn-outline-danger btn-sm">
+                                    <!-- <span
+                                        class="spinner-border spinner-border-sm"
+                                        role="status"
+                                        aria-hidden="true"
+                                    ></span> -->
+                                    Delete
+                                </button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Fabrexa</td>
+                            <td>
+                                <button class="btn btn-outline-success btn-sm">
+                                    Sync
+                                </button>
+                                <button class="btn btn-outline-primary btn-sm">
+                                    Edit
+                                </button>
+                                <button class="btn btn-outline-danger btn-sm">
+                                    Delete
+                                </button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
             </div>
         </div>
     </RowTemplate>
+    
 </BitBasicList>
