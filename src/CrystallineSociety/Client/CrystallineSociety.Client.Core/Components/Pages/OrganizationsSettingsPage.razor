@@ -3,19 +3,64 @@
 @using CrystallineSociety.Shared.Dtos.Organization
 @inherits AppComponentBase
 
-<BitBasicList TItem="OrganizationDto"
-              ItemSize="4"
-              Items="Organizations"
-              Style="border: 1px #a19f9d solid; border-radius: 3px; height: auto; width: 50%;max-height:500px;">
-    <RowTemplate Context="Organization">
-        <div @key="Organization.Code" style="@(Organizations.Count > 1 ? "border-bottom: 1px #8a8886 solid; padding: 5px 20px; margin: 10px;" : "")">
-            <div style="margin-left:3%; display: inline-block;">
-                <p>Organization Name: <strong>@Organization.Title</strong></p>
-                <BitButton OnClick="WrapHandled(()=>HandelSyncAsync(Organization))">
-                    Sync
-                    <BitRollerLoading Size="@(IsSyncing ? 13 : 0)" />
-                </BitButton>
-            </div>
+<div class="container-fluid p-4 pt-2">
+    <div class="table-container">
+        <h3 class="mb-3">Manage organizations</h3>
+        <div class="d-flex justify-content-end mb-3">
+            <button class="btn btn-outline-success">
+                + Add new organization
+            </button>
         </div>
-    </RowTemplate>
-</BitBasicList>
+        <table class="table table-bordered table-fixed">
+            <thead class="table-light">
+                <tr>
+                    <th class="col-6">Organization name</th>
+                    <th class="col-6">Organization actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var organization in Organizations)
+                {
+                    <tr>
+                        <td>@organization.Title</td>
+                        <td class="d-flex justify-content-start gap-1 flex-wrap">
+                            <button class="btn btn-sm @(IsSyncing ? "btn-success opacity-100" : "btn-outline-success")" 
+                                    @onclick="async () => await HandelSyncAsync(organization)" 
+                                    disabled="@(IsSyncing)">
+                                @if (IsSyncing)
+                                {
+                                    <div class="d-flex align-items-center">
+                                        <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                                        Sync
+                                    </div>
+                                }
+                                else
+                                {
+                                    <span>Sync</span>
+                                }
+                            </button>
+                            <button class="btn btn-outline-primary btn-sm">
+                                Edit
+                            </button>
+                            <button class="btn btn-sm @(IsDeleting ? "btn-danger opacity-100" : "btn-outline-danger")" 
+                                    @onclick="async () => await HandelDeleteAsync(organization)" 
+                                    disabled="@(IsDeleting)">
+                                @if (IsDeleting)
+                                {
+                                    <div class="d-flex align-items-center">
+                                        <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                                        Delete
+                                    </div>
+                                }
+                                else
+                                {
+                                    <span>Delete</span>
+                                }
+                            </button>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

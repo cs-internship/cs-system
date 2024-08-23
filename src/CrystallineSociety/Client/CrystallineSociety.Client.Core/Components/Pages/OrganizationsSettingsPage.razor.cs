@@ -5,6 +5,7 @@ public partial class OrganizationsSettingsPage
 {
     private List<OrganizationDto> Organizations = new();
     private bool IsSyncing = false;
+    private bool IsDeleting = false;
 
 
     protected override async Task OnInitAsync()
@@ -20,5 +21,13 @@ public partial class OrganizationsSettingsPage
         await HttpClient.PostAsJsonAsync("api/Organization/SyncOrganizationBadges", organization);
         await HttpClient.PostAsJsonAsync("api/ProgramDocument/SyncOrganizationProgramDocuments", organization);
         IsSyncing = false;
+    }
+
+        private async Task HandelDeleteAsync(OrganizationDto organization)
+    {
+        IsDeleting = true;
+        await HttpClient.PostAsJsonAsync("api/Organization/SyncOrganizationBadges", organization);
+        await HttpClient.PostAsJsonAsync("api/ProgramDocument/SyncOrganizationProgramDocuments", organization);
+        IsDeleting = false;
     }
 }
