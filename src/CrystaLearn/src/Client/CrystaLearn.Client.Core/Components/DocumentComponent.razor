@@ -1,0 +1,14 @@
+﻿@inherits ComponentBase
+
+<BitStack>
+    
+    @if (Document is not null)
+    {
+        <BitText Typography="BitTypography.H3">@Document.Title</BitText>
+        <BitText Typography="BitTypography.Body2">@Document.Content</BitText>
+    }
+    else
+    {
+        <BitText Typography="BitTypography.H3">No document selected</BitText>
+    }
+</BitStack>

@@ -1,0 +1,15 @@
+﻿@attribute [Route(Urls.DocsPage)]
+@attribute [Route("{culture?}" + Urls.DocsPage)]
+@using CrystaLearn.Shared.Dtos.Crysta
+@inherits AppPageBase
+
+<PageTitle>@Localizer[nameof(AppStrings.TermsPageTitle)]</PageTitle>
+
+<article>
+    <BitStack Horizontal>
+        <BitNav Items="DocumentsTree"
+                Style="width: 300px;"
+                OnItemClick="(BitNavItem item) => CurrentDocument = item.Data as DocumentDto" />
+        <DocumentComponent Document="CurrentDocument"/>
+    </BitStack>
+</article>

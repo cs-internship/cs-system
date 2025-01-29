@@ -11,6 +11,7 @@ public static partial class Urls
     public const string SettingsPage = "/settings";
 
     public const string AboutPage = "/about";
+    public const string DocsPage = "/docs";
 
 
     public static readonly string[] All = typeof(Urls).GetFields()
