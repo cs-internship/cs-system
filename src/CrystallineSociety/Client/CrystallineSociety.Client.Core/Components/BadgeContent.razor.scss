@@ -1,0 +1,28 @@
+﻿.badge-container {
+    height: 70vh;
+    overflow-y: auto;
+}
+
+.badge-image {
+    width: 35px;
+    height: 35px;
+}
+
+.Gold{
+    background: url("images/icons/gold.png") center/cover no-repeat;
+}
+.Silver {
+    background: url("images/icons/silver.png") center/cover no-repeat;
+}
+.Bronze {
+    background: url("images/icons/bronze.png") center/cover no-repeat;
+}
+
+.content-container {
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+.color-style {
+    color: black;
+}

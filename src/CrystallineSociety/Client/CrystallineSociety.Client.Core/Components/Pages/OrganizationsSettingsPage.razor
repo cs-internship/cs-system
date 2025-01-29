@@ -1,0 +1,66 @@
+@page "/OrganizationsSettings"
+@using CrystallineSociety.Shared.Dtos.BadgeSystem
+@using CrystallineSociety.Shared.Dtos.Organization
+@inherits AppComponentBase
+
+<div class="container-fluid p-4 pt-2">
+    <div class="table-container">
+        <h3 class="mb-3">Manage organizations</h3>
+        <div class="d-flex justify-content-end mb-3">
+            <button class="btn btn-outline-success">
+                + Add new organization
+            </button>
+        </div>
+        <table class="table table-bordered table-fixed">
+            <thead class="table-light">
+                <tr>
+                    <th class="col-6">Organization name</th>
+                    <th class="col-6">Organization actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var organization in Organizations)
+                {
+                    <tr>
+                        <td>@organization.Title</td>
+                        <td class="d-flex justify-content-start gap-1 flex-wrap">
+                            <button class="btn btn-sm @(IsSyncing ? "btn-success opacity-100" : "btn-outline-success")" 
+                                    @onclick="async () => await HandelSyncAsync(organization)" 
+                                    disabled="@(IsSyncing)">
+                                @if (IsSyncing)
+                                {
+                                    <div class="d-flex align-items-center">
+                                        <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                                        Sync
+                                    </div>
+                                }
+                                else
+                                {
+                                    <span>Sync</span>
+                                }
+                            </button>
+                            <button class="btn btn-outline-primary btn-sm">
+                                Edit
+                            </button>
+                            <button class="btn btn-sm @(IsDeleting ? "btn-danger opacity-100" : "btn-outline-danger")" 
+                                    @onclick="async () => await HandelDeleteAsync(organization)" 
+                                    disabled="@(IsDeleting)">
+                                @if (IsDeleting)
+                                {
+                                    <div class="d-flex align-items-center">
+                                        <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                                        Delete
+                                    </div>
+                                }
+                                else
+                                {
+                                    <span>Delete</span>
+                                }
+                            </button>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
