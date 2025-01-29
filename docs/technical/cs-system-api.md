@@ -7,7 +7,7 @@ All the available REST API on `https://cscore.net/api` are listed in this docume
   /sync-badges
   /sync-documents
 
- /{org}/badges
+ /{program}/badges
   /current/get-bundle
   /current/get-validations
   /current/get-badges
@@ -26,17 +26,17 @@ All the available REST API on `https://cscore.net/api` are listed in this docume
 /home
 /settings
   /general
-  /organizations
+  /programs
 
-/o/{org-code}
+/p/{program-code}
   /home
   /badges
     /
     /{badge-code}
   /learners
-  /documents
+  /docs
     /
-    /{document-code}
+    /{doc-code}
   /feed
 
 /u/{learner-code}
