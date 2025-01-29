@@ -1,0 +1,8 @@
+@inherits AppComponentBase;
+
+<section>
+    <BitNavBar TItem="BitNavBarOption" Style="width:100%">
+        <BitNavBarOption Text="@Localizer[nameof(AppStrings.Home)]" IconName="@BitIconName.Home" Url="@Urls.HomePage" />
+        <BitNavBarOption Text="@Localizer[nameof(AppStrings.Terms)]" IconName="@BitIconName.EntityExtraction" Url="@Urls.TermsPage" />
+    </BitNavBar>
+</section>

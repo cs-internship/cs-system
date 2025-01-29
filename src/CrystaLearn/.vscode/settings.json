@@ -1,0 +1,13 @@
+{
+    "liveSassCompile.settings.watchOnLaunch": true,
+    "dotnet.defaultSolution": "CrystaLearn.Web.slnf",
+    "dotnet.unitTests.runSettingsPath": "src/Tests/.runsettings",
+    "csharp.preview.improvedLaunchExperience": true,
+    "explorer.fileNesting.enabled": true,
+    "explorer.fileNesting.patterns": {
+        "*.resx": "$(capture).*.resx",
+        "*.razor": "$(capture).*.razor, $(capture).razor.cs, $(capture).razor.scss",
+        "*.scss": "$(capture).*.scss, $(capture).css, $(capture).css.map",
+        "*.json": "$(capture).*.json, $(capture).*.json"
+    }
+}

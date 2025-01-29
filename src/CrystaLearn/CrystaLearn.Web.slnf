@@ -1,0 +1,13 @@
+{
+  "solution": {
+    "path": "CrystaLearn.sln",
+    "projects": [
+      "src\\Client\\CrystaLearn.Client.Core\\CrystaLearn.Client.Core.csproj",
+      "src\\Client\\CrystaLearn.Client.Web\\CrystaLearn.Client.Web.csproj",
+      "src\\Server\\CrystaLearn.Server.Api\\CrystaLearn.Server.Api.csproj",
+      "src\\Server\\CrystaLearn.Server.Web\\CrystaLearn.Server.Web.csproj",
+      "src\\Shared\\CrystaLearn.Shared.csproj",
+      "src\\Tests\\CrystaLearn.Tests.csproj"
+    ]
+  }
+}
