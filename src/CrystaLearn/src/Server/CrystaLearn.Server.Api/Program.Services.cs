@@ -19,6 +19,8 @@ using CrystaLearn.Server.Api.Services;
 using CrystaLearn.Server.Api.Controllers;
 using CrystaLearn.Server.Api.Models.Identity;
 using CrystaLearn.Server.Api.Services.Identity;
+using CrystaLearn.Server.Api.Services.Crysta.Contracts;
+using CrystaLearn.Server.Api.Services.Crysta;
 
 namespace CrystaLearn.Server.Api;
 
@@ -178,6 +180,8 @@ public static partial class Program
         AddSwaggerGen(builder);
 
         AddIdentity(builder);
+
+        AddCrysta(builder);
 
         var emailSettings = appSettings.Email ?? throw new InvalidOperationException("Email settings are required.");
         var fluentEmailServiceBuilder = services.AddFluentEmail(emailSettings.DefaultFromEmail);
@@ -371,4 +375,13 @@ public static partial class Program
             });
         });
     }
+
+    private static void AddCrysta(WebApplicationBuilder builder)
+    {
+        var services = builder.Services;
+
+        services.AddTransient<IDocumentRepository, DocumentRepositoryFake>();
+    }
+
+
 }

@@ -17,7 +17,15 @@
         </BitText>
 
         <br />
-
+        @foreach(var doc in Documents){
+                <BitCard FullWidth Style="padding:2rem">
+                    <BitStack HorizontalAlign="BitAlignment.Center">
+                        <BitText Typography="BitTypography.H5">@doc.Title</BitText>
+                        <BitText Typography="BitTypography.Body1" Align="BitTextAlign.Center">@doc.Description</BitText>
+                    </BitStack>
+                </BitCard>
+        }
+        <br/>
         <CascadingValue Value="BitDir.Ltr">
             <BitCard FullWidth Style="padding:2rem">
                 <BitStack>
