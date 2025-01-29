@@ -9,7 +9,7 @@ using CrystaLearn.Shared.Dtos.Statistics;
 namespace CrystaLearn.Shared.Controllers.Crysta;
 [Route("api/[controller]/[action]/")]
 
-public interface IDocumentController
+public interface IDocumentController : IAppController
 {
     //[HttpGet("{packageId}")]
     //Task<NugetStatsDto> GetNugetStats(string packageId, CancellationToken cancellationToken);

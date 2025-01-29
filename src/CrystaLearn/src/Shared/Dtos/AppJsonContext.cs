@@ -1,4 +1,5 @@
-﻿using CrystaLearn.Shared.Dtos.PushNotification;
+﻿using CrystaLearn.Shared.Dtos.Crysta;
+using CrystaLearn.Shared.Dtos.PushNotification;
 using CrystaLearn.Shared.Dtos.Statistics;
 
 namespace CrystaLearn.Shared.Dtos;
@@ -14,6 +15,8 @@ namespace CrystaLearn.Shared.Dtos;
 [JsonSerializable(typeof(GitHubStats))]
 [JsonSerializable(typeof(NugetStatsDto))]
 [JsonSerializable(typeof(PushNotificationSubscriptionDto))]
+[JsonSerializable(typeof(DocumentDto))]
+[JsonSerializable(typeof(List<DocumentDto>))]
 public partial class AppJsonContext : JsonSerializerContext
 {
 }

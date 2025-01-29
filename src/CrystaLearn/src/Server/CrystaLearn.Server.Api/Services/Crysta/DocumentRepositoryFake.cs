@@ -22,6 +22,20 @@ public class DocumentRepositoryFake : IDocumentRepository
                     FileName = "CS Internship Overview --farsi-ir.md",
                     LastHash = "0xa5b6fe",
                     IsActive = true
+                },
+                new Document
+                {
+                    Id = Guid.NewGuid(),
+                    Code = "interview-planning-process",
+                    Title = "Interview Planning Process",
+                    Language = "fa",
+                    Content = "content",
+                    SourceUrl = "https://github.com/cs-internship/cs-internship-spec/blob/master/processes/documents/CSI%20-%20Interview%20Planning%20Process%20--farsi-ir.md",
+                    CrystaUrl = "/interview-planning-process",
+                    Folder = "/",
+                    FileName = "CSI - Interview Planning Process --farsi-ir.md",
+                    LastHash = "0xa5b6fe",
+                    IsActive = true
                 }
             ];
     }
