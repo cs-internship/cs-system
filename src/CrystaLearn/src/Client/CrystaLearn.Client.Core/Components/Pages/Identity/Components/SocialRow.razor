@@ -1,0 +1,21 @@
+﻿@inherits AppComponentBase
+
+<section>
+    <BitStack Horizontal Alignment="BitAlignment.SpaceBetween">
+        <SocialButton OnClick="WrapHandled(HandleGoogle)" Title="@Localizer[AppStrings.GoogleSignInButtonText]">
+            <GoogleIcon />
+        </SocialButton>
+
+        <SocialButton OnClick="WrapHandled(HandleGitHub)" Title="@Localizer[AppStrings.GitHubSignInButtonText]">
+            <GitHubIcon />
+        </SocialButton>
+
+        <SocialButton OnClick="WrapHandled(HandleTwitter)" Title="@Localizer[AppStrings.TwitterSignInButtonText]">
+            <TwitterIcon />
+        </SocialButton>
+
+        <SocialButton OnClick="WrapHandled(HandleApple)" Title="@Localizer[AppStrings.AppleSignInButtonText]">
+            <AppleIcon />
+        </SocialButton>
+    </BitStack>
+</section>

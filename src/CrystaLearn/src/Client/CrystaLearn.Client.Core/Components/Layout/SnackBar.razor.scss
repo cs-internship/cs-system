@@ -1,0 +1,5 @@
+@import '../../Styles/abstracts/_bit-css-variables.scss';
+
+.snackbar {
+    bottom: calc(#{$bit-env-inset-bottom} + 1rem);
+}

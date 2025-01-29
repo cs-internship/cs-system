@@ -1,0 +1,47 @@
+﻿@attribute [Route(Urls.NotAuthorizedPage)]
+@attribute [Route("{culture?}" + Urls.NotAuthorizedPage)]
+@inherits AppPageBase
+
+<PageTitle>@Localizer[nameof(AppStrings.NotAuthorizedPageTitle)]</PageTitle>
+
+@if (isUpdatingAuthState)
+{
+    <LoadingComponent />
+}
+else
+{
+    <AuthorizeView>
+        <Authorized>
+            <section>
+                <BitStack HorizontalAlign="BitAlignment.Center">
+                    <BitImage Src="_content/CrystaLearn.Client.Core/images/403.svg" Width="100%" Style="max-width:600px" />
+
+                    <BitText Typography="BitTypography.H5" Color="BitColor.SevereWarning" Align="BitTextAlign.Center">
+                        @Localizer[nameof(AppStrings.ForbiddenException)]
+                    </BitText>
+
+                    <BitText>@Localizer[nameof(AppStrings.YouAreSignedInAs)] <b>@user.GetDisplayName()</b></BitText>
+
+                    @if (lacksValidPrivilege)
+                    {
+                        <BitButton Style="width:300px"
+                                   Color="BitColor.SevereWarning"
+                                   Href="@($"{Urls.SettingsPage}/{Urls.SettingsSections.Sessions}")">
+                            @Localizer[nameof(AppStrings.TryRemovingOtherSessions)]
+                        </BitButton>
+                    }
+
+                    <BitButton AutoLoading
+                               Style="width:300px"
+                               OnClick="WrapHandled(SignOut)">
+                        @Localizer[nameof(AppStrings.SignInAsDifferentUser)]
+                    </BitButton>
+
+                </BitStack>
+            </section>
+        </Authorized>
+        <NotAuthorized>
+            <RedirectToSignInPage ReturnUrl="@ReturnUrl" />
+        </NotAuthorized>
+    </AuthorizeView>
+}

@@ -1,0 +1,33 @@
+@import '../../Styles/abstracts/_media-queries.scss';
+@import '../../Styles/abstracts/_bit-css-variables.scss';
+
+::deep {
+    .user-menu-callout {
+        min-width: 225px;
+
+        @include lt-sm {
+            height: unset;
+            box-shadow: none;
+            top: $bit-env-inset-top !important;
+            bottom: $bit-env-inset-bottom !important;
+            inset-inline-end: $bit-env-inset-inline-start !important;
+        }
+    }
+
+    .user-menu-card {
+        @include lt-sm {
+            box-shadow: none;
+        }
+    }
+
+    .persona {
+        max-width: 12rem;
+    }
+
+    .persona-details,
+    .menu-chevron {
+        @include lt-sm {
+            display: none;
+        }
+    }
+}
