@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 namespace CrystaLearn.Shared.Dtos.Crysta;
 public class DocumentDto
 {
+    public Guid Id { get; set; }
     public string Code { get; set; } = default!;
     public string Title { get; set; } = default!;
     public string Language { get; set; } = default!;
@@ -18,6 +19,6 @@ public class DocumentDto
     public string? FileName { get; set; }
     public string? LastHash { get; set; }
     public bool IsActive { get; set; } = true;
-    public Guid? CrystaProgramId { get; set; }
+    public CrystaProgramLightDto? CrystaProgram { get; set; }
     public SyncInfoDto SyncInfo { get; set; } = new();
 }

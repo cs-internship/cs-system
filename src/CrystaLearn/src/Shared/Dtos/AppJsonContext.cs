@@ -18,6 +18,7 @@ namespace CrystaLearn.Shared.Dtos;
 [JsonSerializable(typeof(DocumentDto))]
 [JsonSerializable(typeof(List<DocumentDto>))]
 [JsonSerializable(typeof(CrystaProgramDto))]
+[JsonSerializable(typeof(CrystaProgramLightDto))]
 [JsonSerializable(typeof(List<CrystaProgramDto>))]
 [JsonSerializable(typeof(SyncInfoDto))]
 public partial class AppJsonContext : JsonSerializerContext

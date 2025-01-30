@@ -19,12 +19,12 @@ public partial class DocumentComponent
 
     protected override async Task OnParametersSetAsync()
     {
-        if (Document is not null && Document.CrystaProgramId is not null)
+        if (Document is not null && Document.CrystaProgram is not null)
         {
             try
             {
                 IsLoadingDocument = true;
-                var organizationId = Document.CrystaProgramId.Value;
+                var organizationId = Document.CrystaProgram.Id;
                 LoadedDocument = await DocumentController.GetDocumentByCode(organizationId, Document.Code, CancellationToken.None);
             }
             catch (Exception ex)
