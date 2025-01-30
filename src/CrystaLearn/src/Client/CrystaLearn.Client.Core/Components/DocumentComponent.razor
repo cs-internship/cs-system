@@ -1,0 +1,24 @@
+﻿@inherits ComponentBase
+
+<BitStack>
+    
+    @if (LoadedDocument is not null)
+    {
+        if (IsLoadingDocument)
+        {
+            <BitProgress Indeterminate />
+            <BitProgress Circular Indeterminate />
+        }
+        else
+        {
+            <BitText Typography="BitTypography.H3">@LoadedDocument.Title</BitText>
+            <BitText Typography="BitTypography.Body2">@LoadedDocument.Content</BitText>
+            <br />
+            <BitText Typography="BitTypography.Body1">@LoadedDocument.SyncInfo.SyncHash</BitText>
+        }
+    }
+    else
+    {
+        <BitText Typography="BitTypography.H3">No document selected</BitText>
+    }
+</BitStack>
