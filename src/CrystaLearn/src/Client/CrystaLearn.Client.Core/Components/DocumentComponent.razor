@@ -12,9 +12,9 @@
         else
         {
             <BitText Typography="BitTypography.H3">@LoadedDocument.Title</BitText>
-            <BitText Typography="BitTypography.Body2">@LoadedDocument.Content</BitText>
+            <BitText Typography="BitTypography.Body1">@((MarkupString)(LoadedDocument.Content??""))</BitText>
             <br />
-            <BitText Typography="BitTypography.Body1">@LoadedDocument.SyncInfo.SyncHash</BitText>
+            <BitText Typography="BitTypography.Body2">@LoadedDocument.SyncInfo.SyncHash</BitText>
         }
     }
     else

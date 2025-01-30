@@ -17,7 +17,12 @@ public class DocumentRepositoryFake : IDocumentRepository
                     Code = "cs-internship-overview",
                     Title = "CS Internship Overview",
                     Language = "fa",
-                    Content = "content",
+                    Content = 
+                        """
+                        <p>
+                        Hello this is a <b>document</b>.
+                        </p>
+                        """,
                     SourceUrl = "https://github.com/cs-internship/cs-internship-spec/blob/master/processes/documents/CS%20Internship%20Overview%20--farsi-ir.md",
                     CrystaUrl = "/cs-internship-overview",
                     Folder = "interns/",
@@ -97,25 +102,7 @@ public class DocumentRepositoryFake : IDocumentRepository
     public async Task<Document?> GetDocumentByCodeAsync(Guid organizationId, string code, CancellationToken cancellationToken)
     {
         await Task.Delay(2000, cancellationToken);
-        return new Document
-        {
-            Id = Guid.NewGuid(),
-            Code = "cs-internship-overview",
-            Title = "CS Internship Overview",
-            Language = "fa",
-            Content = "content",
-            SourceUrl = "https://github.com/cs-internship/cs-internship-spec/blob/master/processes/documents/CS%20Internship%20Overview%20--farsi-ir.md",
-            CrystaUrl = "/cs-internship-overview",
-            Folder = "interns/",
-            FileName = "CS Internship Overview --farsi-ir.md",
-            LastHash = "0xa5b6fe",
-            IsActive = true,
-            CrystaProgramId = Guid.NewGuid(),
-            SyncInfo = new SyncInfo()
-            {
-                SyncStatus = SyncStatus.Success,
-                SyncHash = "0xa5b6fe"
-            }
-        };
+        var list = await GetDocumentsAsync(organizationId, cancellationToken);
+        return list.FirstOrDefault(d => d.Code == code);
     }
 }
