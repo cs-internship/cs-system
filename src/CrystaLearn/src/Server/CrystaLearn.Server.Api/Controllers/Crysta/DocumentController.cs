@@ -15,9 +15,19 @@ public partial class DocumentController : AppControllerBase, IDocumentController
     [AllowAnonymous]
     [HttpGet("{organizationId}")]
     [ResponseCache(Duration = 1 * 24 * 3600, Location = ResponseCacheLocation.Any, VaryByQueryKeys = ["*"])]
-    public async Task<List<DocumentDto>> GetProgramDocuments(Guid organizationId, CancellationToken cancellationToken)
+    public async Task<List<DocumentDto>> GetDocuments(Guid organizationId, CancellationToken cancellationToken)
     {
-        var list = await DocumentRepository.GetProgramDocumentsAsync(organizationId, cancellationToken);
+        var list = await DocumentRepository.GetDocumentsAsync(organizationId, cancellationToken);
+        list.ForEach(o => o.Content = null);
         return list.Select(x => x.Map()).ToList();
+    }
+
+    [AllowAnonymous]
+    [HttpGet("{organizationId}/{code}")]
+    [ResponseCache(Duration = 1 * 24 * 3600, Location = ResponseCacheLocation.Any, VaryByQueryKeys = ["*"])]
+    public async Task<DocumentDto?> GetDocumentByCode(Guid organizationId, string code, CancellationToken cancellationToken)
+    {
+        var result = await DocumentRepository.GetDocumentByCodeAsync(organizationId, code, cancellationToken);
+        return result?.Map();
     }
 }

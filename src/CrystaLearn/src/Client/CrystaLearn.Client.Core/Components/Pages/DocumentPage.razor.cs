@@ -15,7 +15,14 @@ public partial class DocumentPage
 
     protected override async Task OnInitAsync()
     {
-        var docs = await DocumentController.GetProgramDocuments(Guid.Empty, CurrentCancellationToken);
+        await RefreshDocuments();
+
+        await base.OnInitAsync();
+    }
+
+    private async Task RefreshDocuments()
+    {
+        var docs = await DocumentController.GetDocuments(Guid.Empty, CurrentCancellationToken);
 
         var root = new BitNavItem()
         {
@@ -38,8 +45,6 @@ public partial class DocumentPage
 
 
         DocumentsTree = root.ChildItems;
-
-        await base.OnInitAsync();
     }
 
     private BitNavItem GetOrCreateNavItem(BitNavItem root, string[] folderParts)
@@ -80,5 +85,10 @@ public partial class DocumentPage
         }
 
         return GetOrCreateNavItem(foundFolder, folderParts.Skip(1).ToArray());
+    }
+
+    private async Task OnRefreshClicked()
+    {
+        await RefreshDocuments();
     }
 }

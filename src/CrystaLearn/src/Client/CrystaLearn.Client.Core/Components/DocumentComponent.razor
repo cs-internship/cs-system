@@ -2,13 +2,20 @@
 
 <BitStack>
     
-    @if (Document is not null)
+    @if (LoadedDocument is not null)
     {
-        <BitText Typography="BitTypography.H3">@Document.Title</BitText>
-        <BitText Typography="BitTypography.Body2">@Document.Content</BitText>
-        <br />
-        <BitText Typography="BitTypography.Body1">@Document.SyncInfo.SyncHash</BitText>
-
+        if (IsLoadingDocument)
+        {
+            <BitProgress Indeterminate />
+            <BitProgress Circular Indeterminate />
+        }
+        else
+        {
+            <BitText Typography="BitTypography.H3">@LoadedDocument.Title</BitText>
+            <BitText Typography="BitTypography.Body2">@LoadedDocument.Content</BitText>
+            <br />
+            <BitText Typography="BitTypography.Body1">@LoadedDocument.SyncInfo.SyncHash</BitText>
+        }
     }
     else
     {
