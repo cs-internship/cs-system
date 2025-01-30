@@ -18,4 +18,5 @@ public class DocumentDto
     public string? FileName { get; set; }
     public string? LastHash { get; set; }
     public bool IsActive { get; set; } = true;
+    public SyncInfoDto SyncInfo { get; set; } = new();
 }

@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.DataProtection.EntityFrameworkCore;
 using CrystaLearn.Server.Api.Models.Identity;
 using CrystaLearn.Server.Api.Data.Configurations;
 using CrystaLearn.Server.Api.Models.PushNotification;
+using CrystaLearn.Server.Api.Models.Crysta;
 
 namespace CrystaLearn.Server.Api.Data;
 
@@ -24,6 +25,20 @@ public partial class AppDbContext(DbContextOptions<AppDbContext> options)
         ConfigureIdentityTableNames(modelBuilder);
 
         ConcurrencyStamp(modelBuilder);
+
+        ConfigureCrysta(modelBuilder);
+    }
+
+    private void ConfigureCrysta(ModelBuilder modelBuilder)
+    {
+        modelBuilder.Entity<Document>()
+            .OwnsOne(o=>o.SyncInfo);
+        
+        modelBuilder.Entity<CrystaProgram>()
+            .OwnsOne(o => o.BadgeSyncInfo);
+        modelBuilder.Entity<CrystaProgram>()
+                    .OwnsOne(o => o.DocumentSyncInfo);
+
     }
 
     public override int SaveChanges(bool acceptAllChangesOnSuccess)

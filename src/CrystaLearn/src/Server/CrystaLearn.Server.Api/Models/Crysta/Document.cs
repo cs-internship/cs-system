@@ -5,14 +5,25 @@ namespace CrystaLearn.Server.Api.Models.Crysta;
 
 public class Document : Entity
 {
-    public string Code { get; set; } = default!;
-    public string Title { get; set; } = default!;
-    public string Language { get; set; } = default!;
-    public string? Content { get; set; }
-    public string? SourceUrl { get; set; }
-    public string? CrystaUrl { get; set; }
-    public string? Folder { get; set; }
-    public string? FileName { get; set; }
-    public string? LastHash { get; set; }
-    public bool IsActive { get; set; } = true;
+    [MaxLength(150)]
+    public virtual string Code { get; set; } = default!;
+    [MaxLength(200)]
+    public virtual string Title { get; set; } = default!;
+    [MaxLength(10)] 
+    public virtual string Language { get; set; } = default!;
+    public virtual string? Content { get; set; }
+    [MaxLength(300)]
+    public virtual string? SourceUrl { get; set; }
+    [MaxLength(300)]
+    public virtual string? CrystaUrl { get; set; }
+    [MaxLength(300)]
+    public virtual string? Folder { get; set; }
+    [MaxLength(300)]
+    public virtual string? FileName { get; set; }
+    [MaxLength(100)]
+    public virtual string? LastHash { get; set; }
+    public virtual bool IsActive { get; set; } = true;
+    public virtual SyncInfo SyncInfo { get; set; } = new();
+    public virtual Guid? CrystaProgramId { get; set; }
+    public virtual CrystaProgram? CrystaProgram { get; set; }
 }

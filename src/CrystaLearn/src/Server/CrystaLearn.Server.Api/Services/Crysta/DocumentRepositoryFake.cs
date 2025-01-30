@@ -21,7 +21,12 @@ public class DocumentRepositoryFake : IDocumentRepository
                     Folder = "interns/",
                     FileName = "CS Internship Overview --farsi-ir.md",
                     LastHash = "0xa5b6fe",
-                    IsActive = true
+                    IsActive = true,
+                    SyncInfo = new SyncInfo()
+                    {
+                        SyncStatus = SyncStatus.Success,
+                        SyncHash = "0xa5b6fe"
+                    }
                 },
                 new Document
                 {
@@ -35,7 +40,12 @@ public class DocumentRepositoryFake : IDocumentRepository
                     Folder = "interns/",
                     FileName = "CS Internship Overview --farsi-ir.md",
                     LastHash = "0xa5b6fe",
-                    IsActive = true
+                    IsActive = true,
+                    SyncInfo = new SyncInfo()
+                    {
+                        SyncStatus = SyncStatus.Success,
+                        SyncHash = "0xa5b6fe"
+                    }
                 },
                 new Document
                 {
@@ -49,7 +59,12 @@ public class DocumentRepositoryFake : IDocumentRepository
                     Folder = "/mentors",
                     FileName = "CSI - Interview Planning Process --farsi-ir.md",
                     LastHash = "0xa5b6fe",
-                    IsActive = true
+                    IsActive = true,
+                    SyncInfo = new SyncInfo()
+                    {
+                        SyncStatus = SyncStatus.Success,
+                        SyncHash = "0xa5b6fe"
+                    }
                 },
                 new Document
                 {
@@ -63,7 +78,12 @@ public class DocumentRepositoryFake : IDocumentRepository
                     Folder = "/mentors",
                     FileName = "CSI - Interview Planning Process --farsi-ir.md",
                     LastHash = "0xa5b6fe",
-                    IsActive = true
+                    IsActive = true,
+                    SyncInfo = new SyncInfo()
+                    {
+                        SyncStatus = SyncStatus.Success,
+                        SyncHash = "0xa5b6fe"
+                    }
                 }
             ];
     }
