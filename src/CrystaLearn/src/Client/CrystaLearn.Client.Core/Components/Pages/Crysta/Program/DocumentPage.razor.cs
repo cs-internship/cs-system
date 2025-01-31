@@ -28,7 +28,8 @@ public partial class DocumentPage
         try
         {
             IsLoadingTree = true;
-            
+            StateHasChanged();
+
             var docs = await DocumentController.GetDocuments(ProgramCode, CurrentCancellationToken);
             var root = new BitNavItem()
             {
@@ -55,6 +56,7 @@ public partial class DocumentPage
         finally
         {
             IsLoadingTree = false;
+            StateHasChanged();
         }
     }
 

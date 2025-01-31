@@ -19,21 +19,25 @@ public partial class DocumentComponent
 
     protected override async Task OnParametersSetAsync()
     {
-        if (Document != PreviousDocument)
-        {
-            await LoadDocument();
-            PreviousDocument = Document;
-        }
         await base.OnParametersSetAsync();
+        await LoadDocument();
     }
 
     private async Task LoadDocument()
     {
+        if (Document == PreviousDocument)
+        {
+            return;
+        }
+
+        PreviousDocument = Document;
+
         if (Document is not null && Document.CrystaProgram is not null)
         {
             try
             {
                 IsLoadingDocument = true;
+                
                 var programCode = Document.CrystaProgram.Code;
                 LoadedDocument = await DocumentController.GetDocumentByCode(programCode, Document.Code, CancellationToken.None);
             }
