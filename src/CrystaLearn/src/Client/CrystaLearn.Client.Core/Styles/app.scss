@@ -70,3 +70,17 @@ div[dir=rtl] {
         }
     }
 }
+
+.content-full {
+    padding: 1rem;
+    width: 100%;
+    height: 100%;
+    background-color: $bit-color-background-secondary;
+}
+
+.content-part {
+    padding: 1rem;
+    width: 100%;
+    height: 100%;
+    background-color: $bit-color-background-primary;
+}

@@ -5,12 +5,19 @@
 
 <PageTitle>@Localizer[nameof(AppStrings.TermsPageTitle)]</PageTitle>
 
-<article>
-    <BitButton OnClick="OnRefreshClicked" >Refresh</BitButton>
-    <BitStack Horizontal>
-        <BitNav Items="DocumentsTree"
-                Style="width: 300px;"
-                OnItemClick="(BitNavItem item) => CurrentDocument = item.Data as DocumentDto" />
-        <DocumentComponent Document="CurrentDocument"/>
-    </BitStack>
-</article>
+<BitSplitter FirstPanelMinSize="120" FirstPanelSize="120" SecondPanelMinSize="500">
+    <FirstPanel>
+        <BitStack Class="content-full">
+            <BitButton OnClick="OnRefreshClicked">Refresh</BitButton>
+            <BitNav Items="DocumentsTree"
+                    Style="width: 100%;"
+                    OnItemClick="(BitNavItem item) => CurrentDocument = item.Data as DocumentDto" />
+        </BitStack>
+        
+    </FirstPanel>
+    <SecondPanel>
+        <BitStack Class="content-full">
+            <DocumentComponent Document="CurrentDocument" />
+        </BitStack>
+    </SecondPanel>
+</BitSplitter>

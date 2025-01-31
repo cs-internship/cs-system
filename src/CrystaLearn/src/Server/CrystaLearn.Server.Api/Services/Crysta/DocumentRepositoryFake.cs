@@ -7,7 +7,7 @@ public partial class DocumentRepositoryFake : IDocumentRepository
 {
     public async Task<List<Document>> GetDocumentsAsync(string programCode, CancellationToken cancellationToken)
     {
-        await Task.Delay(2000, cancellationToken);
+        await Task.Delay(500, cancellationToken);
 
         var csInternshipProgram = CrystaProgramRepositoryFake.FakePrograms.FirstOrDefault(p => p.Code == "cs-internship");
 
@@ -104,7 +104,7 @@ public partial class DocumentRepositoryFake : IDocumentRepository
     public async Task<Document?> GetDocumentByCodeAsync(string programCode, string code,
         CancellationToken cancellationToken)
     {
-        await Task.Delay(2000, cancellationToken);
+        await Task.Delay(500, cancellationToken);
         var list = await GetDocumentsAsync(programCode, cancellationToken);
         return list.FirstOrDefault(d => d.Code == code);
     }

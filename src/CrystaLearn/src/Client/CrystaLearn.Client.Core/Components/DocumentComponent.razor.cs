@@ -9,7 +9,7 @@ public partial class DocumentComponent
     private IDocumentController DocumentController { get; set; } = default!;
 
     [Parameter] public DocumentDto? Document { get; set; } = default!;
-
+    private DocumentDto? PreviousDocument { get; set; }
 
     private DocumentDto? LoadedDocument { get; set; }
     private bool IsLoadingDocument { get; set; } = false;
@@ -18,6 +18,16 @@ public partial class DocumentComponent
     private MessageBoxService MessageBoxService { get; set; } = default!;
 
     protected override async Task OnParametersSetAsync()
+    {
+        if (Document != PreviousDocument)
+        {
+            await LoadDocument();
+            PreviousDocument = Document;
+        }
+        await base.OnParametersSetAsync();
+    }
+
+    private async Task LoadDocument()
     {
         if (Document is not null && Document.CrystaProgram is not null)
         {
@@ -36,6 +46,5 @@ public partial class DocumentComponent
                 IsLoadingDocument = false;
             }
         }
-        await base.OnParametersSetAsync();
     }
 }
