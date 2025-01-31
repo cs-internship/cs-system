@@ -12,4 +12,5 @@ namespace CrystaLearn.Server.Api.Mappers;
 public static partial class CrystaProgramMapper
 {
     public static partial CrystaProgramDto Map(this CrystaProgram source);
+    public static partial CrystaProgramLightDto MapLight(this CrystaProgram source);
 }

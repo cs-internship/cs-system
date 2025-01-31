@@ -381,6 +381,7 @@ public static partial class Program
         var services = builder.Services;
 
         services.AddTransient<IDocumentRepository, DocumentRepositoryFake>();
+        services.AddTransient<ICrystaProgramRepository, CrystaProgramRepositoryFake>();
     }
 
 

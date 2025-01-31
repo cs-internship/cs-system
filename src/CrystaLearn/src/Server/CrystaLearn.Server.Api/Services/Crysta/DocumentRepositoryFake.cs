@@ -3,11 +3,13 @@ using CrystaLearn.Server.Api.Services.Crysta.Contracts;
 
 namespace CrystaLearn.Server.Api.Services.Crysta;
 
-public class DocumentRepositoryFake : IDocumentRepository
+public partial class DocumentRepositoryFake : IDocumentRepository
 {
     public async Task<List<Document>> GetDocumentsAsync(string programCode, CancellationToken cancellationToken)
     {
         await Task.Delay(2000, cancellationToken);
+
+        var csInternshipProgram = CrystaProgramRepositoryFake.FakePrograms.FirstOrDefault(p => p.Code == "cs-internship");
 
         return
             [
@@ -29,7 +31,7 @@ public class DocumentRepositoryFake : IDocumentRepository
                     FileName = "CS Internship Overview --farsi-ir.md",
                     LastHash = "0xa5b6fe",
                     IsActive = true,
-                    CrystaProgramId = Guid.NewGuid(),
+                    CrystaProgram = csInternshipProgram,
                     SyncInfo = new SyncInfo()
                     {
                         SyncStatus = SyncStatus.Success,
@@ -49,7 +51,7 @@ public class DocumentRepositoryFake : IDocumentRepository
                     FileName = "CS Internship Overview --farsi-ir.md",
                     LastHash = "0xa5b6fe",
                     IsActive = true,
-                    CrystaProgramId = Guid.NewGuid(),
+                    CrystaProgram = csInternshipProgram,
                     SyncInfo = new SyncInfo()
                     {
                         SyncStatus = SyncStatus.Success,
@@ -69,7 +71,7 @@ public class DocumentRepositoryFake : IDocumentRepository
                     FileName = "CSI - Interview Planning Process --farsi-ir.md",
                     LastHash = "0xa5b6fe",
                     IsActive = true,
-                    CrystaProgramId = Guid.NewGuid(),
+                    CrystaProgram = csInternshipProgram,
                     SyncInfo = new SyncInfo()
                     {
                         SyncStatus = SyncStatus.Success,
@@ -89,7 +91,7 @@ public class DocumentRepositoryFake : IDocumentRepository
                     FileName = "CSI - Interview Planning Process --farsi-ir.md",
                     LastHash = "0xa5b6fe",
                     IsActive = true,
-                    CrystaProgramId = Guid.NewGuid(),
+                    CrystaProgram = csInternshipProgram,
                     SyncInfo = new SyncInfo()
                     {
                         SyncStatus = SyncStatus.Success,
