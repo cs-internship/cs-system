@@ -1,28 +1,28 @@
 ﻿@inherits ComponentBase
 
-
-@if (LoadedDocument is not null)
-{
-    if (IsLoadingDocument)
+<BitStack Gap="2rem" Class="content-full">
+    @if (LoadedDocument is not null)
     {
-        <BitProgress Indeterminate />
-        <BitProgress Circular Indeterminate />
+        if (IsLoadingDocument)
+        {
+            <BitEllipsisLoading Style="align-self:center;" />
+        }
+        else
+        {
+            <BitStack Gap="0" FitHeight>
+                <BitText Typography="BitTypography.H3">@LoadedDocument.Title</BitText>
+                <BitStack Horizontal Gap="3rem">
+                    <BitText Typography="BitTypography.Subtitle1">@LoadedDocument.SyncInfo.SyncStartDateTime.ToString("yyyy/MM/dd HH:mm")</BitText>
+                    <BitText Typography="BitTypography.Subtitle1">@LoadedDocument.SyncInfo.SyncHash</BitText>
+                </BitStack>
+            </BitStack>
+            <BitStack>
+                <BitText Typography="BitTypography.Body1">@((MarkupString)(LoadedDocument.Content ?? ""))</BitText>
+            </BitStack>
+        }
     }
     else
     {
-        <BitStack Gap="0" FitHeight>
-            <BitText Typography="BitTypography.H3">@LoadedDocument.Title</BitText>
-            <BitStack Horizontal Gap="3rem">
-                <BitText Typography="BitTypography.Subtitle1">@LoadedDocument.SyncInfo.SyncStartDateTime.ToString("yyyy/MM/dd HH:mm")</BitText>
-                <BitText Typography="BitTypography.Subtitle1">@LoadedDocument.SyncInfo.SyncHash</BitText>
-            </BitStack>
-        </BitStack>
-        <BitStack Class="content-part">
-            <BitText Typography="BitTypography.Body1">@((MarkupString)(LoadedDocument.Content ?? ""))</BitText>
-        </BitStack>
+        <BitText Typography="BitTypography.H3">No document selected</BitText>
     }
-}
-else
-{
-    <BitText Typography="BitTypography.H3">No document selected</BitText>
-}
+</BitStack>

@@ -14,6 +14,7 @@ public partial class DocumentPage
     protected override string? Subtitle => string.Empty;
     public List<BitNavItem> DocumentsTree { get; set; } = [];
     public DocumentDto? CurrentDocument { get; set; }
+    private bool IsLoadingTree { get; set; } = false;
 
     protected override async Task OnInitAsync()
     {
@@ -24,29 +25,37 @@ public partial class DocumentPage
 
     private async Task RefreshDocuments()
     {
-        var docs = await DocumentController.GetDocuments(ProgramCode, CurrentCancellationToken);
-        
-        var root = new BitNavItem()
+        try
         {
-            Text = "/",
-        };
-
-        foreach (var doc in docs)
-        {
-            var folderParts = doc.Folder?.Trim('/')?.Split('/') ?? [];
-            folderParts = ["/", .. folderParts];
-
-            var navItem = GetOrCreateNavItem(root, folderParts);
-
-            navItem.ChildItems.Add(new BitNavItem
+            IsLoadingTree = true;
+            
+            var docs = await DocumentController.GetDocuments(ProgramCode, CurrentCancellationToken);
+            var root = new BitNavItem()
             {
-                Text = doc.Title,
-                Data = doc,
-            });
+                Text = "/",
+            };
+
+            foreach (var doc in docs)
+            {
+                var folderParts = doc.Folder?.Trim('/')?.Split('/') ?? [];
+                folderParts = ["/", .. folderParts];
+
+                var navItem = GetOrCreateNavItem(root, folderParts);
+
+                navItem.ChildItems.Add(new BitNavItem
+                {
+                    Text = doc.Title,
+                    Data = doc,
+                    IconName = BitIconName.TextDocument
+                });
+            }
+
+            DocumentsTree = root.ChildItems;
         }
-
-
-        DocumentsTree = root.ChildItems;
+        finally
+        {
+            IsLoadingTree = false;
+        }
     }
 
     private BitNavItem GetOrCreateNavItem(BitNavItem root, string[] folderParts)
@@ -81,6 +90,7 @@ public partial class DocumentPage
             foundFolder = new BitNavItem
             {
                 Text = folderPart,
+                IconName = BitIconName.FabricFolder
             };
             root.ChildItems.Add(foundFolder);
 

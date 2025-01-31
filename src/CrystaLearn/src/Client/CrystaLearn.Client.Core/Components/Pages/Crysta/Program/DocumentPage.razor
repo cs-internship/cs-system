@@ -5,18 +5,28 @@
 
 <PageTitle>@Localizer[nameof(AppStrings.TermsPageTitle)]</PageTitle>
 
-<BitSplitter FirstPanelMinSize="120" FirstPanelSize="120" SecondPanelMinSize="500">
+<BitSplitter FirstPanelMinSize="120" FirstPanelSize="120" FirstPanelMaxSize="300">
     <FirstPanel>
         <BitStack Class="content-full">
-            <BitButton OnClick="OnRefreshClicked">Refresh</BitButton>
-            <BitNav Items="DocumentsTree"
-                    Style="width: 100%;"
-                    OnItemClick="(BitNavItem item) => CurrentDocument = item.Data as DocumentDto" />
+        
+            @if (IsLoadingTree)
+            {
+                <BitEllipsisLoading Style="align-self:center;"/>
+            }
+            else
+            {
+                <BitLabel Typography="BitTypography.Body1">Documents</BitLabel>
+                <BitNav Items="DocumentsTree"
+                        Style="width: 100%;"
+                        OnItemClick="(BitNavItem item) => CurrentDocument = item.Data as DocumentDto" />
+            }
+            
         </BitStack>
         
     </FirstPanel>
     <SecondPanel>
-        <BitStack Class="content-full">
+        <BitStack Horizontal>
+            <BitSpacer Width="5"></BitSpacer>
             <DocumentComponent Document="CurrentDocument" />
         </BitStack>
     </SecondPanel>
