@@ -17,9 +17,9 @@ public interface IDocumentController : IAppController
     //[HttpGet, Route("https://api.github.com/repos/bitfoundation/bitplatform")]
     //Task<GitHubStats> GetGitHubStats(CancellationToken cancellationToken) => default!;
 
-    [HttpGet("{organizationId}")]
-    Task<List<DocumentDto>> GetDocuments(Guid organizationId, CancellationToken cancellationToken);
+    [HttpGet("{programCode}")]
+    Task<List<DocumentDto>> GetDocuments(string programCode, CancellationToken cancellationToken);
 
-    [HttpGet("{organizationId}/{code}")]
-    Task<DocumentDto?> GetDocumentByCode(Guid organizationId, string code, CancellationToken cancellationToken);
+    [HttpGet("{programCode}/{code}")]
+    Task<DocumentDto?> GetDocumentByCode(string programCode, string code, CancellationToken cancellationToken);
 }

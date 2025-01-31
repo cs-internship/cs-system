@@ -5,7 +5,7 @@ namespace CrystaLearn.Server.Api.Services.Crysta;
 
 public class DocumentRepositoryFake : IDocumentRepository
 {
-    public async Task<List<Document>> GetDocumentsAsync(Guid organizationId, CancellationToken cancellationToken)
+    public async Task<List<Document>> GetDocumentsAsync(string programCode, CancellationToken cancellationToken)
     {
         await Task.Delay(2000, cancellationToken);
 
@@ -99,10 +99,11 @@ public class DocumentRepositoryFake : IDocumentRepository
             ];
     }
 
-    public async Task<Document?> GetDocumentByCodeAsync(Guid organizationId, string code, CancellationToken cancellationToken)
+    public async Task<Document?> GetDocumentByCodeAsync(string programCode, string code,
+        CancellationToken cancellationToken)
     {
         await Task.Delay(2000, cancellationToken);
-        var list = await GetDocumentsAsync(organizationId, cancellationToken);
+        var list = await GetDocumentsAsync(programCode, cancellationToken);
         return list.FirstOrDefault(d => d.Code == code);
     }
 }

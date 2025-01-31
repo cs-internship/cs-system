@@ -13,21 +13,22 @@ public partial class DocumentController : AppControllerBase, IDocumentController
     [AutoInject] private IDocumentRepository DocumentRepository { get; set; }
 
     [AllowAnonymous]
-    [HttpGet("{organizationId}")]
+    [HttpGet("{programCode}")]
     [ResponseCache(Duration = 1 * 24 * 3600, Location = ResponseCacheLocation.Any, VaryByQueryKeys = ["*"])]
-    public async Task<List<DocumentDto>> GetDocuments(Guid organizationId, CancellationToken cancellationToken)
+    public async Task<List<DocumentDto>> GetDocuments(string programCode, CancellationToken cancellationToken)
     {
-        var list = await DocumentRepository.GetDocumentsAsync(organizationId, cancellationToken);
+        var list = await DocumentRepository.GetDocumentsAsync(programCode, cancellationToken);
         list.ForEach(o => o.Content = null);
         return list.Select(x => x.Map()).ToList();
     }
 
     [AllowAnonymous]
-    [HttpGet("{organizationId}/{code}")]
+    [HttpGet("{programCode}/{code}")]
     [ResponseCache(Duration = 1 * 24 * 3600, Location = ResponseCacheLocation.Any, VaryByQueryKeys = ["*"])]
-    public async Task<DocumentDto?> GetDocumentByCode(Guid organizationId, string code, CancellationToken cancellationToken)
+    public async Task<DocumentDto?> GetDocumentByCode(string programCode, string code,
+        CancellationToken cancellationToken)
     {
-        var result = await DocumentRepository.GetDocumentByCodeAsync(organizationId, code, cancellationToken);
+        var result = await DocumentRepository.GetDocumentByCodeAsync(programCode, code, cancellationToken);
         return result?.Map();
     }
 }

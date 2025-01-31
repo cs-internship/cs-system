@@ -8,6 +8,9 @@ public partial class DocumentPage
 {
     [AutoInject] private IDocumentController DocumentController { get; set; } = default!;
 
+    [Parameter]
+    public string ProgramCode { get; set; } = default!;
+
     protected override string? Title => Localizer[nameof(AppStrings.Terms)];
     protected override string? Subtitle => string.Empty;
     public List<BitNavItem> DocumentsTree { get; set; } = [];
@@ -22,8 +25,8 @@ public partial class DocumentPage
 
     private async Task RefreshDocuments()
     {
-        var docs = await DocumentController.GetDocuments(Guid.Empty, CurrentCancellationToken);
-
+        var docs = await DocumentController.GetDocuments(ProgramCode, CurrentCancellationToken);
+        
         var root = new BitNavItem()
         {
             Text = "/",

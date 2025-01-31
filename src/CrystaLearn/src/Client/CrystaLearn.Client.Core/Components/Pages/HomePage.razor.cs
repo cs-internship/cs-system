@@ -38,7 +38,7 @@ public partial class HomePage
 
     private async Task LoadDocuments()
     {
-        Documents = await documentController.GetDocuments(Guid.Empty, CurrentCancellationToken);
+        Documents = await documentController.GetDocuments("", CurrentCancellationToken);
     }
 
     private async Task LoadNuget()
