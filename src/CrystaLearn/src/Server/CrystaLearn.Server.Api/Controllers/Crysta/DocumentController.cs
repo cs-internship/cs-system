@@ -1,11 +1,8 @@
-﻿using CrystaLearn.Server.Api.Services;
-using CrystaLearn.Shared.Dtos.Statistics;
-using CrystaLearn.Shared.Controllers.Statistics;
+﻿using CrystaLearn.Server.Api.Services.Crysta.Contracts;
 using CrystaLearn.Shared.Controllers.Crysta;
 using CrystaLearn.Shared.Dtos.Crysta;
-using CrystaLearn.Server.Api.Services.Crysta.Contracts;
 
-namespace CrystaLearn.Server.Api.Controllers.Statistics;
+namespace CrystaLearn.Server.Api.Controllers.Crysta;
 
 [ApiController, Route("api/[controller]/[action]")]
 public partial class DocumentController : AppControllerBase, IDocumentController

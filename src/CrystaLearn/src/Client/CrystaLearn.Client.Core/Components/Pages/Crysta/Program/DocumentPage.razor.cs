@@ -1,8 +1,7 @@
-﻿
-using CrystaLearn.Shared.Controllers.Crysta;
+﻿using CrystaLearn.Shared.Controllers.Crysta;
 using CrystaLearn.Shared.Dtos.Crysta;
 
-namespace CrystaLearn.Client.Core.Components.Pages;
+namespace CrystaLearn.Client.Core.Components.Pages.Crysta.Program;
 
 public partial class DocumentPage
 {

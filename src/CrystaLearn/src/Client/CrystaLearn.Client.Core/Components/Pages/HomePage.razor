@@ -6,27 +6,31 @@
 
 <section>
     <BitStack Alignment="BitAlignment.Center" Gap="2rem" Class="stack">
-        <BitText Typography="BitTypography.H4" Align="BitTextAlign.Center">
-            @Localizer[nameof(AppStrings.HomePanelTitle)]
-            <br />
-            @Localizer[nameof(AppStrings.HomePanelSubtitle)]
-        </BitText>
-
-        <BitText Typography="BitTypography.H6" Align="BitTextAlign.Center">
-            @Localizer[nameof(AppStrings.HomeMessage)]
-        </BitText>
-
-        <br />
-        @foreach(var doc in Documents){
-                <BitCard FullWidth Style="padding:2rem">
+        
+        <BitStack Horizontal Gap="2rem" Class="products-stack">
+            @foreach(var program in Programs)
+            {
+                <BitCard Style="padding:3rem" FullWidth>
                     <BitStack HorizontalAlign="BitAlignment.Center">
-                        <BitText Typography="BitTypography.H5">@doc.Title</BitText>
-                        <BitText Typography="BitTypography.Body1" Align="BitTextAlign.Center">@doc.Description</BitText>
-                        <BitText Typography="BitTypography.Body1" Align="BitTextAlign.Center">@doc.CrystaProgram?.Title</BitText>
+                        <BitText Typography="BitTypography.H5">@program.Title</BitText>
+                        <BitText Typography="BitTypography.Body1" Align="BitTextAlign.Center">
+                            CS Internship is a cool program.
+                        </BitText>
+                        <BitButton Variant="BitVariant.Outline" Href="@Urls.Crysta.Program(program.Code).DocsPage">
+                            Documents
+                        </BitButton>
+                        <BitLink Href="https://blazorui.bitplatform.dev/" Target="_blank" NoUnderline>
+                            <BitStack Horizontal VerticalAlign="BitAlignment.Baseline" Gap="0.5rem">
+                                @program.DocumentSyncInfo.SyncHash
+                                <BitIcon Size="BitSize.Small" IconName="@(currentDir is BitDir.Rtl ? BitIconName.ChromeBack : BitIconName.ChromeBackMirrored)" />
+                            </BitStack>
+                        </BitLink>
                     </BitStack>
                 </BitCard>
-        }
-        <br/>
+            }
+            
+        </BitStack>
+
         <CascadingValue Value="BitDir.Ltr">
             <BitCard FullWidth Style="padding:2rem">
                 <BitStack>

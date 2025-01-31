@@ -1,4 +1,5 @@
-﻿using CrystaLearn.Shared.Controllers.Crysta;
+﻿using System.Collections;
+using CrystaLearn.Shared.Controllers.Crysta;
 using CrystaLearn.Shared.Controllers.Statistics;
 using CrystaLearn.Shared.Dtos.Crysta;
 using CrystaLearn.Shared.Dtos.Statistics;
@@ -13,12 +14,12 @@ public partial class HomePage
     [CascadingParameter] private BitDir? currentDir { get; set; }
 
     [AutoInject] private IStatisticsController statisticsController = default!;
-    [AutoInject] private IDocumentController documentController = default!;
+    [AutoInject] private ICrystaProgramController CrystaProgramController { get; set; } = default!;
     private bool isLoadingGitHub = true;
     private bool isLoadingNuget = true;
     private GitHubStats? gitHubStats;
     private NugetStatsDto? nugetStats;
-    private List<DocumentDto> Documents = [];
+    private List<CrystaProgramDto> Programs { get; set; } = [];
 
     protected override async Task OnInitAsync()
     {
@@ -33,12 +34,12 @@ public partial class HomePage
         // However, the logic in other HTTP message handlers, such as **LoggingDelegatingHandler** and **RetryDelegatingHandler**,
         // effectively addresses most scenarios.
 
-        await Task.WhenAll(LoadNuget(), LoadGitHub(), LoadDocuments());
+        await Task.WhenAll(LoadNuget(), LoadGitHub(), LoadPrograms());
     }
 
-    private async Task LoadDocuments()
+    private async Task LoadPrograms()
     {
-        Documents = await documentController.GetDocuments("", CurrentCancellationToken);
+        Programs = await CrystaProgramController.GetPrograms(CurrentCancellationToken);
     }
 
     private async Task LoadNuget()
