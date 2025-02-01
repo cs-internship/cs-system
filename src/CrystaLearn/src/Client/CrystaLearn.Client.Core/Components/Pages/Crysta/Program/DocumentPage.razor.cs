@@ -21,6 +21,13 @@ public partial class DocumentPage
 
     protected override async Task OnInitAsync()
     {
+        await RefreshDocuments();
+
+        await base.OnInitAsync();
+    }
+
+    protected override Task OnParamsSetAsync()
+    {
         if (DocumentCode is not null)
         {
             var currentCulture = CultureInfoManager.DefaultCulture.Name;
@@ -37,9 +44,7 @@ public partial class DocumentPage
             SetCurrentDocument(document);
         }
 
-        await RefreshDocuments();
-
-        await base.OnInitAsync();
+        return base.OnParamsSetAsync();
     }
 
     private async Task RefreshDocuments()
@@ -128,7 +133,12 @@ public partial class DocumentPage
     private async Task OnNavItemClicked(BitNavItem item)
     {
         var document = item.Data as DocumentDto;
-        SetCurrentDocument(document);
+        if (document is null)
+        {
+            return;
+        }
+        //SetCurrentDocument(document);
+        NavigationManager.NavigateTo(Urls.Crysta.Program(ProgramCode).DocPage(document.Code));
     }
 
     private void SetCurrentDocument(DocumentDto? document)

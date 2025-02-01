@@ -10,6 +10,7 @@ public static partial class Urls
         public class ProgramPage(string programCode)
         {
             public string DocsPage = $"/{programCode}/docs";
+            public string DocPage(string documentCode) => $"{DocsPage}/{documentCode}";
         }
     }
 
