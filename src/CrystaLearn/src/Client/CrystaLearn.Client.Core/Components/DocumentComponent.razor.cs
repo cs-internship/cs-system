@@ -20,6 +20,12 @@ public partial class DocumentComponent
     [AutoInject]
     private MessageBoxService MessageBoxService { get; set; } = default!;
 
+    private List<BitButtonGroupItem> MenuItems { get; set; } =
+    [
+        new() { Text = "Copy Link", IconName = BitIconName.Share },
+        new() { Text = "GitHub", IconName = BitIconName.GitGraph },
+    ];
+
     protected override async Task OnParametersSetAsync()
     {
         await base.OnParametersSetAsync();
@@ -42,7 +48,8 @@ public partial class DocumentComponent
                 IsLoadingDocument = true;
                 
                 var programCode = Document.CrystaProgram.Code;
-                LoadedDocument = await DocumentController.GetDocumentByCode(programCode, Document.Code, CancellationToken.None);
+                var culture = CultureInfo.CurrentUICulture.Name;
+                LoadedDocument = await DocumentController.GetDocumentByCode(programCode, Document.Code, culture, CancellationToken.None);
             }
             catch (Exception ex)
             {

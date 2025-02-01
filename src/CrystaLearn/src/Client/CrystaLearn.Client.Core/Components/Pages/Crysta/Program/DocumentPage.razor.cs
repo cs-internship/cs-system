@@ -7,7 +7,6 @@ namespace CrystaLearn.Client.Core.Components.Pages.Crysta.Program;
 public partial class DocumentPage
 {
     [AutoInject] private IDocumentController DocumentController { get; set; } = default!;
-    [AutoInject] private CultureInfoManager CultureInfoManager { get; set; } = default!;
     [Parameter]
     public string ProgramCode { get; set; } = default!;
     [Parameter]
@@ -30,7 +29,7 @@ public partial class DocumentPage
     {
         if (DocumentCode is not null)
         {
-            var currentCulture = CultureInfoManager.DefaultCulture.Name;
+            var currentCulture = CultureInfo.CurrentUICulture.Name;
             var document = new DocumentDto
             {
                 Code = DocumentCode,

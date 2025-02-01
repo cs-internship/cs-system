@@ -20,6 +20,6 @@ public interface IDocumentController : IAppController
     [HttpGet("{programCode}")]
     Task<List<DocumentDto>> GetDocuments(string programCode, CancellationToken cancellationToken);
 
-    [HttpGet("{programCode}/{code}")]
-    Task<DocumentDto?> GetDocumentByCode(string programCode, string code, CancellationToken cancellationToken);
+    [HttpGet("{programCode}/{code}/{culture}")]
+    Task<DocumentDto?> GetDocumentByCode(string programCode, string code, string culture, CancellationToken cancellationToken);
 }

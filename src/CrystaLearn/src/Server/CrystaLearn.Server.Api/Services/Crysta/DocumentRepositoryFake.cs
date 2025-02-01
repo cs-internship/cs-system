@@ -35,7 +35,8 @@ public partial class DocumentRepositoryFake : IDocumentRepository
                     SyncInfo = new SyncInfo()
                     {
                         SyncStatus = SyncStatus.Success,
-                        SyncHash = "0xa5b6fe"
+                        SyncHash = "0xa5b6fe",
+                        SyncStartDateTime = DateTimeOffset.Now,
                     }
                 },
                 new Document
@@ -60,7 +61,8 @@ public partial class DocumentRepositoryFake : IDocumentRepository
                     SyncInfo = new SyncInfo()
                     {
                         SyncStatus = SyncStatus.Success,
-                        SyncHash = "0xa5b6fe"
+                        SyncHash = "0xa5b6fe",
+                        SyncStartDateTime = DateTimeOffset.Now,
                     }
                 },
                 new Document
@@ -80,7 +82,8 @@ public partial class DocumentRepositoryFake : IDocumentRepository
                     SyncInfo = new SyncInfo()
                     {
                         SyncStatus = SyncStatus.Success,
-                        SyncHash = "0xa5b6fe"
+                        SyncHash = "0xa5b6fe",
+                        SyncStartDateTime = DateTimeOffset.Now,
                     }
                 },
                 new Document
@@ -100,7 +103,8 @@ public partial class DocumentRepositoryFake : IDocumentRepository
                     SyncInfo = new SyncInfo()
                     {
                         SyncStatus = SyncStatus.Success,
-                        SyncHash = "0xa5b6fe"
+                        SyncHash = "0xa5b6fe",
+                        SyncStartDateTime = DateTimeOffset.Now,
                     }
                 },
                 new Document
@@ -120,7 +124,8 @@ public partial class DocumentRepositoryFake : IDocumentRepository
                     SyncInfo = new SyncInfo()
                     {
                         SyncStatus = SyncStatus.Success,
-                        SyncHash = "0xa5b6fe"
+                        SyncHash = "0xa5b6fe",
+                        SyncStartDateTime = DateTimeOffset.Now,
                     }
                 }
             ];
@@ -136,7 +141,7 @@ public partial class DocumentRepositoryFake : IDocumentRepository
         var list = await GetDocumentsAsync(programCode, cancellationToken);
         var languageVariants = list.Where(d => d.Code == docCode).ToList();
 
-        var document = languageVariants.FirstOrDefault(d => d.Culture == culture);
+        var document = languageVariants.FirstOrDefault(d => culture?.StartsWith(d.Culture) ?? false );
         if (document is not null)
         {
             return document;
