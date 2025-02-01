@@ -137,8 +137,9 @@ public partial class DocumentPage
         {
             return;
         }
-        //SetCurrentDocument(document);
-        NavigationManager.NavigateTo(Urls.Crysta.Program(ProgramCode).DocPage(document.Code));
+        
+        SetCurrentDocument(document);
+        //NavigationManager.NavigateTo(Urls.Crysta.Program(ProgramCode).DocPage(document.Code));
     }
 
     private void SetCurrentDocument(DocumentDto? document)
