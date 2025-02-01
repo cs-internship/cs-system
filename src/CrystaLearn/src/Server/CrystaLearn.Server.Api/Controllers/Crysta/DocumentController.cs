@@ -8,6 +8,7 @@ namespace CrystaLearn.Server.Api.Controllers.Crysta;
 public partial class DocumentController : AppControllerBase, IDocumentController
 {
     [AutoInject] private IDocumentRepository DocumentRepository { get; set; }
+    [AutoInject] private CultureInfoManager CultureInfoManager { get; set; } = default!;
 
     [AllowAnonymous]
     [HttpGet("{programCode}")]
@@ -25,7 +26,9 @@ public partial class DocumentController : AppControllerBase, IDocumentController
     public async Task<DocumentDto?> GetDocumentByCode(string programCode, string code,
         CancellationToken cancellationToken)
     {
-        var result = await DocumentRepository.GetDocumentByCodeAsync(programCode, code, cancellationToken);
+        var culture = CultureInfoManager.DefaultCulture.Name;
+
+        var result = await DocumentRepository.GetDocumentByCodeAsync(programCode, code, culture, cancellationToken);
         return result?.Map();
     }
 }

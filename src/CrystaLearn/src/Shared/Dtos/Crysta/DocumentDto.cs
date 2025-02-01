@@ -10,7 +10,7 @@ public class DocumentDto
     public Guid Id { get; set; }
     public string Code { get; set; } = default!;
     public string Title { get; set; } = default!;
-    public string Language { get; set; } = default!;
+    public string Culture { get; set; } = default!;
     public string? Description { get; set; } = default!;
     public string? Content { get; set; }
     public string? SourceUrl { get; set; }

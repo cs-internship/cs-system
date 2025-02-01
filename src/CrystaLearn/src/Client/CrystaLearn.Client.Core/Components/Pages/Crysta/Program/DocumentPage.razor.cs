@@ -1,14 +1,17 @@
 ﻿using CrystaLearn.Shared.Controllers.Crysta;
 using CrystaLearn.Shared.Dtos.Crysta;
+using CrystaLearn.Shared.Services;
 
 namespace CrystaLearn.Client.Core.Components.Pages.Crysta.Program;
 
 public partial class DocumentPage
 {
     [AutoInject] private IDocumentController DocumentController { get; set; } = default!;
-
+    [AutoInject] private CultureInfoManager CultureInfoManager { get; set; } = default!;
     [Parameter]
     public string ProgramCode { get; set; } = default!;
+    [Parameter]
+    public string? DocumentCode { get; set; } = default!;
 
     protected override string? Title => Localizer[nameof(AppStrings.Terms)];
     protected override string? Subtitle => string.Empty;
@@ -18,6 +21,22 @@ public partial class DocumentPage
 
     protected override async Task OnInitAsync()
     {
+        if (DocumentCode is not null)
+        {
+            var currentCulture = CultureInfoManager.DefaultCulture.Name;
+            var document = new DocumentDto
+            {
+                Code = DocumentCode,
+                Culture = currentCulture,
+                CrystaProgram = new CrystaProgramLightDto
+                {
+                    Code = ProgramCode,
+                    Title = ""
+                }
+            };
+            SetCurrentDocument(document);
+        }
+
         await RefreshDocuments();
 
         await base.OnInitAsync();
@@ -104,5 +123,16 @@ public partial class DocumentPage
     private async Task OnRefreshClicked()
     {
         await RefreshDocuments();
+    }
+
+    private async Task OnNavItemClicked(BitNavItem item)
+    {
+        var document = item.Data as DocumentDto;
+        SetCurrentDocument(document);
+    }
+
+    private void SetCurrentDocument(DocumentDto? document)
+    {
+        CurrentDocument = document;
     }
 }

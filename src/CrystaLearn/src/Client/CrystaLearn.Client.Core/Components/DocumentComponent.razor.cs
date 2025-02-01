@@ -1,5 +1,6 @@
 ﻿using CrystaLearn.Shared.Controllers.Crysta;
 using CrystaLearn.Shared.Dtos.Crysta;
+using CrystaLearn.Shared.Services;
 
 namespace CrystaLearn.Client.Core.Components;
 
@@ -7,6 +8,8 @@ public partial class DocumentComponent
 {
     [AutoInject]
     private IDocumentController DocumentController { get; set; } = default!;
+    [AutoInject]
+    private CultureInfoManager CultureInfoManager { get; set; } = default!;
 
     [Parameter] public DocumentDto? Document { get; set; } = default!;
     private DocumentDto? PreviousDocument { get; set; }
@@ -50,5 +53,17 @@ public partial class DocumentComponent
                 IsLoadingDocument = false;
             }
         }
+    }
+
+    private string? GetCultureTitle(DocumentDto? document)
+    {
+        if (document is null)
+        {
+            return null;
+        }
+
+        var culture = CultureInfoManager.SupportedCultures.FirstOrDefault(s=>s.Culture.Name.StartsWith(document.Culture));
+
+        return culture.DisplayName;
     }
 }

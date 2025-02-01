@@ -1,4 +1,4 @@
-﻿@attribute [Route(Urls.Crysta.DocsPageRoutePattern)]
+﻿@attribute [Route(Urls.Crysta.DocsPageRoutePattern + "/{DocumentCode?}")]
 @attribute [Route("{culture?}" + Urls.Crysta.DocsPageRoutePattern)]
 @using CrystaLearn.Shared.Dtos.Crysta
 @inherits AppPageBase
@@ -18,7 +18,7 @@
                 <BitLabel Typography="BitTypography.Body1">Documents</BitLabel>
                 <BitNav Items="DocumentsTree"
                         Style="width: 100%;"
-                        OnItemClick="(BitNavItem item) => CurrentDocument = item.Data as DocumentDto" />
+                        OnItemClick="(BitNavItem item) => OnNavItemClicked(item)" />
             }
             
         </BitStack>

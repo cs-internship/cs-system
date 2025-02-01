@@ -18,7 +18,7 @@ public partial class DocumentRepositoryFake : IDocumentRepository
                     Id = Guid.NewGuid(),
                     Code = "cs-internship-overview",
                     Title = "CS Internship Overview",
-                    Language = "fa",
+                    Culture = "en",
                     Content = 
                         """
                         <p>
@@ -41,9 +41,34 @@ public partial class DocumentRepositoryFake : IDocumentRepository
                 new Document
                 {
                     Id = Guid.NewGuid(),
+                    Code = "cs-internship-overview",
+                    Title = "CS Internship Overview",
+                    Culture = "fa",
+                    Content =
+                        """
+                        <p>
+                        این یک مستند فارسی است</b>.
+                        </p>
+                        """,
+                    SourceUrl = "https://github.com/cs-internship/cs-internship-spec/blob/master/processes/documents/CS%20Internship%20Overview%20--farsi-ir.md",
+                    CrystaUrl = "/cs-internship-overview",
+                    Folder = "interns/",
+                    FileName = "CS Internship Overview --farsi-ir.md",
+                    LastHash = "0xa5b6fe",
+                    IsActive = true,
+                    CrystaProgram = csInternshipProgram,
+                    SyncInfo = new SyncInfo()
+                    {
+                        SyncStatus = SyncStatus.Success,
+                        SyncHash = "0xa5b6fe"
+                    }
+                },
+                new Document
+                {
+                    Id = Guid.NewGuid(),
                     Code = "cs-internship-overview-other",
                     Title = "Other CS Internship Overview",
-                    Language = "fa",
+                    Culture = "fa",
                     Content = "content",
                     SourceUrl = "https://github.com/cs-internship/cs-internship-spec/blob/master/processes/documents/CS%20Internship%20Overview%20--farsi-ir.md",
                     CrystaUrl = "/cs-internship-overview",
@@ -63,7 +88,7 @@ public partial class DocumentRepositoryFake : IDocumentRepository
                     Id = Guid.NewGuid(),
                     Code = "interview-planning-process",
                     Title = "Interview Planning Process",
-                    Language = "fa",
+                    Culture = "fa",
                     Content = "content",
                     SourceUrl = "https://github.com/cs-internship/cs-internship-spec/blob/master/processes/documents/CSI%20-%20Interview%20Planning%20Process%20--farsi-ir.md",
                     CrystaUrl = "/interview-planning-process",
@@ -83,7 +108,7 @@ public partial class DocumentRepositoryFake : IDocumentRepository
                     Id = Guid.NewGuid(),
                     Code = "interview-planning-process-other",
                     Title = "Other Interview Planning Process",
-                    Language = "fa",
+                    Culture = "fa",
                     Content = "content",
                     SourceUrl = "https://github.com/cs-internship/cs-internship-spec/blob/master/processes/documents/CSI%20-%20Interview%20Planning%20Process%20--farsi-ir.md",
                     CrystaUrl = "/interview-planning-process",
@@ -101,11 +126,34 @@ public partial class DocumentRepositoryFake : IDocumentRepository
             ];
     }
 
-    public async Task<Document?> GetDocumentByCodeAsync(string programCode, string code,
+    public async Task<Document?> GetDocumentByCodeAsync(
+        string programCode, 
+        string docCode,
+        string? culture,
         CancellationToken cancellationToken)
     {
         await Task.Delay(500, cancellationToken);
         var list = await GetDocumentsAsync(programCode, cancellationToken);
-        return list.FirstOrDefault(d => d.Code == code);
+        var languageVariants = list.Where(d => d.Code == docCode).ToList();
+
+        var document = languageVariants.FirstOrDefault(d => d.Culture == culture);
+        if (document is not null)
+        {
+            return document;
+        }
+
+        document = languageVariants.FirstOrDefault(d => d.Culture == "en");
+        if (document is not null)
+        {
+            return document;
+        }
+
+        document = languageVariants.FirstOrDefault(d => d.Culture == "fa");
+        if (document is not null)
+        {
+            return document;
+        }
+
+        return null;
     }
 }

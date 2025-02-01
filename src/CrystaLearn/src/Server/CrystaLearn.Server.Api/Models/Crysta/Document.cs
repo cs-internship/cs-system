@@ -10,7 +10,7 @@ public class Document : Entity
     [MaxLength(200)]
     public virtual string Title { get; set; } = default!;
     [MaxLength(10)] 
-    public virtual string Language { get; set; } = default!;
+    public virtual string Culture { get; set; } = default!;
     public virtual string? Content { get; set; }
     [MaxLength(300)]
     public virtual string? SourceUrl { get; set; }
