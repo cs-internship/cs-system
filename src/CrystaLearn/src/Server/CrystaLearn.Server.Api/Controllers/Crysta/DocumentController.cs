@@ -1,4 +1,4 @@
-﻿using CrystaLearn.Server.Api.Services.Crysta.Contracts;
+﻿using CrystaLearn.Core.Services.Contracts;
 using CrystaLearn.Shared.Controllers.Crysta;
 using CrystaLearn.Shared.Dtos.Crysta;
 

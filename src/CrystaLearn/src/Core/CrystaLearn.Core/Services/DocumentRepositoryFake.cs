@@ -1,7 +1,7 @@
 ﻿using CrystaLearn.Core.Models.Crysta;
-using CrystaLearn.Server.Api.Services.Crysta.Contracts;
+using CrystaLearn.Core.Services.Contracts;
 
-namespace CrystaLearn.Server.Api.Services.Crysta;
+namespace CrystaLearn.Core.Services;
 
 public partial class DocumentRepositoryFake : IDocumentRepository
 {
@@ -19,7 +19,7 @@ public partial class DocumentRepositoryFake : IDocumentRepository
                     Code = "cs-internship-overview",
                     Title = "CS Internship Overview",
                     Culture = "en",
-                    Content = 
+                    Content =
                         """
                         <p>
                         Hello this is a <b>document</b>.
@@ -132,7 +132,7 @@ public partial class DocumentRepositoryFake : IDocumentRepository
     }
 
     public async Task<Document?> GetDocumentByCodeAsync(
-        string programCode, 
+        string programCode,
         string docCode,
         string? culture,
         CancellationToken cancellationToken)
@@ -141,7 +141,7 @@ public partial class DocumentRepositoryFake : IDocumentRepository
         var list = await GetDocumentsAsync(programCode, cancellationToken);
         var languageVariants = list.Where(d => d.Code == docCode).ToList();
 
-        var document = languageVariants.FirstOrDefault(d => culture?.StartsWith(d.Culture) ?? false );
+        var document = languageVariants.FirstOrDefault(d => culture?.StartsWith(d.Culture) ?? false);
         if (document is not null)
         {
             return document;

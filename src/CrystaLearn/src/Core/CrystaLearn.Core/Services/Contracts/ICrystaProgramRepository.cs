@@ -1,6 +1,6 @@
 ﻿using CrystaLearn.Core.Models.Crysta;
 
-namespace CrystaLearn.Server.Api.Services.Crysta.Contracts;
+namespace CrystaLearn.Core.Services.Contracts;
 
 public interface ICrystaProgramRepository
 {

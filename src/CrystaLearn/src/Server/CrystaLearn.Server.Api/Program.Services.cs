@@ -15,12 +15,13 @@ using FluentStorage.Blobs;
 using FluentEmail.Core;
 using AdsPush;
 using AdsPush.Abstraction;
+using CrystaLearn.Core.Extensions;
 using CrystaLearn.Server.Api.Services;
 using CrystaLearn.Server.Api.Controllers;
 using CrystaLearn.Core.Models.Identity;
 using CrystaLearn.Server.Api.Services.Identity;
-using CrystaLearn.Server.Api.Services.Crysta.Contracts;
-using CrystaLearn.Server.Api.Services.Crysta;
+using CrystaLearn.Core.Services;
+using CrystaLearn.Core.Services.Contracts;
 
 namespace CrystaLearn.Server.Api;
 
@@ -181,7 +182,7 @@ public static partial class Program
 
         AddIdentity(builder);
 
-        AddCrysta(builder);
+        builder.AddCrystaServices();
 
         var emailSettings = appSettings.Email ?? throw new InvalidOperationException("Email settings are required.");
         var fluentEmailServiceBuilder = services.AddFluentEmail(emailSettings.DefaultFromEmail);
@@ -375,14 +376,4 @@ public static partial class Program
             });
         });
     }
-
-    private static void AddCrysta(WebApplicationBuilder builder)
-    {
-        var services = builder.Services;
-
-        services.AddTransient<IDocumentRepository, DocumentRepositoryFake>();
-        services.AddTransient<ICrystaProgramRepository, CrystaProgramRepositoryFake>();
-    }
-
-
 }

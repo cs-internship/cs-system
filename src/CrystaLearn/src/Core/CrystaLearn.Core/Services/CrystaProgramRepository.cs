@@ -1,7 +1,7 @@
 ﻿using CrystaLearn.Core.Models.Crysta;
-using CrystaLearn.Server.Api.Services.Crysta.Contracts;
+using CrystaLearn.Core.Services.Contracts;
 
-namespace CrystaLearn.Server.Api.Services.Crysta;
+namespace CrystaLearn.Core.Services;
 
 public partial class CrystaProgramRepositoryFake : ICrystaProgramRepository
 {
