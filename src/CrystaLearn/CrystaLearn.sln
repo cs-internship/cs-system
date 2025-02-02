@@ -53,6 +53,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Console", "Console", "{8093
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CrystaLearn.Console", "src\Console\CrystaLearn.Console\CrystaLearn.Console.csproj", "{B34B8893-FCD2-4B17-BD07-B1E595B959F6}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CrystaLearn.Core.Tests", "src\Core\CrystaLearn.Core.Tests\CrystaLearn.Core.Tests.csproj", "{4065D723-F862-4906-AF66-BFEC934F4D25}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -97,6 +99,10 @@ Global
 		{B34B8893-FCD2-4B17-BD07-B1E595B959F6}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B34B8893-FCD2-4B17-BD07-B1E595B959F6}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B34B8893-FCD2-4B17-BD07-B1E595B959F6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4065D723-F862-4906-AF66-BFEC934F4D25}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4065D723-F862-4906-AF66-BFEC934F4D25}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4065D723-F862-4906-AF66-BFEC934F4D25}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4065D723-F862-4906-AF66-BFEC934F4D25}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -113,10 +119,11 @@ Global
 		{47F82CD8-D6DA-4F03-9DD6-F67AF3621C93} = {B38FF18E-11BC-4AF6-8FA3-648B3952DCAF}
 		{0C62C061-89C1-4135-8042-A829F9FAE082} = {0D2D7A9F-86DF-46C6-9519-7BC04EDA7B40}
 		{B34B8893-FCD2-4B17-BD07-B1E595B959F6} = {80939E9B-6F25-44EE-9AB8-16ACFBDFE0A1}
+		{4065D723-F862-4906-AF66-BFEC934F4D25} = {0D2D7A9F-86DF-46C6-9519-7BC04EDA7B40}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
-		SolutionGuid = {61F7FB11-1E47-470C-91E2-47F8143E1572}
-		RESX_CodeReferences = {"Items":[{"Expression":"\\W($File.$Key)\\W","Extensions":".cs,.xaml,.cshtml,.razor","IsCaseSensitive":true,"SingleLineComment":"\/\/"},{"Expression":"\\W($File.$Key)\\W","Extensions":".vbhtml","IsCaseSensitive":false,"SingleLineComment":null},{"Expression":"ResourceManager.GetString\\(\"($Key)\"\\)","Extensions":".cs","IsCaseSensitive":true,"SingleLineComment":"\/\/"},{"Expression":"typeof\\((\\w+\\.)*($File)\\).+\"($Key)\"|\"($Key)\".+typeof\\((\\w+\\.)*($File)\\)","Extensions":".cs","IsCaseSensitive":true,"SingleLineComment":"\/\/"},{"Expression":"\\W($Key)\\W","Extensions":".vb","IsCaseSensitive":false,"SingleLineComment":"'"},{"Expression":"\\W($File::$Key)\\W","Extensions":".cpp,.c,.hxx,.h","IsCaseSensitive":true,"SingleLineComment":"\/\/"},{"Expression":"&lt;%\\$\\s+Resources:\\s*($File)\\s*,\\s*($Key)\\s*%&gt;","Extensions":".aspx,.ascx,.master","IsCaseSensitive":true,"SingleLineComment":null},{"Expression":"StringResourceKey\\.($Key)","Extensions":".cs","IsCaseSensitive":true,"SingleLineComment":"\/\/"},{"Expression":"\\.($Key)","Extensions":".ts,.html","IsCaseSensitive":true,"SingleLineComment":"\/\/"}]}
 		RESX_NeutralResourcesLanguage = en-US
+		RESX_CodeReferences = {"Items":[{"Expression":"\\W($File.$Key)\\W","Extensions":".cs,.xaml,.cshtml,.razor","IsCaseSensitive":true,"SingleLineComment":"\/\/"},{"Expression":"\\W($File.$Key)\\W","Extensions":".vbhtml","IsCaseSensitive":false,"SingleLineComment":null},{"Expression":"ResourceManager.GetString\\(\"($Key)\"\\)","Extensions":".cs","IsCaseSensitive":true,"SingleLineComment":"\/\/"},{"Expression":"typeof\\((\\w+\\.)*($File)\\).+\"($Key)\"|\"($Key)\".+typeof\\((\\w+\\.)*($File)\\)","Extensions":".cs","IsCaseSensitive":true,"SingleLineComment":"\/\/"},{"Expression":"\\W($Key)\\W","Extensions":".vb","IsCaseSensitive":false,"SingleLineComment":"'"},{"Expression":"\\W($File::$Key)\\W","Extensions":".cpp,.c,.hxx,.h","IsCaseSensitive":true,"SingleLineComment":"\/\/"},{"Expression":"&lt;%\\$\\s+Resources:\\s*($File)\\s*,\\s*($Key)\\s*%&gt;","Extensions":".aspx,.ascx,.master","IsCaseSensitive":true,"SingleLineComment":null},{"Expression":"StringResourceKey\\.($Key)","Extensions":".cs","IsCaseSensitive":true,"SingleLineComment":"\/\/"},{"Expression":"\\.($Key)","Extensions":".ts,.html","IsCaseSensitive":true,"SingleLineComment":"\/\/"}]}
+		SolutionGuid = {61F7FB11-1E47-470C-91E2-47F8143E1572}
 	EndGlobalSection
 EndGlobal
