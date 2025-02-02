@@ -39,9 +39,9 @@ You have the flexibility to develop this project using one of the recommended ID
 
 1. **Clone the repository**: Use the `git clone` command followed by the URL of the repository. This will create a local copy of the project on your machine.
 
-2. **Navigate to the project directory**: Use the `cd` command followed by the path of the directory. For example, if the project is in a directory named `src/CrystallineSociety`, you would use the command `cd src/CrystallineSociety`.
+2. **Navigate to the project directory**: Use the `cd` command followed by the path of the directory. For example, if the project is in a directory named `src/CrystaLearn`, you would use the command `cd src/CrystaLearn`.
 
-3. **Run the web app**: Navigate to the `Server/CrystallineSociety.Server` directory within the project directory. Use the `dotnet run` command to start the web app. This command will build the project and start running the web server.
+3. **Run the web app**: Navigate to the `Server/CrystaLearn.Server.Web` directory within the project directory. Use the `dotnet run` command to start the web app. This command will build the project and start running the web server.
 
 # Managing Secrets with User-Secrets
 
@@ -49,29 +49,33 @@ You have the flexibility to develop this project using one of the recommended ID
 
 Here's how you can use the secrets manager:
 
-1. **Install the Secret Manager tool globally**: Run the following command in your terminal:
-
+Install the Secret Manager tool globally. Run the following command in your terminal:
 ```bash
 dotnet tool install --global dotnet-user-secrets
 ```
 
-2. **Navigate to your API project directory**: Use the `cd` command to navigate to the directory of your API project. If your API project is located in a folder named `Server/CrystallineSociety.Server` inside the `src/CrystallineSociety` directory, you would use the following command:
+### Generating a GitHub Access Token
+A GitHub access token is a way to authenticate with GitHub without using a password. You can generate a new token in this link:
+[https://github.com/settings/tokens](https://github.com/settings/tokens)
+For more detailed information, you can visit the official GitHub documentation on [Managing Your Personal Access Tokens](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens).
+
+For the SQL Server Connection String, you can request access to the Telegram group that contains the connection string. You can join the group using this [link](https://t.me/+VLs-FTg5nLRmMGY0).
+
+### Initialize and set the secrets
 
 ```bash
-cd src/CrystallineSociety/Server/CrystallineSociety.Server
-```
-
-3. **Initialize the secrets storage**: Run the following command:
-
-```bash
+cd /src/CrystaLearn/src/Server/CrystaLearn.Server.Web
 dotnet user-secrets init
-```
+dotnet user-secrets set "ConnectionStrings:SqlServerConnectionString" "Your SQL Server Connection String"
+dotnet user-secrets set "GitHub:GitHubAccessToken" "Your GitHub Access Token"
 
-4. **Set the secrets**: Use the `dotnet user-secrets set` command to set your secrets. For example:
+cd /src/CrystaLearn/src/Console/CrystaLearn.Console
+dotnet user-secrets init
+dotnet user-secrets set "ConnectionStrings:SqlServerConnectionString" "Your SQL Server Connection String"
+dotnet user-secrets set "GitHub:GitHubAccessToken" "Your GitHub Access Token"
 
-> :warning: **Important!** You will need to generate your own GitHub Access Token. Instructions on how to do this will be provided in the [next section](#generating-a-github-access-token). For the SQL Server Connection String, you can request access to the Telegram group that contains the connection string. You can join the group using this [link](https://t.me/+VLs-FTg5nLRmMGY0).
-
-```bash
+cd /src/CrystaLearn/src/Core/CrystaLearn.Core.Tests
+dotnet user-secrets init
 dotnet user-secrets set "ConnectionStrings:SqlServerConnectionString" "Your SQL Server Connection String"
 dotnet user-secrets set "GitHub:GitHubAccessToken" "Your GitHub Access Token"
 ```
@@ -79,30 +83,3 @@ dotnet user-secrets set "GitHub:GitHubAccessToken" "Your GitHub Access Token"
 Remember to replace `"Your SQL Server Connection String"` and `"Your GitHub Access Token"` with your actual connection string and access token.
 
 This way, your secrets are kept out of your project files and won't be checked into source control. For more information on managing application secrets during development with User Secrets, you can visit the official Microsoft documentation [here](https://learn.microsoft.com/en-us/aspnet/core/security/app-secrets).
-
-
-# Generating a GitHub Access Token
-
-A GitHub access token is a way to authenticate with GitHub without using a password. You can generate a new token as follows:
-
-1. **Go to your GitHub settings**: Click on your profile picture in the top right corner of the GitHub homepage, then click on `Settings`.
-
-2. **Navigate to `Developer settings`**: This is located at the bottom of the settings sidebar.
-
-3. **Click on `Personal access tokens`**: This will take you to a page where you can see a list of your existing tokens.
-
-4. **Generate a new token**: Click on the `Generate new token` button. You will be asked to enter your password.
-
-5. **Name your token**: Enter a descriptive name in the `Note` field to help you remember what the token is for.
-
-6. **Set the scopes**: Check the boxes for the scopes, or permissions, you want to grant this token. For example, if you want the token to be able to access your repositories, you would check the `repo` box.
-
-7. **Generate the token**: Click the `Generate token` button at the bottom of the page. Your new token will be created.
-
-8. **Copy the token**: After generating the token, make sure to copy it. You won't be able to see it again. Use the .NET user-secrets tool to store your new token. Run the following command in your terminal, replacing `"Your GitHub Access Token"` with your new token:
-
-```bash
-dotnet user-secrets set "GitHub:GitHubAccessToken" "Your GitHub Access Token"
-```
-
-For more detailed information, you can visit the official GitHub documentation on [Managing Your Personal Access Tokens](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens).
