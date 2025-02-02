@@ -6,7 +6,7 @@ using CrystaLearn.Shared.Dtos.Identity;
 using CrystaLearn.Shared.Dtos.PushNotification;
 using Riok.Mapperly.Abstractions;
 
-namespace CrystaLearn.Server.Api.Mappers;
+namespace CrystaLearn.Core.Mappers;
 
 [Mapper]
 public static partial class CrystaProgramMapper

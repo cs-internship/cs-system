@@ -2,7 +2,7 @@
 using CrystaLearn.Shared.Dtos.Crysta;
 using Riok.Mapperly.Abstractions;
 
-namespace CrystaLearn.Server.Api.Mappers;
+namespace CrystaLearn.Core.Mappers;
 
 [Mapper]
 public static partial class SyncInfoMapper

@@ -2,7 +2,7 @@
 using CrystaLearn.Shared.Dtos.PushNotification;
 using Riok.Mapperly.Abstractions;
 
-namespace CrystaLearn.Server.Api.Mappers;
+namespace CrystaLearn.Core.Mappers;
 
 /// <summary>
 /// More info at Server/Mappers/README.md

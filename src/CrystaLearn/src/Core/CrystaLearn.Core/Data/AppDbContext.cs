@@ -1,11 +1,11 @@
-﻿using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
+﻿using CrystaLearn.Core.Data.Configurations;
+using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Microsoft.AspNetCore.DataProtection.EntityFrameworkCore;
 using CrystaLearn.Core.Models.Identity;
-using CrystaLearn.Server.Api.Data.Configurations;
 using CrystaLearn.Core.Models.PushNotification;
 using CrystaLearn.Core.Models.Crysta;
 
-namespace CrystaLearn.Server.Api.Data;
+namespace CrystaLearn.Core.Data;
 
 public partial class AppDbContext(DbContextOptions<AppDbContext> options)
     : IdentityDbContext<User, Role, Guid>(options), IDataProtectionKeyContext

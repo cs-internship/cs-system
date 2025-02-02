@@ -47,8 +47,8 @@
         <Using Include="Microsoft.EntityFrameworkCore.Metadata.Builders" />
         <Using Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" />
         <Using Include="CrystaLearn.Shared" />
-        <Using Include="CrystaLearn.Server.Api.Data" />
-        <Using Include="CrystaLearn.Server.Api.Mappers" />
+        <Using Include="CrystaLearn.Core.Data" />
+        <Using Include="CrystaLearn.Core.Mappers" />
         <Using Include="Microsoft.AspNetCore.Identity" />
         <Using Include="Microsoft.EntityFrameworkCore" />
         <Using Include="Microsoft.AspNetCore.OData.Query" />
@@ -83,10 +83,6 @@
             <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
             <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
         </Content>
-    </ItemGroup>
-
-    <ItemGroup>
-      <Folder Include="Models\" />
     </ItemGroup>
 
     <!--

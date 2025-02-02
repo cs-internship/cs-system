@@ -1,4 +1,4 @@
-﻿using CrystaLearn.Server.Api.Data;
+﻿using CrystaLearn.Core.Data;
 using CrystaLearn.Client.Core.Services.Contracts;
 
 namespace CrystaLearn.Server.Web;

@@ -1,5 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using CrystaLearn.Server.Api.Data;
+using CrystaLearn.Core.Data;
 using Microsoft.Extensions.Hosting;
 
 namespace CrystaLearn.Tests;

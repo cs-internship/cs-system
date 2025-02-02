@@ -1,6 +1,6 @@
 ﻿using CrystaLearn.Core.Models.PushNotification;
 
-namespace CrystaLearn.Server.Api.Data.Configurations.PushNotification;
+namespace CrystaLearn.Core.Data.Configurations.PushNotification;
 
 public class PushNotificationSubscriptionConfiguration : IEntityTypeConfiguration<PushNotificationSubscription>
 {

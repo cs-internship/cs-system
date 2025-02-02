@@ -1,6 +1,6 @@
 ﻿using CrystaLearn.Core.Models.Identity;
 
-namespace CrystaLearn.Server.Api.Data.Configurations.Identity;
+namespace CrystaLearn.Core.Data.Configurations.Identity;
 
 public partial class UserConfiguration : IEntityTypeConfiguration<User>
 {

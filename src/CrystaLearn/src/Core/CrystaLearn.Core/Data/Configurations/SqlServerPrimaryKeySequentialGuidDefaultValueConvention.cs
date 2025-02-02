@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore.Metadata.Conventions;
 
-namespace CrystaLearn.Server.Api.Data.Configurations;
+namespace CrystaLearn.Core.Data.Configurations;
 
 public partial class SqlServerPrimaryKeySequentialGuidDefaultValueConvention : IModelFinalizingConvention
 {

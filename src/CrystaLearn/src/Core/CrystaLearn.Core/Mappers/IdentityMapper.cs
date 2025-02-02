@@ -2,7 +2,7 @@
 using CrystaLearn.Core.Models.Identity;
 using CrystaLearn.Shared.Dtos.Identity;
 
-namespace CrystaLearn.Server.Api.Mappers;
+namespace CrystaLearn.Core.Mappers;
 
 /// <summary>
 /// More info at Server/Mappers/README.md
