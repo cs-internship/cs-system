@@ -1,8 +1,8 @@
 ﻿using FluentEmail.Core;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
-using CrystaLearn.Server.Api.Models.Emailing;
-using CrystaLearn.Server.Api.Models.Identity;
+using CrystaLearn.Core.Models.Emailing;
+using CrystaLearn.Core.Models.Identity;
 
 namespace CrystaLearn.Server.Api.Services;
 

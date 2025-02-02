@@ -1,4 +1,4 @@
-﻿namespace CrystaLearn.Server.Api.Models.Infra;
+﻿namespace CrystaLearn.Core.Models.Infra;
 
 public class Entity : IEntity
 {

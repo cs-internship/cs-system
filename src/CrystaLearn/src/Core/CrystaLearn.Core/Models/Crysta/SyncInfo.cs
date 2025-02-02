@@ -1,4 +1,4 @@
-﻿namespace CrystaLearn.Server.Api.Models.Crysta;
+﻿namespace CrystaLearn.Core.Models.Crysta;
 
 [ComplexType]
 public class SyncInfo

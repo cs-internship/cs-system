@@ -1,4 +1,4 @@
-﻿namespace CrystaLearn.Server.Api.Models.Emailing;
+﻿namespace CrystaLearn.Core.Models.Emailing;
 
 public partial class EmailTokenTemplateModel
 {

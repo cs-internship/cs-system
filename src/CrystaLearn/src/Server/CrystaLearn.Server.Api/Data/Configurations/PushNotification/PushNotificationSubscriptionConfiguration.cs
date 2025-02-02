@@ -1,4 +1,4 @@
-﻿using CrystaLearn.Server.Api.Models.PushNotification;
+﻿using CrystaLearn.Core.Models.PushNotification;
 
 namespace CrystaLearn.Server.Api.Data.Configurations.PushNotification;
 

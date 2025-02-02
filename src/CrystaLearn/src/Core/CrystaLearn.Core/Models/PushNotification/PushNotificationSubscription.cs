@@ -1,6 +1,6 @@
-﻿using CrystaLearn.Server.Api.Models.Identity;
+﻿using CrystaLearn.Core.Models.Identity;
 
-namespace CrystaLearn.Server.Api.Models.PushNotification;
+namespace CrystaLearn.Core.Models.PushNotification;
 
 public class PushNotificationSubscription
 {

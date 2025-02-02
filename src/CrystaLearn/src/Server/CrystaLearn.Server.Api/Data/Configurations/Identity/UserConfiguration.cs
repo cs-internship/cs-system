@@ -1,4 +1,4 @@
-﻿using CrystaLearn.Server.Api.Models.Identity;
+﻿using CrystaLearn.Core.Models.Identity;
 
 namespace CrystaLearn.Server.Api.Data.Configurations.Identity;
 

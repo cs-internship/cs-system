@@ -1,5 +1,7 @@
 ﻿
-namespace CrystaLearn.Server.Api.Models.Identity;
+using Microsoft.AspNetCore.Identity;
+
+namespace CrystaLearn.Core.Models.Identity;
 
 public partial class User : IdentityUser<Guid>
 {

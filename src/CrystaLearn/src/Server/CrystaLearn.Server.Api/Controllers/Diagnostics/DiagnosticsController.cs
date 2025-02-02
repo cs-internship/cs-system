@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.SignalR;
 using CrystaLearn.Server.Api.SignalR;
 using CrystaLearn.Server.Api.Services;
-using CrystaLearn.Server.Api.Models.Identity;
+using CrystaLearn.Core.Models.Identity;
 using CrystaLearn.Shared.Controllers.Diagnostics;
 
 namespace CrystaLearn.Server.Api.Controllers.Diagnostics;

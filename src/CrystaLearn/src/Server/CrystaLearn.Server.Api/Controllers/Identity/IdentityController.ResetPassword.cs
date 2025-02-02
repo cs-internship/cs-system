@@ -1,6 +1,6 @@
 ﻿using Humanizer;
 using CrystaLearn.Shared.Dtos.Identity;
-using CrystaLearn.Server.Api.Models.Identity;
+using CrystaLearn.Core.Models.Identity;
 using Microsoft.AspNetCore.SignalR;
 
 namespace CrystaLearn.Server.Api.Controllers.Identity;

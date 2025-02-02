@@ -1,7 +1,7 @@
 ﻿using System.Xml.Linq;
-using CrystaLearn.Server.Api.Models.Infra;
+using CrystaLearn.Core.Models.Infra;
 
-namespace CrystaLearn.Server.Api.Models.Crysta;
+namespace CrystaLearn.Core.Models.Crysta;
 
 public class Document : Entity
 {

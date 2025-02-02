@@ -1,4 +1,4 @@
-﻿using CrystaLearn.Server.Api.Models.Identity;
+﻿using CrystaLearn.Core.Models.Identity;
 using CrystaLearn.Shared.Dtos.Identity;
 
 namespace Microsoft.AspNetCore.Identity;

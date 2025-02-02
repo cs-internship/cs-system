@@ -1,4 +1,4 @@
-﻿using CrystaLearn.Server.Api.Models.Crysta;
+﻿using CrystaLearn.Core.Models.Crysta;
 using CrystaLearn.Shared.Dtos.Crysta;
 using Riok.Mapperly.Abstractions;
 

@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.SignalR;
 using CrystaLearn.Server.Api.SignalR;
 using CrystaLearn.Server.Api.Services;
 using CrystaLearn.Shared.Dtos.Identity;
-using CrystaLearn.Server.Api.Models.Identity;
+using CrystaLearn.Core.Models.Identity;
 using CrystaLearn.Shared.Controllers.Identity;
 using CrystaLearn.Server.Api.Services.Identity;
 

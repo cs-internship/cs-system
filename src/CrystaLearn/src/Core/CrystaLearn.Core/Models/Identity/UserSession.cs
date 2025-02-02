@@ -1,7 +1,7 @@
-﻿using CrystaLearn.Shared.Dtos.Identity;
-using CrystaLearn.Server.Api.Models.PushNotification;
+﻿using CrystaLearn.Core.Models.PushNotification;
+using CrystaLearn.Shared.Dtos.Identity;
 
-namespace CrystaLearn.Server.Api.Models.Identity;
+namespace CrystaLearn.Core.Models.Identity;
 
 public partial class UserSession
 {

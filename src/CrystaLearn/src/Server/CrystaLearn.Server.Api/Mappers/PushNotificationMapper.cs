@@ -1,4 +1,4 @@
-﻿using CrystaLearn.Server.Api.Models.PushNotification;
+﻿using CrystaLearn.Core.Models.PushNotification;
 using CrystaLearn.Shared.Dtos.PushNotification;
 using Riok.Mapperly.Abstractions;
 

@@ -1,5 +1,5 @@
 ﻿using Riok.Mapperly.Abstractions;
-using CrystaLearn.Server.Api.Models.Identity;
+using CrystaLearn.Core.Models.Identity;
 using CrystaLearn.Shared.Dtos.Identity;
 
 namespace CrystaLearn.Server.Api.Mappers;

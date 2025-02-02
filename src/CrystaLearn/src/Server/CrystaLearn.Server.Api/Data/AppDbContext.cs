@@ -1,9 +1,9 @@
 ﻿using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Microsoft.AspNetCore.DataProtection.EntityFrameworkCore;
-using CrystaLearn.Server.Api.Models.Identity;
+using CrystaLearn.Core.Models.Identity;
 using CrystaLearn.Server.Api.Data.Configurations;
-using CrystaLearn.Server.Api.Models.PushNotification;
-using CrystaLearn.Server.Api.Models.Crysta;
+using CrystaLearn.Core.Models.PushNotification;
+using CrystaLearn.Core.Models.Crysta;
 
 namespace CrystaLearn.Server.Api.Data;
 

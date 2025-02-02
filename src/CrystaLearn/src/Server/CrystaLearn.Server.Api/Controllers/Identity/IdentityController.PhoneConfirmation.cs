@@ -1,7 +1,7 @@
 ﻿using Humanizer;
 using CrystaLearn.Server.Api.Services;
 using CrystaLearn.Shared.Dtos.Identity;
-using CrystaLearn.Server.Api.Models.Identity;
+using CrystaLearn.Core.Models.Identity;
 
 namespace CrystaLearn.Server.Api.Controllers.Identity;
 

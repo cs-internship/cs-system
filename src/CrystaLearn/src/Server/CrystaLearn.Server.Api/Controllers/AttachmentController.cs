@@ -3,7 +3,7 @@ using FluentStorage.Blobs;
 using Microsoft.AspNetCore.SignalR;
 using CrystaLearn.Server.Api.SignalR;
 using CrystaLearn.Shared.Dtos.Identity;
-using CrystaLearn.Server.Api.Models.Identity;
+using CrystaLearn.Core.Models.Identity;
 
 namespace CrystaLearn.Server.Api.Controllers;
 

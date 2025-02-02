@@ -1,6 +1,6 @@
 ﻿using System.Reflection;
 using CrystaLearn.Server.Api;
-using CrystaLearn.Server.Api.Models.Identity;
+using CrystaLearn.Core.Models.Identity;
 
 namespace Microsoft.AspNetCore.Identity;
 

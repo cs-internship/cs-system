@@ -17,7 +17,7 @@ using AdsPush;
 using AdsPush.Abstraction;
 using CrystaLearn.Server.Api.Services;
 using CrystaLearn.Server.Api.Controllers;
-using CrystaLearn.Server.Api.Models.Identity;
+using CrystaLearn.Core.Models.Identity;
 using CrystaLearn.Server.Api.Services.Identity;
 using CrystaLearn.Server.Api.Services.Crysta.Contracts;
 using CrystaLearn.Server.Api.Services.Crysta;

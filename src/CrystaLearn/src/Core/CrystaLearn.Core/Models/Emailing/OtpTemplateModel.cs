@@ -1,6 +1,6 @@
-﻿namespace CrystaLearn.Server.Api.Models.Emailing;
+﻿namespace CrystaLearn.Core.Models.Emailing;
 
-public partial class ResetPasswordTokenTemplateModel
+public partial class OtpTemplateModel
 {
     public string? DisplayName { get; set; }
     public required string Token { get; set; }
