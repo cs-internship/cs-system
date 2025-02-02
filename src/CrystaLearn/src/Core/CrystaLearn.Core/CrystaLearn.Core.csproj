@@ -15,6 +15,7 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <PackageReference Include="Microsoft.Extensions.Identity.Stores" />
+    <PackageReference Include="Octokit" />
     <PackageReference Include="Riok.Mapperly" />
 
     <Using Include="Microsoft.EntityFrameworkCore.Migrations" />

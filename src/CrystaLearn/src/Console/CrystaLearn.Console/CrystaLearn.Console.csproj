@@ -6,7 +6,8 @@
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
         <AssemblyName>cslearn</AssemblyName>
-    </PropertyGroup>
+      <UserSecretsId>8f1fdf5b-c100-4729-82ec-c7c3b28e2bb0</UserSecretsId>
+  </PropertyGroup>
 
     <ItemGroup>
       <Content Include="appsettings.json">
