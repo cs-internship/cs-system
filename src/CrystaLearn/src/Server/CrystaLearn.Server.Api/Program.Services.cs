@@ -145,20 +145,6 @@ public static partial class Program
             });
         }
 
-        services.AddPooledDbContextFactory<AppDbContext>(AddDbContext);
-        services.AddDbContextPool<AppDbContext>(AddDbContext);
-
-        void AddDbContext(DbContextOptionsBuilder options)
-        {
-            options.EnableSensitiveDataLogging(env.IsDevelopment())
-                .EnableDetailedErrors(env.IsDevelopment());
-
-            options.UseSqlServer(configuration.GetConnectionString("SqlServerConnectionString"), dbOptions =>
-            {
-
-            });
-        };
-
         services.AddOptions<IdentityOptions>()
             .Bind(configuration.GetRequiredSection(nameof(ServerApiSettings.Identity)))
             .ValidateDataAnnotations()

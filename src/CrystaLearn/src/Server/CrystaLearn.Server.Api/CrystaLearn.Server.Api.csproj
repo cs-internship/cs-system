@@ -26,20 +26,13 @@
         <PackageReference Include="FluentStorage" />
         <PackageReference Include="FluentStorage.Azure.Blobs" />
         <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" />
-        <PackageReference Include="Microsoft.AspNetCore.DataProtection.EntityFrameworkCore" />
-        <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" />
         <PackageReference Include="Microsoft.AspNetCore.OData" />
-        <PackageReference Include="Microsoft.EntityFrameworkCore.Design" PrivateAssets="all" />
-        <PackageReference Include="Microsoft.EntityFrameworkCore" />
-        <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" />
         <PackageReference Include="Microsoft.Azure.SignalR" />
-        <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" PrivateAssets="all" />
         <PackageReference Include="Swashbuckle.AspNetCore" />
         <PackageReference Include="Microsoft.AspNetCore.Authentication.Google" />
         <PackageReference Include="Microsoft.AspNetCore.Authentication.Twitter" />
         <PackageReference Include="AspNet.Security.OAuth.Apple" />
         <PackageReference Include="AspNet.Security.OAuth.GitHub" />
-        <PackageReference Include="Riok.Mapperly" />
         <PackageReference Include="Twilio" />
         <PackageReference Include="AdsPush" />
 
@@ -62,7 +55,6 @@
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\..\Core\CrystaLearn.Core.Services\CrystaLearn.Core.csproj" />
         <ProjectReference Include="..\..\Core\CrystaLearn.Core\CrystaLearn.Core.csproj" />
     </ItemGroup>
 

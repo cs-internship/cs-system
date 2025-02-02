@@ -16,6 +16,20 @@ public static class ApplicationBuilderExtensions
         var services = builder.Services;
         var configuration = builder.Configuration;
 
+        services.AddPooledDbContextFactory<AppDbContext>(AddDbContext);
+        services.AddDbContextPool<AppDbContext>(AddDbContext);
+
+        void AddDbContext(DbContextOptionsBuilder options)
+        {
+            options.EnableSensitiveDataLogging(env.IsDevelopment())
+                   .EnableDetailedErrors(env.IsDevelopment());
+
+            options.UseSqlServer(configuration.GetConnectionString("SqlServerConnectionString"), dbOptions =>
+            {
+
+            });
+        };
+
         services.AddTransient<IDocumentRepository, DocumentRepositoryFake>();
         services.AddTransient<ICrystaProgramRepository, CrystaProgramRepositoryFake>();
     }
