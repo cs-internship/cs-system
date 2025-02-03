@@ -1,4 +1,5 @@
-﻿using CrystaLearn.Shared.Controllers.Crysta;
+﻿using System.Text.RegularExpressions;
+using CrystaLearn.Shared.Controllers.Crysta;
 using CrystaLearn.Shared.Dtos.Crysta;
 using CrystaLearn.Shared.Services;
 
@@ -82,5 +83,17 @@ public partial class DocumentComponent
         var culture = CultureInfoManager.SupportedCultures.FirstOrDefault(s=>s.Culture.Name.StartsWith(document.Culture));
 
         return culture.DisplayName;
+    }
+
+    private BitDir GetCultureDir(DocumentDto? document)
+    {
+        if (document?.Content is null)
+        {
+            return BitDir.Ltr;
+        }
+
+        var content = document.Content;
+        var isRtl = TextUtil.IsRtl(content);
+        return isRtl ? BitDir.Rtl : BitDir.Ltr;
     }
 }

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace CrystaLearn.Shared.Services;
@@ -99,5 +100,10 @@ public static class TextUtil
         public required string FileNameWithoutExtension { get; init; }
         public required string FileExtension { get; init; }
         public required string FullPath { get; set; }
+    }
+
+    public static bool IsRtl(string content)
+    {
+        return Regex.IsMatch(content, @"\p{IsArabic}|\p{IsHebrew}");
     }
 }

@@ -23,7 +23,11 @@
                 </BitStack>
             </BitStack>
             <BitStack>
-                <BitText Typography="BitTypography.Body1">@((MarkupString)(LoadedDocument.Content ?? ""))</BitText>
+                <BitText 
+                    Typography="BitTypography.Body1"
+                         Dir="@GetCultureDir(LoadedDocument)">
+                    @((MarkupString)(LoadedDocument.Content ?? ""))
+                </BitText>
             </BitStack>
         }
         else
