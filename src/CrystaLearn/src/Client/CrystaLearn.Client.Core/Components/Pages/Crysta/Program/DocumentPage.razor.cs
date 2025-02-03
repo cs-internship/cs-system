@@ -61,7 +61,13 @@ public partial class DocumentPage
 
             foreach (var doc in docs)
             {
-                var folderParts = doc.Folder?.Trim('/')?.Split('/') ?? [];
+                var folderParts =
+                    doc.Folder?
+                    .Trim('/')?
+                    .Split('/')?
+                    .Where(s => !string.IsNullOrWhiteSpace(s))?
+                    .ToArray()
+                    ?? [];
                 folderParts = ["/", .. folderParts];
 
                 var navItem = GetOrCreateNavItem(root, folderParts);

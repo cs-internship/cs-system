@@ -13,7 +13,9 @@ public class Document : Entity
     public virtual string Culture { get; set; } = default!;
     public virtual string? Content { get; set; }
     [MaxLength(300)]
-    public virtual string? SourceUrl { get; set; }
+    public virtual string? SourceHtmlUrl { get; set; }
+    [MaxLength(300)]
+    public virtual string? SourceContentUrl { get; set; }
     [MaxLength(300)]
     public virtual string? CrystaUrl { get; set; }
     [MaxLength(300)]

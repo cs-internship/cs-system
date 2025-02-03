@@ -12,6 +12,7 @@ public partial class CrystaProgramRepositoryFake : ICrystaProgramRepository
             Id = new Guid("C73198A2-5913-40D0-AC28-F5306CCD7534"),
             Code = "cs-internship",
             Title = "CS Internship",
+            DocumentUrl = "https://github.com/cs-internship/cs-internship-spec/tree/master/processes",
             IsActive = true,
         },
 

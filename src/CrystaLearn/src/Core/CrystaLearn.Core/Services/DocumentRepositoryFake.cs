@@ -25,7 +25,7 @@ public partial class DocumentRepositoryFake : IDocumentRepository
                         Hello this is a <b>document</b>.
                         </p>
                         """,
-                    SourceUrl = "https://github.com/cs-internship/cs-internship-spec/blob/master/processes/documents/CS%20Internship%20Overview%20--farsi-ir.md",
+                    SourceHtmlUrl = "https://github.com/cs-internship/cs-internship-spec/blob/master/processes/documents/CS%20Internship%20Overview%20--farsi-ir.md",
                     CrystaUrl = "/cs-internship-overview",
                     Folder = "interns/",
                     FileName = "CS Internship Overview --farsi-ir.md",
@@ -51,7 +51,7 @@ public partial class DocumentRepositoryFake : IDocumentRepository
                         این یک مستند فارسی است</b>.
                         </p>
                         """,
-                    SourceUrl = "https://github.com/cs-internship/cs-internship-spec/blob/master/processes/documents/CS%20Internship%20Overview%20--farsi-ir.md",
+                    SourceHtmlUrl = "https://github.com/cs-internship/cs-internship-spec/blob/master/processes/documents/CS%20Internship%20Overview%20--farsi-ir.md",
                     CrystaUrl = "/cs-internship-overview",
                     Folder = "interns/",
                     FileName = "CS Internship Overview --farsi-ir.md",
@@ -72,7 +72,7 @@ public partial class DocumentRepositoryFake : IDocumentRepository
                     Title = "Other CS Internship Overview",
                     Culture = "fa",
                     Content = "content",
-                    SourceUrl = "https://github.com/cs-internship/cs-internship-spec/blob/master/processes/documents/CS%20Internship%20Overview%20--farsi-ir.md",
+                    SourceHtmlUrl = "https://github.com/cs-internship/cs-internship-spec/blob/master/processes/documents/CS%20Internship%20Overview%20--farsi-ir.md",
                     CrystaUrl = "/cs-internship-overview",
                     Folder = "interns/",
                     FileName = "CS Internship Overview --farsi-ir.md",
@@ -93,7 +93,7 @@ public partial class DocumentRepositoryFake : IDocumentRepository
                     Title = "Interview Planning Process",
                     Culture = "fa",
                     Content = "content",
-                    SourceUrl = "https://github.com/cs-internship/cs-internship-spec/blob/master/processes/documents/CSI%20-%20Interview%20Planning%20Process%20--farsi-ir.md",
+                    SourceHtmlUrl = "https://github.com/cs-internship/cs-internship-spec/blob/master/processes/documents/CSI%20-%20Interview%20Planning%20Process%20--farsi-ir.md",
                     CrystaUrl = "/interview-planning-process",
                     Folder = "/mentors",
                     FileName = "CSI - Interview Planning Process --farsi-ir.md",
@@ -114,7 +114,7 @@ public partial class DocumentRepositoryFake : IDocumentRepository
                     Title = "Other Interview Planning Process",
                     Culture = "fa",
                     Content = "content",
-                    SourceUrl = "https://github.com/cs-internship/cs-internship-spec/blob/master/processes/documents/CSI%20-%20Interview%20Planning%20Process%20--farsi-ir.md",
+                    SourceHtmlUrl = "https://github.com/cs-internship/cs-internship-spec/blob/master/processes/documents/CSI%20-%20Interview%20Planning%20Process%20--farsi-ir.md",
                     CrystaUrl = "/interview-planning-process",
                     Folder = "/mentors",
                     FileName = "CSI - Interview Planning Process --farsi-ir.md",
