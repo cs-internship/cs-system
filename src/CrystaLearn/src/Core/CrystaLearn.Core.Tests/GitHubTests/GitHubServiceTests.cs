@@ -15,7 +15,7 @@ public class GitHubServiceTests : TestBase
         // Arrange
         var services = CreateServiceProvider();
         var service = services.GetRequiredService<IGitHubService>();
-        var url = "https://github.com/cs-internship/cs-internship-spec/tree/master/processes/documents";
+        var url = "https://github.com/cs-internship/cs-internship-spec/tree/master/processes";
 
         // Act
         var files = await service.GetFilesAsync(url);

@@ -1,4 +1,5 @@
-﻿using Octokit;
+﻿using CrystaLearn.Core.Services.GitHub;
+using Octokit;
 
 namespace CrystaLearn.Core.Services.Contracts;
 
@@ -8,9 +9,9 @@ public interface IGitHubService
     /// 
     /// </summary>
     /// <param name="url">
-    /// Sample URL:
-    /// https://github.com/cs-internship/cs-internship-spec/tree/master/processes/documents
+    ///     Sample URL:
+    ///     https://github.com/cs-internship/cs-internship-spec/tree/master/processes/documents
     /// </param>
     /// <returns></returns>
-    Task<List<TreeItem>> GetFilesAsync(string url);
+    Task<List<GitHubService.GitHubItem>> GetFilesAsync(string url);
 }

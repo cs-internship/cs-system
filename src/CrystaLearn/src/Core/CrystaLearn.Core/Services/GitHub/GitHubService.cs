@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using System.Web;
 using CrystaLearn.Core.Services.Contracts;
 using Octokit;
 
@@ -17,65 +18,68 @@ public partial class GitHubService : IGitHubService
     /// 
     /// </summary>
     /// <param name="url">
-    /// Sample URL:
-    /// https://github.com/cs-internship/cs-internship-spec/tree/master/processes/documents
+    ///     Sample URL:
+    ///     https://github.com/cs-internship/cs-internship-spec/tree/master/processes/documents
     /// </param>
     /// <returns></returns>
-    public async Task<List<TreeItem>> GetFilesAsync(string url)
+    public async Task<List<GitHubItem>> GetFilesAsync(string url)
     {
-        var (orgName, repoName) = GetRepoAndOrgNameFromUrl(url);
-        var repo = await GitHubClient.Repository.Get(orgName, repoName);
-        var refs = await GitHubClient.Git.Reference.GetAll(repo.Id);
+        var urlInfo = TextUtil.GetGitHubFolderUrlInfo(url);
 
-        var lastSegment = GetLastSegmentFromUrl(url, refs, out var parentFolderPath);
-        var repositoryId = repo.Id;
+        var parentContents = await GitHubClient.Repository.Content.GetAllContentsByRef(
+            urlInfo.Owner, 
+            urlInfo.RepoName, 
+            urlInfo.ParentPath, 
+            urlInfo.Branch);
 
-        var folderContents = await GitHubClient.Repository.Content.GetAllContents(repositoryId, parentFolderPath);
-        var folderSha = folderContents?.First(f => f.Name == lastSegment).Sha;
-        var allContents = await GitHubClient.Git.Tree.GetRecursive(repositoryId, folderSha);
+        var folder = parentContents.First(f => f.Path == urlInfo.Path);
 
-        return allContents.Tree
-                          .Where(t => t.Type == TreeType.Blob && t.Path.EndsWith(".md"))
+        var treeResponse = await GitHubClient.Git.Tree.GetRecursive(urlInfo.Owner, urlInfo.RepoName, folder.Sha);
+        
+        var result = treeResponse.Tree
+                          .Where(t => t.Type == TreeType.Blob)
+                          .Select(t =>
+                          {
+                              var relativeFolderPath = 
+                                Path.Combine(urlInfo.Path, Path.GetDirectoryName(t.Path) ?? "/")
+                                .Replace(@"\", @"/");
+                              var fileName = Path.GetFileName(t.Path);
+                              var fileExtension = Path.GetExtension(t.Path);
+                              var fileNameWithoutExtension = Path.GetFileNameWithoutExtension(t.Path);
+                              var relativeFilePath = 
+                                Path.Combine(relativeFolderPath, fileName)
+                                .Replace(@"\", @"/");
+
+                              var htmlUrl = HttpUtility.UrlPathEncode(
+                                  $"https://github.com/{urlInfo.Owner}/{urlInfo.RepoName}/blob/{urlInfo.Branch}/{relativeFolderPath}/{fileName}");
+                              return new GitHubItem
+                              {
+                                  Sha = t.Sha,
+                                  FileName = fileName,
+                                  GitHubUrl = t.Url,
+                                  HtmlUrl = htmlUrl,
+                                  RelativeFolderPath = relativeFolderPath,
+                                  RelativeFilePath = relativeFilePath,
+                                  FileExtension = fileExtension,
+                                  FileNameWithoutExtension = fileNameWithoutExtension
+                              };
+                          })
                           .ToList();
+
+        return result;
     }
 
-    private (string org, string repo) GetRepoAndOrgNameFromUrl(string url)
+    public class GitHubItem
     {
-        var uri = new Uri(url);
-        var segments = uri.Segments;
-        var org = segments[1].TrimEnd('/');
-        var repo = segments[2].TrimEnd('/');
-
-        return (org, repo);
+        public required string Sha { get; set; }
+        public required string FileName { get; set; }
+        public required string HtmlUrl { get; set; }
+        public required string RelativeFolderPath { get; set; }
+        public required string RelativeFilePath { get; set; }
+        public required string GitHubUrl { get; set; }
+        public required string FileExtension { get; set; }
+        public required string FileNameWithoutExtension { get; set; }
     }
 
-    private static string GetLastSegmentFromUrl(string url, IEnumerable<Reference> refs, out string? parentFolderPath)
-    {
-        var uri = new Uri(url);
-        var lastSegment = uri.Segments.Last().TrimEnd('/');
-        var parentFolderUrl = uri.GetLeftPart(UriPartial.Authority) +
-                              string.Join("", uri.Segments.Take(uri.Segments.Length - 1));
-
-        parentFolderPath = GetRelativePath(parentFolderUrl, refs);
-
-        return lastSegment;
-    }
-
-    private static string? GetRelativePath(string url, IEnumerable<Reference> refs)
-    {
-        var uri = new Uri(url);
-        var afterTreeSegments = string.Join("", uri.Segments[4..]);
-        foreach (var reference in refs)
-        {
-            var branchInRefWithEndingSlash = $"{Regex.Replace(reference.Ref, @"^[^/]+/[^/]+/", "")}/";
-
-            if (!afterTreeSegments.StartsWith(branchInRefWithEndingSlash))
-                continue;
-
-            var path = afterTreeSegments.Replace(branchInRefWithEndingSlash, string.Empty).TrimEnd('/');
-            return path;
-        }
-
-        return null;
-    }
+    
 }
