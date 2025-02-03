@@ -69,6 +69,13 @@ public partial class GitHubService : IGitHubService
         return result;
     }
 
+    public async Task<string?> GetFileContentAsync(string url)
+    {
+        var info = TextUtil.GetGitHubFileUrlInfo(url);
+        var contents = await GitHubClient.Repository.Content.GetAllContentsByRef(info.Owner, info.RepoName, info.FullPath, info.Branch);
+        return contents.FirstOrDefault()?.Content;
+    }
+
     public class GitHubItem
     {
         public required string Sha { get; set; }

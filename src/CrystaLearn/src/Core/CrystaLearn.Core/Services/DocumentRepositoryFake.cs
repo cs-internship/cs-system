@@ -161,4 +161,11 @@ public partial class DocumentRepositoryFake : IDocumentRepository
 
         return null;
     }
+
+    public async Task<string?> GetDocumentContentByUrlAsync(string url, CancellationToken cancellationToken)
+    {
+        var info = TextUtil.GetGitHubFileUrlInfo(url);
+        var list = await GetDocumentsAsync(info.RepoName, cancellationToken);
+        return list.FirstOrDefault(d => d.SourceHtmlUrl == url)?.Content;
+    }
 }

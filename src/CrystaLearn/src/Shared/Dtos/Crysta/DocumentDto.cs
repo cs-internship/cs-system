@@ -13,7 +13,8 @@ public class DocumentDto
     public string Culture { get; set; } = default!;
     public string? Description { get; set; } = default!;
     public string? Content { get; set; }
-    public string? SourceUrl { get; set; }
+    public virtual string? SourceHtmlUrl { get; set; }
+    public virtual string? SourceContentUrl { get; set; }
     public string? CrystaUrl { get; set; }
     public string? Folder { get; set; }
     public string? FileName { get; set; }

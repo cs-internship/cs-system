@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using CrystaLearn.Shared.Dtos.Crysta;
 using CrystaLearn.Shared.Dtos.Statistics;
+using Microsoft.AspNetCore.Authorization;
 
 namespace CrystaLearn.Shared.Controllers.Crysta;
 [Route("api/[controller]/[action]/")]
@@ -22,4 +23,8 @@ public interface IDocumentController : IAppController
 
     [HttpGet("{programCode}/{code}/{culture}")]
     Task<DocumentDto?> GetDocumentByCode(string programCode, string code, string culture, CancellationToken cancellationToken);
+
+    [HttpPost]
+    Task<DocumentDto> GetDocumentContentByUrl(string url, CancellationToken cancellationToken);
+    
 }

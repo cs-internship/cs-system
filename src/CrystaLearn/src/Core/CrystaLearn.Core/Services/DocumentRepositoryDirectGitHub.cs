@@ -1,5 +1,6 @@
 ﻿using CrystaLearn.Core.Models.Crysta;
 using CrystaLearn.Core.Services.Contracts;
+using Markdig;
 
 namespace CrystaLearn.Core.Services;
 
@@ -94,8 +95,21 @@ public partial class DocumentRepositoryDirectGitHub : IDocumentRepository
         return result;
     }
 
-    public Task<Document?> GetDocumentByCodeAsync(string programCode, string docCode, string? culture, CancellationToken cancellationToken)
+    public async Task<Document?> GetDocumentByCodeAsync(string programCode, string docFullPath, string? culture, CancellationToken cancellationToken)
     {
         throw new NotImplementedException();
+    }
+
+    public async Task<string?> GetDocumentContentByUrlAsync(string url, CancellationToken cancellationToken)
+    {
+        var content = await GitHubService.GetFileContentAsync(url);
+
+        if (content == null)
+        {
+            return null;
+        }
+        
+        var html = Markdown.ToHtml(content);
+        return html;
     }
 }

@@ -80,6 +80,14 @@ public partial class DocumentPage
                 });
             }
 
+            var allNavItems = root.ChildItems.SelectMany(n => new List<BitNavItem>([n,..(n.ChildItems)])).ToList();
+            allNavItems.Add(root);
+
+            foreach (var item in allNavItems)
+            {
+                item.ChildItems = item.ChildItems.OrderBy(i => $"{(i.Data is null ? "0-folder/" : "1-file/")}{i.Text}").ToList();
+            }
+
             DocumentsTree = root.ChildItems;
         }
         finally

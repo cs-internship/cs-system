@@ -28,4 +28,20 @@ public partial class DocumentController : AppControllerBase, IDocumentController
         var result = await DocumentRepository.GetDocumentByCodeAsync(programCode, code, culture, cancellationToken);
         return result?.Map();
     }
+
+    [AllowAnonymous]
+    [HttpPost]
+    [ResponseCache(Duration = 1 * 24 * 3600, Location = ResponseCacheLocation.Any, VaryByQueryKeys = ["*"])]
+    public async Task<DocumentDto> GetDocumentContentByUrl([FromBody]string url, CancellationToken cancellationToken)
+    {
+        
+        var result = await DocumentRepository.GetDocumentContentByUrlAsync(url, cancellationToken);
+
+        var doc = new DocumentDto
+        {
+            Content = result
+        };
+
+        return doc;
+    }
 }

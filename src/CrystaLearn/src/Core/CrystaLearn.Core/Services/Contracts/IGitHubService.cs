@@ -14,4 +14,6 @@ public interface IGitHubService
     /// </param>
     /// <returns></returns>
     Task<List<GitHubService.GitHubItem>> GetFilesAsync(string url);
+
+    Task<string?> GetFileContentAsync(string url);
 }

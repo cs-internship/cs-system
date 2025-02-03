@@ -46,10 +46,20 @@ public partial class DocumentComponent
             try
             {
                 IsLoadingDocument = true;
-                
-                var programCode = Document.CrystaProgram.Code;
-                var culture = CultureInfo.CurrentUICulture.Name;
-                LoadedDocument = await DocumentController.GetDocumentByCode(programCode, Document.Code, culture, CancellationToken.None);
+
+                if (Document.SourceHtmlUrl is not null)
+                {
+                    LoadedDocument = Document;
+                    var doc = await DocumentController.GetDocumentContentByUrl(Document.SourceHtmlUrl, CancellationToken.None);
+                    LoadedDocument.Content = doc.Content;
+                }
+                else
+                {
+
+                    var programCode = Document.CrystaProgram.Code;
+                    var culture = CultureInfo.CurrentUICulture.Name;
+                    LoadedDocument = await DocumentController.GetDocumentByCode(programCode, Document.Code, culture, CancellationToken.None);
+                }
             }
             catch (Exception ex)
             {
