@@ -24,7 +24,7 @@ public interface IDocumentController : IAppController
     [HttpGet("{programCode}/{code}/{culture}")]
     Task<DocumentDto?> GetDocumentByCode(string programCode, string code, string culture, CancellationToken cancellationToken);
 
-    [HttpPost]
-    Task<DocumentDto> GetDocumentContentByUrl(string url, CancellationToken cancellationToken);
+    [HttpPost("{programCode}")]
+    Task<DocumentDto> GetDocumentContentByUrl(string url, string programCode, CancellationToken cancellationToken);
     
 }

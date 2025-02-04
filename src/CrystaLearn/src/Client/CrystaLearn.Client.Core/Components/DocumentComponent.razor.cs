@@ -51,7 +51,7 @@ public partial class DocumentComponent
                 if (Document.SourceHtmlUrl is not null)
                 {
                     LoadedDocument = Document;
-                    var doc = await DocumentController.GetDocumentContentByUrl(Document.SourceHtmlUrl, CancellationToken.None);
+                    var doc = await DocumentController.GetDocumentContentByUrl(Document.SourceHtmlUrl, Document.CrystaProgram.Code, CancellationToken.None);
                     LoadedDocument.Content = doc.Content;
                 }
                 else
@@ -93,7 +93,7 @@ public partial class DocumentComponent
         }
 
         var content = document.Content;
-        var isRtl = TextUtil.IsRtl(content);
+        var isRtl = GitHubUtil.IsRtl(content);
         return isRtl ? BitDir.Rtl : BitDir.Ltr;
     }
 }

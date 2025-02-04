@@ -6,9 +6,9 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace CrystaLearn.Shared.Services;
-public static class TextUtil
+public static class GitHubUtil
 {
-    public static GitHubFolderUrlInfo GetGitHubFolderUrlInfo(string url)
+    public static GitHubFolderUrlInfo GetFolderUrlInfo(string url)
     {
         var uri = new Uri(url);
         var segments = uri.Segments;
@@ -54,7 +54,7 @@ public static class TextUtil
     /// Url sample: https://github.com/cs-internship/cs-internship-spec/blob/master/processes/nervous-system.md
     /// </param>
     /// <returns></returns>
-    public static GitHubFileUrlInfo GetGitHubFileUrlInfo(string url)
+    public static GitHubFileUrlInfo GetFileUrlInfo(string url)
     {
         var uri = new Uri(url);
         var segments = uri.Segments;

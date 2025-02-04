@@ -8,5 +8,5 @@ public interface IDocumentRepository
     Task<Document?> GetDocumentByCodeAsync(string programCode, string docCode, string? culture,
         CancellationToken cancellationToken);
 
-    Task<string?> GetDocumentContentByUrlAsync(string url, CancellationToken cancellationToken);
+    Task<string?> GetDocumentContentByUrlAsync(string programCode, string url, CancellationToken cancellationToken);
 }

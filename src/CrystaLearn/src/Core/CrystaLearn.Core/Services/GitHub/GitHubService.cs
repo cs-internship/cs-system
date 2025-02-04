@@ -24,7 +24,7 @@ public partial class GitHubService : IGitHubService
     /// <returns></returns>
     public async Task<List<GitHubItem>> GetFilesAsync(string url)
     {
-        var urlInfo = TextUtil.GetGitHubFolderUrlInfo(url);
+        var urlInfo = GitHubUtil.GetFolderUrlInfo(url);
 
         var parentContents = await GitHubClient.Repository.Content.GetAllContentsByRef(
             urlInfo.Owner, 
@@ -71,22 +71,8 @@ public partial class GitHubService : IGitHubService
 
     public async Task<string?> GetFileContentAsync(string url)
     {
-        var info = TextUtil.GetGitHubFileUrlInfo(url);
+        var info = GitHubUtil.GetFileUrlInfo(url);
         var contents = await GitHubClient.Repository.Content.GetAllContentsByRef(info.Owner, info.RepoName, info.FullPath, info.Branch);
         return contents.FirstOrDefault()?.Content;
     }
-
-    public class GitHubItem
-    {
-        public required string Sha { get; set; }
-        public required string FileName { get; set; }
-        public required string HtmlUrl { get; set; }
-        public required string RelativeFolderPath { get; set; }
-        public required string RelativeFilePath { get; set; }
-        public required string GitHubUrl { get; set; }
-        public required string FileExtension { get; set; }
-        public required string FileNameWithoutExtension { get; set; }
-    }
-
-    
 }

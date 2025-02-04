@@ -13,7 +13,7 @@ public interface IGitHubService
     ///     https://github.com/cs-internship/cs-internship-spec/tree/master/processes/documents
     /// </param>
     /// <returns></returns>
-    Task<List<GitHubService.GitHubItem>> GetFilesAsync(string url);
+    Task<List<GitHubItem>> GetFilesAsync(string url);
 
     Task<string?> GetFileContentAsync(string url);
 }

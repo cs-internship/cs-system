@@ -14,7 +14,7 @@ public class GetGitHubFolderUrlInfoTests
         var url = "https://github.com/cs-internship/cs-internship-spec/blob/master/processes/documents";
 
         // Act
-        var info = TextUtil.GetGitHubFolderUrlInfo(url);
+        var info = GitHubUtil.GetFolderUrlInfo(url);
 
         // Assert
         Assert.Equal("cs-internship", info.Owner);

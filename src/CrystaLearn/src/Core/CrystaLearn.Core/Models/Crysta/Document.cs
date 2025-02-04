@@ -28,4 +28,9 @@ public class Document : Entity
     public virtual SyncInfo SyncInfo { get; set; } = new();
     public virtual Guid? CrystaProgramId { get; set; }
     public virtual CrystaProgram? CrystaProgram { get; set; }
+
+    public override string ToString()
+    {
+        return $"{FileName}";
+    }
 }

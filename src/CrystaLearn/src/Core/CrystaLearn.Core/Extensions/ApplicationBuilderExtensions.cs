@@ -34,7 +34,7 @@ public static class ApplicationBuilderExtensions
             });
         };
 
-        services.AddTransient<IDocumentRepository, DocumentRepositoryDirectGitHub>();
+        services.AddSingleton<IDocumentRepository, DocumentRepositoryInMemory>();
         services.AddTransient<ICrystaProgramRepository, CrystaProgramRepositoryFake>();
         services.AddTransient<IGitHubService, GitHubService>();
     }

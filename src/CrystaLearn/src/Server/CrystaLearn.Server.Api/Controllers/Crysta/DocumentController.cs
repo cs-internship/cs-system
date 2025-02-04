@@ -15,8 +15,9 @@ public partial class DocumentController : AppControllerBase, IDocumentController
     public async Task<List<DocumentDto>> GetDocuments(string programCode, CancellationToken cancellationToken)
     {
         var list = await DocumentRepository.GetDocumentsAsync(programCode, cancellationToken);
-        list.ForEach(o => o.Content = null);
-        return list.Select(x => x.Map()).ToList();
+        var dtos = list.Select(x => x.Map()).ToList();
+        dtos.ForEach(o => o.Content = null);
+        return dtos;
     }
 
     [AllowAnonymous]
@@ -30,12 +31,12 @@ public partial class DocumentController : AppControllerBase, IDocumentController
     }
 
     [AllowAnonymous]
-    [HttpPost]
+    [HttpPost("{programCode}")]
     [ResponseCache(Duration = 1 * 24 * 3600, Location = ResponseCacheLocation.Any, VaryByQueryKeys = ["*"])]
-    public async Task<DocumentDto> GetDocumentContentByUrl([FromBody]string url, CancellationToken cancellationToken)
+    public async Task<DocumentDto> GetDocumentContentByUrl([FromBody]string url, string programCode, CancellationToken cancellationToken)
     {
         
-        var result = await DocumentRepository.GetDocumentContentByUrlAsync(url, cancellationToken);
+        var result = await DocumentRepository.GetDocumentContentByUrlAsync(programCode, url, cancellationToken);
 
         var doc = new DocumentDto
         {

@@ -1,0 +1,94 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Reflection.Metadata;
+using System.Text;
+using System.Threading.Tasks;
+using CrystaLearn.Core.Models.Crysta;
+using Markdig;
+
+namespace CrystaLearn.Core.Services.GitHub;
+public static class GitHubExtensions
+{
+    public static Models.Crysta.Document CreateDocument(this GitHubItem item, CrystaProgram program)
+    {
+        string culture = "";
+        string programDocUrl = program.DocumentUrl ?? throw new Exception($"Program with code '{program.Code}' has no document url.");
+
+        var culturePosition = item.FileNameWithoutExtension.LastIndexOf("--", StringComparison.Ordinal);
+        if (culturePosition == -1)
+        {
+            culturePosition = item.FileNameWithoutExtension.Length;
+        }
+        else
+        {
+            culture = item.FileNameWithoutExtension.Substring(culturePosition + 2).Trim();
+        }
+
+        if (string.IsNullOrWhiteSpace(culture))
+        {
+            if (item.FileNameWithoutExtension.ToLower().Contains("farsi"))
+            {
+                culture = "fa";
+            }
+            else
+            {
+                culture = "en";
+            }
+        }
+
+        culture = culture.Replace("farsi", "fa");
+
+
+        var title = item.FileNameWithoutExtension.Substring(0, culturePosition).Trim();
+        var code = title
+                   .ToLower()
+                   .Replace(" ", "-")
+                   .Replace("--", "-")
+                   .Replace("--", "-");
+
+        var docUrlInfo = GitHubUtil.GetFolderUrlInfo(programDocUrl);
+
+        var relativePath = item.RelativeFolderPath.Substring(docUrlInfo.Path.Length);
+        var folderPathPart = relativePath + (!string.IsNullOrEmpty(relativePath) ? "/" : "");
+        var crystaUrl = Urls.Crysta.Program(program.Code).DocPage($"{folderPathPart}{code}");
+
+        var folderPath = string.IsNullOrWhiteSpace(relativePath) ? "/" : relativePath;
+
+        var doc = new Models.Crysta.Document
+        {
+            Id = Guid.NewGuid(),
+            Code = code,
+            Title = title,
+            Culture = culture,
+            Content = null,
+            SourceHtmlUrl = item.HtmlUrl,
+            SourceContentUrl = item.GitHubUrl,
+            CrystaUrl = crystaUrl,
+            Folder = folderPath,
+            FileName = item.FileName,
+            LastHash = item.Sha,
+            IsActive = true,
+            CrystaProgram = program,
+            SyncInfo = new SyncInfo()
+            {
+                SyncStatus = SyncStatus.Success,
+                SyncHash = item.Sha,
+                SyncStartDateTime = DateTimeOffset.Now,
+            }
+        };
+        return doc;
+    }
+
+    public static string? GetHtmlContent(this Models.Crysta.Document doc)
+    {
+        var content = doc.Content;
+        if (content == null)
+        {
+            return null;
+        }
+        
+        var html = Markdown.ToHtml(content);
+        return html;
+    }
+}
