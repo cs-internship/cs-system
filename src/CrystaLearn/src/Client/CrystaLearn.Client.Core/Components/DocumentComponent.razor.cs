@@ -13,6 +13,7 @@ public partial class DocumentComponent
     private CultureInfoManager CultureInfoManager { get; set; } = default!;
 
     [Parameter] public DocumentDto? Document { get; set; } = default!;
+    [Parameter] public string? CrystaUrl { get; set; } = default!;
     private DocumentDto? PreviousDocument { get; set; }
 
     private DocumentDto? LoadedDocument { get; set; }
@@ -35,32 +36,32 @@ public partial class DocumentComponent
 
     private async Task LoadDocument()
     {
-        if (Document == PreviousDocument)
-        {
-            return;
-        }
-
-        PreviousDocument = Document;
-
-        if (Document is not null && Document.CrystaProgram is not null)
         {
             try
             {
                 IsLoadingDocument = true;
-
-                if (Document.SourceHtmlUrl is not null)
+                if (Document is not null && Document.CrystaProgram is not null)
                 {
-                    LoadedDocument = Document;
-                    var doc = await DocumentController.GetDocumentContentByUrl(Document.SourceHtmlUrl, Document.CrystaProgram.Code, CancellationToken.None);
-                    LoadedDocument.Content = doc.Content;
+                    if (Document == PreviousDocument)
+                    {
+                        return;
+                    }
+                    PreviousDocument = Document;
+
+                    if (Document.SourceHtmlUrl is not null)
+                    {
+                        LoadedDocument = Document;
+                        var doc = await DocumentController.GetContentByGitHubUrl(Document.SourceHtmlUrl, Document.CrystaProgram.Code, CancellationToken.None);
+                        LoadedDocument.Content = doc.Content;
+                    }
+                    
                 }
-                else
+                else if (CrystaUrl is not null)
                 {
-
-                    var programCode = Document.CrystaProgram.Code;
                     var culture = CultureInfo.CurrentUICulture.Name;
-                    LoadedDocument = await DocumentController.GetDocumentByCode(programCode, Document.Code, culture, CancellationToken.None);
+                    LoadedDocument = await DocumentController.GetContentByCrystaUrl(CrystaUrl, culture, CancellationToken.None);
                 }
+
             }
             catch (Exception ex)
             {

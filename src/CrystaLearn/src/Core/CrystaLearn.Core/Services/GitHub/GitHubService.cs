@@ -26,10 +26,12 @@ public partial class GitHubService : IGitHubService
     {
         var urlInfo = GitHubUtil.GetFolderUrlInfo(url);
 
+        var parentPath = string.IsNullOrWhiteSpace(urlInfo.ParentPath) ? "/" : urlInfo.ParentPath;
+
         var parentContents = await GitHubClient.Repository.Content.GetAllContentsByRef(
             urlInfo.Owner, 
-            urlInfo.RepoName, 
-            urlInfo.ParentPath, 
+            urlInfo.RepoName,
+            parentPath, 
             urlInfo.Branch);
 
         var folder = parentContents.First(f => f.Path == urlInfo.Path);

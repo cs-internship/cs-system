@@ -12,19 +12,14 @@ namespace CrystaLearn.Shared.Controllers.Crysta;
 
 public interface IDocumentController : IAppController
 {
-    //[HttpGet("{packageId}")]
-    //Task<NugetStatsDto> GetNugetStats(string packageId, CancellationToken cancellationToken);
-
-    //[HttpGet, Route("https://api.github.com/repos/bitfoundation/bitplatform")]
-    //Task<GitHubStats> GetGitHubStats(CancellationToken cancellationToken) => default!;
-
     [HttpGet("{programCode}")]
     Task<List<DocumentDto>> GetDocuments(string programCode, CancellationToken cancellationToken);
 
-    [HttpGet("{programCode}/{code}/{culture}")]
-    Task<DocumentDto?> GetDocumentByCode(string programCode, string code, string culture, CancellationToken cancellationToken);
+    [HttpPost("{culture}")]
+    Task<DocumentDto?> GetContentByCrystaUrl(string crystaUrl, string culture,
+        CancellationToken cancellationToken);
 
     [HttpPost("{programCode}")]
-    Task<DocumentDto> GetDocumentContentByUrl(string url, string programCode, CancellationToken cancellationToken);
+    Task<DocumentDto> GetContentByGitHubUrl(string url, string programCode, CancellationToken cancellationToken);
     
 }

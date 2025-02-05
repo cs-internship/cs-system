@@ -35,7 +35,8 @@ public partial class DocumentRepositoryDirectGitHub : IDocumentRepository
         return result;
     }
 
-    public async Task<Document?> GetDocumentByCodeAsync(string programCode, string docFullPath, string? culture, CancellationToken cancellationToken)
+    public async Task<Document?> GetDocumentByCrystaUrlAsync(string crystaUrl,
+        string? culture, CancellationToken cancellationToken)
     {
         throw new NotImplementedException();
     }

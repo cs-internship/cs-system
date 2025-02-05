@@ -16,9 +16,7 @@ public static class GitHubUtil
         var repo = segments[2].TrimEnd('/');
         var branch = segments[4].TrimEnd('/');
         var path = string.Join("", segments[5..]);
-        var parentPath = string.Join("", segments[5..^1]);
-        if (string.IsNullOrWhiteSpace(parentPath))
-            parentPath = "/";
+        var parentPath = string.Join("", segments[5..^1]).Trim('/');
 
         var refBranch = $"refs/heads/{branch}";
         var refPath = $"{refBranch}/{path}";
@@ -100,6 +98,15 @@ public static class GitHubUtil
         public required string FileNameWithoutExtension { get; init; }
         public required string FileExtension { get; init; }
         public required string FullPath { get; set; }
+    }
+
+    public static (string ProgramCode, string Path) GetCrystaUrlInfo(string url)
+    {
+        var parts = url.Trim('/').Split('/');
+        var program = parts.ElementAtOrDefault(0) ?? throw new ArgumentException("Invalid CrystaUrl");
+        var path = string.Join('/', parts[1..]);
+
+        return (program, path);
     }
 
     public static bool IsRtl(string content)

@@ -1,4 +1,5 @@
 ﻿using System.Collections.Concurrent;
+using System.Text;
 using System.Threading;
 using CrystaLearn.Core.Models.Crysta;
 using CrystaLearn.Core.Services.Contracts;
@@ -29,9 +30,35 @@ public partial class DocumentRepositoryInMemory : IDocumentRepository
         return docs;
     }
 
-    public async Task<Document?> GetDocumentByCodeAsync(string programCode, string docFullPath, string? culture, CancellationToken cancellationToken)
+    public async Task<Document?> GetDocumentByCrystaUrlAsync(string crystaUrl, string? culture, CancellationToken cancellationToken)
     {
-        throw new NotImplementedException();
+        //var crystaUrlBuilder = new StringBuilder($"/{programCode}/");
+        //if (!string.IsNullOrEmpty(crystaUrl) && crystaUrl != "/")
+        //    crystaUrlBuilder.Append($"/{crystaUrl}");
+
+        //crystaUrlBuilder.Append($"/{docCode}");
+
+        //var crystaUrl = crystaUrlBuilder.ToString();
+
+        //var url = Urls.Crysta.Program(programCode).DocPage(crystaUrl);
+        var programCode = GitHubUtil.GetCrystaUrlInfo(crystaUrl).ProgramCode;
+        var docs = await GetDocumentsAsync(programCode, cancellationToken);
+        var languageVariants = docs.Where(
+            o => o.CrystaUrl == crystaUrl
+        ).ToList();
+
+        var document = languageVariants.FirstOrDefault(d => culture?.StartsWith(d.Culture) ?? false);
+        document ??= languageVariants.FirstOrDefault(d => d.Culture == "en");
+        document ??= languageVariants.FirstOrDefault(d => d.Culture == "fa");
+
+        if (document is null)
+        {
+            return null;
+        }
+
+        await PopulateContentAsync(document);
+        
+        return document;
     }
 
     public async Task<string?> GetDocumentContentByUrlAsync(string programCode, string url, CancellationToken cancellationToken)
@@ -39,11 +66,19 @@ public partial class DocumentRepositoryInMemory : IDocumentRepository
         var docs = await GetDocumentsAsync(programCode, cancellationToken);
         var doc = docs.First(o => o.SourceHtmlUrl == url);
 
-        doc.Content ??= await GitHubService.GetFileContentAsync(url);
-        
-        doc.Content = doc.GetHtmlContent();
-        
+        await PopulateContentAsync(doc);
         return doc.Content;
+    }
+
+    private async Task PopulateContentAsync(Document document)
+    {
+        if (string.IsNullOrWhiteSpace(document.SourceHtmlUrl))
+        {
+            throw new Exception("Document has no source html url.");
+        }
+        
+        document.Content ??= await GitHubService.GetFileContentAsync(document.SourceHtmlUrl);
+        document.Content = document.GetHtmlContent();
     }
 
     private async Task<List<Document>> GetProgramDocsFromGitHubAsync(string programCode, CancellationToken cancellationToken)

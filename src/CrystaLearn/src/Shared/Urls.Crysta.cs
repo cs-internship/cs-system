@@ -10,7 +10,14 @@ public static partial class Urls
         public class ProgramPage(string programCode)
         {
             public string DocsPage = $"/{programCode}/docs";
-            public string DocPage(string documentCode) => $"{DocsPage}/{documentCode}";
+            /// <summary>
+            /// 
+            /// </summary>
+            /// <param name="documentPath">
+            /// Sample format: /processes/nervous-system
+            /// </param>
+            /// <returns></returns>
+            public string DocPage(string documentPath) => $"{DocsPage.TrimEnd('/')}/{documentPath.Trim('/')}";
         }
     }
 

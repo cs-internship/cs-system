@@ -1,4 +1,4 @@
-﻿@attribute [Route(Urls.Crysta.DocsPageRoutePattern + "/{DocumentCode?}")]
+﻿@attribute [Route(Urls.Crysta.DocsPageRoutePattern + "/{*DocPath}")]
 @attribute [Route("{culture?}" + Urls.Crysta.DocsPageRoutePattern)]
 @using CrystaLearn.Shared.Dtos.Crysta
 @inherits AppPageBase
@@ -27,7 +27,10 @@
         <SecondPanel>
             <BitStack Horizontal>
                 <BitSpacer Width="5"></BitSpacer>
-                <DocumentComponent Document="CurrentDocument" />
+                <DocumentComponent 
+                    Document="CurrentDocument" 
+                    CrystaUrl="@CrystaUrl"
+                    />
             </BitStack>
         </SecondPanel>
     </BitSplitter>

@@ -131,15 +131,14 @@ public partial class DocumentRepositoryFake : IDocumentRepository
             ];
     }
 
-    public async Task<Document?> GetDocumentByCodeAsync(
-        string programCode,
-        string docCode,
+    public async Task<Document?> GetDocumentByCrystaUrlAsync(string crystaUrl,
         string? culture,
         CancellationToken cancellationToken)
     {
         await Task.Delay(500, cancellationToken);
+        var programCode = GitHubUtil.GetCrystaUrlInfo(crystaUrl).ProgramCode;
         var list = await GetDocumentsAsync(programCode, cancellationToken);
-        var languageVariants = list.Where(d => d.Code == docCode).ToList();
+        var languageVariants = list.Where(d => $"{d.Folder}/{d.FileName}" == crystaUrl).ToList();
 
         var document = languageVariants.FirstOrDefault(d => culture?.StartsWith(d.Culture) ?? false);
         if (document is not null)

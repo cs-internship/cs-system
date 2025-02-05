@@ -10,16 +10,41 @@ public partial class DocumentPage
     [Parameter]
     public string ProgramCode { get; set; } = default!;
     [Parameter]
-    public string? DocumentCode { get; set; } = default!;
+    public string? DocPath { get; set; } = default!;
 
     protected override string? Title => Localizer[nameof(AppStrings.Terms)];
     protected override string? Subtitle => string.Empty;
     public List<BitNavItem> DocumentsTree { get; set; } = [];
     public DocumentDto? CurrentDocument { get; set; }
+    private string? CrystaUrl { get; set; }
     private bool IsLoadingTree { get; set; } = false;
 
     protected override async Task OnInitAsync()
     {
+        if (!string.IsNullOrWhiteSpace(DocPath))
+        {
+            CrystaUrl = Urls.Crysta.Program(ProgramCode).DocPage(DocPath);
+        }
+        //if (DocPath is not null)
+        //{
+        //    var currentCulture = CultureInfo.CurrentUICulture.Name;
+        //    var parts = DocPath.Split('/');
+        //    var code = parts.Last();
+        //    var folder = string.Join("/", parts[..^1]);
+        //    var document = new DocumentDto
+        //    {
+        //        Code = code,
+        //        Culture = currentCulture,
+        //        Folder = folder,
+        //        CrystaProgram = new CrystaProgramLightDto
+        //        {
+        //            Code = ProgramCode,
+        //            Title = ""
+        //        }
+        //    };
+        //    SetCurrentDocument(document);
+        //}
+
         await RefreshDocuments();
 
         await base.OnInitAsync();
@@ -27,21 +52,7 @@ public partial class DocumentPage
 
     protected override Task OnParamsSetAsync()
     {
-        if (DocumentCode is not null)
-        {
-            var currentCulture = CultureInfo.CurrentUICulture.Name;
-            var document = new DocumentDto
-            {
-                Code = DocumentCode,
-                Culture = currentCulture,
-                CrystaProgram = new CrystaProgramLightDto
-                {
-                    Code = ProgramCode,
-                    Title = ""
-                }
-            };
-            SetCurrentDocument(document);
-        }
+        
 
         return base.OnParamsSetAsync();
     }

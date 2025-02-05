@@ -21,19 +21,19 @@ public partial class DocumentController : AppControllerBase, IDocumentController
     }
 
     [AllowAnonymous]
-    [HttpGet("{programCode}/{code}/{culture}")]
+    [HttpPost("{culture}")]
     [ResponseCache(Duration = 1 * 24 * 3600, Location = ResponseCacheLocation.Any, VaryByQueryKeys = ["*"])]
-    public async Task<DocumentDto?> GetDocumentByCode(string programCode, string code, string culture,
+    public async Task<DocumentDto?> GetContentByCrystaUrl([FromBody] string crystaUrl, string culture,
         CancellationToken cancellationToken)
     {
-        var result = await DocumentRepository.GetDocumentByCodeAsync(programCode, code, culture, cancellationToken);
+        var result = await DocumentRepository.GetDocumentByCrystaUrlAsync(crystaUrl, culture, cancellationToken);
         return result?.Map();
     }
 
     [AllowAnonymous]
     [HttpPost("{programCode}")]
     [ResponseCache(Duration = 1 * 24 * 3600, Location = ResponseCacheLocation.Any, VaryByQueryKeys = ["*"])]
-    public async Task<DocumentDto> GetDocumentContentByUrl([FromBody]string url, string programCode, CancellationToken cancellationToken)
+    public async Task<DocumentDto> GetContentByGitHubUrl([FromBody]string url, string programCode, CancellationToken cancellationToken)
     {
         
         var result = await DocumentRepository.GetDocumentContentByUrlAsync(programCode, url, cancellationToken);

@@ -51,9 +51,9 @@ public static class GitHubExtensions
 
         var relativePath = item.RelativeFolderPath.Substring(docUrlInfo.Path.Length);
         var folderPathPart = relativePath + (!string.IsNullOrEmpty(relativePath) ? "/" : "");
-        var crystaUrl = Urls.Crysta.Program(program.Code).DocPage($"{folderPathPart}{code}");
+        var crystaUrl = Urls.Crysta.Program(program.Code).DocPage($"{relativePath}/{code}");
 
-        var folderPath = string.IsNullOrWhiteSpace(relativePath) ? "/" : relativePath;
+        var folderPath = relativePath;
 
         var doc = new Models.Crysta.Document
         {
