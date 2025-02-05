@@ -28,6 +28,8 @@ public partial class DocumentComponent
         new() { Text = "GitHub", IconName = BitIconName.GitGraph },
     ];
 
+    public List<BitBreadcrumbItem> BreadcrumbItems { get; set; } = [];
+
     protected override async Task OnParametersSetAsync()
     {
         await base.OnParametersSetAsync();
@@ -62,6 +64,18 @@ public partial class DocumentComponent
                     LoadedDocument = await DocumentController.GetContentByCrystaUrl(CrystaUrl, culture, CancellationToken.None);
                 }
 
+                if (LoadedDocument != null)
+                {
+                    var parts = $"{LoadedDocument.Folder}/{LoadedDocument.FileName}".Split('/');
+
+                    BreadcrumbItems = parts
+                                      .Select((folder, index) => new BitBreadcrumbItem
+                                      {
+                                          Text = folder,
+                                          IsEnabled = (index == parts.Length-1)
+                                      })
+                                      .ToList();
+                }
             }
             catch (Exception ex)
             {

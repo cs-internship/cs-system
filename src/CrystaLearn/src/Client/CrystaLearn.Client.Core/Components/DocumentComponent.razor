@@ -11,15 +11,17 @@
         if (LoadedDocument is not null)
         {
             <BitStack Gap="0" FitHeight>
-                <BitStack Horizontal>
-                    <BitText Typography="BitTypography.H3">@LoadedDocument.Title</BitText>
+                <BitStack Horizontal VerticalAlign="BitAlignment.Center">
+                    <BitBreadcrumb 
+                        Items="BreadcrumbItems" />
+                    <BitSpacer />
+                    <BitButtonGroup Variant="BitVariant.Outline" Items="MenuItems" />
                 </BitStack>
                 <BitStack Horizontal Gap="3rem" VerticalAlign="BitAlignment.End">
                     <BitText Typography="BitTypography.Subtitle1">@LoadedDocument.SyncInfo.SyncStartDateTime.ToString("yyyy/MM/dd HH:mm")</BitText>
                     <BitText Typography="BitTypography.Subtitle1">@GetCultureTitle(LoadedDocument)</BitText>
-                    <BitText Typography="BitTypography.Subtitle1">@LoadedDocument.SyncInfo.SyncHash</BitText>
-                    <BitSpacer />
-                    <BitButtonGroup Variant="BitVariant.Outline" Items="MenuItems" />
+                    <BitText Typography="BitTypography.Subtitle1">@LoadedDocument.SyncInfo.SyncHash?.Substring(0,5)...</BitText>
+                    
                 </BitStack>
             </BitStack>
             <BitStack>

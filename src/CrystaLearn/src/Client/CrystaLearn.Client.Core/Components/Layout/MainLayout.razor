@@ -19,13 +19,13 @@
                                         <BitNavPanel @bind-IsOpen="isNavPanelOpen" Items="navPanelItems" />
                                     }
 
-                                    <div class="stack">
+                                    <div class="stack" style="height:100%;">
                                         @if (isAuthenticated is true)
                                         {
                                             <AuthorizedHeader />
                                         }
 
-                                        <div class="body">
+                                        <div class="body" style="height:100%;">
                                             @Body
                                         </div>
 
