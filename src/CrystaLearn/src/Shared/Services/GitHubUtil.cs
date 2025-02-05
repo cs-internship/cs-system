@@ -104,6 +104,6 @@ public static class GitHubUtil
 
     public static bool IsRtl(string content)
     {
-        return Regex.IsMatch(content, @"\p{IsArabic}|\p{IsHebrew}");
+        return Regex.IsMatch(content[..20], @"\p{IsArabic}|\p{IsHebrew}");
     }
 }

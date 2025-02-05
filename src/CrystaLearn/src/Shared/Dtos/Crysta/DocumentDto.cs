@@ -22,4 +22,9 @@ public class DocumentDto
     public bool IsActive { get; set; } = true;
     public CrystaProgramLightDto? CrystaProgram { get; set; }
     public SyncInfoDto SyncInfo { get; set; } = new();
+
+    public string? FileExtension { get; set; }
+    public string? FileNameWithoutExtension { get; set; }
+    public DocumentType DocumentType { get; set; } = DocumentType.None;
+
 }

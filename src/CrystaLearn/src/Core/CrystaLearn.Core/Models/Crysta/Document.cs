@@ -28,6 +28,11 @@ public class Document : Entity
     public virtual SyncInfo SyncInfo { get; set; } = new();
     public virtual Guid? CrystaProgramId { get; set; }
     public virtual CrystaProgram? CrystaProgram { get; set; }
+    [MaxLength(50)]
+    public string? FileExtension { get; set; }
+    [MaxLength(300)]
+    public string? FileNameWithoutExtension { get; set; }
+    public DocumentType DocumentType { get; set; } = DocumentType.None;
 
     public override string ToString()
     {

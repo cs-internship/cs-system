@@ -70,6 +70,9 @@ public static class GitHubExtensions
             LastHash = item.Sha,
             IsActive = true,
             CrystaProgram = program,
+            FileExtension = item.FileExtension,
+            FileNameWithoutExtension = item.FileNameWithoutExtension,
+            DocumentType = item.FileExtension.GetDocumentType(),
             SyncInfo = new SyncInfo()
             {
                 SyncStatus = SyncStatus.Success,
@@ -87,8 +90,27 @@ public static class GitHubExtensions
         {
             return null;
         }
+
+        string html = doc.DocumentType switch
+        {
+            DocumentType.Markdown => Markdown.ToHtml(content),
+            DocumentType.Html => content,
+            _ => content
+        };
         
-        var html = Markdown.ToHtml(content);
         return html;
+    }
+
+    public static DocumentType GetDocumentType(this string fileExtension)
+    {
+        return fileExtension switch
+        {
+            ".md" => DocumentType.Markdown,
+            ".html" => DocumentType.Html,
+            ".pdf" => DocumentType.Pdf,
+            ".pptx" => DocumentType.PowerPoint,
+            ".ppt" => DocumentType.PowerPoint,
+            _ => DocumentType.None
+        };
     }
 }
