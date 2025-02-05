@@ -19,7 +19,5 @@ public interface IDocumentController : IAppController
     Task<DocumentDto?> GetContentByCrystaUrl(string crystaUrl, string culture,
         CancellationToken cancellationToken);
 
-    [HttpPost("{programCode}")]
-    Task<DocumentDto> GetContentByGitHubUrl(string url, string programCode, CancellationToken cancellationToken);
     
 }

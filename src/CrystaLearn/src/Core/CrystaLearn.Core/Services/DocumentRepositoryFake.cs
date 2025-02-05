@@ -1,171 +1,171 @@
-﻿using CrystaLearn.Core.Models.Crysta;
-using CrystaLearn.Core.Services.Contracts;
+﻿//using CrystaLearn.Core.Models.Crysta;
+//using CrystaLearn.Core.Services.Contracts;
 
-namespace CrystaLearn.Core.Services;
+//namespace CrystaLearn.Core.Services;
 
-public partial class DocumentRepositoryFake : IDocumentRepository
-{
-    public async Task<List<Document>> GetDocumentsAsync(string programCode, CancellationToken cancellationToken)
-    {
-        await Task.Delay(500, cancellationToken);
+//public partial class DocumentRepositoryFake : IDocumentRepository
+//{
+//    public async Task<List<Document>> GetDocumentsAsync(string programCode, CancellationToken cancellationToken)
+//    {
+//        await Task.Delay(500, cancellationToken);
 
-        var csInternshipProgram = CrystaProgramRepositoryFake.FakePrograms.FirstOrDefault(p => p.Code == "cs-internship");
+//        var csInternshipProgram = CrystaProgramRepositoryFake.FakePrograms.FirstOrDefault(p => p.Code == "cs-internship");
 
-        return
-            [
-                new Document
-                {
-                    Id = Guid.NewGuid(),
-                    Code = "cs-internship-overview",
-                    Title = "CS Internship Overview",
-                    Culture = "en",
-                    Content =
-                        """
-                        <p>
-                        Hello this is a <b>document</b>.
-                        </p>
-                        """,
-                    SourceHtmlUrl = "https://github.com/cs-internship/cs-internship-spec/blob/master/processes/documents/CS%20Internship%20Overview%20--farsi-ir.md",
-                    CrystaUrl = "/cs-internship-overview",
-                    Folder = "interns/",
-                    FileName = "CS Internship Overview --farsi-ir.md",
-                    LastHash = "0xa5b6fe",
-                    IsActive = true,
-                    CrystaProgram = csInternshipProgram,
-                    SyncInfo = new SyncInfo()
-                    {
-                        SyncStatus = SyncStatus.Success,
-                        SyncHash = "0xa5b6fe",
-                        SyncStartDateTime = DateTimeOffset.Now,
-                    }
-                },
-                new Document
-                {
-                    Id = Guid.NewGuid(),
-                    Code = "cs-internship-overview",
-                    Title = "CS Internship Overview",
-                    Culture = "fa",
-                    Content =
-                        """
-                        <p>
-                        این یک مستند فارسی است</b>.
-                        </p>
-                        """,
-                    SourceHtmlUrl = "https://github.com/cs-internship/cs-internship-spec/blob/master/processes/documents/CS%20Internship%20Overview%20--farsi-ir.md",
-                    CrystaUrl = "/cs-internship-overview",
-                    Folder = "interns/",
-                    FileName = "CS Internship Overview --farsi-ir.md",
-                    LastHash = "0xa5b6fe",
-                    IsActive = true,
-                    CrystaProgram = csInternshipProgram,
-                    SyncInfo = new SyncInfo()
-                    {
-                        SyncStatus = SyncStatus.Success,
-                        SyncHash = "0xa5b6fe",
-                        SyncStartDateTime = DateTimeOffset.Now,
-                    }
-                },
-                new Document
-                {
-                    Id = Guid.NewGuid(),
-                    Code = "cs-internship-overview-other",
-                    Title = "Other CS Internship Overview",
-                    Culture = "fa",
-                    Content = "content",
-                    SourceHtmlUrl = "https://github.com/cs-internship/cs-internship-spec/blob/master/processes/documents/CS%20Internship%20Overview%20--farsi-ir.md",
-                    CrystaUrl = "/cs-internship-overview",
-                    Folder = "interns/",
-                    FileName = "CS Internship Overview --farsi-ir.md",
-                    LastHash = "0xa5b6fe",
-                    IsActive = true,
-                    CrystaProgram = csInternshipProgram,
-                    SyncInfo = new SyncInfo()
-                    {
-                        SyncStatus = SyncStatus.Success,
-                        SyncHash = "0xa5b6fe",
-                        SyncStartDateTime = DateTimeOffset.Now,
-                    }
-                },
-                new Document
-                {
-                    Id = Guid.NewGuid(),
-                    Code = "interview-planning-process",
-                    Title = "Interview Planning Process",
-                    Culture = "fa",
-                    Content = "content",
-                    SourceHtmlUrl = "https://github.com/cs-internship/cs-internship-spec/blob/master/processes/documents/CSI%20-%20Interview%20Planning%20Process%20--farsi-ir.md",
-                    CrystaUrl = "/interview-planning-process",
-                    Folder = "/mentors",
-                    FileName = "CSI - Interview Planning Process --farsi-ir.md",
-                    LastHash = "0xa5b6fe",
-                    IsActive = true,
-                    CrystaProgram = csInternshipProgram,
-                    SyncInfo = new SyncInfo()
-                    {
-                        SyncStatus = SyncStatus.Success,
-                        SyncHash = "0xa5b6fe",
-                        SyncStartDateTime = DateTimeOffset.Now,
-                    }
-                },
-                new Document
-                {
-                    Id = Guid.NewGuid(),
-                    Code = "interview-planning-process-other",
-                    Title = "Other Interview Planning Process",
-                    Culture = "fa",
-                    Content = "content",
-                    SourceHtmlUrl = "https://github.com/cs-internship/cs-internship-spec/blob/master/processes/documents/CSI%20-%20Interview%20Planning%20Process%20--farsi-ir.md",
-                    CrystaUrl = "/interview-planning-process",
-                    Folder = "/mentors",
-                    FileName = "CSI - Interview Planning Process --farsi-ir.md",
-                    LastHash = "0xa5b6fe",
-                    IsActive = true,
-                    CrystaProgram = csInternshipProgram,
-                    SyncInfo = new SyncInfo()
-                    {
-                        SyncStatus = SyncStatus.Success,
-                        SyncHash = "0xa5b6fe",
-                        SyncStartDateTime = DateTimeOffset.Now,
-                    }
-                }
-            ];
-    }
+//        return
+//            [
+//                new Document
+//                {
+//                    Id = Guid.NewGuid(),
+//                    Code = "cs-internship-overview",
+//                    Title = "CS Internship Overview",
+//                    Culture = "en",
+//                    Content =
+//                        """
+//                        <p>
+//                        Hello this is a <b>document</b>.
+//                        </p>
+//                        """,
+//                    SourceHtmlUrl = "https://github.com/cs-internship/cs-internship-spec/blob/master/processes/documents/CS%20Internship%20Overview%20--farsi-ir.md",
+//                    CrystaUrl = "/cs-internship-overview",
+//                    Folder = "interns/",
+//                    FileName = "CS Internship Overview --farsi-ir.md",
+//                    LastHash = "0xa5b6fe",
+//                    IsActive = true,
+//                    CrystaProgram = csInternshipProgram,
+//                    SyncInfo = new SyncInfo()
+//                    {
+//                        SyncStatus = SyncStatus.Success,
+//                        SyncHash = "0xa5b6fe",
+//                        SyncStartDateTime = DateTimeOffset.Now,
+//                    }
+//                },
+//                new Document
+//                {
+//                    Id = Guid.NewGuid(),
+//                    Code = "cs-internship-overview",
+//                    Title = "CS Internship Overview",
+//                    Culture = "fa",
+//                    Content =
+//                        """
+//                        <p>
+//                        این یک مستند فارسی است</b>.
+//                        </p>
+//                        """,
+//                    SourceHtmlUrl = "https://github.com/cs-internship/cs-internship-spec/blob/master/processes/documents/CS%20Internship%20Overview%20--farsi-ir.md",
+//                    CrystaUrl = "/cs-internship-overview",
+//                    Folder = "interns/",
+//                    FileName = "CS Internship Overview --farsi-ir.md",
+//                    LastHash = "0xa5b6fe",
+//                    IsActive = true,
+//                    CrystaProgram = csInternshipProgram,
+//                    SyncInfo = new SyncInfo()
+//                    {
+//                        SyncStatus = SyncStatus.Success,
+//                        SyncHash = "0xa5b6fe",
+//                        SyncStartDateTime = DateTimeOffset.Now,
+//                    }
+//                },
+//                new Document
+//                {
+//                    Id = Guid.NewGuid(),
+//                    Code = "cs-internship-overview-other",
+//                    Title = "Other CS Internship Overview",
+//                    Culture = "fa",
+//                    Content = "content",
+//                    SourceHtmlUrl = "https://github.com/cs-internship/cs-internship-spec/blob/master/processes/documents/CS%20Internship%20Overview%20--farsi-ir.md",
+//                    CrystaUrl = "/cs-internship-overview",
+//                    Folder = "interns/",
+//                    FileName = "CS Internship Overview --farsi-ir.md",
+//                    LastHash = "0xa5b6fe",
+//                    IsActive = true,
+//                    CrystaProgram = csInternshipProgram,
+//                    SyncInfo = new SyncInfo()
+//                    {
+//                        SyncStatus = SyncStatus.Success,
+//                        SyncHash = "0xa5b6fe",
+//                        SyncStartDateTime = DateTimeOffset.Now,
+//                    }
+//                },
+//                new Document
+//                {
+//                    Id = Guid.NewGuid(),
+//                    Code = "interview-planning-process",
+//                    Title = "Interview Planning Process",
+//                    Culture = "fa",
+//                    Content = "content",
+//                    SourceHtmlUrl = "https://github.com/cs-internship/cs-internship-spec/blob/master/processes/documents/CSI%20-%20Interview%20Planning%20Process%20--farsi-ir.md",
+//                    CrystaUrl = "/interview-planning-process",
+//                    Folder = "/mentors",
+//                    FileName = "CSI - Interview Planning Process --farsi-ir.md",
+//                    LastHash = "0xa5b6fe",
+//                    IsActive = true,
+//                    CrystaProgram = csInternshipProgram,
+//                    SyncInfo = new SyncInfo()
+//                    {
+//                        SyncStatus = SyncStatus.Success,
+//                        SyncHash = "0xa5b6fe",
+//                        SyncStartDateTime = DateTimeOffset.Now,
+//                    }
+//                },
+//                new Document
+//                {
+//                    Id = Guid.NewGuid(),
+//                    Code = "interview-planning-process-other",
+//                    Title = "Other Interview Planning Process",
+//                    Culture = "fa",
+//                    Content = "content",
+//                    SourceHtmlUrl = "https://github.com/cs-internship/cs-internship-spec/blob/master/processes/documents/CSI%20-%20Interview%20Planning%20Process%20--farsi-ir.md",
+//                    CrystaUrl = "/interview-planning-process",
+//                    Folder = "/mentors",
+//                    FileName = "CSI - Interview Planning Process --farsi-ir.md",
+//                    LastHash = "0xa5b6fe",
+//                    IsActive = true,
+//                    CrystaProgram = csInternshipProgram,
+//                    SyncInfo = new SyncInfo()
+//                    {
+//                        SyncStatus = SyncStatus.Success,
+//                        SyncHash = "0xa5b6fe",
+//                        SyncStartDateTime = DateTimeOffset.Now,
+//                    }
+//                }
+//            ];
+//    }
 
-    public async Task<Document?> GetDocumentByCrystaUrlAsync(string crystaUrl,
-        string? culture,
-        CancellationToken cancellationToken)
-    {
-        await Task.Delay(500, cancellationToken);
-        var programCode = GitHubUtil.GetCrystaUrlInfo(crystaUrl).ProgramCode;
-        var list = await GetDocumentsAsync(programCode, cancellationToken);
-        var languageVariants = list.Where(d => $"{d.Folder}/{d.FileName}" == crystaUrl).ToList();
+//    public async Task<(Document doc, List<Document> languageVariants)> GetDocumentByCrystaUrlAsync(string crystaUrl,
+//        string? culture,
+//        CancellationToken cancellationToken)
+//    {
+//        await Task.Delay(500, cancellationToken);
+//        var programCode = GitHubUtil.GetCrystaUrlInfo(crystaUrl).ProgramCode;
+//        var list = await GetDocumentsAsync(programCode, cancellationToken);
+//        var languageVariants = list.Where(d => $"{d.Folder}/{d.FileName}" == crystaUrl).ToList();
 
-        var document = languageVariants.FirstOrDefault(d => culture?.StartsWith(d.Culture) ?? false);
-        if (document is not null)
-        {
-            return document;
-        }
+//        var document = languageVariants.FirstOrDefault(d => culture?.StartsWith(d.Culture) ?? false);
+//        if (document is not null)
+//        {
+//            return document;
+//        }
 
-        document = languageVariants.FirstOrDefault(d => d.Culture == "en");
-        if (document is not null)
-        {
-            return document;
-        }
+//        document = languageVariants.FirstOrDefault(d => d.Culture == "en");
+//        if (document is not null)
+//        {
+//            return document;
+//        }
 
-        document = languageVariants.FirstOrDefault(d => d.Culture == "fa");
-        if (document is not null)
-        {
-            return document;
-        }
+//        document = languageVariants.FirstOrDefault(d => d.Culture == "fa");
+//        if (document is not null)
+//        {
+//            return document;
+//        }
 
-        return null;
-    }
+//        return null;
+//    }
 
-    public async Task<string?> GetDocumentContentByUrlAsync(string programCode, string url,
-        CancellationToken cancellationToken)
-    {
-        var info = GitHubUtil.GetFileUrlInfo(url);
-        var list = await GetDocumentsAsync(info.RepoName, cancellationToken);
-        return list.FirstOrDefault(d => d.SourceHtmlUrl == url)?.Content;
-    }
-}
+//    public async Task<string?> GetDocumentContentByUrlAsync(string programCode, string url,
+//        CancellationToken cancellationToken)
+//    {
+//        var info = GitHubUtil.GetFileUrlInfo(url);
+//        var list = await GetDocumentsAsync(info.RepoName, cancellationToken);
+//        return list.FirstOrDefault(d => d.SourceHtmlUrl == url)?.Content;
+//    }
+//}

@@ -1,4 +1,5 @@
 ﻿using System.Text.RegularExpressions;
+using Bit.BlazorUI;
 using CrystaLearn.Shared.Controllers.Crysta;
 using CrystaLearn.Shared.Dtos.Crysta;
 using CrystaLearn.Shared.Services;
@@ -12,13 +13,12 @@ public partial class DocumentComponent
     [AutoInject]
     private CultureInfoManager CultureInfoManager { get; set; } = default!;
 
-    [Parameter] public DocumentDto? Document { get; set; } = default!;
     [Parameter] public string? CrystaUrl { get; set; } = default!;
-    private DocumentDto? PreviousDocument { get; set; }
+    private string? PreviousCrystaUrl { get; set; }
 
     private DocumentDto? LoadedDocument { get; set; }
     private bool IsLoadingDocument { get; set; } = false;
-    
+    private string? SelectedCulture { get; set; }
     [AutoInject]
     private MessageBoxService MessageBoxService { get; set; } = default!;
 
@@ -30,74 +30,66 @@ public partial class DocumentComponent
 
     public List<BitBreadcrumbItem> BreadcrumbItems { get; set; } = [];
 
-    protected override async Task OnParametersSetAsync()
+    protected override async Task OnParamsSetAsync()
     {
-        await base.OnParametersSetAsync();
+        await base.OnParamsSetAsync();
         await LoadDocument();
     }
 
     private async Task LoadDocument()
     {
+        try
         {
-            try
+            IsLoadingDocument = true;
+            
+            if (CrystaUrl is not null)
             {
-                IsLoadingDocument = true;
-                if (Document is not null && Document.CrystaProgram is not null)
+                if (PreviousCrystaUrl == CrystaUrl)
                 {
-                    if (Document == PreviousDocument)
-                    {
-                        return;
-                    }
-                    PreviousDocument = Document;
-
-                    if (Document.SourceHtmlUrl is not null)
-                    {
-                        LoadedDocument = Document;
-                        var doc = await DocumentController.GetContentByGitHubUrl(Document.SourceHtmlUrl, Document.CrystaProgram.Code, CancellationToken.None);
-                        LoadedDocument.Content = doc.Content;
-                    }
-                    
-                }
-                else if (CrystaUrl is not null)
-                {
-                    var culture = CultureInfo.CurrentUICulture.Name;
-                    LoadedDocument = await DocumentController.GetContentByCrystaUrl(CrystaUrl, culture, CancellationToken.None);
+                    return;
                 }
 
-                if (LoadedDocument != null)
-                {
-                    var parts = $"{LoadedDocument.Folder}/{LoadedDocument.FileName}".Split('/');
+                PreviousCrystaUrl = CrystaUrl;
 
-                    BreadcrumbItems = parts
-                                      .Select((folder, index) => new BitBreadcrumbItem
-                                      {
-                                          Text = folder,
-                                          IsEnabled = (index == parts.Length-1)
-                                      })
-                                      .ToList();
-                }
+                var culture = CultureInfo.CurrentUICulture.Name;
+                LoadedDocument = await DocumentController.GetContentByCrystaUrl(CrystaUrl, culture, CancellationToken.None);
             }
-            catch (Exception ex)
+
+            if (LoadedDocument != null)
             {
-                MessageBoxService.Show(ex.Message, "Error");
+                var parts = $"{LoadedDocument.Folder?.Trim('/')}/{LoadedDocument.FileName}".Split('/');
+
+                BreadcrumbItems = parts
+                                  .Select((folder, index) => new BitBreadcrumbItem
+                                  {
+                                      Text = folder,
+                                      IsEnabled = (index == parts.Length-1)
+                                  })
+                                  .ToList();
             }
-            finally
-            {
-                IsLoadingDocument = false;
-            }
+
+            SelectedCulture = GetCulture(LoadedDocument)?.Culture.Name;
+        }
+        catch (Exception ex)
+        {
+            MessageBoxService.Show(ex.Message, "Error");
+        }
+        finally
+        {
+            IsLoadingDocument = false;
         }
     }
 
-    private string? GetCultureTitle(DocumentDto? document)
+    private (string DisplayName, CultureInfo Culture)? GetCulture(DocumentDto? document)
     {
         if (document is null)
         {
             return null;
         }
 
-        var culture = CultureInfoManager.SupportedCultures.FirstOrDefault(s=>s.Culture.Name.StartsWith(document.Culture));
+        var culture = CultureInfoManager.SupportedCultures.FirstOrDefault(s=>s.Culture.Name.ToLower().StartsWith(document.Culture.ToLower()));
 
-        return culture.DisplayName;
+        return culture;
     }
 
     private BitDir GetCultureDir(DocumentDto? document)
@@ -110,5 +102,31 @@ public partial class DocumentComponent
         var content = document.Content;
         var isRtl = GitHubUtil.IsRtl(content);
         return isRtl ? BitDir.Rtl : BitDir.Ltr;
+    }
+
+    private BitDropdownItem<string>[] GetLanguages(DocumentDto loadedDocument)
+    {
+        var cultures = CultureInfoManager.SupportedCultures
+                                     .Select(sc => new BitDropdownItem<string> { Value = sc.Culture.Name, Text = sc.DisplayName })
+                                     .Where(sc=>loadedDocument.CultureVariants.Any(v=>sc.Value?.ToLower().StartsWith(v.ToLower())??false))
+                                     .ToArray();
+
+        return cultures;
+    }
+
+    private string? GetCultureMessage(DocumentDto? document)
+    {
+        var culture = CultureInfo.CurrentUICulture;
+        if (document?.CultureVariants.Any(v=> culture.Name.ToLower().StartsWith(v.ToLower())) ?? true)
+        {
+            return "Language:";
+        }
+
+        return $"Not in {culture.DisplayName}:";
+    }
+
+    private async Task OnCultureChanged(string? s)
+    {
+        //throw new NotImplementedException();
     }
 }

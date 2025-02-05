@@ -33,7 +33,6 @@ public class Document : Entity
     [MaxLength(300)]
     public string? FileNameWithoutExtension { get; set; }
     public DocumentType DocumentType { get; set; } = DocumentType.None;
-
     public override string ToString()
     {
         return $"{FileName}";

@@ -15,35 +15,16 @@ public partial class DocumentPage
     protected override string? Title => Localizer[nameof(AppStrings.Terms)];
     protected override string? Subtitle => string.Empty;
     public List<BitNavItem> DocumentsTree { get; set; } = [];
-    public DocumentDto? CurrentDocument { get; set; }
-    private string? CrystaUrl { get; set; }
+    public string? CurrentCrystaUrl { get; set; }
     private bool IsLoadingTree { get; set; } = false;
 
     protected override async Task OnInitAsync()
     {
         if (!string.IsNullOrWhiteSpace(DocPath))
         {
-            CrystaUrl = Urls.Crysta.Program(ProgramCode).DocPage(DocPath);
+            CurrentCrystaUrl = Urls.Crysta.Program(ProgramCode).DocPage(DocPath);
         }
-        //if (DocPath is not null)
-        //{
-        //    var currentCulture = CultureInfo.CurrentUICulture.Name;
-        //    var parts = DocPath.Split('/');
-        //    var code = parts.Last();
-        //    var folder = string.Join("/", parts[..^1]);
-        //    var document = new DocumentDto
-        //    {
-        //        Code = code,
-        //        Culture = currentCulture,
-        //        Folder = folder,
-        //        CrystaProgram = new CrystaProgramLightDto
-        //        {
-        //            Code = ProgramCode,
-        //            Title = ""
-        //        }
-        //    };
-        //    SetCurrentDocument(document);
-        //}
+
 
         await RefreshDocuments();
 
@@ -168,6 +149,6 @@ public partial class DocumentPage
 
     private void SetCurrentDocument(DocumentDto? document)
     {
-        CurrentDocument = document;
+        CurrentCrystaUrl = document.CrystaUrl;
     }
 }

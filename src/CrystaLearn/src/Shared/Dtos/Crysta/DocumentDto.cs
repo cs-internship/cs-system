@@ -26,5 +26,5 @@ public class DocumentDto
     public string? FileExtension { get; set; }
     public string? FileNameWithoutExtension { get; set; }
     public DocumentType DocumentType { get; set; } = DocumentType.None;
-
+    public string[] CultureVariants { get; set; } = [];
 }

@@ -4,6 +4,7 @@ using System.Threading;
 using CrystaLearn.Core.Models.Crysta;
 using CrystaLearn.Core.Services.Contracts;
 using CrystaLearn.Core.Services.GitHub;
+using CrystaLearn.Shared.Dtos.Crysta;
 using Markdig;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 
@@ -30,15 +31,8 @@ public partial class DocumentRepositoryInMemory : IDocumentRepository
         return docs;
     }
 
-    public async Task<Document?> GetDocumentByCrystaUrlAsync(string crystaUrl, string? culture, CancellationToken cancellationToken)
+    public async Task<DocumentDto?> GetDocumentByCrystaUrlAsync(string crystaUrl, string? culture, CancellationToken cancellationToken)
     {
-        //var crystaUrlBuilder = new StringBuilder($"/{programCode}/");
-        //if (!string.IsNullOrEmpty(crystaUrl) && crystaUrl != "/")
-        //    crystaUrlBuilder.Append($"/{crystaUrl}");
-
-        //crystaUrlBuilder.Append($"/{docCode}");
-
-        //var crystaUrl = crystaUrlBuilder.ToString();
 
         //var url = Urls.Crysta.Program(programCode).DocPage(crystaUrl);
         var programCode = GitHubUtil.GetCrystaUrlInfo(crystaUrl).ProgramCode;
@@ -48,8 +42,8 @@ public partial class DocumentRepositoryInMemory : IDocumentRepository
         ).ToList();
 
         var document = languageVariants.FirstOrDefault(d => culture?.StartsWith(d.Culture) ?? false);
-        document ??= languageVariants.FirstOrDefault(d => d.Culture == "en");
-        document ??= languageVariants.FirstOrDefault(d => d.Culture == "fa");
+        document ??= languageVariants.FirstOrDefault(d => d.Culture.StartsWith("en"));
+        document ??= languageVariants.FirstOrDefault(d => d.Culture.StartsWith("fa"));
 
         if (document is null)
         {
@@ -57,18 +51,14 @@ public partial class DocumentRepositoryInMemory : IDocumentRepository
         }
 
         await PopulateContentAsync(document);
-        
-        return document;
+
+        var dto = document.Map();
+        dto.CultureVariants = languageVariants.Select(x => x.Culture).ToArray();
+
+        return dto;
     }
 
-    public async Task<string?> GetDocumentContentByUrlAsync(string programCode, string url, CancellationToken cancellationToken)
-    {
-        var docs = await GetDocumentsAsync(programCode, cancellationToken);
-        var doc = docs.First(o => o.SourceHtmlUrl == url);
-
-        await PopulateContentAsync(doc);
-        return doc.Content;
-    }
+   
 
     private async Task PopulateContentAsync(Document document)
     {

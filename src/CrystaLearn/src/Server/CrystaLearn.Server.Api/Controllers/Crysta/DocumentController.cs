@@ -27,22 +27,8 @@ public partial class DocumentController : AppControllerBase, IDocumentController
         CancellationToken cancellationToken)
     {
         var result = await DocumentRepository.GetDocumentByCrystaUrlAsync(crystaUrl, culture, cancellationToken);
-        return result?.Map();
+        return result;
     }
 
-    [AllowAnonymous]
-    [HttpPost("{programCode}")]
-    [ResponseCache(Duration = 1 * 24 * 3600, Location = ResponseCacheLocation.Any, VaryByQueryKeys = ["*"])]
-    public async Task<DocumentDto> GetContentByGitHubUrl([FromBody]string url, string programCode, CancellationToken cancellationToken)
-    {
-        
-        var result = await DocumentRepository.GetDocumentContentByUrlAsync(programCode, url, cancellationToken);
-
-        var doc = new DocumentDto
-        {
-            Content = result
-        };
-
-        return doc;
-    }
+   
 }
