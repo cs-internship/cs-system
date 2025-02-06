@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using CrystaLearn.Core.Services;
+using CrystaLearn.Core.Services.AzureBoard;
 using CrystaLearn.Core.Services.Contracts;
 using CrystaLearn.Core.Services.GitHub;
 using Microsoft.Extensions.Hosting;
@@ -37,6 +38,7 @@ public static class ApplicationBuilderExtensions
         services.AddSingleton<IDocumentRepository, DocumentRepositoryInMemory>();
         services.AddTransient<ICrystaProgramRepository, CrystaProgramRepositoryFake>();
         services.AddTransient<IGitHubService, GitHubService>();
+        services.AddTransient<IAzureBoardService, AzureBoardService>();
     }
 
     private static void AddGitHubClient(this IHostApplicationBuilder builder)
