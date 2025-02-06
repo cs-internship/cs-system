@@ -16,6 +16,7 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <PackageReference Include="Microsoft.Extensions.Identity.Stores" />
+    <PackageReference Include="Microsoft.TeamFoundationServer.Client" />
     <PackageReference Include="Octokit" />
     <PackageReference Include="Riok.Mapperly" />
 

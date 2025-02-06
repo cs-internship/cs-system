@@ -7,4 +7,5 @@ using System.Threading.Tasks;
 namespace CrystaLearn.Core.Services.Contracts;
 public interface IAzureBoardService
 {
+    Task GetWorkItemsAsync();
 }

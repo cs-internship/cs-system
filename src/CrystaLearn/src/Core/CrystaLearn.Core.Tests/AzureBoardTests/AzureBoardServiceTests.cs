@@ -14,13 +14,12 @@ public class AzureBoardServiceTests : TestBase
     {
         // Arrange
         var services = CreateServiceProvider();
-        var service = services.GetRequiredService<IGitHubService>();
+        var service = services.GetRequiredService<IAzureBoardService>();
         var url = "https://github.com/cs-internship/cs-internship-spec/tree/master/processes";
 
         // Act
-        var files = await service.GetFilesAsync(url);
+        await service.GetWorkItemsAsync();
 
         // Assert
-        Assert.True(files.Any());
     }
 }
