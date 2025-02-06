@@ -61,6 +61,11 @@ For more detailed information, you can visit the official GitHub documentation o
 
 For the SQL Server Connection String, you can request access to the Telegram group that contains the connection string. You can join the group using this [link](https://t.me/+VLs-FTg5nLRmMGY0).
 
+### Generating Azure DevOps Personal Access Token
+Check this document and create your PAT:
+
+https://learn.microsoft.com/en-us/azure/devops/organizations/accounts/use-personal-access-tokens-to-authenticate?view=azure-devops&tabs=Windows
+
 ### Initialize and set the secrets
 
 ```bash
@@ -68,16 +73,19 @@ cd /src/CrystaLearn/src/Server/CrystaLearn.Server.Web
 dotnet user-secrets init
 dotnet user-secrets set "ConnectionStrings:SqlServerConnectionString" "Your SQL Server Connection String"
 dotnet user-secrets set "GitHub:GitHubAccessToken" "Your GitHub Access Token"
+dotnet user-secrets set "AzureDevOps:PersonalAccessToken" "Your Azure DevOps Personal Access Token"
 
 cd /src/CrystaLearn/src/Console/CrystaLearn.Console
 dotnet user-secrets init
 dotnet user-secrets set "ConnectionStrings:SqlServerConnectionString" "Your SQL Server Connection String"
 dotnet user-secrets set "GitHub:GitHubAccessToken" "Your GitHub Access Token"
+dotnet user-secrets set "AzureDevOps:PersonalAccessToken" "Your Azure DevOps Personal Access Token"
 
 cd /src/CrystaLearn/src/Core/CrystaLearn.Core.Tests
 dotnet user-secrets init
 dotnet user-secrets set "ConnectionStrings:SqlServerConnectionString" "Your SQL Server Connection String"
 dotnet user-secrets set "GitHub:GitHubAccessToken" "Your GitHub Access Token"
+dotnet user-secrets set "AzureDevOps:PersonalAccessToken" "Your Azure DevOps Personal Access Token"
 ```
 
 Remember to replace `"Your SQL Server Connection String"` and `"Your GitHub Access Token"` with your actual connection string and access token.
