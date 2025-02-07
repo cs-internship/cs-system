@@ -7,6 +7,7 @@ using CrystaLearn.Core.Services;
 using CrystaLearn.Core.Services.AzureBoard;
 using CrystaLearn.Core.Services.Contracts;
 using CrystaLearn.Core.Services.GitHub;
+using CrystaLearn.Core.Services.Sync;
 using Microsoft.Extensions.Hosting;
 using Octokit;
 
@@ -39,6 +40,7 @@ public static class ApplicationBuilderExtensions
         services.AddTransient<ICrystaProgramRepository, CrystaProgramRepositoryFake>();
         services.AddTransient<IGitHubService, GitHubService>();
         services.AddTransient<IAzureBoardService, AzureBoardService>();
+        services.AddTransient<ICrystaProgramSyncService, CrystaProgramSyncService>();
     }
 
     private static void AddGitHubClient(this IHostApplicationBuilder builder)

@@ -16,13 +16,24 @@ public partial class AzureBoardService : IAzureBoardService
 {
     [AutoInject] IConfiguration Configuration { get; set; } = default!;
 
-    public async Task<List<WorkItem>> GetWorkItemsRawQueryAsync(string query, string[] fields)
+    public async Task<List<WorkItem>> GetWorkItemsRawQueryAsync(AzureBoardSyncConfig config, string query, string[]? fields = null)
     {
-        var pat = Configuration["AzureDevOps:PersonalAccessToken"];
-        VssConnection connection = new VssConnection(new Uri("https://dev.azure.com/cs-internship"), new VssBasicCredential(string.Empty, pat));
+        VssConnection connection = new VssConnection(
+            new Uri($"https://dev.azure.com/{config.Organization}"), 
+            new VssBasicCredential(string.Empty, config.PersonalAccessToken));
+
         using WorkItemTrackingHttpClient witClient = await connection.GetClientAsync<WorkItemTrackingHttpClient>();
 
-        //List<QueryHierarchyItem> queryHierarchyItems = await witClient.GetQueriesAsync("CS Internship Program", depth: 2);
+        fields ??= [
+            "System.Id",
+            "System.Title", 
+            "System.State",
+            "System.Tags", 
+            "System.WorkItemType", 
+            "System.AssignedTo", 
+            "System.CreatedDate", 
+            "System.ChangedDate"
+        ];
 
         var wiql = new Wiql { Query = query };
 
@@ -34,11 +45,24 @@ public partial class AzureBoardService : IAzureBoardService
         return workItems;
     }
 
-    public async Task<List<WorkItem>> GetWorkItemsBatchAsync(string query, string[] fields)
+    public async Task<List<WorkItem>> GetWorkItemsBatchAsync(AzureBoardSyncConfig config, string query, string[]? fields = null)
     {
-        var pat = Configuration["AzureDevOps:PersonalAccessToken"];
-        VssConnection connection = new VssConnection(new Uri("https://dev.azure.com/cs-internship"), new VssBasicCredential(string.Empty, pat));
+        VssConnection connection = new VssConnection(
+            new Uri($"https://dev.azure.com/{config.Organization}"),
+            new VssBasicCredential(string.Empty, config.PersonalAccessToken));
+
         using WorkItemTrackingHttpClient witClient = await connection.GetClientAsync<WorkItemTrackingHttpClient>();
+
+        fields ??= [
+            "System.Id",
+            "System.Title",
+            "System.State",
+            "System.Tags",
+            "System.WorkItemType",
+            "System.AssignedTo",
+            "System.CreatedDate",
+            "System.ChangedDate"
+        ];
 
         var wiql = new Wiql { Query = query };
 
