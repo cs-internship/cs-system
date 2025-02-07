@@ -42,7 +42,6 @@ public partial class CrystaProgramSyncService : ICrystaProgramSyncService
             ?? throw new Exception("Invalid sync config");
 
         var project = config.Project ?? throw new Exception("No project provided");
-        //var board = config.Board ?? throw new Exception("No board provided");
         var lastSyncDateTime = module.SyncInfo.LastSyncDateTime;
 
         if (!int.TryParse(module.SyncInfo.LastSyncOffset, out var lastWorkItemId))
