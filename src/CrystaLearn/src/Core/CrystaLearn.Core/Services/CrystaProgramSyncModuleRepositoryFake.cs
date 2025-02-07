@@ -12,28 +12,28 @@ public partial class CrystaProgramSyncModuleRepositoryFake : ICrystaProgramSyncM
         var pat = Configuration["AzureDevOps:PersonalAccessToken"];
 
         List<CrystaProgramSyncModule> modules =
-            [
-                new()
-                {
-                    Id = Guid.NewGuid(),
-                    CrystaProgramId = CrystaProgramRepositoryFake.FakeProgramCSI.Id,
-                    CrystaProgram = CrystaProgramRepositoryFake.FakeProgramCSI,
-                    ModuleType = SyncModuleType.AzureBoard,
-                    SyncConfig =
-                        $$"""
-                        {   
-                            "Organization": "cs-internship",
-                            "PersonalAccessToken": "{{pat}}",
-                            "Project": "CS Internship Program"
-                        }
-                        """,
-                    SyncInfo = new()
-                    {
-                        LastSyncDateTime = DateTimeOffset.Now.AddDays(-2),
-                        LastSyncOffset = "0"
+        [
+            new()
+            {
+                Id = Guid.NewGuid(),
+                CrystaProgramId = CrystaProgramRepositoryFake.FakeProgramCSI.Id,
+                CrystaProgram = CrystaProgramRepositoryFake.FakeProgramCSI,
+                ModuleType = SyncModuleType.AzureBoard,
+                SyncConfig =
+                    $$"""
+                    {   
+                        "Organization": "cs-internship",
+                        "PersonalAccessToken": "{{pat}}",
+                        "Project": "CS Internship Program"
                     }
+                    """,
+                SyncInfo = new()
+                {
+                    LastSyncDateTime = DateTimeOffset.Now.AddDays(-2),
+                    LastSyncOffset = "0"
                 }
-                ];
+            }
+        ];
 
         return modules;
     }
