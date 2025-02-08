@@ -70,15 +70,20 @@ public partial class AzureBoardService : IAzureBoardService
 
         using WorkItemTrackingHttpClient witClient = await connection.GetClientAsync<WorkItemTrackingHttpClient>();
 
+        // https://learn.microsoft.com/en-us/azure/devops/boards/work-items/guidance/work-item-field?view=azure-devops
+
         fields ??= [
             "System.Id",
             "System.Title",
+            "System.Description",
             "System.State",
             "System.Tags",
             "System.WorkItemType",
             "System.AssignedTo",
             "System.CreatedDate",
-            "System.ChangedDate"
+            "System.ChangedDate",
+            "System.AreaPath",
+            "System.IterationPath",
         ];
 
         var wiql = new Wiql { Query = query };

@@ -41,7 +41,9 @@ public static class ApplicationBuilderExtensions
         services.AddTransient<IGitHubService, GitHubService>();
         services.AddTransient<IAzureBoardService, AzureBoardService>();
         services.AddTransient<ICrystaProgramSyncService, CrystaProgramSyncService>();
+        services.AddTransient<IAzureBoardSyncService, AzureBoardSyncService>();
         services.AddTransient<ICrystaProgramSyncModuleRepository, CrystaProgramSyncModuleRepositoryFake>();
+        services.AddTransient<ICrystaTaskRepository, CrystaTaskRepositoryFake>();
     }
 
     private static void AddGitHubClient(this IHostApplicationBuilder builder)

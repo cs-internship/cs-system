@@ -22,7 +22,7 @@ public class AzureBoardSyncServiceTests : TestBase
             sc.AddTransient<ICrystaProgramSyncModuleRepository, CrystaProgramSyncModuleRepositoryFake>();
         });
 
-        var service = services.GetRequiredService<ICrystaProgramSyncService>();
+        var service = services.GetRequiredService<IAzureBoardSyncService>();
 
         var configuration = services.GetRequiredService<IConfiguration>();
         var organization = "cs-internship";
@@ -50,7 +50,7 @@ public class AzureBoardSyncServiceTests : TestBase
             }
         };
 
-        await service.SyncAzureBoardAsync(module);
+        await service.SyncAsync(module);
     }
 
     [Fact]
@@ -63,13 +63,13 @@ public class AzureBoardSyncServiceTests : TestBase
         });
 
         var moduleService = services.GetRequiredService<ICrystaProgramSyncModuleRepository>();
-        var syncService = services.GetRequiredService<ICrystaProgramSyncService>();
+        var syncService = services.GetRequiredService<IAzureBoardSyncService>();
 
         var modules = await moduleService.GetSyncModulesAsync(default);
 
         foreach (var module in modules)
         {
-            await syncService.SyncAzureBoardAsync(module);
+            await syncService.SyncAsync(module);
         }
     }
 }

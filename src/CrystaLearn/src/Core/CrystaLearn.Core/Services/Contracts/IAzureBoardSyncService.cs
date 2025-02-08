@@ -3,7 +3,8 @@ using CrystaLearn.Core.Services.Sync;
 
 namespace CrystaLearn.Core.Services.Contracts;
 
-public interface ICrystaProgramSyncService
+public interface IAzureBoardSyncService
 {
-    Task SyncAsync(CrystaProgramSyncModule module);
+    Task<SyncResult> SyncAsync(CrystaProgramSyncModule module);
+
 }
