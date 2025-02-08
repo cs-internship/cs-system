@@ -42,7 +42,10 @@ public partial class CrystaProgramSyncService : ICrystaProgramSyncService
             ?? throw new Exception("Invalid sync config");
 
         var project = config.Project ?? throw new Exception("No project provided");
-        var lastSyncDateTime = module.SyncInfo.LastSyncDateTime;
+        var lastSyncDateTime = 
+            module.SyncInfo.LastSyncDateTime
+            ?? config.WorkItemChangedFromDateTime
+            ?? throw new Exception("No WorkItemChangedFromDateTime date provided");
 
         if (!int.TryParse(module.SyncInfo.LastSyncOffset, out var lastWorkItemId))
         {

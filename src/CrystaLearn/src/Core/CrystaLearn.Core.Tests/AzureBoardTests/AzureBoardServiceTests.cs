@@ -54,6 +54,99 @@ public partial class AzureBoardServiceTests : TestBase
     }
 
     [Fact]
+    public async Task EnumerateWorkItemsQueryAsync_WhenCalled_Returns()
+    {
+        // Arrange
+        var services = CreateServiceProvider();
+        var service = services.GetRequiredService<IAzureBoardService>();
+        var configuration = services.GetRequiredService<IConfiguration>();
+        var organization = "cs-internship";
+        var pat = configuration["AzureDevOps:PersonalAccessToken"]
+                  ?? throw new Exception("No PAT provided.");
+
+        var project = "CS Internship Program";
+
+        var config = new AzureBoardSyncConfig
+        {
+            Organization = organization,
+            PersonalAccessToken = pat,
+            Project = project
+        };
+
+        var query =
+            $"""
+             Select 
+                 [Id] 
+             From 
+                 WorkItems 
+             Where 
+                 [Work Item Type] = 'Task' 
+                 And [System.TeamProject] = '{project}' 
+                 And [System.State] <> 'Closed' 
+             Order By 
+                 [State] Asc, 
+                 [Changed Date] Desc
+             """;
+
+        // Act
+        await foreach (var workItems in service.EnumerateWorkItemsQueryAsync(config, query))
+        {
+            Assert.True(workItems.Any());
+            return;
+        }
+
+        // Assert
+    }
+
+    [Fact]
+    public async Task EnumerateWorkItemsQueryAsync_WhenMoreThan20K_Throws()
+    {
+        // Arrange
+        var services = CreateServiceProvider();
+        var service = services.GetRequiredService<IAzureBoardService>();
+        var configuration = services.GetRequiredService<IConfiguration>();
+        var organization = "cs-internship";
+        var pat = configuration["AzureDevOps:PersonalAccessToken"]
+                  ?? throw new Exception("No PAT provided.");
+
+        var project = "CS Internship Program";
+
+        var config = new AzureBoardSyncConfig
+        {
+            Organization = organization,
+            PersonalAccessToken = pat,
+            Project = project
+        };
+
+        var query =
+            $"""
+             Select 
+                 [Id] 
+             From 
+                 WorkItems 
+             Where 
+                 [Work Item Type] = 'Task' 
+                 And [System.TeamProject] = '{project}' 
+                 And [System.State] <> 'Closed' 
+             Order By 
+                 [State] Asc, 
+                 [Changed Date] Desc
+             """;
+
+        // Act
+        await Assert.ThrowsAsync<InvalidOperationException>(async () =>
+        {
+            await foreach (var workItems in service.EnumerateWorkItemsQueryAsync(config, query, top: 30_000))
+            {
+                // Assert
+            }
+        });
+
+
+        // Assert
+    }
+
+    [Fact]
     public async Task GetWorkItemsBatchAsync_WhenCalled_Returns()
     {
         // Arrange

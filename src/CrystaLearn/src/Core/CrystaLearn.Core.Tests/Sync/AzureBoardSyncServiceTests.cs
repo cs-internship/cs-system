@@ -35,7 +35,8 @@ public class AzureBoardSyncServiceTests : TestBase
         {
             Organization = organization,
             PersonalAccessToken = pat,
-            Project = project
+            Project = project,
+            WorkItemChangedFromDateTime = DateTimeOffset.Now.AddDays(-10)
         };
 
         var module = new CrystaProgramSyncModule
