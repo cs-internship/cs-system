@@ -1,4 +1,6 @@
-﻿namespace CrystaLearn.Server.Api;
+﻿using CrystaLearn.Core.Data;
+
+namespace CrystaLearn.Server.Api;
 
 public static partial class Program
 {
@@ -10,11 +12,12 @@ public static partial class Program
 
         builder.Configuration.AddSharedConfigurations();
 
+        builder.WebHost.UseSentry(configureOptions: options => builder.Configuration.GetRequiredSection("Logging:Sentry").Bind(options));
 
         // The following line (using the * in the URL), allows the emulators and mobile devices to access the app using the host IP address.
         if (builder.Environment.IsDevelopment() && AppPlatform.IsWindows)
         {
-            builder.WebHost.UseUrls("http://localhost:5255", "http://*:5255");
+            builder.WebHost.UseUrls("http://localhost:5029", "http://*:5029");
         }
 
         builder.Services.AddSharedProjectServices(builder.Configuration);

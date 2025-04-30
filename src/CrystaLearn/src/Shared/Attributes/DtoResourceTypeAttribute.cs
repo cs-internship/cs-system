@@ -1,7 +1,7 @@
-﻿namespace CrystaLearn.Shared.Attributes;
+namespace CrystaLearn.Shared.Attributes;
 
 /// <summary>
-/// Instead of repeatedly applying the ErrorMessageResourceType to properties featuring validation attributes like [Required] or [StringLength],
+/// Instead of repeatedly applying the <see cref="ValidationAttribute.ErrorMessageResourceType"/> to properties featuring validation attributes like [Required] or [StringLength],
 /// you can streamline the process by applying this attribute to the class just once.
 /// </summary>
 [AttributeUsage(AttributeTargets.Class, AllowMultiple = false)]

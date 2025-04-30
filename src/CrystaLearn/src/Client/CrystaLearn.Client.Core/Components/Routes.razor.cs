@@ -2,20 +2,16 @@
 
 public partial class Routes
 {
+    [Parameter] public Type? Layout { get; set; }
+
     [AutoInject] NavigationManager? navigationManager { set => universalLinksNavigationManager = value; get => universalLinksNavigationManager; }
     private static NavigationManager? universalLinksNavigationManager;
 
     public static async Task OpenUniversalLink(string url, bool forceLoad = false, bool replace = false)
     {
-        await Task.Run(async () =>
-        {
-            while (universalLinksNavigationManager is null)
-            {
-                await Task.Yield();
-            }
-        });
+        await EnsureNavigationManagerIsReady();
 
-        if (CultureInfoManager.MultilingualEnabled &&
+        if (CultureInfoManager.InvariantGlobalization is false &&
             forceLoad == false &&
             (AppPlatform.IsAndroid || AppPlatform.IsIOS))
         {
@@ -26,5 +22,16 @@ public partial class Routes
         }
 
         universalLinksNavigationManager!.NavigateTo(url, forceLoad, replace);
+    }
+
+    private static async Task EnsureNavigationManagerIsReady()
+    {
+        await Task.Run(async () =>
+        {
+            while (universalLinksNavigationManager is null)
+            {
+                await Task.Yield();
+            }
+        });
     }
 }

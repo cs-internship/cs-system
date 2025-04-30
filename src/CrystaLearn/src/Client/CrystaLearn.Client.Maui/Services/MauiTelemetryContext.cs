@@ -1,4 +1,4 @@
-﻿namespace CrystaLearn.Client.Maui.Services;
+namespace CrystaLearn.Client.Maui.Services;
 
 public class MauiTelemetryContext : AppTelemetryContext
 {

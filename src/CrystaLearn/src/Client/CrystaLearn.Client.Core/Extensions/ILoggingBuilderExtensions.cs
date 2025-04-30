@@ -1,4 +1,4 @@
-﻿using CrystaLearn.Client.Core.Services.DiagnosticLog;
+using CrystaLearn.Client.Core.Services.DiagnosticLog;
 
 namespace Microsoft.Extensions.Logging;
 
@@ -27,6 +27,12 @@ public static class ILoggingBuilderExtensions
 
         loggingBuilder.AddDiagnosticLogger();
 
+        loggingBuilder.AddSentry(options =>
+        {
+            options.Debug = AppEnvironment.IsDev();
+            options.Environment = AppEnvironment.Current;
+            configuration.GetRequiredSection("Logging:Sentry").Bind(options);
+        });
 
         return loggingBuilder;
     }

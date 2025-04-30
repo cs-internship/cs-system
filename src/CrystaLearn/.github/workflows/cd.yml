@@ -1,4 +1,4 @@
-﻿name: CrystaLearn CD
+name: CrystaLearn CD
 
 # https://bitplatform.dev/templates/dev-ops
 
@@ -33,13 +33,19 @@ jobs:
 
     - uses: actions/setup-node@v4
       with:
-        node-version: 22
+        node-version: 23
+
+    - name: Use Bit.ResxTranslator
+      run: |
+            dotnet tool install --global Bit.ResxTranslator
+            bit-resx-translate
 
     - name: Update core appsettings.json
       uses: devops-actions/variable-substitution@v1.2 
       with:
-        files: 'src/Shared/appsettings.json, src/Client/CrystaLearn.Client.Core/appsettings.json, src/Client/CrystaLearn.Client.Web/appsettings.json'
+        files: 'src/**/appsettings*json'
       env:
+        WebAppRender.BlazorMode: 'BlazorWebAssembly'
         ServerAddress: ${{ env.SERVER_ADDRESS }}
         AdsPushVapid.PublicKey: ${{ secrets.PUBLIC_VAPIDKEY }}
 
@@ -47,7 +53,9 @@ jobs:
       run:  cd src && dotnet workload install wasm-tools
       
     - name: Generate CSS/JS files
-      run: dotnet build src/Client/CrystaLearn.Client.Core/CrystaLearn.Client.Core.csproj -t:BeforeBuildTasks --no-restore -c Release
+      run: |
+          dotnet build src/Client/CrystaLearn.Client.Core/CrystaLearn.Client.Core.csproj -t:BeforeBuildTasks --no-restore -c Release
+          dotnet build src/Client/CrystaLearn.Client.Web/CrystaLearn.Client.Web.csproj -t:BeforeBuildTasks --no-restore -c Release
 
     - name: Publish
       run: dotnet publish src/Server/CrystaLearn.Server.Web/CrystaLearn.Server.Web.csproj -c Release --self-contained -r linux-x64 -o ${{env.DOTNET_ROOT}}/server
@@ -94,19 +102,8 @@ jobs:
         with:
           files: 'appsettings.json'
         env:
-          ConnectionStrings_SqlServerConnectionString: ${{ secrets.DB_CONNECTION_STRING }}
-          DataProtectionCertificatePassword: ${{ secrets.API_DATA_PROTECTION_CERTIFICATE_PASSWORD }}
-
-      - name: Delete DataProtectionCertificate.pfx
-        run: |
-            rm DataProtectionCertificate.pfx
-
-      - name: Extract data protection certificate from env
-        uses: timheuer/base64-to-file@v1.2
-        with:
-            fileDir: './'
-            fileName: 'DataProtectionCertificate.pfx'
-            encodedString: ${{ secrets.API_DATA_PROTECTION_CERTIFICATE_FILE_BASE64 }}
+          ConnectionStrings.SqlServerConnectionString: ${{ secrets.DB_CONNECTION_STRING }}
+          Identity.JwtIssuerSigningKeySecret: ${{ secrets.Jwt_Issuer_Signing_Key_Secret }}
 
       - name: Run migrations
         run: |
@@ -123,6 +120,52 @@ jobs:
           publish-profile: ${{ secrets.AZURE_APP_SERVICE_PUBLISH_PROFILE }}
           package: .
 
+  build_blazor_hybrid_windows:
+    name: build blazor hybrid (windows)
+    runs-on: windows-2022
+  
+    steps:
+     
+    - name: Checkout source code
+      uses: actions/checkout@v4
+
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        global-json-file: global.json
+
+    - uses: actions/setup-node@v4
+      with:
+        node-version: 23
+
+    - name: Use Bit.ResxTranslator
+      run: |
+            dotnet tool install --global Bit.ResxTranslator
+            bit-resx-translate
+  
+    - name: Update core appsettings.json
+      uses: devops-actions/variable-substitution@v1.2 
+      with:
+        files: 'src\**\appsettings*json'
+      env:
+        ServerAddress: ${{ env.SERVER_ADDRESS }}
+        WindowsUpdate.FilesUrl: 'https://use-your-api-server-url-here.com/windows' # Deploy the published Windows application files to your desired hosting location and use the host url here.
+  
+    - name: Generate CSS/JS files
+      run: dotnet build src\Client\CrystaLearn.Client.Core\CrystaLearn.Client.Core.csproj -t:BeforeBuildTasks --no-restore -c Release
+
+    - name: Publish
+      run: |
+        cd src\Client\CrystaLearn.Client.Windows\
+        dotnet publish CrystaLearn.Client.Windows.csproj -c Release -o .\publish-result -r win-x86 -p:Version="${{ vars.APPLICATION_DISPLAY_VERSION}}" --self-contained
+          dotnet tool restore
+          dotnet vpk pack -u CrystaLearn.Client.Windows -v "${{ vars.APPLICATION_DISPLAY_VERSION }}" -p .\publish-result -e CrystaLearn.Client.Windows.exe -r win-x86 --framework webview2 --icon .\wwwroot\favicon.ico --packTitle 'CrystaLearn'
+  
+    - name: Upload artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: win-exe-bundle
+        path: src\Client\CrystaLearn.Client.Windows\Releases
   
   build_blazor_hybrid_android:
     name: build blazor hybrid (android)
@@ -140,7 +183,7 @@ jobs:
 
     - uses: actions/setup-node@v4
       with:
-        node-version: 22
+        node-version: 23
   
     - name: Extract Android signing key from env
       uses: timheuer/base64-to-file@v1.2
@@ -148,11 +191,16 @@ jobs:
           fileDir: './src/Client/CrystaLearn.Client.Maui/'
           fileName: 'CrystaLearn.keystore'
           encodedString: ${{ secrets.ANDROID_RELEASE_KEYSTORE_FILE_BASE64 }}
+
+    - name: Use Bit.ResxTranslator
+      run: |
+            dotnet tool install --global Bit.ResxTranslator
+            bit-resx-translate
   
     - name: Update core appsettings.json
       uses: devops-actions/variable-substitution@v1.2 
       with:
-        files: 'src/Shared/appsettings.json, src/Client/CrystaLearn.Client.Core/appsettings.json, src/Client/CrystaLearn.Client.Maui/appsettings.json'
+        files: 'src/**/appsettings*json'
       env:
         ServerAddress: ${{ env.SERVER_ADDRESS }}
 
@@ -192,16 +240,21 @@ jobs:
 
     - uses: maxim-lobanov/setup-xcode@v1.6.0
       with:
-        xcode-version: '16.2'
+        xcode-version: '16.3'
 
     - uses: actions/setup-node@v4
       with:
-        node-version: 22
+        node-version: 23
+
+    - name: Use Bit.ResxTranslator
+      run: |
+            dotnet tool install --global Bit.ResxTranslator
+            bit-resx-translate
   
     - name: Update core appsettings.json
       uses: devops-actions/variable-substitution@v1.2 
       with:
-        files: 'src/Shared/appsettings.json, src/Client/CrystaLearn.Client.Core/appsettings.json, src/Client/CrystaLearn.Client.Maui/appsettings.json'
+        files: 'src/**/appsettings*json'
       env:
         ServerAddress: ${{ env.SERVER_ADDRESS }}
 

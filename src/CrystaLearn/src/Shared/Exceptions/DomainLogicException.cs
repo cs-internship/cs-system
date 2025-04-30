@@ -1,4 +1,4 @@
-﻿namespace CrystaLearn.Shared.Exceptions;
+namespace CrystaLearn.Shared.Exceptions;
 
 public partial class DomainLogicException : KnownException
 {

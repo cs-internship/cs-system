@@ -1,4 +1,4 @@
-﻿using CrystaLearn.Client.Maui.Platforms.Android.Services;
+using CrystaLearn.Client.Maui.Platforms.Android.Services;
 
 namespace Microsoft.Extensions.DependencyInjection;
 

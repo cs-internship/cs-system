@@ -1,4 +1,4 @@
-﻿using CrystaLearn.Shared;
+using CrystaLearn.Shared;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Components.Web;
 
@@ -8,7 +8,7 @@ public static partial class ISharedServiceCollectionExtensions
 {
     public static IServiceCollection AddSharedProjectServices(this IServiceCollection services, IConfiguration configuration)
     {
-        // Services being registered here can get injected everywhere (Api, Web, Android, iOS, Windows and macOS)
+        // Services being registered here can get injected everywhere.
 
         services.AddScoped<HtmlRenderer>();
         services.AddScoped<CultureInfoManager>();
@@ -20,7 +20,7 @@ public static partial class ISharedServiceCollectionExtensions
             configuration.Bind(settings);
             return settings;
         });
-        services.AddSingleton(sp =>
+        services.TryAddSingleton(sp =>
         {
             JsonSerializerOptions options = new JsonSerializerOptions(AppJsonContext.Default.Options);
 
@@ -39,6 +39,8 @@ public static partial class ISharedServiceCollectionExtensions
         services.ConfigureAuthorizationCore();
 
         services.AddLocalization();
+
+        services.AddMemoryCache();
 
         return services;
     }

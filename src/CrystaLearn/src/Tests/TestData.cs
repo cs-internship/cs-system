@@ -1,4 +1,4 @@
-﻿namespace CrystaLearn.Tests;
+namespace CrystaLearn.Tests;
 
 public partial class TestData
 {

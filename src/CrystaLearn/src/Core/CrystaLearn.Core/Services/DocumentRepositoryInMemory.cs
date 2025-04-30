@@ -1,12 +1,9 @@
 ﻿using System.Collections.Concurrent;
-using System.Text;
-using System.Threading;
+using CrystaLearn.Core.Mappers;
 using CrystaLearn.Core.Models.Crysta;
 using CrystaLearn.Core.Services.Contracts;
 using CrystaLearn.Core.Services.GitHub;
 using CrystaLearn.Shared.Dtos.Crysta;
-using Markdig;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
 
 namespace CrystaLearn.Core.Services;
 
@@ -58,7 +55,7 @@ public partial class DocumentRepositoryInMemory : IDocumentRepository
         return dto;
     }
 
-   
+
 
     private async Task PopulateContentAsync(Document document)
     {
@@ -66,7 +63,7 @@ public partial class DocumentRepositoryInMemory : IDocumentRepository
         {
             throw new Exception("Document has no source html url.");
         }
-        
+
         document.Content ??= await GitHubService.GetFileContentAsync(document.SourceHtmlUrl);
         document.Content = document.GetHtmlContent();
     }
@@ -93,6 +90,6 @@ public partial class DocumentRepositoryInMemory : IDocumentRepository
 
         return result;
 
-        
+
     }
 }

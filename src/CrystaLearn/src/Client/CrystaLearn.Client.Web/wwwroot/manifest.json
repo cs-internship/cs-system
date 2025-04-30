@@ -35,6 +35,18 @@
             "url": "/terms"
         },
         {
+            "name": "Todo",
+            "url": "/todo"
+        },
+        {
+            "name": "Categories",
+            "url": "/categories"
+        },
+        {
+            "name": "Products",
+            "url": "/products"
+        },
+        {
             "name": "Profile",
             "url": "/profile"
         }

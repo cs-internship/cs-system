@@ -1,4 +1,4 @@
-﻿namespace CrystaLearn.Shared.Dtos.Identity;
+namespace CrystaLearn.Shared.Dtos.Identity;
 
 [DtoResourceType(typeof(AppStrings))]
 public partial class SendEmailTokenRequestDto
@@ -7,4 +7,6 @@ public partial class SendEmailTokenRequestDto
     [EmailAddress(ErrorMessage = nameof(AppStrings.EmailAddressAttribute_ValidationError))]
     [Display(Name = nameof(AppStrings.Email))]
     public string? Email { get; set; }
+
+    public string? ReturnUrl { get; set; }
 }

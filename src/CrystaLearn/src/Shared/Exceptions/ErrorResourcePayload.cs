@@ -1,9 +1,7 @@
-﻿namespace CrystaLearn.Shared.Exceptions;
+namespace CrystaLearn.Shared.Exceptions;
 
 public partial class ErrorResourcePayload
 {
-    public string? ResourceTypeName { get; set; } = "*";
-
     public List<PropertyErrorResourceCollection> Details { get; set; } = [];
 }
 

@@ -1,4 +1,4 @@
-﻿namespace CrystaLearn.Shared.Services;
+namespace CrystaLearn.Shared.Services;
 
 /// <summary>
 /// Unlike ASP.NET Core, which allows environment configuration via environment variables, 

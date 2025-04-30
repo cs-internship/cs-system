@@ -1,4 +1,4 @@
-﻿namespace CrystaLearn.Client.Core.Components.Pages.Authorized.Settings;
+namespace CrystaLearn.Client.Core.Components.Pages.Authorized.Settings;
 
 public partial class Accordion
 {

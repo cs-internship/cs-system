@@ -1,13 +1,13 @@
 ﻿using System.Text;
 using System.Text.Encodings.Web;
-using QRCoder;
-using Humanizer;
-using CrystaLearn.Server.Api.Services;
-using CrystaLearn.Shared.Dtos.Identity;
 using CrystaLearn.Core.Models.Identity;
-using CrystaLearn.Shared.Controllers.Identity;
-using Microsoft.AspNetCore.SignalR;
+using CrystaLearn.Server.Api.Services;
 using CrystaLearn.Server.Api.SignalR;
+using CrystaLearn.Shared.Controllers.Identity;
+using CrystaLearn.Shared.Dtos.Identity;
+using Humanizer;
+using Microsoft.AspNetCore.SignalR;
+using QRCoder;
 
 namespace CrystaLearn.Server.Api.Controllers.Identity;
 
@@ -117,7 +117,10 @@ public partial class UserController : AppControllerBase, IUserController
         var user = await userManager.FindByIdAsync(User.GetUserId().ToString());
 
         if (await userManager.IsLockedOutAsync(user!))
-            throw new BadRequestException(Localizer[nameof(AppStrings.UserLockedOut), (DateTimeOffset.UtcNow - user!.LockoutEnd!).Value.Humanize(culture: CultureInfo.CurrentUICulture)]);
+        {
+            var tryAgainIn = (user!.LockoutEnd! - DateTimeOffset.UtcNow).Value;
+            throw new BadRequestException(Localizer[nameof(AppStrings.UserLockedOut), tryAgainIn.Humanize(culture: CultureInfo.CurrentUICulture)]).WithExtensionData("TryAgainIn", tryAgainIn);
+        }
 
         var result = await userManager.ChangePasswordAsync(user!, request.OldPassword!, request.NewPassword!);
 
@@ -146,7 +149,7 @@ public partial class UserController : AppControllerBase, IUserController
         var resendDelay = (DateTimeOffset.Now - user!.EmailTokenRequestedOn) - AppSettings.Identity.EmailTokenLifetime;
 
         if (resendDelay < TimeSpan.Zero)
-            throw new TooManyRequestsExceptions(Localizer[nameof(AppStrings.WaitForEmailTokenRequestResendDelay), resendDelay.Value.Humanize(culture: CultureInfo.CurrentUICulture)]);
+            throw new TooManyRequestsExceptions(Localizer[nameof(AppStrings.WaitForEmailTokenRequestResendDelay), resendDelay.Value.Humanize(culture: CultureInfo.CurrentUICulture)]).WithExtensionData("TryAgainIn", resendDelay);
 
         user.EmailTokenRequestedOn = DateTimeOffset.Now;
         var result = await userManager.UpdateAsync(user);
@@ -207,7 +210,7 @@ public partial class UserController : AppControllerBase, IUserController
         var resendDelay = (DateTimeOffset.Now - user!.PhoneNumberTokenRequestedOn) - AppSettings.Identity.PhoneNumberTokenLifetime;
 
         if (resendDelay < TimeSpan.Zero)
-            throw new TooManyRequestsExceptions(Localizer[nameof(AppStrings.WaitForPhoneNumberTokenRequestResendDelay), resendDelay.Value.Humanize(culture: CultureInfo.CurrentUICulture)]);
+            throw new TooManyRequestsExceptions(Localizer[nameof(AppStrings.WaitForPhoneNumberTokenRequestResendDelay), resendDelay.Value.Humanize(culture: CultureInfo.CurrentUICulture)]).WithExtensionData("TryAgainIn", resendDelay);
 
         user.PhoneNumberTokenRequestedOn = DateTimeOffset.Now;
         var result = await userManager.UpdateAsync(user);
@@ -220,7 +223,7 @@ public partial class UserController : AppControllerBase, IUserController
         var message = Localizer[nameof(AppStrings.ChangePhoneNumberTokenShortText), token];
         var smsMessage = $"{message}{Environment.NewLine}@{HttpContext.Request.GetWebAppUrl().Host} #{token}" /* Web OTP */;
 
-        await phoneService.SendSms(smsMessage, request.PhoneNumber!, cancellationToken);
+        await phoneService.SendSms(smsMessage, request.PhoneNumber!);
     }
 
     [HttpPost]
@@ -364,7 +367,7 @@ public partial class UserController : AppControllerBase, IUserController
         // Elevated access token claim gets added to access token upon refresh token request call, so their lifetime would be the same
 
         if (resendDelay < TimeSpan.Zero)
-            throw new TooManyRequestsExceptions(Localizer[nameof(AppStrings.WaitForElevatedAccessTokenRequestResendDelay), resendDelay.Value.Humanize(culture: CultureInfo.CurrentUICulture)]);
+            throw new TooManyRequestsExceptions(Localizer[nameof(AppStrings.WaitForElevatedAccessTokenRequestResendDelay), resendDelay.Value.Humanize(culture: CultureInfo.CurrentUICulture)]).WithExtensionData("TryAgainIn", resendDelay);
 
         user.ElevatedAccessTokenRequestedOn = DateTimeOffset.Now;
         var result = await userManager.UpdateAsync(user);
@@ -390,17 +393,20 @@ public partial class UserController : AppControllerBase, IUserController
         if (await userManager.IsPhoneNumberConfirmedAsync(user))
         {
             var smsMessage = $"{message}{Environment.NewLine}@{HttpContext.Request.GetWebAppUrl().Host} #{token}" /* Web OTP */;
-            sendMessagesTasks.Add(phoneService.SendSms(smsMessage, user.PhoneNumber!, cancellationToken));
+            sendMessagesTasks.Add(phoneService.SendSms(smsMessage, user.PhoneNumber!));
         }
 
-        // Checkout AppHub's comments for more info.
-        var userSessionIdsExceptCurrentUserSessionId = await DbContext.UserSessions
-            .Where(us => us.UserId == user.Id && us.Id != currentUserSessionId && us.SignalRConnectionId != null)
-            .Select(us => us.SignalRConnectionId!)
-            .ToArrayAsync(cancellationToken);
-        sendMessagesTasks.Add(appHubContext.Clients.Clients(userSessionIdsExceptCurrentUserSessionId).SendAsync(SignalREvents.SHOW_MESSAGE, message, cancellationToken));
+        if (user.TwoFactorEnabled || (user.EmailConfirmed is false && user.PhoneNumberConfirmed is false /* Users signed-in through social sign-in */))
+        {
+            // Checkout AppHub's comments for more info.
+            var userSessionIdsExceptCurrentUserSessionId = await DbContext.UserSessions
+                .Where(us => us.UserId == user.Id && us.Id != currentUserSessionId && us.SignalRConnectionId != null)
+                .Select(us => us.SignalRConnectionId!)
+                .ToArrayAsync(cancellationToken);
+            sendMessagesTasks.Add(appHubContext.Clients.Clients(userSessionIdsExceptCurrentUserSessionId).SendAsync(SignalREvents.SHOW_MESSAGE, message, cancellationToken));
 
-        sendMessagesTasks.Add(pushNotificationService.RequestPush(message: message, userRelatedPush: true, customSubscriptionFilter: us => us.UserSession!.UserId == user.Id && us.UserSessionId != currentUserSessionId, cancellationToken: cancellationToken));
+            sendMessagesTasks.Add(pushNotificationService.RequestPush(message: message, userRelatedPush: true, customSubscriptionFilter: us => us.UserSession!.UserId == user.Id && us.UserSessionId != currentUserSessionId, cancellationToken: cancellationToken));
+        }
 
         await Task.WhenAll(sendMessagesTasks);
     }

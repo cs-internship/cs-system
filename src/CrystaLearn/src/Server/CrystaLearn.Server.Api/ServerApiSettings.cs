@@ -1,27 +1,27 @@
 ﻿using AdsPush.Abstraction.Settings;
+using System.Text;
 using System.Text.RegularExpressions;
+using CrystaLearn.Server.Api.Services;
 
 namespace CrystaLearn.Server.Api;
 
 public partial class ServerApiSettings : SharedSettings
 {
-    /// <summary>
-    /// It can also be configured using: dotnet user-secrets set 'DataProtectionCertificatePassword' '@nyPassw0rd'
-    /// </summary>
-    [Required]
-    public string DataProtectionCertificatePassword { get; set; } = default!;
-
     [Required]
     public AppIdentityOptions Identity { get; set; } = default!;
 
     [Required]
     public EmailOptions Email { get; set; } = default!;
 
+    public AIOptions? AI { get; set; }
+
     public SmsOptions? Sms { get; set; }
 
     [Required]
     public string UserProfileImagesDir { get; set; } = default!;
 
+    [Required]
+    public string GoogleRecaptchaSecretKey { get; set; } = default!;
 
     public AdsPushVapidSettings? AdsPushVapid { get; set; }
 
@@ -31,10 +31,19 @@ public partial class ServerApiSettings : SharedSettings
 
     public ForwardedHeadersOptions? ForwardedHeaders { get; set; }
 
+    public CloudflareOptions? Cloudflare { get; set; }
+
+    public ResponseCachingOptions? ResponseCaching { get; set; }
+
     /// <summary>
-    /// Defines the list of origins permitted for CORS access to the API. These origins are also valid for use as return URLs after social sign-ins and for generating URLs in emails.
+    /// Lists the permitted origins for CORS requests, return URLs following social sign-in and email confirmation, etc., along with allowed origins for Web Auth.
     /// </summary>
-    public Uri[] AllowedOrigins { get; set; } = [];
+    public Uri[] TrustedOrigins { get; set; } = [];
+
+    [Required]
+    public string ProductImagesDir { get; set; } = default!;
+
+    public HangfireOptions? Hangfire { get; set; }
 
     public override IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
     {
@@ -42,6 +51,7 @@ public partial class ServerApiSettings : SharedSettings
 
         if (Identity is null)
             throw new InvalidOperationException("Identity configuration is required.");
+
         if (Email is null)
             throw new InvalidOperationException("Email configuration is required.");
 
@@ -59,15 +69,31 @@ public partial class ServerApiSettings : SharedSettings
         {
             Validator.TryValidateObject(ForwardedHeaders, new ValidationContext(ForwardedHeaders), validationResults, true);
         }
+        if (ResponseCaching is not null)
+        {
+            Validator.TryValidateObject(ResponseCaching, new ValidationContext(ResponseCaching), validationResults, true);
+        }
+
+        const int MinimumJwtIssuerSigningKeySecretByteLength = 64; // 512 bits = 64 bytes, minimum for HS512
+        var jwtIssuerSigningKeySecretByteLength = Encoding.UTF8.GetBytes(Identity.JwtIssuerSigningKeySecret).Length;
+        if (jwtIssuerSigningKeySecretByteLength <= MinimumJwtIssuerSigningKeySecretByteLength)
+        {
+            throw new ArgumentException(
+                $"The JWT signing key must be greater than {MinimumJwtIssuerSigningKeySecretByteLength} bytes " +
+                $"({MinimumJwtIssuerSigningKeySecretByteLength * 8} bits) for HS512. Current key is {jwtIssuerSigningKeySecretByteLength} bytes.");
+        }
 
         if (AppEnvironment.IsDev() is false)
         {
-            if (DataProtectionCertificatePassword is "P@ssw0rdP@ssw0rd")
+            if (Identity.JwtIssuerSigningKeySecret is "VeryLongJWTIssuerSiginingKeySecretThatIsMoreThan64BytesToEnsureCompatibilityWithHS512Algorithm")
             {
-                throw new InvalidOperationException(@"The default test certificate is still in use. Please replace it with a new one by running the 'dotnet dev-certs https --export-path DataProtectionCertificate.pfx --password @nyPassw0rd'
-command in the Server.Api's project's folder and replace P@ssw0rdP@ssw0rd with the new password.");
+                throw new InvalidOperationException(@"Please replace JwtIssuerSigningKeySecret with a new one.");
             }
 
+            if (GoogleRecaptchaSecretKey is "6LdMKr4pAAAAANvngWNam_nlHzEDJ2t6SfV6L_DS")
+            {
+                throw new InvalidOperationException("The GoogleRecaptchaSecretKey is not set. Please set it in the server's appsettings.json file.");
+            }
 
             if (AdsPushVapid?.PrivateKey is "dMIR1ICj-lDWYZ-ZYCwXKyC2ShYayYYkEL-oOPnpq9c" || AdsPushVapid?.Subject is "mailto:test@bitplatform.dev")
             {
@@ -80,8 +106,8 @@ command in the Server.Api's project's folder and replace P@ssw0rdP@ssw0rd with t
 
     internal bool IsAllowedOrigin(Uri origin)
     {
-        return AllowedOrigins.Any(allowedOrigin => allowedOrigin == origin)
-            || AllowedOriginsRegex().IsMatch(origin.ToString());
+        return TrustedOrigins.Any(trustedOrigin => trustedOrigin == origin)
+            || TrustedOriginsRegex().IsMatch(origin.ToString());
     }
 
         /// <summary>
@@ -92,13 +118,16 @@ command in the Server.Api's project's folder and replace P@ssw0rdP@ssw0rd with t
 #else
     [GeneratedRegex(@"^(http|https|app):\/\/(localhost|0\.0\.0\.0|0\.0\.0\.1|127\.0\.0\.1)(:\d+)?(\/.*)?$")]
 #endif
-        private partial Regex AllowedOriginsRegex();
+        private partial Regex TrustedOriginsRegex();
 }
 
 public partial class AppIdentityOptions : IdentityOptions
 {
+    [Required]
+    public string JwtIssuerSigningKeySecret { get; set; } = default!;
+
     /// <summary>
-    /// BearerTokenExpiration used as JWT's expiration claim, access token's expires in and cookie's max age.
+    /// BearerTokenExpiration used as JWT's expiration claim, access token's `expires in` and cookie's `max age`.
     /// </summary>
     public TimeSpan BearerTokenExpiration { get; set; }
     public TimeSpan RefreshTokenExpiration { get; set; }
@@ -121,7 +150,7 @@ public partial class AppIdentityOptions : IdentityOptions
     public TimeSpan TwoFactorTokenLifetime { get; set; }
 
     /// <summary>
-    /// To sign in with either Otp or magic link.
+    /// <see cref="SignInManagerExtensions.OtpSignInAsync(SignInManager{Models.Identity.User}, Models.Identity.User, string)"/>
     /// </summary>
     public TimeSpan OtpTokenLifetime { get; set; }
 
@@ -130,6 +159,35 @@ public partial class AppIdentityOptions : IdentityOptions
     /// </summary>
     public int MaxConcurrentPrivilegedSessions { get; set; }
 }
+
+public partial class AIOptions
+{
+    public OpenAIOptions? OpenAI { get; set; }
+    public AzureOpenAIOptions? AzureOpenAI { get; set; }
+}
+
+public class OpenAIOptions
+{
+    public string? ChatModel { get; set; }
+    public Uri? ChatEndpoint { get; set; }
+    public string? ChatApiKey { get; set; }
+
+    public string? EmbeddingModel { get; set; }
+    public Uri? EmbeddingEndpoint { get; set; }
+    public string? EmbeddingApiKey { get; set; }
+}
+
+public class AzureOpenAIOptions
+{
+    public string? ChatModel { get; set; }
+    public Uri? ChatEndpoint { get; set; }
+    public string? ChatApiKey { get; set; }
+
+    public string? EmbeddingModel { get; set; }
+    public Uri? EmbeddingEndpoint { get; set; }
+    public string? EmbeddingApiKey { get; set; }
+}
+
 
 public partial class EmailOptions
 {
@@ -150,6 +208,23 @@ public partial class EmailOptions
     public bool HasCredential => (string.IsNullOrEmpty(UserName) is false) && (string.IsNullOrEmpty(Password) is false);
 }
 
+public class CloudflareOptions
+{
+    public string? ApiToken { get; set; }
+
+    public string? ZoneId { get; set; }
+
+    /// <summary>
+    /// The <see cref="ResponseCacheService"/> clears the cache for the current domain by default.
+    /// If multiple Cloudflare-hosted domains point to your origin backend, you will need to
+    /// purge the cache for each of them individually.
+    /// </summary>
+    public Uri[] AdditionalDomains { get; set; } = [];
+
+    public bool Configured => string.IsNullOrEmpty(ApiToken) is false &&
+        string.IsNullOrEmpty(ZoneId) is false;
+}
+
 public partial class SmsOptions
 {
     public string? FromPhoneNumber { get; set; }
@@ -159,4 +234,25 @@ public partial class SmsOptions
     public bool Configured => string.IsNullOrEmpty(FromPhoneNumber) is false &&
                               string.IsNullOrEmpty(TwilioAccountSid) is false &&
                               string.IsNullOrEmpty(TwilioAutoToken) is false;
+}
+
+public class ResponseCachingOptions
+{
+    /// <summary>
+    /// Enables ASP.NET Core's response output caching
+    /// </summary>
+    public bool EnableOutputCaching { get; set; }
+
+    /// <summary>
+    /// Enables CDN's edge servers caching
+    /// </summary>
+    public bool EnableCdnEdgeCaching { get; set; }
+}
+
+public class HangfireOptions
+{
+    /// <summary>
+    /// Useful for testing or in production when managing multiple codebases with a single database.
+    /// </summary>
+    public bool UseIsolatedStorage { get; set; }
 }

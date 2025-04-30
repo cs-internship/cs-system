@@ -1,4 +1,4 @@
-﻿using UserNotifications;
+using UserNotifications;
 
 namespace CrystaLearn.Client.Maui.Platforms.iOS.Services;
 public partial class AppUNUserNotificationCenterDelegate : UNUserNotificationCenterDelegate

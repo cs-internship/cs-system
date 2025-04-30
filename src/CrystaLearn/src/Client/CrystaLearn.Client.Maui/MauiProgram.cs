@@ -3,9 +3,6 @@ using Microsoft.Maui.LifecycleEvents;
 using Plugin.LocalNotification;
 using CrystaLearn.Client.Core.Styles;
 using CrystaLearn.Client.Maui.Services;
-using Maui.AppStores;
-using Maui.InAppReviews;
-using Maui.Android.InAppUpdates;
 #if iOS || Mac
 using UIKit;
 using WebKit;
@@ -35,9 +32,11 @@ public static partial class MauiProgram
 
                 builder
             .UseMauiApp<App>()
-            .UseInAppReviews()
-            .UseAppStoreInfo()
-            .UseAndroidInAppUpdates()
+            .UseSentry(options =>
+            {
+                var configuration = new ConfigurationBuilder().AddClientConfigurations(clientEntryAssemblyName: "CrystaLearn.Client.Maui").Build();
+                configuration.GetRequiredSection("Logging:Sentry").Bind(options);
+            })
             .Configuration.AddClientConfigurations(clientEntryAssemblyName: "CrystaLearn.Client.Maui");
 
         if (AppPlatform.IsWindows is false)
@@ -88,6 +87,16 @@ public static partial class MauiProgram
         SetupBlazorWebView();
 
         var mauiApp = builder.Build();
+
+        mauiApp.Services.GetRequiredService<PubSubService>()
+            .Subscribe(ClientPubSubMessages.PAGE_DATA_CHANGED, async (args) =>
+            {
+                var (title, _, __) = ((string?, string?, bool))args!;
+                await MainThread.InvokeOnMainThreadAsync(() =>
+                {
+                    Application.Current!.Windows.First().Title = title ?? "CrystaLearn";
+                });
+            });
 
         return mauiApp;
     }

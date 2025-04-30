@@ -1,4 +1,4 @@
-﻿using CrystaLearn.Client.Core.Components;
+using CrystaLearn.Client.Core.Components;
 
 namespace CrystaLearn.Client.Core.Services.Contracts;
 
@@ -56,7 +56,7 @@ public interface ITelemetryContext
         {
             { nameof(UserId), UserId },
             { nameof(UserSessionId), UserSessionId },
-            { nameof(AppSessionId), AppSessionId },
+            { "ClientAppSessionId", AppSessionId },
             { nameof(Platform), Platform },
             { nameof(AppVersion), AppVersion },
             { nameof(PageUrl), PageUrl },

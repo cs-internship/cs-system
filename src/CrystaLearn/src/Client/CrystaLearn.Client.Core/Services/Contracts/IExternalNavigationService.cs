@@ -1,4 +1,4 @@
-﻿namespace CrystaLearn.Client.Core.Services.Contracts;
+namespace CrystaLearn.Client.Core.Services.Contracts;
 
 public interface IExternalNavigationService
 {

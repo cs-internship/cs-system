@@ -1,4 +1,4 @@
-﻿using CrystaLearn.Client.Core.Services.Contracts;
+using CrystaLearn.Client.Core.Services.Contracts;
 
 namespace CrystaLearn.Tests.Services;
 

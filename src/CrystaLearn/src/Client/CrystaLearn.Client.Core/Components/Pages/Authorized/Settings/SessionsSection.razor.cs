@@ -1,6 +1,5 @@
-﻿using CrystaLearn.Shared.Dtos.Identity;
+using CrystaLearn.Shared.Dtos.Identity;
 using CrystaLearn.Shared.Controllers.Identity;
-using Microsoft.AspNetCore.Components.Routing;
 
 namespace CrystaLearn.Client.Core.Components.Pages.Authorized.Settings;
 
@@ -17,9 +16,9 @@ public partial class SessionsSection
 
     protected override async Task OnInitAsync()
     {
-        await LoadSessions();
-
         await base.OnInitAsync();
+
+        await LoadSessions();
     }
 
 
@@ -32,7 +31,7 @@ public partial class SessionsSection
 
         try
         {
-            currentSessionId = await PrerenderStateService.GetValue(async () => (await AuthenticationStateTask).User.GetSessionId());
+            currentSessionId = (await AuthenticationStateTask).User.GetSessionId();
 
             var userSessions = await userController.GetUserSessions(CurrentCancellationToken);
             otherSessions = userSessions.Where(s => s.Id != currentSessionId).ToArray();

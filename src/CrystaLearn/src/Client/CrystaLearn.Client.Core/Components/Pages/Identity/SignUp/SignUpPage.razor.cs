@@ -1,4 +1,4 @@
-﻿using CrystaLearn.Shared.Dtos.Identity;
+using CrystaLearn.Shared.Dtos.Identity;
 using CrystaLearn.Shared.Controllers.Identity;
 
 namespace CrystaLearn.Client.Core.Components.Pages.Identity.SignUp;
@@ -19,6 +19,14 @@ public partial class SignUpPage
     {
         if (isWaiting) return;
 
+        var googleRecaptchaResponse = await JSRuntime.GoogleRecaptchaGetResponse();
+        if (string.IsNullOrWhiteSpace(googleRecaptchaResponse))
+        {
+            SnackBarService.Error(Localizer[nameof(AppStrings.InvalidGoogleRecaptchaChallenge)]);
+            return;
+        }
+
+        signUpModel.GoogleRecaptchaResponse = googleRecaptchaResponse;
         signUpModel.ReturnUrl = ReturnUrlQueryString ?? Urls.HomePage;
 
         isWaiting = true;
@@ -50,6 +58,7 @@ public partial class SignUpPage
 
             SnackBarService.Error(message);
 
+            await JSRuntime.GoogleRecaptchaReset();
         }
         finally
         {
@@ -61,9 +70,9 @@ public partial class SignUpPage
     {
         try
         {
-            var port = localHttpServer.ShouldUseForSocialSignIn() ? localHttpServer.Start(CurrentCancellationToken) : -1;
+            var port = localHttpServer.EnsureStarted();
 
-            var redirectUrl = await identityController.GetSocialSignInUri(provider, localHttpPort: port is -1 ? null : port, cancellationToken: CurrentCancellationToken);
+            var redirectUrl = await identityController.GetSocialSignInUri(provider, ReturnUrlQueryString, port is -1 ? null : port, CurrentCancellationToken);
 
             await externalNavigationService.NavigateToAsync(redirectUrl);
         }

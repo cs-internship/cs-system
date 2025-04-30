@@ -1,4 +1,4 @@
-﻿using System.Reflection;
+using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Runtime.CompilerServices;
 using CrystaLearn.Shared.Attributes;
@@ -9,8 +9,9 @@ namespace CrystaLearn.Client.Core.Components;
 
 /// <summary>
 /// To implement forms where each error is displayed according to the language chosen by the user, you can use the <see cref="DtoResourceTypeAttribute"/>
-/// on the corresponding class instead of using `ErrorResourceType` on each property. Check out <see cref="SignUpRequestDto"/> for an example.
+/// on the corresponding class instead of using `<see cref="ValidationAttribute.ErrorResourceType" />` on each property. Check out <see cref="SignUpRequestDto.UserName"/> for an example.
 /// However, you need to use <see cref="AppDataAnnotationsValidator"/> instead of <see cref="DataAnnotationsValidator"/> in Blazor EditForms for this method to work.
+/// Additionally, this provides the `<see cref="DisplayErrors(ResourceValidationException)"/>` method, which assists in displaying dynamic error messages.
 /// </summary>
 public partial class AppDataAnnotationsValidator : AppComponentBase
 {
@@ -26,8 +27,10 @@ public partial class AppDataAnnotationsValidator : AppComponentBase
 
     [CascadingParameter] public EditContext EditContext { get; set; } = default!;
 
-    protected override Task OnInitAsync()
+    protected override async Task OnInitAsync()
     {
+        await base.OnInitAsync();
+
         if (EditContext is null)
             throw new InvalidOperationException("EditContext is required");
 
@@ -35,8 +38,6 @@ public partial class AppDataAnnotationsValidator : AppComponentBase
         EditContext.OnValidationRequested += OnValidationRequested;
 
         validationMessageStore = new ValidationMessageStore(EditContext);
-
-        return base.OnInitAsync();
     }
 
     private void OnFieldChanged(object? sender, FieldChangedEventArgs eventArgs)

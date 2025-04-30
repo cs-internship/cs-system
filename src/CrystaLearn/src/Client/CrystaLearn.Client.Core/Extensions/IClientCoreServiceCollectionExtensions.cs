@@ -13,18 +13,25 @@ public static partial class IClientCoreServiceCollectionExtensions
 {
     public static IServiceCollection AddClientCoreProjectServices(this IServiceCollection services, IConfiguration configuration)
     {
-        // Services being registered here can get injected in client side (Web, Android, iOS, Windows, macOS) and server side (during pre rendering)
+        // Services being registered here can get injected in client side (WebAssembly, Android, iOS, Windows and macOS) + server side (during pre-rendering and Blazor Server)
         services.AddSharedProjectServices(configuration);
 
-        services.AddTransient<IPrerenderStateService, NoopPrerenderStateService>();
+        services.AddTransient<IPrerenderStateService, NoOpPrerenderStateService>();
 
         services.AddScoped<ThemeService>();
         services.AddScoped<CultureService>();
-        services.AddScoped<HttpClientHandler>();
         services.AddScoped<LazyAssemblyLoader>();
         services.AddScoped<IAuthTokenProvider, ClientSideAuthTokenProvider>();
         services.AddScoped<IExternalNavigationService, DefaultExternalNavigationService>();
-        services.AddScoped<AbsoluteServerAddressProvider>(sp => new() { GetAddress = () => sp.GetRequiredService<HttpClient>().BaseAddress! /* Read AbsoluteServerAddressProvider's comments for more info. */ });
+
+        if (Uri.TryCreate(configuration.GetServerAddress(), UriKind.Absolute, out var serverAddress))
+        {
+            services.AddScoped<AbsoluteServerAddressProvider>(sp => new() { GetAddress = () => serverAddress });
+        }
+        else
+        {
+            services.AddScoped<AbsoluteServerAddressProvider>(sp => new() { GetAddress = () => sp.GetRequiredService<HttpClient>().BaseAddress! /* Read AbsoluteServerAddressProvider's comments for more info. */ });
+        }
 
         // The following services must be unique to each app session.
         // Defining them as singletons would result in them being shared across all users in Blazor Server and during pre-rendering.
@@ -33,8 +40,7 @@ public static partial class IClientCoreServiceCollectionExtensions
         services.AddSessioned<PubSubService>();
         services.AddSessioned<PromptService>();
         services.AddSessioned<SnackBarService>();
-        services.AddSessioned<MessageBoxService>();
-        services.AddSessioned<ILocalHttpServer, NoopLocalHttpServer>();
+        services.AddSessioned<ILocalHttpServer, NoOpLocalHttpServer>();
         services.AddSessioned<ITelemetryContext, AppTelemetryContext>();
         services.AddSessioned<AuthenticationStateProvider>(sp =>
         {
@@ -62,23 +68,25 @@ public static partial class IClientCoreServiceCollectionExtensions
 
         // This code constructs a chain of HTTP message handlers. By default, it uses `HttpClientHandler` 
         // to send requests to the server. However, you can replace `HttpClientHandler` with other HTTP message 
-        // handlers, such as ASP.NET Core's `HttpMessageHandler` from the Test Host, which is useful for integration tests.
+        // handlers, such as `SocketsHttpHandler` or ASP.NET Core's `HttpMessageHandler` from the Test Host, which is useful for integration tests.
         services.AddScoped<HttpMessageHandlersChainFactory>(serviceProvider => transportHandler =>
         {
             var constructedHttpMessageHandler = ActivatorUtilities.CreateInstance<LoggingDelegatingHandler>(serviceProvider,
+                        [ActivatorUtilities.CreateInstance<CacheDelegatingHandler>(serviceProvider,
                         [ActivatorUtilities.CreateInstance<RequestHeadersDelegatingHandler>(serviceProvider,
                         [ActivatorUtilities.CreateInstance<AuthDelegatingHandler>(serviceProvider,
                         [ActivatorUtilities.CreateInstance<RetryDelegatingHandler>(serviceProvider,
-                        [ActivatorUtilities.CreateInstance<ExceptionDelegatingHandler>(serviceProvider, [transportHandler])])])])]);
+                        [ActivatorUtilities.CreateInstance<ExceptionDelegatingHandler>(serviceProvider, [transportHandler])])])])])]);
             return constructedHttpMessageHandler;
         });
         services.AddScoped<AuthDelegatingHandler>();
+        services.AddScoped<CacheDelegatingHandler>();
         services.AddScoped<RetryDelegatingHandler>();
         services.AddScoped<ExceptionDelegatingHandler>();
         services.AddScoped<RequestHeadersDelegatingHandler>();
         services.AddScoped(serviceProvider =>
         {
-            var transportHandler = serviceProvider.GetRequiredService<HttpClientHandler>();
+            var transportHandler = serviceProvider.GetRequiredKeyedService<HttpMessageHandler>("PrimaryHttpMessageHandler");
             var constructedHttpMessageHandler = serviceProvider.GetRequiredService<HttpMessageHandlersChainFactory>().Invoke(transportHandler);
             return constructedHttpMessageHandler;
         });
@@ -90,7 +98,7 @@ public static partial class IClientCoreServiceCollectionExtensions
             configuration.GetRequiredSection("ApplicationInsights").Bind(options);
         }, loggingOptions: options => configuration.GetRequiredSection("Logging:ApplicationInsightsLoggerProvider").Bind(options));
 
-        services.AddTypedHttpClients();
+        services.AddTypedHttpClients(); // See CrystaLearn.Shared/Controllers/Readme.md
 
         services.AddScoped<IRetryPolicy, SignalRInfiniteRetryPolicy>();
         services.AddSessioned(sp =>
@@ -111,20 +119,12 @@ public static partial class IClientCoreServiceCollectionExtensions
                     options.HttpMessageHandlerFactory = httpClientHandler => sp.GetRequiredService<HttpMessageHandlersChainFactory>().Invoke(httpClientHandler);
                     options.AccessTokenProvider = async () =>
                     {
-                        var accessToken = await authTokenProvider.GetAccessToken();
-
-                        if (string.IsNullOrEmpty(accessToken) is false &&
-                            IAuthTokenProvider.ParseAccessToken(accessToken, validateExpiry: true).IsAuthenticated() is false)
+                        try
                         {
-                            try
-                            {
-                                return await authManager.RefreshToken(requestedBy: nameof(HubConnectionBuilder));
-                            }
-                            catch (ServerConnectionException)
-                            { } // If the client disconnects and the access token expires, this code will execute repeatedly every few seconds, causing an annoying error message to be displayed to the user.
+                            return await authManager.GetFreshAccessToken(requestedBy: nameof(HubConnection));
                         }
-
-                        return accessToken;
+                        catch (ServerConnectionException) { } // If the client is disconnected and the access token is expired, this code will execute repeatedly every few seconds, causing an annoying error message to be displayed to the user.
+                        return null;
                     };
                 })
                 .Build();

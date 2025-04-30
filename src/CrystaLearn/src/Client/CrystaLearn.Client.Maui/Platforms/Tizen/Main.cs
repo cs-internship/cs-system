@@ -1,4 +1,4 @@
-﻿namespace CrystaLearn.Client.Maui;
+namespace CrystaLearn.Client.Maui;
 
 partial class Program : MauiApplication
 {

@@ -1,10 +1,13 @@
 ﻿using System.IO.Compression;
 using Microsoft.Net.Http.Headers;
 using Microsoft.AspNetCore.ResponseCompression;
-using CrystaLearn.Server.Api;
+using Microsoft.AspNetCore.Identity;
 using CrystaLearn.Client.Web;
 using CrystaLearn.Server.Web.Services;
+using Microsoft.AspNetCore.Antiforgery;
 using CrystaLearn.Client.Core.Services.Contracts;
+using CrystaLearn.Client.Web.Services;
+using CrystaLearn.Client.Core.Services;
 
 namespace CrystaLearn.Server.Web;
 
@@ -30,7 +33,49 @@ public static partial class Program
             return settings;
         });
 
-        builder.AddServerApiProjectServices();
+        services.AddOutputCache(options =>
+        {
+            options.AddPolicy("AppResponseCachePolicy", policy =>
+            {
+                var builder = policy.AddPolicy<AppResponseCachePolicy>();
+            }, excludeDefaultPolicy: true);
+        });
+        services.AddDistributedMemoryCache();
+
+        services.AddHttpContextAccessor();
+
+        services.AddResponseCompression(opts =>
+        {
+            opts.EnableForHttps = true;
+            opts.MimeTypes = ResponseCompressionDefaults.MimeTypes.Concat(["application/octet-stream"]).ToArray();
+            opts.Providers.Add<BrotliCompressionProvider>();
+            opts.Providers.Add<GzipCompressionProvider>();
+        })
+            .Configure<BrotliCompressionProviderOptions>(opt => opt.Level = CompressionLevel.Fastest)
+            .Configure<GzipCompressionProviderOptions>(opt => opt.Level = CompressionLevel.Fastest);
+
+        services.AddApplicationInsightsTelemetry(configuration);
+
+        services.AddAntiforgery();
+
+        services.AddAuthentication(options =>
+        {
+            options.DefaultScheme = IdentityConstants.BearerScheme;
+        }).AddBearerToken(IdentityConstants.BearerScheme, options =>
+        {
+            options.BearerTokenProtector = new SimpleJwtSecureDataFormat();
+            options.RefreshTokenProtector = new SimpleJwtSecureDataFormat();
+
+            options.Events = new()
+            {
+                OnMessageReceived = async context =>
+                {
+                    // The server accepts the accessToken from either the authorization header, the cookie, or the request URL query string
+                    context.Token ??= context.Request.Query.ContainsKey("access_token") ? context.Request.Query["access_token"] : context.Request.Cookies["access_token"];
+                }
+            };
+        });
+        services.AddAuthorization();
 
         services.AddOptions<ServerWebSettings>()
             .Bind(configuration)
@@ -45,6 +90,9 @@ public static partial class Program
         var services = builder.Services;
         var configuration = builder.Configuration;
 
+        services.AddTransient<IAntiforgery, NoOpAntiforgery>();
+        services.AddTransient<IPrerenderStateService, WebServerPrerenderStateService>();
+        services.AddScoped<IExceptionHandler, WebServerExceptionHandler>();
         services.AddScoped<IAuthTokenProvider, ServerSideAuthTokenProvider>();
         services.AddScoped(sp =>
         {
@@ -53,7 +101,11 @@ public static partial class Program
             // Additionally, forwarded headers are handled to ensure proper forwarding, if the backend is hosted behind a CDN. 
             // User agent and referrer headers are also included to provide the API with necessary request context. 
 
-            Uri.TryCreate(configuration.GetServerAddress(), UriKind.RelativeOrAbsolute, out var serverAddress);
+            var serverSettings = sp.GetRequiredService<ServerWebSettings>();
+            var serverAddressString = string.IsNullOrEmpty(serverSettings.ServerSideHttpClientBaseAddress) is false ?
+                serverSettings.ServerSideHttpClientBaseAddress : configuration.GetServerAddress();
+
+            Uri.TryCreate(serverAddressString, UriKind.RelativeOrAbsolute, out var serverAddress);
             var currentRequest = sp.GetRequiredService<IHttpContextAccessor>().HttpContext!.Request;
             if (serverAddress!.IsAbsoluteUri is false)
             {
@@ -72,7 +124,7 @@ public static partial class Program
                 httpClient.DefaultRequestHeaders.Add(xHeader.Key, string.Join(',', xHeader.Value.AsEnumerable()));
             }
 
-            if (httpClient.DefaultRequestHeaders.Contains(forwardedHeadersOptions.ForwardedForHeaderName) is false &&
+            if (forwardedHeadersOptions is not null && httpClient.DefaultRequestHeaders.Contains(forwardedHeadersOptions.ForwardedForHeaderName) is false &&
                 currentRequest.HttpContext.Connection.RemoteIpAddress is not null)
             {
                 httpClient.DefaultRequestHeaders.Add(forwardedHeadersOptions.ForwardedForHeaderName,
@@ -95,6 +147,11 @@ public static partial class Program
             httpClient.DefaultRequestHeaders.Add("X-Origin", currentRequest.GetBaseUrl().ToString());
 
             return httpClient;
+        });
+        services.AddKeyedScoped<HttpMessageHandler, SocketsHttpHandler>("PrimaryHttpMessageHandler", (sp, key) => new()
+        {
+            EnableMultipleHttp2Connections = true,
+            EnableMultipleHttp3Connections = true
         });
 
         services.AddRazorComponents()

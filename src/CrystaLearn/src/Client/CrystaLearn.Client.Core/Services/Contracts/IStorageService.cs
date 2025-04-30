@@ -1,4 +1,4 @@
-﻿namespace CrystaLearn.Client.Core.Services.Contracts;
+namespace CrystaLearn.Client.Core.Services.Contracts;
 
 public interface IStorageService
 {
@@ -9,4 +9,6 @@ public interface IStorageService
     ValueTask<bool> IsPersistent(string key);
 
     ValueTask RemoveItem(string key);
+
+    ValueTask Clear();
 }

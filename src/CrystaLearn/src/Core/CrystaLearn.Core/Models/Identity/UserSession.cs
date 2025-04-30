@@ -1,5 +1,5 @@
-﻿using CrystaLearn.Core.Models.PushNotification;
-using CrystaLearn.Shared.Dtos.Identity;
+﻿using CrystaLearn.Shared.Dtos.Identity;
+using CrystaLearn.Core.Models.PushNotification;
 
 namespace CrystaLearn.Core.Models.Identity;
 

@@ -1,26 +1,20 @@
-﻿using System.Text.RegularExpressions;
-using Bit.BlazorUI;
-using CrystaLearn.Shared.Controllers.Crysta;
+﻿using CrystaLearn.Shared.Controllers.Crysta;
 using CrystaLearn.Shared.Dtos.Crysta;
-using CrystaLearn.Shared.Services;
 
 namespace CrystaLearn.Client.Core.Components;
 
 public partial class DocumentComponent
 {
-    [AutoInject]
-    private IDocumentController DocumentController { get; set; } = default!;
-    [AutoInject]
-    private CultureInfoManager CultureInfoManager { get; set; } = default!;
+    [AutoInject] private IDocumentController DocumentController { get; set; } = default!;
+    [AutoInject] private CultureInfoManager CultureInfoManager { get; set; } = default!;
+    [AutoInject] private SnackBarService MessageBoxService { get; set; } = default!;
 
     [Parameter] public string? CrystaUrl { get; set; } = default!;
-    private string? PreviousCrystaUrl { get; set; }
 
+    private string? PreviousCrystaUrl { get; set; }
     private DocumentDto? LoadedDocument { get; set; }
     private bool IsLoadingDocument { get; set; } = false;
     private string? SelectedCulture { get; set; }
-    [AutoInject]
-    private MessageBoxService MessageBoxService { get; set; } = default!;
 
     private List<BitButtonGroupItem> MenuItems { get; set; } =
     [
@@ -41,7 +35,7 @@ public partial class DocumentComponent
         try
         {
             IsLoadingDocument = true;
-            
+
             if (CrystaUrl is not null)
             {
                 if (PreviousCrystaUrl == CrystaUrl)
@@ -63,7 +57,7 @@ public partial class DocumentComponent
                                   .Select((folder, index) => new BitBreadcrumbItem
                                   {
                                       Text = folder,
-                                      IsEnabled = (index == parts.Length-1)
+                                      IsEnabled = (index == parts.Length - 1)
                                   })
                                   .ToList();
             }
@@ -87,7 +81,7 @@ public partial class DocumentComponent
             return null;
         }
 
-        var culture = CultureInfoManager.SupportedCultures.FirstOrDefault(s=>s.Culture.Name.ToLower().StartsWith(document.Culture.ToLower()));
+        var culture = CultureInfoManager.SupportedCultures.FirstOrDefault(s => s.Culture.Name.ToLower().StartsWith(document.Culture.ToLower()));
 
         return culture;
     }
@@ -108,7 +102,7 @@ public partial class DocumentComponent
     {
         var cultures = CultureInfoManager.SupportedCultures
                                      .Select(sc => new BitDropdownItem<string> { Value = sc.Culture.Name, Text = sc.DisplayName })
-                                     .Where(sc=>loadedDocument.CultureVariants.Any(v=>sc.Value?.ToLower().StartsWith(v.ToLower())??false))
+                                     .Where(sc => loadedDocument.CultureVariants.Any(v => sc.Value?.ToLower().StartsWith(v.ToLower()) ?? false))
                                      .ToArray();
 
         return cultures;
@@ -117,7 +111,7 @@ public partial class DocumentComponent
     private string? GetCultureMessage(DocumentDto? document)
     {
         var culture = CultureInfo.CurrentUICulture;
-        if (document?.CultureVariants.Any(v=> culture.Name.ToLower().StartsWith(v.ToLower())) ?? true)
+        if (document?.CultureVariants.Any(v => culture.Name.ToLower().StartsWith(v.ToLower())) ?? true)
         {
             return "Language:";
         }

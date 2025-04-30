@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authentication;
+using CrystaLearn.Server.Api.Services;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Components.Web;
 
 namespace CrystaLearn.Server.Api.Controllers.Identity;
@@ -6,8 +7,10 @@ namespace CrystaLearn.Server.Api.Controllers.Identity;
 public partial class IdentityController
 {
     [AutoInject] private HtmlRenderer htmlRenderer = default!;
+    [AutoInject] private ServerExceptionHandler serverExceptionHandler = default!;
 
     [HttpGet]
+    [AppResponseCache(SharedMaxAge = 3600 * 24 * 7, MaxAge = 60 * 5)]
     public async Task<string> GetSocialSignInUri(string provider, string? returnUrl = null, int? localHttpPort = null, CancellationToken cancellationToken = default)
     {
         var uri = Url.Action(nameof(SocialSignIn), new { provider, returnUrl, localHttpPort, origin = Request.GetWebAppUrl() })!;
@@ -17,7 +20,7 @@ public partial class IdentityController
     [HttpGet]
     public async Task<ActionResult> SocialSignIn(string provider,
         string? returnUrl = null, /* Specifies the relative page address to navigate to after completion. */
-        int? localHttpPort = null, /* Defines the local HTTP server port awaiting the social sign-in result on Windows/macOS versions of the app. */
+        int? localHttpPort = null, /* Defines the local HTTP server port awaiting the social sign-in result on Windows/macOS/iOS versions of the app. */
         [FromQuery] string? origin = null /* Indicates the base address URL for redirection after the process completes. */ )
     {
         var redirectUrl = Url.Action(nameof(SocialSignInCallback), "Identity", new { returnUrl, localHttpPort, origin });
@@ -46,9 +49,14 @@ public partial class IdentityController
 
             if (user is null)
             {
+                var name = info.Principal.FindFirstValue(ClaimTypes.Name) ?? info.Principal.FindFirstValue(ClaimTypes.NameIdentifier);
                 // Instead of automatically creating a user here, you can navigate to the sign-up page and pass the email and phone number in the query string.
 
-                user = new() { LockoutEnabled = true };
+                user = new()
+                {
+                    FullName = name,
+                    LockoutEnabled = true
+                };
 
                 await userStore.SetUserNameAsync(user, Guid.NewGuid().ToString(), cancellationToken);
 
@@ -88,7 +96,7 @@ public partial class IdentityController
         }
         catch (Exception exp)
         {
-            LogSocialSignInCallbackFailed(logger, exp, info?.LoginProvider, info?.Principal?.GetDisplayName());
+            serverExceptionHandler.Handle(exp, new() { { "LoginProvider", info?.LoginProvider }, { "Principal", info?.Principal?.GetDisplayName() } });
             url = $"{Urls.SignInPage}?error={Uri.EscapeDataString(exp is KnownException ? Localizer[exp.Message] : Localizer[nameof(AppStrings.UnknownException)])}";
         }
         finally
@@ -99,7 +107,4 @@ public partial class IdentityController
         if (localHttpPort is not null) return Redirect(new Uri(new Uri($"http://localhost:{localHttpPort}"), url).ToString());
         return Redirect(new Uri(Request.HttpContext.Request.GetWebAppUrl(), url).ToString());
     }
-
-    [LoggerMessage(Level = LogLevel.Error, Message = "Failed to perform {loginProvider} social sign in for {principal}")]
-    private static partial void LogSocialSignInCallbackFailed(ILogger logger, Exception exp, string? loginProvider, string? principal);
 }

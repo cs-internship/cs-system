@@ -1,4 +1,4 @@
-﻿namespace CrystaLearn.Client.Maui.Services;
+namespace CrystaLearn.Client.Maui.Services;
 
 public partial class MauiStorageService : IStorageService
 {
@@ -34,5 +34,11 @@ public partial class MauiStorageService : IStorageService
                 tempStorage[key] = value;
             }
         }
+    }
+
+    public async ValueTask Clear()
+    {
+        tempStorage.Clear();
+        Preferences.Clear();
     }
 }

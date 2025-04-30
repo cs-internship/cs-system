@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <!-- +:cnd:noEmit -->
 <root>
     <!-- 
@@ -277,6 +277,12 @@
     <data name="ConcurrentUserSessionOnTheSameDevice" xml:space="preserve">
     <value>لطفاً اطمینان حاصل کنید که این اپلیکیشن بیش از یک‌بار، به طور هم‌زمان روی یک دستگاه یا مرورگر باز نیست.</value>
   </data>
+    <data name="SystemPromptsTitle" xml:space="preserve">
+    <value>پرامپت‌های سیستمی</value>
+  </data>
+    <data name="SystemPromptsSubTitle" xml:space="preserve">
+    <value>این‌جا میتونید پرامپت‌های سیستمی مورد استفاده چت بات رو مشاهده کنید</value>
+  </data>
     <data name="FullName" xml:space="preserve">
     <value>نام کامل</value>
   </data>
@@ -340,8 +346,8 @@
     <data name="ResetPasswordTokenSentMessage" xml:space="preserve">
     <value>توکن ریست رمز عبور به آدرس ایمیل شما ارسال شده است.</value>
   </data>
-    <data name="UserImageCouldNotBeFound" xml:space="preserve">
-    <value>تصویر کاربر پیدا نشد</value>
+    <data name="ImageCouldNotBeFound" xml:space="preserve">
+    <value>تصویر پیدا نشد</value>
   </data>
     <data name="Error" xml:space="preserve">
     <value>خطا</value>
@@ -433,9 +439,6 @@
     <data name="ExpiredToken" xml:space="preserve">
     <value>توکن منقضی شده است.</value>
   </data>
-    <data name="TokenPlaceholder" xml:space="preserve">
-    <value>توکن را وارد کنید</value>
-  </data>
     <data name="SignInMessageInSignUp" xml:space="preserve">
     <value>از قبل حساب کاربری دارید؟</value>
   </data>
@@ -466,9 +469,6 @@
     <data name="EmailToken" xml:space="preserve">
     <value>توکن ایمیل</value>
   </data>
-    <data name="EmailTokenPlaceholder" xml:space="preserve">
-    <value>توکن ایمیل را وارد کنید</value>
-  </data>
     <data name="EmailTokenConfirmButtonText" xml:space="preserve">
     <value>تایید آدرس ایمیل</value>
   </data>
@@ -493,9 +493,6 @@
     <data name="PhoneToken" xml:space="preserve">
     <value>توکن تلفن</value>
   </data>
-    <data name="PhoneTokenPlaceholder" xml:space="preserve">
-    <value>توکن تلفن را وارد کنید</value>
-  </data>
     <data name="PhoneTokenConfirmButtonText" xml:space="preserve">
     <value>تایید شماره تلفن</value>
   </data>
@@ -518,7 +515,7 @@
     <value>حساب کاربری</value>
   </data>
     <data name="AccountSubtitle" xml:space="preserve">
-    <value>ایمیل یا شماره تلفن حساب کاربری خود را تغییر دهید</value>
+    <value>ایمیل، شماره تلفن یا تنظیمات بی رمز حساب کاربری خود را تغییر دهید</value>
   </data>
     <data name="DeleteAccount" xml:space="preserve">
     <value>حذف حساب</value>
@@ -664,13 +661,10 @@
     <data name="Continue" xml:space="preserve">
     <value>ادامه</value>
   </data>
-    <data name="SocialSignedInTitle" xml:space="preserve">
-    <value>ورود سوشال</value>
+    <data name="CloseBrowserMessageTitle" xml:space="preserve">
+    <value>بازگشت به برنامه</value>
   </data>
-    <data name="SocialSignedInMessageTitle" xml:space="preserve">
-    <value>ورود سوشال انجام شد</value>
-  </data>
-    <data name="SocialSignedInMessageBody" xml:space="preserve">
+    <data name="CloseBrowserMessageBody" xml:space="preserve">
     <value>حالا میتوانید به برنامه بازگردید</value>
   </data>
     <data name="GoogleSignInButtonText" xml:space="preserve">
@@ -709,8 +703,8 @@
     <data name="TermsMessage" xml:space="preserve">
     <value>من موافقم با</value>
   </data>
-    <data name="UploadNewProfileImage" xml:space="preserve">
-    <value>بارگذاری یک عکس پروفایل جدید</value>
+    <data name="UploadNewImage" xml:space="preserve">
+    <value>بارگذاری یک عکس جدید</value>
   </data>
     <data name="Yes" xml:space="preserve">
     <value>بله</value>
@@ -1009,10 +1003,229 @@
     <data name="UpdateToNewVersion" xml:space="preserve">
     <value>آیا می خواهید به نسخه جدید بروید؟ {0}</value>
   </data>
-    <data name="AboutTitle" xml:space="preserve">
+    <data name="About" xml:space="preserve">
+    <value>درباره</value>
+  </data>
+    <data name="AboutPageTitle" xml:space="preserve">
     <value>درباره</value>
   </data>
     <data name="NothingFound" xml:space="preserve">
     <value>چیزی پیدا نشد!</value>
+  </data>
+    <data name="TodoAddPlaceholder" xml:space="preserve">
+    <value>افزودن یک کار</value>
+  </data>
+    <data name="NoTodos" xml:space="preserve">
+    <value>هنوز کاری ثبت نشده</value>
+  </data>
+    <data name="TodoSearchPlaceholder" xml:space="preserve">
+    <value>جستجوی کارها...</value>
+  </data>
+    <data name="ToDoItemCouldNotBeFound" xml:space="preserve">
+    <value>کار پیدا نشد</value>
+  </data>
+    <data name="TodoPageTitle" xml:space="preserve">
+    <value>کار</value>
+  </data>
+    <data name="Todo" xml:space="preserve">
+    <value>کار</value>
+  </data>
+    <data name="DeleteTodoItem" xml:space="preserve">
+    <value>حذف کار</value>
+  </data>
+    <data name="CategoryCouldNotBeFound" xml:space="preserve">
+    <value>دسته مورد نظر پیدا نشد</value>
+  </data>
+    <data name="ProductCouldNotBeFound" xml:space="preserve">
+    <value>محصول پیدا نشد</value>
+  </data>
+    <data name="Category" xml:space="preserve">
+    <value>دسته</value>
+  </data>
+    <data name="AdminPanel" xml:space="preserve">
+    <value>پنل ادمین</value>
+  </data>
+    <data name="PaginatorSummary" xml:space="preserve">
+    <value>{0} آیتم</value>
+  </data>
+    <data name="PaginatorFirstButtonTitle" xml:space="preserve">
+    <value>برو به اولین برگه</value>
+  </data>
+    <data name="PaginatorPrevButtonTitle" xml:space="preserve">
+    <value>برو به برگه قبل</value>
+  </data>
+    <data name="PaginatorNextButtonTitle" xml:space="preserve">
+    <value>برو به برگه بعد</value>
+  </data>
+    <data name="PaginatorLastButtonTitle" xml:space="preserve">
+    <value>برو به آخرین برگه</value>
+  </data>
+    <data name="Page" xml:space="preserve">
+    <value>برگه</value>
+  </data>
+    <data name="Of" xml:space="preserve">
+    <value>از</value>
+  </data>
+    <data name="ProductsCount" xml:space="preserve">
+    <value>تعداد محصولات</value>
+  </data>
+    <data name="Last30DaysProductCount" xml:space="preserve">
+    <value>تعداد محصولات ۳۰ روز گذشته</value>
+  </data>
+    <data name="AddProduct" xml:space="preserve">
+    <value>افزودن محصول</value>
+  </data>
+    <data name="SearchProductsPlaceholder" xml:space="preserve">
+    <value>نام محصول، دسته بندی و توضیحات را در اینجا جستجو کنید...</value>
+  </data>
+    <data name="SelectCategory" xml:space="preserve">
+    <value>انتخاب دسته</value>
+  </data>
+    <data name="TotalCategories" xml:space="preserve">
+    <value>تعداد دسته بندی ها</value>
+  </data>
+    <data name="TotalProducts" xml:space="preserve">
+    <value>تعداد محصولات</value>
+  </data>
+    <data name="EditCategory" xml:space="preserve">
+    <value>ویرایش دسته</value>
+  </data>
+    <data name="AddCategory" xml:space="preserve">
+    <value>دسته جدید</value>
+  </data>
+    <data name="CategoriesPageTitle" xml:space="preserve">
+    <value>دسته بندی ها</value>
+  </data>
+    <data name="EnterCategoryName" xml:space="preserve">
+    <value>نام دسته را وارد کنید</value>
+  </data>
+    <data name="EnterProductName" xml:space="preserve">
+    <value>نام محصول را وارد کنید</value>
+  </data>
+    <data name="CategoriesWithProductCount" xml:space="preserve">
+    <value>تعداد دسته های دارای محصول</value>
+  </data>
+    <data name="ProductSales" xml:space="preserve">
+    <value>فروش محصولات</value>
+  </data>
+    <data name="ProductSalesText" xml:space="preserve">
+    <value>این نمودار تعداد فروش هر محصول را نشان می دهد.</value>
+  </data>
+    <data name="SearchOnName" xml:space="preserve">
+    <value>جستجو در نام</value>
+  </data>
+    <data name="ProductsCountPerCategoryChart" xml:space="preserve">
+    <value>چارت تعداد محصولات در هر دسته</value>
+  </data>
+    <data name="ProductsCountPerCategoryChartText" xml:space="preserve">
+    <value>این نمودار تعداد محصولات در هر دسته را نشان می دهد.</value>
+  </data>
+    <data name="ProductsPageTitle" xml:space="preserve">
+    <value>محصولات</value>
+  </data>
+    <data name="ProductsPercentagePerCategory" xml:space="preserve">
+    <value>درصد محصولات هر دسته</value>
+  </data>
+    <data name="ProductsPercentagePerCategoryText" xml:space="preserve">
+    <value>این نمودار درصد محصولات هر دسته را نشان می دهد.</value>
+  </data>
+    <data name="Categories" xml:space="preserve">
+    <value>دسته ها</value>
+  </data>
+    <data name="ProductCategory" xml:space="preserve">
+    <value>دسته ها و محصولات</value>
+  </data>
+    <data name="Products" xml:space="preserve">
+    <value>محصولات</value>
+  </data>
+    <data name="CategoryNotEmpty" xml:space="preserve">
+    <value>این دسته دارای محصول است، بنابراین نمی توانید ان را حذف کنید</value>
+  </data>
+    <data name="AreYouSureWannaDeleteCategory" xml:space="preserve">
+    <value>آیا مطمئن هستید که می خواهید دسته بندی {0} را حذف کنید؟</value>
+  </data>
+    <data name="AreYouSureWannaDeleteProduct" xml:space="preserve">
+    <value>آیا مطمئن هستید که می خواهید محصول {0} را حذف کنید؟</value>
+  </data>
+    <data name="DeleteCategory" xml:space="preserve">
+    <value>حذف دسته</value>
+  </data>
+    <data name="DeleteProduct" xml:space="preserve">
+    <value>حذف محصول</value>
+  </data>
+    <data name="DefaultColorPicker" xml:space="preserve">
+    <value>انتخاب کننده رنگ پیش فرض</value>
+  </data>
+    <data name="EditProduct" xml:space="preserve">
+    <value>ویرایش محصول {0}</value>
+  </data>
+    <data name="DuplicateProductName" xml:space="preserve">
+    <value>نام محصول تکراری است</value>
+  </data>
+    <data name="DuplicateCategoryName" xml:space="preserve">
+    <value>نام دسته تکراری است</value>
+  </data>
+    <data name="DashboardPageTitle" xml:space="preserve">
+    <value>داشبورد</value>
+  </data>
+    <data name="Dashboard" xml:space="preserve">
+    <value>داشبورد</value>
+  </data>
+    <data name="DashboardSubtitle" xml:space="preserve">
+    <value>داده های تحلیلی شما</value>
+  </data>
+    <data name="InvalidGoogleRecaptchaResponse" xml:space="preserve">
+    <value>پاسخ گوگل ریکپچا نامعتبر است.</value>
+  </data>
+    <data name="InvalidGoogleRecaptchaChallenge" xml:space="preserve">
+    <value>شما باید چالش گوگل ریکپچا را به سرانجام برسانید.</value>
+  </data>
+    <data name="Passwordless" xml:space="preserve">
+    <value>بی رمز</value>
+  </data>
+    <data name="PasswordlessTitle" xml:space="preserve">
+    <value>ورود بی رمز</value>
+  </data>
+    <data name="EnablePasswordless" xml:space="preserve">
+    <value>فعالسازی ورود بی رمز</value>
+  </data>
+    <data name="EnablePasswordlessSucsessMessage" xml:space="preserve">
+    <value>ورود بی رمز با موفقیت فعال شد</value>
+  </data>
+    <data name="DisablePasswordless" xml:space="preserve">
+    <value>غیرفعالسازی ورود بی رمز</value>
+  </data>
+    <data name="DisablePasswordlessSucsessMessage" xml:space="preserve">
+    <value>ورود بی رمز با موفقیت غیرفعال شد</value>
+  </data>
+    <data name="Clear" xml:space="preserve">
+    <value>پاک کردن</value>
+  </data>
+    <data name="Send" xml:space="preserve">
+    <value>ارسال</value>
+  </data>
+    <data name="Canceled" xml:space="preserve">
+    <value>لغو شده</value>
+  </data>
+    <data name="AiChatPanelTitle" xml:space="preserve">
+    <value>پنل هوش مصنوعی</value>
+  </data>
+    <data name="AiChatPanelInitialResponse" xml:space="preserve">
+    <value>سلام! من اینجا هستم تا تجربه اپلیکیشن شما رو فوق‌العاده کنم! سؤالی دارید یا به کمک نیاز دارید؟</value>
+  </data>
+    <data name="AiChatPanelPrompt1" xml:space="preserve">
+    <value>چگونه میتوانم رمزعبور خود را ریست کنم؟</value>
+  </data>
+    <data name="AiChatPanelPrompt2" xml:space="preserve">
+    <value>چگونه میتوانم نسخه PWA برنامه رو نصب کنم؟</value>
+  </data>
+    <data name="AiChatPanelPrompt3" xml:space="preserve">
+    <value>کجا میتونم گزارشات محصولات رو ببینم؟</value>
+  </data>
+    <data name="AiChatPanelPlaceholder" xml:space="preserve">
+    <value>پیامی را وارد کنید...</value>
+  </data>
+    <data name="AiChatPanelCommunicatingPlaceholder" xml:space="preserve">
+    <value>درحال فکر کردن...</value>
   </data>
 </root>

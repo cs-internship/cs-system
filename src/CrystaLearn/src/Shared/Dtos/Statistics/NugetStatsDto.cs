@@ -1,4 +1,4 @@
-﻿namespace CrystaLearn.Shared.Dtos.Statistics;
+namespace CrystaLearn.Shared.Dtos.Statistics;
 
 public record NugetStatsDto(
     [property: JsonPropertyName("data")] IReadOnlyList<Datum> Data

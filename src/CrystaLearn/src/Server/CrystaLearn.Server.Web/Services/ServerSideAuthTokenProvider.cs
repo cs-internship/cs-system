@@ -1,4 +1,4 @@
-﻿using Microsoft.JSInterop;
+using Microsoft.JSInterop;
 using CrystaLearn.Client.Core.Services;
 using CrystaLearn.Client.Core.Services.Contracts;
 

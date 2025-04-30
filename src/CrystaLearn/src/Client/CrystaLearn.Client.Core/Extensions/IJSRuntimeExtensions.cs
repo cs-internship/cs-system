@@ -1,4 +1,4 @@
-﻿using System.Reflection;
+using System.Reflection;
 using CrystaLearn.Shared.Dtos.PushNotification;
 
 namespace Microsoft.JSInterop;
@@ -10,6 +10,15 @@ public static partial class IJSRuntimeExtensions
         return jsRuntime.InvokeAsync<string>("App.getTimeZone");
     }
 
+    public static ValueTask<string> GoogleRecaptchaGetResponse(this IJSRuntime jsRuntime)
+    {
+        return jsRuntime.InvokeAsync<string>("grecaptcha.getResponse");
+    }
+
+    public static ValueTask<string> GoogleRecaptchaReset(this IJSRuntime jsRuntime)
+    {
+        return jsRuntime.InvokeAsync<string>("grecaptcha.reset");
+    }
 
     public static async ValueTask<PushNotificationSubscriptionDto> GetPushNotificationSubscription(this IJSRuntime jsRuntime, string vapidPublicKey)
     {

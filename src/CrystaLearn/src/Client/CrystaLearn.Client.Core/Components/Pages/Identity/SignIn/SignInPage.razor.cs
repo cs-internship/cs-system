@@ -1,10 +1,13 @@
-﻿using CrystaLearn.Shared.Dtos.Identity;
+﻿using Fido2NetLib;
+using CrystaLearn.Shared.Dtos.Identity;
 using CrystaLearn.Shared.Controllers.Identity;
+using Microsoft.AspNetCore.Components.Routing;
 
 namespace CrystaLearn.Client.Core.Components.Pages.Identity.SignIn;
 
-public partial class SignInPage : IDisposable
+public partial class SignInPage
 {
+
     [Parameter, SupplyParameterFromQuery(Name = "return-url")]
     public string? ReturnUrlQueryString { get; set; }
 
@@ -24,6 +27,7 @@ public partial class SignInPage : IDisposable
     public string? ErrorQueryString { get; set; }
 
 
+    [AutoInject] private IWebAuthnService webAuthnService = default!;
     [AutoInject] private ILocalHttpServer localHttpServer = default!;
     [AutoInject] private ITelemetryContext telemetryContext = default!;
     [AutoInject] private IIdentityController identityController = default!;
@@ -32,16 +36,12 @@ public partial class SignInPage : IDisposable
 
     private bool isWaiting;
     private bool isOtpSent;
+    private bool sucssefulSignIn;
     private bool requiresTwoFactor;
     private SignInPanelTab currentSignInPanelTab;
     private readonly SignInRequestDto model = new();
-    private AppDataAnnotationsValidator validatorRef = default!;
-    private Action unsubscribeIdentityHeaderBackLinkClicked = default!;
-
-
-    private const string OtpPayload = nameof(OtpPayload);
-    private const string TfaPayload = nameof(TfaPayload);
-
+    private AppDataAnnotationsValidator? validatorRef;
+    private AuthenticatorAssertionRawResponse? webAuthnAssertion;
 
     protected override async Task OnInitAsync()
     {
@@ -68,35 +68,92 @@ public partial class SignInPage : IDisposable
         {
             SnackBarService.Error(ErrorQueryString);
         }
-
-        unsubscribeIdentityHeaderBackLinkClicked = PubSubService.Subscribe(ClientPubSubMessages.IDENTITY_HEADER_BACK_LINK_CLICKED, async payload =>
-        {
-            var source = (string?)payload;
-
-            if (source == OtpPayload)
-            {
-                isOtpSent = false;
-                model.Otp = null;
-            }
-
-            if (source == TfaPayload)
-            {
-                requiresTwoFactor = false;
-                model.TwoFactorCode = null;
-            }
-
-            await InvokeAsync(StateHasChanged);
-
-            PubSubService.Publish(ClientPubSubMessages.UPDATE_IDENTITY_HEADER_BACK_LINK, null);
-        });
     }
 
+    private async Task ShowSignInPanel(LocationChangingContext args)
+    {
+        // We're treating OtpPanel and TfaPanel as modal dialogs. This means that no matter where the user tries to navigate,
+        // we will block the navigation and close either the TfaPanel or OtpPanel if it's visible.
+        // The only exception to this is when the sign-in process is successful.
+        if (sucssefulSignIn)
+            return;
 
-    private async Task SocialSignIn(string provider)
+        args.PreventNavigation();
+
+        webAuthnAssertion = null;
+
+        isOtpSent = false;
+        model.Otp = null;
+
+        requiresTwoFactor = false;
+        model.TwoFactorCode = null;
+
+        await InvokeAsync(StateHasChanged);
+    }
+
+    private async Task DoSignIn()
+    {
+        if (isOtpSent && string.IsNullOrWhiteSpace(model.Otp)) return;
+
+        isWaiting = true;
+        sucssefulSignIn = false;
+
+        try
+        {
+            if (requiresTwoFactor && string.IsNullOrWhiteSpace(model.TwoFactorCode)) return;
+
+            if (webAuthnAssertion is not null)
+            {
+                var response = await identityController
+                    .WithQueryIf(AppPlatform.IsBlazorHybrid, "origin", localHttpServer.Origin)
+                    .VerifyWebAuthAndSignIn(new() { ClientResponse = webAuthnAssertion, TfaCode = model.TwoFactorCode }, CurrentCancellationToken);
+
+                requiresTwoFactor = response.RequiresTwoFactor;
+
+                if (requiresTwoFactor is false)
+                {
+                    sucssefulSignIn = true;
+                    await AuthManager.StoreTokens(response!, model.RememberMe);
+                }
+            }
+            else
+            {
+                CleanModel();
+
+                if (validatorRef?.EditContext.Validate() is false) return;
+
+                model.DeviceInfo = telemetryContext.Platform;
+
+                requiresTwoFactor = await AuthManager.SignIn(model, CurrentCancellationToken);
+
+                if (requiresTwoFactor is false)
+                {
+                    sucssefulSignIn = true;
+                }
+            }
+
+            if (sucssefulSignIn)
+            {
+                NavigationManager.NavigateTo(ReturnUrlQueryString ?? Urls.HomePage, replace: true);
+            }
+        }
+        catch (KnownException e)
+        {
+            // To disable the sign-in button until a specific time after a user lockout, use the value of `e.TryGetExtensionDataValue<TimeSpan>("TryAgainIn", out var tryAgainIn)`.
+
+            SnackBarService.Error(e.Message);
+        }
+        finally
+        {
+            isWaiting = false;
+        }
+    }
+
+    private async Task HandleOnSocialSignIn(string provider)
     {
         try
         {
-            var port = localHttpServer.ShouldUseForSocialSignIn() ? localHttpServer.Start(CurrentCancellationToken) : -1;
+            var port = localHttpServer.EnsureStarted();
 
             var redirectUrl = await identityController.GetSocialSignInUri(provider, ReturnUrlQueryString, port is -1 ? null : port, CurrentCancellationToken);
 
@@ -108,36 +165,40 @@ public partial class SignInPage : IDisposable
         }
     }
 
-    private async Task DoSignIn()
+    private async Task HandleOnPasswordlessSignIn()
     {
         if (isWaiting) return;
-        if (isOtpSent && string.IsNullOrWhiteSpace(model.Otp)) return;
-
         isWaiting = true;
 
         try
         {
-            if (requiresTwoFactor && string.IsNullOrWhiteSpace(model.TwoFactorCode)) return;
+            var userIds = await webAuthnService.GetWebAuthnConfiguredUserIds();
 
-            CleanModel();
-
-            if (validatorRef.EditContext.Validate() is false) return;
-
-            model.DeviceInfo = telemetryContext.Platform;
-
-            requiresTwoFactor = await AuthManager.SignIn(model, CurrentCancellationToken);
-
-            if (requiresTwoFactor is false)
+            if (AppPlatform.IsBlazorHybrid)
             {
-                NavigationManager.NavigateTo(ReturnUrlQueryString ?? Urls.HomePage, replace: true);
+                localHttpServer.EnsureStarted();
             }
-            else
+
+            var options = await identityController
+                .WithQueryIf(AppPlatform.IsBlazorHybrid, "origin", localHttpServer.Origin)
+                .GetWebAuthnAssertionOptions(new() { UserIds = userIds }, CurrentCancellationToken);
+
+            try
             {
-                PubSubService.Publish(ClientPubSubMessages.UPDATE_IDENTITY_HEADER_BACK_LINK, TfaPayload);
+                webAuthnAssertion = await webAuthnService.GetWebAuthnCredential(options, CurrentCancellationToken);
             }
+            catch (Exception ex)
+            {
+                // we can safely handle the exception thrown here since it mostly because of a timeout or user cancelling the native ui.
+                ExceptionHandler.Handle(ex, AppEnvironment.IsDev() ? ExceptionDisplayKind.NonInterrupting : ExceptionDisplayKind.None);
+                return;
+            }
+
+            await DoSignIn();
         }
         catch (KnownException e)
         {
+            webAuthnAssertion = null;
             SnackBarService.Error(e.Message);
         }
         finally
@@ -146,6 +207,13 @@ public partial class SignInPage : IDisposable
         }
     }
 
+    private void HandleOnSignInPanelTabChange(SignInPanelTab tab)
+    {
+        currentSignInPanelTab = tab;
+    }
+
+    private Task HandleOnSendOtp() => SendOtp(false);
+    private Task HandleOnResendOtp() => SendOtp(true);
     private async Task SendOtp(bool resend)
     {
         try
@@ -173,8 +241,6 @@ public partial class SignInPage : IDisposable
             if (resend is false)
             {
                 isOtpSent = true;
-
-                PubSubService.Publish(ClientPubSubMessages.UPDATE_IDENTITY_HEADER_BACK_LINK, OtpPayload);
             }
         }
         catch (KnownException e)
@@ -182,16 +248,23 @@ public partial class SignInPage : IDisposable
             SnackBarService.Error(e.Message);
         }
     }
-    private Task ResendOtp() => SendOtp(true);
-    private Task SendOtp() => SendOtp(false);
 
-    private async Task SendTfaToken()
+    private async Task HandleOnSendTfaToken()
     {
         try
         {
-            CleanModel();
+            if (webAuthnAssertion is null)
+            {
+                CleanModel();
 
-            await identityController.SendTwoFactorToken(model, CurrentCancellationToken);
+                await identityController.SendTwoFactorToken(model, CurrentCancellationToken);
+            }
+            else
+            {
+                await identityController
+                    .WithQueryIf(AppPlatform.IsBlazorHybrid, "origin", localHttpServer.Origin)
+                    .VerifyWebAuthAndSendTwoFactorToken(webAuthnAssertion, CurrentCancellationToken);
+            }
 
             SnackBarService.Success(Localizer[nameof(AppStrings.TfaTokenSentMessage)]);
         }
@@ -201,29 +274,21 @@ public partial class SignInPage : IDisposable
         }
     }
 
-    private void HandleOnSignInPanelTabChange(SignInPanelTab tab)
-    {
-        currentSignInPanelTab = tab;
-    }
-
     private void CleanModel()
     {
         if (currentSignInPanelTab is SignInPanelTab.Email)
         {
             model.PhoneNumber = null;
+            if (validatorRef is null) return;
+
             validatorRef.EditContext.NotifyFieldChanged(validatorRef.EditContext.Field(nameof(SignInRequestDto.PhoneNumber)));
         }
-
-        if (currentSignInPanelTab is SignInPanelTab.Phone)
+        else
         {
             model.Email = null;
+            if (validatorRef is null) return;
+
             validatorRef.EditContext.NotifyFieldChanged(validatorRef.EditContext.Field(nameof(SignInRequestDto.Email)));
         }
-    }
-
-
-    public void Dispose()
-    {
-        unsubscribeIdentityHeaderBackLinkClicked?.Invoke();
     }
 }

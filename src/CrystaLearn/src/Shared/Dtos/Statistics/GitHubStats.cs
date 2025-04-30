@@ -1,4 +1,4 @@
-﻿namespace CrystaLearn.Shared.Dtos.Statistics;
+namespace CrystaLearn.Shared.Dtos.Statistics;
 
 public record GitHubStats(
     [property: JsonPropertyName("name")] string Name,

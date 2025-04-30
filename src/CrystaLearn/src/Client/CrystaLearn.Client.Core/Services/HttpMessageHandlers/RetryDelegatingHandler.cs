@@ -1,6 +1,3 @@
-﻿using System.Reflection;
-using CrystaLearn.Shared.Controllers;
-
 namespace CrystaLearn.Client.Core.Services.HttpMessageHandlers;
 
 public partial class RetryDelegatingHandler(HttpMessageHandler handler)
@@ -23,7 +20,7 @@ public partial class RetryDelegatingHandler(HttpMessageHandler handler)
             }
             catch (Exception exp) when (exp is not KnownException || exp is ServerConnectionException) // If the exception is either unknown or a server connection issue, let's retry once more.
             {
-                if (HasNoRetryPolicyAttribute(request))
+                if (request.HasNoRetryPolicyAttribute() || AppEnvironment.IsDev())
                     throw;
                 retryCount++;
                 logScopeData["RetryCount"] = retryCount;
@@ -33,21 +30,6 @@ public partial class RetryDelegatingHandler(HttpMessageHandler handler)
         }
 
         throw lastExp!;
-    }
-
-    /// <summary>
-    /// <see cref="NoRetryPolicyAttribute"/>
-    /// </summary>
-    private static bool HasNoRetryPolicyAttribute(HttpRequestMessage request)
-    {
-        if (request.Options.TryGetValue(new(RequestOptionNames.IControllerType), out Type? controllerType) is false)
-            return false;
-
-        var parameterTypes = ((Dictionary<string, Type>)request.Options.GetValueOrDefault(RequestOptionNames.ActionParametersInfo)!).Select(p => p.Value).ToArray();
-        var method = controllerType!.GetMethod((string)request.Options.GetValueOrDefault(RequestOptionNames.ActionName)!, parameterTypes)!;
-
-        return controllerType.GetCustomAttribute<NoRetryPolicyAttribute>(inherit: true) is not null ||
-               method.GetCustomAttribute<NoRetryPolicyAttribute>() is not null;
     }
 
     private static IEnumerable<TimeSpan> GetDelaySequence(TimeSpan scaleFirstTry)

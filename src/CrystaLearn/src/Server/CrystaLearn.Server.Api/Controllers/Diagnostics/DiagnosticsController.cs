@@ -1,9 +1,9 @@
 ﻿using System.Text;
-using Microsoft.AspNetCore.SignalR;
-using CrystaLearn.Server.Api.SignalR;
-using CrystaLearn.Server.Api.Services;
 using CrystaLearn.Core.Models.Identity;
+using CrystaLearn.Server.Api.Services;
+using CrystaLearn.Server.Api.SignalR;
 using CrystaLearn.Shared.Controllers.Diagnostics;
+using Microsoft.AspNetCore.SignalR;
 
 namespace CrystaLearn.Server.Api.Controllers.Diagnostics;
 
@@ -15,14 +15,9 @@ public partial class DiagnosticsController : AppControllerBase, IDiagnosticsCont
     [AutoInject] private IHubContext<AppHub> appHubContext = default!;
 
     [HttpPost]
-    public async Task<string> PerformDiagnostics(CancellationToken cancellationToken)
+    public async Task<string> PerformDiagnostics([FromQuery] string? signalRConnectionId, [FromQuery] string? pushNotificationSubscriptionDeviceId, CancellationToken cancellationToken)
     {
         StringBuilder result = new();
-
-        foreach (var header in Request.Headers.Where(h => h.Key.StartsWith("X-", StringComparison.InvariantCulture)))
-        {
-            result.AppendLine($"{header.Key}: {header.Value}");
-        }
 
         result.AppendLine($"Client IP: {HttpContext.Connection.RemoteIpAddress}");
 
@@ -41,22 +36,29 @@ public partial class DiagnosticsController : AppControllerBase, IDiagnosticsCont
 
         result.AppendLine($"IsAuthenticated: {isAuthenticated.ToString().ToLowerInvariant()}");
 
-        if (isAuthenticated)
+        if (string.IsNullOrEmpty(pushNotificationSubscriptionDeviceId) is false)
         {
-            var subscription = await DbContext.UserSessions.Include(us => us.PushNotificationSubscription)
-                .FirstOrDefaultAsync(us => us.Id == userSessionId, cancellationToken);
+            var subscription = await DbContext.PushNotificationSubscriptions.Include(us => us.UserSession)
+                .FirstOrDefaultAsync(d => d.DeviceId == pushNotificationSubscriptionDeviceId, cancellationToken);
 
-            result.AppendLine($"Subscription exists: {(subscription?.PushNotificationSubscription is not null).ToString().ToLowerInvariant()}");
+            result.AppendLine($"Subscription exists: {(subscription is not null).ToString().ToLowerInvariant()}");
 
-            await pushNotificationService.RequestPush("Test Push", DateTimeOffset.Now.ToString("HH:mm:ss"), "Test action", userRelatedPush: true, u => u.UserSessionId == userSessionId, cancellationToken);
+            await pushNotificationService.RequestPush("Test Push", DateTimeOffset.Now.ToString("HH:mm:ss"), "Test action", userRelatedPush: false, u => u.DeviceId == pushNotificationSubscriptionDeviceId, cancellationToken);
         }
 
-        if (isAuthenticated && userSession!.SignalRConnectionId is not null)
+        if (string.IsNullOrEmpty(signalRConnectionId) is false)
         {
-            await appHubContext.Clients.Client(userSession.SignalRConnectionId).SendAsync(SignalREvents.SHOW_MESSAGE, DateTimeOffset.Now.ToString("HH:mm:ss"), cancellationToken);
+            await appHubContext.Clients.Client(signalRConnectionId).SendAsync(SignalREvents.SHOW_MESSAGE, DateTimeOffset.Now.ToString("HH:mm:ss"), cancellationToken);
         }
 
         result.AppendLine($"Culture => C: {CultureInfo.CurrentCulture.Name}, UC: {CultureInfo.CurrentUICulture.Name}");
+
+        result.AppendLine();
+
+        foreach (var header in Request.Headers.OrderBy(h => h.Key))
+        {
+            result.AppendLine($"{header.Key}: {header.Value}");
+        }
 
         return result.ToString();
     }

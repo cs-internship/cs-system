@@ -1,13 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using CrystaLearn.Core.Data;
 using CrystaLearn.Core.Services;
 using CrystaLearn.Core.Services.AzureBoard;
 using CrystaLearn.Core.Services.Contracts;
 using CrystaLearn.Core.Services.GitHub;
 using CrystaLearn.Core.Services.Sync;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Hosting;
 using Octokit;
 
@@ -34,7 +31,8 @@ public static class ApplicationBuilderExtensions
             {
 
             });
-        };
+        }
+        ;
 
         services.AddSingleton<IDocumentRepository, DocumentRepositoryInMemory>();
         services.AddTransient<ICrystaProgramRepository, CrystaProgramRepositoryFake>();

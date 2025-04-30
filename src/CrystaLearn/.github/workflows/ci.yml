@@ -25,13 +25,13 @@ jobs:
 
     - uses: actions/setup-node@v4
       with:
-        node-version: 22
+        node-version: 23
 
     - name: Build
       run: dotnet build CrystaLearn.sln -c Release
 
     - name: Install Playwright
-      run: pwsh src/Tests/bin/Debug/net8.0/playwright.ps1 install --with-deps
+      run: pwsh src/Tests/bin/Debug/net9.0/playwright.ps1 install --with-deps
 
     - name: Test
       id: test

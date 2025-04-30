@@ -6,14 +6,13 @@ public partial class CultureService
     [AutoInject] private PubSubService pubSubService = default!;
     [AutoInject] private IStorageService storageService = default!;
     [AutoInject] private NavigationManager navigationManager = default!;
-    [AutoInject] private CultureInfoManager cultureInfoManager = default!;
 
     public async Task ChangeCulture(string? cultureName)
     {
         if (AppPlatform.IsBlazorHybrid)
         {
             await storageService.SetItem("Culture", cultureName, persistent: true);
-            cultureInfoManager.SetCurrentCulture(cultureName!);
+            CultureInfoManager.SetCurrentCulture(cultureName);
             pubSubService.Publish(ClientPubSubMessages.CULTURE_CHANGED, cultureName);
         }
         else
@@ -22,7 +21,7 @@ public partial class CultureService
             {
                 Name = ".AspNetCore.Culture",
                 Value = Uri.EscapeDataString($"c={cultureName}|uic={cultureName}"),
-                MaxAge = 30 * 24 * 3600,
+                MaxAge = 3600 * 24 * 30,
                 Path = "/",
                 SameSite = SameSite.Strict,
                 Secure = AppEnvironment.IsDev() is false

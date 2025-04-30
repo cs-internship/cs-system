@@ -1,4 +1,4 @@
-﻿using UIKit;
+using UIKit;
 
 namespace CrystaLearn.Client.Maui.Platforms.iOS;
 

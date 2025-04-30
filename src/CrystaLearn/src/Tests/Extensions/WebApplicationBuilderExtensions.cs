@@ -1,4 +1,4 @@
-﻿using CrystaLearn.Server.Web;
+using CrystaLearn.Server.Web;
 using CrystaLearn.Tests.Services;
 using CrystaLearn.Server.Api.Services;
 

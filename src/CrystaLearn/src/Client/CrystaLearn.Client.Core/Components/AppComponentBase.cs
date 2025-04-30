@@ -14,8 +14,6 @@ public partial class AppComponentBase : ComponentBase, IAsyncDisposable
 
     [AutoInject] protected IStorageService StorageService = default!;
 
-    [AutoInject] protected HttpClient HttpClient = default!;
-
     [AutoInject] protected JsonSerializerOptions JsonSerializerOptions = default!;
 
     /// <summary>
@@ -55,10 +53,19 @@ public partial class AppComponentBase : ComponentBase, IAsyncDisposable
     [AutoInject] protected AbsoluteServerAddressProvider AbsoluteServerAddress { get; set; } = default!;
 
 
-    private CancellationTokenSource cts = new();
-    protected CancellationToken CurrentCancellationToken => cts.Token;
+    private CancellationTokenSource? cts = new();
+    protected CancellationToken CurrentCancellationToken
+    {
+        get
+        {
+            if (cts == null)
+                throw new OperationCanceledException(); // Component already disposed.
+            cts.Token.ThrowIfCancellationRequested();
+            return cts.Token;
+        }
+    }
 
-    protected bool InPrerenderSession => AppPlatform.IsBlazorHybrid is false && JSRuntime.IsInitialized() is false;
+    protected bool InPrerenderSession => AppPlatform.IsBlazorHybrid is false && RendererInfo.IsInteractive is false;
 
     protected sealed override void OnInitialized()
     {
@@ -69,8 +76,8 @@ public partial class AppComponentBase : ComponentBase, IAsyncDisposable
     {
         try
         {
-            await OnInitAsync();
             await base.OnInitializedAsync();
+            await OnInitAsync();
         }
         catch (Exception exp)
         {
@@ -79,7 +86,7 @@ public partial class AppComponentBase : ComponentBase, IAsyncDisposable
     }
 
     /// <summary>
-    /// Replacement for <see cref="OnInitializedAsync"/> which catches all possible exceptions in order to prevent app crash.
+    /// A safer alternative to `<see cref="OnInitializedAsync"/>` that catches and handles all exceptions internally, preventing them from triggering the application's error boundary.
     /// </summary>
     protected virtual Task OnInitAsync()
     {
@@ -91,8 +98,8 @@ public partial class AppComponentBase : ComponentBase, IAsyncDisposable
     {
         try
         {
-            await OnParamsSetAsync();
             await base.OnParametersSetAsync();
+            await OnParamsSetAsync();
         }
         catch (Exception exp)
         {
@@ -101,7 +108,7 @@ public partial class AppComponentBase : ComponentBase, IAsyncDisposable
     }
 
     /// <summary>
-    /// Replacement for <see cref="OnParametersSetAsync"/> which catches all possible exceptions in order to prevent app crash.
+    /// A safer alternative to `<see cref="OnParametersSetAsync"/>` that catches and handles all exceptions internally, preventing them from triggering the application's error boundary.
     /// </summary>
     protected virtual Task OnParamsSetAsync()
     {
@@ -111,6 +118,8 @@ public partial class AppComponentBase : ComponentBase, IAsyncDisposable
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
+        await base.OnAfterRenderAsync(firstRender);
+
         if (firstRender)
         {
             try
@@ -122,12 +131,11 @@ public partial class AppComponentBase : ComponentBase, IAsyncDisposable
                 HandleException(exp);
             }
         }
-
-        await base.OnAfterRenderAsync(firstRender);
     }
 
     /// <summary>
-    /// Method invoked after first time the component has been rendered.
+    /// This method is executed only during the initial render of the component.
+    /// It ensures that all potential exceptions are handled gracefully, preventing them from triggering the application's error boundary.
     /// </summary>
     protected virtual Task OnAfterFirstRenderAsync()
     {
@@ -136,7 +144,7 @@ public partial class AppComponentBase : ComponentBase, IAsyncDisposable
 
 
     /// <summary>
-    /// Executes passed action while catching all possible exceptions to prevent app crash.
+    /// Executes passed action that catches and handles all exceptions internally, preventing them from triggering the application's error boundary.
     /// </summary>
     public virtual Action WrapHandled(Action action,
         [CallerLineNumber] int lineNumber = 0,
@@ -157,7 +165,7 @@ public partial class AppComponentBase : ComponentBase, IAsyncDisposable
     }
 
     /// <summary>
-    /// Executes passed action while catching all possible exceptions to prevent app crash.
+    /// Executes passed action that catches and handles all exceptions internally, preventing them from triggering the application's error boundary.
     /// </summary>
     public virtual Action<T> WrapHandled<T>(Action<T> func,
         [CallerLineNumber] int lineNumber = 0,
@@ -178,7 +186,7 @@ public partial class AppComponentBase : ComponentBase, IAsyncDisposable
     }
 
     /// <summary>
-    /// Executes passed function while catching all possible exceptions to prevent app crash.
+    /// Executes passed action that catches and handles all exceptions internally, preventing them from triggering the application's error boundary.
     /// </summary>
     public virtual Func<Task> WrapHandled(Func<Task> func,
         [CallerLineNumber] int lineNumber = 0,
@@ -199,7 +207,29 @@ public partial class AppComponentBase : ComponentBase, IAsyncDisposable
     }
 
     /// <summary>
-    /// Executes passed function while catching all possible exceptions to prevent app crash.
+    /// Executes passed action that catches and handles all exceptions internally, preventing them from triggering the application's error boundary.
+    /// </summary>
+    public virtual Func<Task<T>> WrapHandled<T>(Func<Task<T>> func,
+        [CallerLineNumber] int lineNumber = 0,
+        [CallerMemberName] string memberName = "",
+        [CallerFilePath] string filePath = "")
+    {
+        return async () =>
+        {
+            try
+            {
+                return await func();
+            }
+            catch (Exception exp)
+            {
+                HandleException(exp, null, lineNumber, memberName, filePath);
+                return default;
+            }
+        };
+    }
+
+    /// <summary>
+    /// Executes passed action that catches and handles all exceptions internally, preventing them from triggering the application's error boundary.
     /// </summary>
     public virtual Func<T, Task> WrapHandled<T>(Func<T, Task> func,
         [CallerLineNumber] int lineNumber = 0,
@@ -220,30 +250,44 @@ public partial class AppComponentBase : ComponentBase, IAsyncDisposable
     }
 
     /// <summary>
-    /// Cancells running codes inside current component.
+    /// Terminates any ongoing operations within the current component.
     /// </summary>
-    protected void Abort()
+    protected async Task Abort()
     {
-        cts.Cancel();
-        cts.Dispose();
+        if (cts == null)
+            return; // Component already disposed.
+
+        using var currentCts = cts;
         cts = new();
+
+        if (currentCts.IsCancellationRequested is false)
+        {
+            await currentCts.CancelAsync();
+        }
     }
 
     public async ValueTask DisposeAsync()
     {
+        if (cts != null)
+        {
+            using var currentCts = cts;
+            cts = null;
+            if (currentCts.IsCancellationRequested is false)
+            {
+                await currentCts.CancelAsync();
+            }
+        }
+
+        await PrerenderStateService.DisposeAsync();
+
         await DisposeAsync(true);
 
         GC.SuppressFinalize(this);
     }
 
-    protected virtual async ValueTask DisposeAsync(bool disposing)
+    protected virtual ValueTask DisposeAsync(bool disposing)
     {
-        if (disposing)
-        {
-            await PrerenderStateService.DisposeAsync();
-            cts.Cancel();
-            cts.Dispose();
-        }
+        return ValueTask.CompletedTask;
     }
 
     private void HandleException(Exception exp,

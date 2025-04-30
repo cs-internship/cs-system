@@ -11,7 +11,7 @@ public class AuthPolicies
     /// By default, each user is limited to 3 active sessions.
     /// This policy can be disabled or configured to adjust the session limit dynamically, 
     /// such as by reading from application settings, the user's subscription plan, or other criteria.
-    /// Currently, this policy applies only to the Todo and AdminPanel related sample pages. 
+    /// Currently, this policy applies only to the Todo and AdminPanel specific pages like dashboard page. 
     /// However, it can be extended to cover additional pages as needed. 
     /// 
     /// Important: Do not apply this policy to the settings page, as users need access to manage and revoke their sessions there.
@@ -21,29 +21,27 @@ public class AuthPolicies
     /// <summary>
     /// Enables the user to execute potentially harmful operations, like account removal. 
     /// This limited-time policy is activated upon successful verification via a secure 6-digit code or
-    /// during the initial minutes of a sign-in session.
+    /// during the initial minutes of a sign-in session of users with 2fa enabled.
     /// </summary>
     public const string ELEVATED_ACCESS = nameof(ELEVATED_ACCESS);
 }
 
 public class AppClaimTypes
 {
-    public const string SESSION_ID = "session-id";
+    public const string SESSION_ID = "SessionId";
 
     /// <summary>
     /// <inheritdoc cref="AuthPolicies.PRIVILEGED_ACCESS"/>
     /// </summary>
-    public const string PRIVILEGED_SESSION = "privileged-session";
+    public const string PRIVILEGED_SESSION = "PrivilegedSession";
 
     /// <summary>
     /// <inheritdoc cref="AuthPolicies.ELEVATED_ACCESS"/>
     /// </summary>
-    public const string ELEVATED_SESSION = "elevated-session";
+    public const string ELEVATED_SESSION = "ElevatedSession";
+}
 
-    /// <summary>
-    /// Refresh tokens are tied to specific user sessions, 
-    /// This ensures that refresh tokens are single-use, preventing users from reusing a copied token to bypass the potential limit 
-    /// on the maximum number of concurrent privileged sessions of the user.
-    /// </summary>
-    public const string SESSION_STAMP = "session_stamp";
+public class AppRoles
+{
+    public const string SUPER_ADMIN = "SuperAdmin";
 }

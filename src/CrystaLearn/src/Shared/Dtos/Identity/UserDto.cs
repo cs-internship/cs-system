@@ -31,17 +31,18 @@ public partial class UserDto : IValidatableObject
     [Display(Name = nameof(AppStrings.BirthDate))]
     public DateTimeOffset? BirthDate { get; set; }
 
-    public string? ProfileImageName { get; set; }
+    public bool HasProfilePicture { get; set; }
 
     public string? ConcurrencyStamp { get; set; }
 
-    public string? DisplayName => FullName ?? Email ?? PhoneNumber ?? UserName;
+    public string? DisplayName => FullName ?? DisplayUserName;
+    public string? DisplayUserName => FullName ?? Email ?? PhoneNumber ?? UserName;
 
     public string? GetProfileImageUrl(Uri absoluteServerAddress)
     {
-        return ProfileImageName is null
+        return HasProfilePicture is false
             ? null
-            : new Uri(absoluteServerAddress, $"/api/Attachment/GetProfileImage/{Id}?v={ConcurrencyStamp}").ToString();
+            : new Uri(absoluteServerAddress, $"/api/Attachment/GetAttachment/{Id}/{AttachmentKind.UserProfileImageSmall}?v={ConcurrencyStamp}").ToString();
     }
 
     public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)

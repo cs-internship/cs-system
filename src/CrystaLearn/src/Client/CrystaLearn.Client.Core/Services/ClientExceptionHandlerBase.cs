@@ -1,4 +1,4 @@
-﻿using System.Diagnostics;
+using System.Diagnostics;
 using System.Runtime.CompilerServices;
 
 namespace CrystaLearn.Client.Core.Services;
@@ -7,7 +7,7 @@ public abstract partial class ClientExceptionHandlerBase : SharedExceptionHandle
 {
     [AutoInject] protected readonly SnackBarService SnackBarService = default!;
     [AutoInject] protected readonly ITelemetryContext TelemetryContext = default!;
-    [AutoInject] protected readonly MessageBoxService MessageBoxService = default!;
+    [AutoInject] protected readonly BitMessageBoxService MessageBoxService = default!;
     [AutoInject] protected readonly ILogger<ClientExceptionHandlerBase> Logger = default!;
 
     public void Handle(Exception exception,
@@ -23,6 +23,11 @@ public abstract partial class ClientExceptionHandlerBase : SharedExceptionHandle
         parameters[nameof(memberName)] = memberName;
         parameters[nameof(lineNumber)] = lineNumber;
         parameters["exceptionId"] = Guid.NewGuid(); // This will remain consistent across different registered loggers, such as Sentry, Application Insights, etc.
+
+        foreach (var item in GetExceptionData(exception))
+        {
+            parameters[item.Key] = item.Value;
+        }
 
         Handle(exception, displayKind, parameters.ToDictionary(i => i.Key, i => i.Value ?? string.Empty));
     }
@@ -60,7 +65,7 @@ public abstract partial class ClientExceptionHandlerBase : SharedExceptionHandle
         }
         else if (displayKind is ExceptionDisplayKind.Interrupting)
         {
-            MessageBoxService.Show(exceptionMessageToShow, Localizer[nameof(AppStrings.Error)]);
+            _ = MessageBoxService.Show(Localizer[nameof(AppStrings.Error)], exceptionMessageToShow);
         }
         else if (displayKind is ExceptionDisplayKind.None && isDevEnv)
         {
@@ -70,7 +75,7 @@ public abstract partial class ClientExceptionHandlerBase : SharedExceptionHandle
 
     private ExceptionDisplayKind GetDisplayKind(Exception exception)
     {
-        if (exception is ServerConnectionException or ReusedRefreshTokenException)
+        if (exception is ServerConnectionException)
             return ExceptionDisplayKind.NonInterrupting;
 
         return ExceptionDisplayKind.Interrupting;

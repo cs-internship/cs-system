@@ -1,4 +1,4 @@
-﻿using CrystaLearn.Client.Core.Services.Contracts;
+using CrystaLearn.Client.Core.Services.Contracts;
 
 namespace CrystaLearn.Tests.Services;
 
@@ -31,5 +31,10 @@ public partial class TestStorageService : IStorageService
         {
             tempStorage[key] = value;
         }
+    }
+
+    public async ValueTask Clear()
+    {
+        tempStorage.Clear();
     }
 }

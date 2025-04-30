@@ -1,5 +1,4 @@
 ﻿using CrystaLearn.Shared.Dtos.Identity;
-
 using Riok.Mapperly.Abstractions;
 
 namespace CrystaLearn.Shared;

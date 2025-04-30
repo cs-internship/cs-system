@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk.Razor">
+<Project Sdk="Microsoft.NET.Sdk.Razor">
 
     <PropertyGroup>
         <TargetFrameworks>net9.0-android;net9.0-ios;net9.0-maccatalyst</TargetFrameworks>
@@ -32,13 +32,13 @@
         </ResolveStaticWebAssetsInputsDependsOn>
     </PropertyGroup>
 
-    <PropertyGroup Condition="'$(Environment)' == 'Production'">
+    <PropertyGroup>
         <CompressionEnabled>false</CompressionEnabled>
         <!-- Enabling compression generates `.br` and `.gz` files for static assets.
         While this is beneficial for Blazor WebAssembly, it only adds to the app bundle size in MAUI without offering any advantages. -->
     </PropertyGroup>
 
-    <PropertyGroup Condition="$(TargetFramework.Contains('-android')) and '$(Environment)' == 'Production'">
+    <PropertyGroup Condition="$(TargetFramework.Contains('-android')) and '$(Environment)' != 'Development'">
         <EnableLLVM>true</EnableLLVM>
         <RuntimeIdentifiers Condition="'$(AndroidPackageFormat)' == 'apk'">android-arm64</RuntimeIdentifiers>
         <MauiUseDefaultAotProfile Condition="Exists('custom.aprof')">false</MauiUseDefaultAotProfile>
@@ -50,7 +50,7 @@
         <EnableSGenConc>True</EnableSGenConc>
     </PropertyGroup>
 
-    <PropertyGroup Condition="$(TargetFramework.Contains('-ios')) and '$(Environment)' == 'Production'">
+    <PropertyGroup Condition="$(TargetFramework.Contains('-ios')) and '$(Environment)' != 'Development'">
         <CodesignEntitlements>Platforms/iOS/Entitlements.Production.plist</CodesignEntitlements>
         <EnableSGenConc>True</EnableSGenConc>
                 <!-- https://learn.microsoft.com/en-us/dotnet/maui/macios/interpreter -->
@@ -63,7 +63,7 @@
         <CodesignEntitlements>Platforms/MacCatalyst/Entitlements.Development.plist</CodesignEntitlements>
     </PropertyGroup>
 
-    <PropertyGroup Condition="$(TargetFramework.Contains('-maccatalyst')) and '$(Environment)' == 'Production'">
+    <PropertyGroup Condition="$(TargetFramework.Contains('-maccatalyst')) and '$(Environment)' != 'Development'">
         <CodesignEntitlements>Platforms/MacCatalyst/Entitlements.Production.plist</CodesignEntitlements>
         <UseHardenedRuntime>true</UseHardenedRuntime>
                 <MtouchInterpreter>-all</MtouchInterpreter>
@@ -85,6 +85,8 @@
         <PackageReference Include="Xamarin.AndroidX.Activity.Ktx" />
         <PackageReference Include="Xamarin.AndroidX.Lifecycle.LiveData" />
         <PackageReference Include="Xamarin.AndroidX.Lifecycle.LiveData.Core.Ktx" />
+        <PackageReference Include="Xamarin.GooglePlayServices.Basement" />
+        <PackageReference Include="Xamarin.Google.Android.Play.Review.Ktx" />
                 <!-- Run the following commands to create custom.aprof file which improves the Android app performance -->
         <!-- dotnet add package Mono.AotProfiler.Android -->
         <!-- dotnet build -t:BuildAndStartAotProfiling -f net9.0-android -p:UseInterpreter=false -->
@@ -104,7 +106,6 @@
         <Using Include="CrystaLearn.Client.Core.Services.Contracts" />
         <Using Include="CrystaLearn.Client.Core.Services" />
         <Using Include="CrystaLearn.Shared" />
-        <Watch Remove="*.scss" />
     </ItemGroup>
 
     <ItemGroup>
@@ -136,6 +137,12 @@
     </ItemGroup>
 
     <ItemGroup>
+        <Content Remove="wwwroot\external-js-runner.html" />
+        <EmbeddedResource Include="wwwroot\external-js-runner.html" />
+        <EmbeddedResource Include="..\CrystaLearn.Client.Core\wwwroot\scripts\app.js" Link="wwwroot\scripts\app.js" />
+    </ItemGroup>
+
+    <ItemGroup>
         <ProjectReference Include="..\CrystaLearn.Client.Core\CrystaLearn.Client.Core.csproj" />
     </ItemGroup>
 
@@ -146,23 +153,20 @@
         <PackageReference Include="Microsoft.AspNetCore.Components.WebView.Maui" />
         <PackageReference Include="Microsoft.Extensions.Logging.EventLog" />
         <PackageReference Include="Microsoft.Extensions.Logging.EventSource" />
+                <PackageReference Include="Newtonsoft.Json" />
+        <PackageReference Include="Plugin.Maui.AppRating" />
+        <PackageReference Include="Sentry.Maui" />
         <PackageReference Include="Microsoft.Extensions.Logging.ApplicationInsights" />
         <PackageReference Include="Plugin.LocalNotification" />
             </ItemGroup>
 
-        <ItemGroup>
-        <PackageReference Include="Oscore.Maui.AppStoreInfo" />
-        <PackageReference Include="Oscore.Maui.InAppReviews" />
-        <PackageReference Include="Oscore.Maui.Android.InAppUpdates" />
-    </ItemGroup>
-    
     <Target Name="BeforeBuildTasks" AfterTargets="CoreCompile">
         <Error Text="Enable long paths in Windows. https://learn.microsoft.com/en-us/windows/win32/fileio/maximum-file-path-limitation?tabs=powershell#enable-long-paths-in-windows-10-version-1607-and-later" Condition=" $([MSBuild]::IsOSPlatform('windows')) AND $([MSBuild]::GetRegistryValueFromView('HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\FileSystem', 'LongPathsEnabled', null, RegistryView.Registry64)) != '1' " />
         <CallTarget Targets="BuildCssFiles" />
     </Target>
 
     <Target Name="BuildCssFiles">
-        <Exec Command="../CrystaLearn.Client.Core/node_modules/.bin/sass .:. --style compressed --load-path=. --silence-deprecation=import" StandardOutputImportance="high" StandardErrorImportance="high" LogStandardErrorAsError="true" />
+        <Exec Command="../CrystaLearn.Client.Core/node_modules/.bin/sass .:. --style compressed --load-path=. --silence-deprecation=import --update" StandardOutputImportance="high" StandardErrorImportance="high" LogStandardErrorAsError="true" />
     </Target>
 
     <!-- https://github.com/dotnet/runtime/issues/104599  -->
