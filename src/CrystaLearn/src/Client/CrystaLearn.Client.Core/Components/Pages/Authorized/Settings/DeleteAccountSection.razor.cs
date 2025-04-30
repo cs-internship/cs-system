@@ -1,4 +1,4 @@
-﻿using CrystaLearn.Shared.Controllers.Identity;
+using CrystaLearn.Shared.Controllers.Identity;
 
 namespace CrystaLearn.Client.Core.Components.Pages.Authorized.Settings;
 

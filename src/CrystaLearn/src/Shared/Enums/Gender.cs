@@ -1,4 +1,4 @@
-﻿namespace CrystaLearn.Shared.Enums;
+namespace CrystaLearn.Shared.Enums;
 
 [JsonConverter(typeof(JsonStringEnumConverter<Gender>))]
 public enum Gender

@@ -1,8 +1,9 @@
-﻿@attribute [Route(Urls.SignUpPage)]
+@attribute [Route(Urls.SignUpPage)]
 @attribute [Route("{culture?}" + Urls.SignUpPage)]
 @inherits AppPageBase
 
-<PageTitle>@Localizer[nameof(AppStrings.SignUpPageTitle)]</PageTitle>
+<AppPageData Title="@Localizer[nameof(AppStrings.SignUp)]"
+             PageTitle="@Localizer[nameof(AppStrings.SignUpPageTitle)]" />
 
 <section>
     <BitStack HorizontalAlign="BitAlignment.Center">
@@ -15,7 +16,7 @@
                 </BitText>
             </BitStack>
 
-            <SocialRow OnClick="SocialSignUp" />
+            <SocialRow IsWaiting="isWaiting" OnClick="SocialSignUp" />
 
             <BitSeparator Border="BitColorKind.Tertiary" Background="BitColorKind.Secondary" Class="lg-sep">@Localizer[AppStrings.Or]</BitSeparator>
             <BitSeparator Border="BitColorKind.Secondary" Background="BitColorKind.Primary" Class="sm-sep">@Localizer[AppStrings.Or]</BitSeparator>
@@ -63,6 +64,7 @@
                         <ValidationMessage For="@(() => signUpModel.Password)" />
                     </BitStack>
 
+                    <GoogleRecaptcha />
 
                     <BitButton IsLoading="isWaiting" ButtonType="BitButtonType.Submit">
                         @Localizer[nameof(AppStrings.SignUp)]
@@ -72,9 +74,9 @@
             <br />
             <BitText Typography="BitTypography.Body2">
                 @Localizer[nameof(AppStrings.SignInMessageInSignUp)]
-                <BitLink Href="@($"{Urls.SignInPage}?return-url={ReturnUrlQueryString}")">@Localizer[nameof(AppStrings.SignIn)]</BitLink>
+                <BitLink Href="@($"{Urls.SignInPage}?return-url={Uri.EscapeDataString(ReturnUrlQueryString ?? Urls.HomePage)}")">@Localizer[nameof(AppStrings.SignIn)]</BitLink>
                 @Localizer[nameof(AppStrings.Or)]
-                <BitLink Href="@($"{Urls.ConfirmPage}?email={Uri.EscapeDataString(signUpModel.Email??"")}&phoneNumber={Uri.EscapeDataString(signUpModel.PhoneNumber??"")}&return-url={ReturnUrlQueryString}")">
+                <BitLink Href="@($"{Urls.ConfirmPage}?email={Uri.EscapeDataString(signUpModel.Email ?? "")}&phoneNumber={Uri.EscapeDataString(signUpModel.PhoneNumber ?? "")}&return-url={Uri.EscapeDataString(ReturnUrlQueryString ?? Urls.HomePage)}")">
                     @Localizer[nameof(AppStrings.Confirm)]
                 </BitLink>
             </BitText>

@@ -1,4 +1,4 @@
-﻿namespace CrystaLearn.Server.Api.Services.Identity;
+namespace CrystaLearn.Server.Api.Services.Identity;
 
 public partial class AppIdentityErrorDescriber : IdentityErrorDescriber
 {

@@ -1,4 +1,5 @@
-﻿using CrystaLearn.Shared.Dtos.Statistics;
+using Fido2NetLib;
+using CrystaLearn.Shared.Dtos.Statistics;
 
 namespace CrystaLearn.Server.Api.Services;
 
@@ -7,6 +8,9 @@ namespace CrystaLearn.Server.Api.Services;
 /// </summary>
 [JsonSourceGenerationOptions(PropertyNamingPolicy = JsonKnownNamingPolicy.CamelCase)]
 [JsonSerializable(typeof(NugetStatsDto))]
+[JsonSerializable(typeof(GoogleRecaptchaVerificationResponse))]
+[JsonSerializable(typeof(ProblemDetails))]
+[JsonSerializable(typeof(AuthenticatorResponse))]
 public partial class ServerJsonContext : JsonSerializerContext
 {
 }

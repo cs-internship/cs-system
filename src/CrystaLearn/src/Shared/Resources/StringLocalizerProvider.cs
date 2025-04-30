@@ -1,4 +1,4 @@
-﻿using System.Reflection;
+using System.Reflection;
 
 namespace CrystaLearn.Shared.Resources;
 public static partial class StringLocalizerProvider

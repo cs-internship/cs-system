@@ -1,26 +1,39 @@
-﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+<Project Sdk="Microsoft.NET.Sdk.Web">
 
     <PropertyGroup>
         <TargetFramework>net9.0</TargetFramework>
-        <UserSecretsId>20D5215F-5E46-4176-8D60-2855C0E53204</UserSecretsId>
+        <UserSecretsId>AD69594D-685D-441F-B0E1-6AB4212F3C09</UserSecretsId>
         <ValidateExecutableReferencesMatchSelfContained>false</ValidateExecutableReferencesMatchSelfContained>
     </PropertyGroup>
-    
+
+    <PropertyGroup Condition="'$(Environment)' != 'Development'">
+        <SelfContained>true</SelfContained>
+        <PublishReadyToRun>true</PublishReadyToRun>
+        <PublishReadyToRunComposite>true</PublishReadyToRunComposite>
+    </PropertyGroup>
+
     <ItemGroup>
         <PackageReference Include="NWebsec.AspNetCore.Middleware" />
         <PackageReference Include="Microsoft.AspNetCore.Components.Web" />
         <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Server" />
         <PackageReference Include="Microsoft.ApplicationInsights.AspNetCore" />
-        <PackageReference Include="Swashbuckle.AspNetCore" />
+        <PackageReference Include="Sentry.AspNetCore" />
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\CrystaLearn.Server.Api\CrystaLearn.Server.Api.csproj" />
         <ProjectReference Include="..\..\Client\CrystaLearn.Client.Web\CrystaLearn.Client.Web.csproj" />
     </ItemGroup>
 
     <ItemGroup>
         <Using Include="CrystaLearn.Shared.Enums" />
+    </ItemGroup>
+
+    <ItemGroup Condition="'$(Environment)' == 'Development'">
+        <!-- Checkout ScssCompilerService.cs source code. -->
+        <PackageReference Include="Meziantou.Framework.Win32.Jobs" />
+    </ItemGroup>
+    <ItemGroup Condition="'$(Environment)' != 'Development'">
+        <Compile Remove="Services\ScssCompilerService.cs" />
     </ItemGroup>
 
     <!--
@@ -29,7 +42,7 @@
     -->
     <PropertyGroup>
         <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
-        <EnableSdkContainerDebugging Condition="'$(Configuration)' == 'Debug'">True</EnableSdkContainerDebugging>
+        <EnableSdkContainerDebugging Condition="'$(Environment)' == 'Development'">True</EnableSdkContainerDebugging>
     </PropertyGroup>
 
 </Project>

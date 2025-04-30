@@ -1,4 +1,4 @@
-﻿namespace CrystaLearn.Client.Core.Services;
+namespace CrystaLearn.Client.Core.Services;
 
 public enum AppThemeType
 {

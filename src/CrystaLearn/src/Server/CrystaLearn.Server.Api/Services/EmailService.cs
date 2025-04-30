@@ -1,8 +1,8 @@
-﻿using FluentEmail.Core;
+﻿using CrystaLearn.Core.Models.Emailing;
+using CrystaLearn.Core.Models.Identity;
+using CrystaLearn.Server.Api.Services.Jobs;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
-using CrystaLearn.Core.Models.Emailing;
-using CrystaLearn.Core.Models.Identity;
 
 namespace CrystaLearn.Server.Api.Services;
 
@@ -10,11 +10,10 @@ public partial class EmailService
 {
     [AutoInject] private HtmlRenderer htmlRenderer = default!;
     [AutoInject] private ILogger<EmailService> logger = default!;
-    [AutoInject] private ServerApiSettings appSettings = default!;
     [AutoInject] private IHostEnvironment hostEnvironment = default!;
     [AutoInject] private IHttpContextAccessor httpContextAccessor = default!;
+    [AutoInject] private IBackgroundJobClient backgroundJobClient = default!;
     [AutoInject] private IStringLocalizer<EmailStrings> emailLocalizer = default!;
-    [AutoInject] private RootServiceScopeProvider rootServiceScopeProvider = default!;
 
     public async Task SendResetPasswordToken(User user, string token, Uri link, CancellationToken cancellationToken)
     {
@@ -36,7 +35,7 @@ public partial class EmailService
             [nameof(ResetPasswordTokenTemplate.HttpContext)] = httpContextAccessor.HttpContext
         });
 
-        await SendEmail(body, user.Email!, user.DisplayName!, subject, cancellationToken);
+        await SendEmail(body, user.Email!, user.DisplayName!, subject);
     }
 
     public async Task SendOtp(User user, string token, Uri link, CancellationToken cancellationToken)
@@ -59,7 +58,7 @@ public partial class EmailService
             [nameof(OtpTemplate.HttpContext)] = httpContextAccessor.HttpContext
         });
 
-        await SendEmail(body, user.Email!, user.DisplayName!, subject, cancellationToken);
+        await SendEmail(body, user.Email!, user.DisplayName!, subject);
     }
 
     public async Task SendTwoFactorToken(User user, string token, CancellationToken cancellationToken)
@@ -77,7 +76,7 @@ public partial class EmailService
             [nameof(TwoFactorTokenTemplate.HttpContext)] = httpContextAccessor.HttpContext
         });
 
-        await SendEmail(body, user.Email!, user.DisplayName!, subject, cancellationToken);
+        await SendEmail(body, user.Email!, user.DisplayName!, subject);
     }
 
     public async Task SendEmailToken(User user, string toEmailAddress, string token, Uri link, CancellationToken cancellationToken)
@@ -95,7 +94,7 @@ public partial class EmailService
             [nameof(EmailTokenTemplate.HttpContext)] = httpContextAccessor.HttpContext
         });
 
-        await SendEmail(body, toEmailAddress!, user.DisplayName!, subject, cancellationToken);
+        await SendEmail(body, toEmailAddress!, user.DisplayName!, subject);
     }
 
     public async Task SendElevatedAccessToken(User user, string token, CancellationToken cancellationToken)
@@ -113,7 +112,7 @@ public partial class EmailService
             [nameof(ElevatedAccessTokenTemplate.HttpContext)] = httpContextAccessor.HttpContext
         });
 
-        await SendEmail(body, user.Email!, user.DisplayName!, subject, cancellationToken);
+        await SendEmail(body, user.Email!, user.DisplayName!, subject);
     }
 
     private async Task<string> BuildBody<TTemplate>(Dictionary<string, object?> parameters)
@@ -129,39 +128,10 @@ public partial class EmailService
         return body!;
     }
 
-    private async Task SendEmail(string body, string toEmailAddress, string toName, string subject, CancellationToken cancellationToken)
+    private async Task SendEmail(string body, string toEmailAddress, string toName, string subject)
     {
-        var defaultFromName = emailLocalizer[nameof(EmailStrings.DefaultFromName)];
-        var defaultFromEmail = appSettings.Email!.DefaultFromEmail;
-
-        _ = Task.Run(async () => // Let's not wait for the email to be sent. Consider using a proper message queue or background job system like Hangfire.
-        {
-            await using var scope = rootServiceScopeProvider.Invoke();
-            var logger = scope.ServiceProvider.GetRequiredService<ILogger<EmailService>>();
-
-            try
-            {
-                var fluentEmail = scope.ServiceProvider.GetRequiredService<IFluentEmail>();
-                var localizer = scope.ServiceProvider.GetRequiredService<IStringLocalizer<AppStrings>>();
-                var emailResult = await fluentEmail.To(toEmailAddress, toName)
-                                               .Subject(subject)
-                                               .SetFrom(defaultFromEmail, defaultFromName)
-                                               .Body(body, isHtml: true)
-                                               .SendAsync(default);
-
-                if (emailResult.Successful is false)
-                    throw new ResourceValidationException(emailResult.ErrorMessages.Select(err => localizer[err]).ToArray());
-            }
-            catch (Exception exp)
-            {
-                LogSendEmailFailed(logger, exp, subject, toEmailAddress);
-            }
-
-        }, default);
+        backgroundJobClient.Enqueue<EmailServiceJobsRunner>(jobRunner => jobRunner.SendEmailJob(toEmailAddress, toName, subject, body, default));
     }
-
-    [LoggerMessage(Level = LogLevel.Error, Message = "Failed to send e-mail with subject '{Subject}' to {ToEmailAddress}.")]
-    private static partial void LogSendEmailFailed(ILogger logger, Exception exp, string subject, string toEmailAddress);
 
     [LoggerMessage(Level = LogLevel.Information, Message = "{type} e-mail with subject '{subject}' to {toEmailAddress}. {link}")]
     private static partial void LogSendEmail(ILogger logger, string subject, string toEmailAddress, string type, string? link = null);

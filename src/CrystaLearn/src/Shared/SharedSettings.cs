@@ -1,4 +1,4 @@
-﻿namespace CrystaLearn.Shared;
+namespace CrystaLearn.Shared;
 
 public partial class SharedSettings : IValidatableObject
 {

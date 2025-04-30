@@ -21,7 +21,7 @@ public static partial class Program
             // By default, App.razor adds Routes and HeadOutlet.
             // The following is only required for blazor webassembly standalone.
             builder.RootComponents.Add<HeadOutlet>("head::after");
-            builder.RootComponents.Add<BlazorApplicationInsights.ApplicationInsightsInit>(selector: "head::after");
+            builder.RootComponents.Add(componentType: typeof(BlazorApplicationInsights.ApplicationInsightsInit), selector: "head::after", parameters: ParameterView.FromDictionary(new Dictionary<string, object?> { { nameof(BlazorApplicationInsights.ApplicationInsightsInit.IsWasmStandalone), true } }));
             builder.RootComponents.Add<Routes>("#app-container");
         }
 
@@ -36,7 +36,7 @@ public static partial class Program
             e.SetObserved();
         };
 
-        if (CultureInfoManager.MultilingualEnabled)
+        if (CultureInfoManager.InvariantGlobalization is false)
         {
             var cultureCookie = await host.Services.GetRequiredService<Cookie>().GetValue(".AspNetCore.Culture");
 
@@ -52,7 +52,7 @@ public static partial class Program
                           cultureCookie ?? // 2- User settings
                           CultureInfo.CurrentUICulture.Name; // 3- OS/Browser settings
 
-            host.Services.GetRequiredService<CultureInfoManager>().SetCurrentCulture(culture);
+            CultureInfoManager.SetCurrentCulture(culture);
         }
 
         await host.RunAsync();

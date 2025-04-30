@@ -5,7 +5,8 @@
         <Nullable>enable</Nullable>
         <IsTestProject>true</IsTestProject>
         <RunSettingsFilePath>$(MSBuildProjectDirectory)\.runsettings</RunSettingsFilePath>
-    </PropertyGroup>
+      <UserSecretsId>3b84084b-a242-44aa-8f47-f144fe1b6b83</UserSecretsId>
+  </PropertyGroup>
 
     <ItemGroup>
         <PackageReference Include="coverlet.collector">
@@ -28,6 +29,7 @@
         <Using Include="System.Net.Http.Headers" />
         <Using Include="System.Net.Http.Json" />
         <Using Include="CrystaLearn.Shared" />
+        <Using Include="CrystaLearn.Server.Web" />
         <Using Include="CrystaLearn.Shared.Enums" />
         <Using Include="Microsoft.AspNetCore.Http" />
         <Using Include="Microsoft.AspNetCore.Components" />

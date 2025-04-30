@@ -1,4 +1,4 @@
-﻿using CrystaLearn.Client.Web.Services;
+using CrystaLearn.Client.Web.Services;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 
 namespace CrystaLearn.Client.Web;
@@ -24,12 +24,19 @@ public static partial class Program
 
         services.AddScoped(sp =>
         {
-            var httpClient = new HttpClient(sp.GetRequiredService<HttpMessageHandler>()) { BaseAddress = serverAddress };
+            var httpClient = new HttpClient(sp.GetRequiredService<HttpMessageHandler>())
+            {
+                BaseAddress = serverAddress
+            };
 
             httpClient.DefaultRequestHeaders.Add("X-Origin", builder.HostEnvironment.BaseAddress);
 
             return httpClient;
         });
+        services.AddKeyedScoped<HttpMessageHandler, HttpClientHandler>("PrimaryHttpMessageHandler");
+        services.AddScoped<IExceptionHandler, WebClientExceptionHandler>();
+
+        services.AddTransient<IPrerenderStateService, WebClientPrerenderStateService>();
     }
 
     public static void AddClientWebProjectServices(this IServiceCollection services, IConfiguration configuration)
@@ -37,12 +44,10 @@ public static partial class Program
         services.AddClientCoreProjectServices(configuration);
         // The following services work both in blazor web assembly and server side for pre-rendering and blazor server.
 
-        services.AddTransient<IPrerenderStateService, WebPrerenderStateService>();
-
         services.AddScoped<IBitDeviceCoordinator, WebDeviceCoordinator>();
-        services.AddScoped<IExceptionHandler, WebExceptionHandler>();
-        services.AddScoped<IStorageService, BrowserStorageService>();
+        services.AddScoped<IStorageService, WebStorageService>();
         services.AddScoped<IPushNotificationService, WebPushNotificationService>();
+        services.AddScoped<IWebAuthnService, WebAuthnService>();
 
         services.AddSingleton(sp =>
         {

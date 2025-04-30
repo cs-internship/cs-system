@@ -1,5 +1,3 @@
-﻿using System.Web;
-
 namespace CrystaLearn.Client.Core.Services;
 
 /// <summary>
@@ -28,18 +26,18 @@ public partial class ODataQuery
     public string? Expand { get; set; }
     public string? Search { get; set; }
 
-    public override string ToString()
+    public override string? ToString()
     {
-        var qs = HttpUtility.ParseQueryString(string.Empty);
+        var qs = new AppQueryStringCollection();
 
         if (Top is not null)
         {
-            qs.Add("$top", Top.ToString());
+            qs.Add("$top", Top.ToString()!);
         }
 
         if (Skip is not null)
         {
-            qs.Add("$skip", Skip.ToString());
+            qs.Add("$skip", Skip.ToString()!);
         }
 
         if (string.IsNullOrEmpty(Filter) is false)
@@ -67,6 +65,8 @@ public partial class ODataQuery
             qs.Add("$search", Search);
         }
 
-        return qs.ToString()!;
+        return qs.ToString();
     }
+
+    public static implicit operator string?(ODataQuery query) => query.ToString();
 }

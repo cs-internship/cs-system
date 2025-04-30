@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
         <TargetFramework>net9.0</TargetFramework>
@@ -6,8 +6,10 @@
     </PropertyGroup>
 
     <ItemGroup>
+        <PackageReference Include="Fido2.Models" />
         <PackageReference Include="Microsoft.AspNetCore.Authorization" />
         <PackageReference Include="Microsoft.AspNetCore.Components.Web" />
+        <PackageReference Include="Microsoft.Extensions.Caching.Memory" />
         <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" />
         <PackageReference Include="Microsoft.Extensions.Localization" />
         <PackageReference Include="Microsoft.Extensions.Configuration.Json" />
@@ -55,18 +57,13 @@
     <ItemGroup>
         <Content Remove="appsettings*.json" />
         <EmbeddedResource Include="appsettings*.json" />
+        <Content Include="..\..\Bit.ResxTranslator.json" Link="Resources\Bit.ResxTranslator.json" />
         <EmbeddedResource Update="appsettings.*.json">
             <DependentUpon>appsettings.json</DependentUpon>
         </EmbeddedResource>
         <Compile Update="Urls.*.cs">
             <DependentUpon>Urls.cs</DependentUpon>
         </Compile>
-    </ItemGroup>
-
-    <ItemGroup>
-      <Compile Update="Urls - Copy.SettingsSections.cs">
-        <DependentUpon>Urls.cs</DependentUpon>
-      </Compile>
     </ItemGroup>
 
 </Project>

@@ -1,4 +1,4 @@
-﻿namespace CrystaLearn.Shared.Services.Contracts;
+namespace CrystaLearn.Shared.Services.Contracts;
 
 public interface IDateTimeProvider
 {

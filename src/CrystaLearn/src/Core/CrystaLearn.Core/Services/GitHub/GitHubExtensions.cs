@@ -1,10 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection.Metadata;
-using System.Text;
-using System.Threading.Tasks;
-using CrystaLearn.Core.Models.Crysta;
+﻿using CrystaLearn.Core.Models.Crysta;
+using CrystaLearn.Shared;
 using Markdig;
 
 namespace CrystaLearn.Core.Services.GitHub;
@@ -97,7 +92,7 @@ public static class GitHubExtensions
             DocumentType.Html => content,
             _ => content
         };
-        
+
         return html;
     }
 

@@ -1,4 +1,5 @@
-﻿using CrystaLearn.Shared.Dtos.Identity;
+﻿using CrystaLearn.Shared.Controllers;
+using CrystaLearn.Shared.Dtos.Identity;
 using CrystaLearn.Shared.Controllers.Identity;
 
 namespace CrystaLearn.Client.Core.Components.Pages.Authorized.Settings;
@@ -9,32 +10,21 @@ public partial class ProfileSection
     [Parameter] public UserDto? User { get; set; }
 
     [AutoInject] private IUserController userController = default!;
+    [AutoInject] private IAttachmentController attachmentController = default!;
 
 
     private bool isSaving;
     private bool isUploading;
-    private string? profileImageUploadUrl;
     private BitFileUpload fileUploadRef = default!;
     private readonly EditUserDto editUserDto = new();
 
-    
     private string? ProfileImageUrl => User?.GetProfileImageUrl(AbsoluteServerAddress);
-
-
-    protected override async Task OnInitAsync()
-    {
-        var accessToken = await PrerenderStateService.GetValue(AuthTokenProvider.GetAccessToken);
-
-        profileImageUploadUrl = new Uri(AbsoluteServerAddress, $"/api/Attachment/UploadProfileImage?access_token={accessToken}").ToString();
-
-        await base.OnInitAsync();
-    }
 
     protected override void OnParametersSet()
     {
-        User?.Patch(editUserDto);
-
         base.OnParametersSet();
+
+        User?.Patch(editUserDto);
     }
 
 
@@ -71,9 +61,9 @@ public partial class ProfileSection
 
         try
         {
-            await HttpClient.DeleteAsync("api/Attachment/RemoveProfileImage", CurrentCancellationToken);
+            await attachmentController.DeleteUserProfilePicture(CurrentCancellationToken);
 
-            User.ProfileImageName = null;
+            User.HasProfilePicture = false;
 
             PublishUserDataUpdated();
         }
@@ -118,5 +108,12 @@ public partial class ProfileSection
     private void PublishUserDataUpdated()
     {
         PubSubService.Publish(ClientPubSubMessages.PROFILE_UPDATED, User);
+    }
+
+    private async Task<string> GetUploadUrl()
+    {
+        var accessToken = await AuthManager.GetFreshAccessToken(requestedBy: nameof(BitFileUpload));
+
+        return new Uri(AbsoluteServerAddress, $"/api/Attachment/UploadUserProfilePicture?access_token={accessToken}").ToString();
     }
 }

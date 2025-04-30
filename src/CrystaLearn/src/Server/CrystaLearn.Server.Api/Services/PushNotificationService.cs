@@ -1,10 +1,11 @@
-﻿using AdsPush;
-using AdsPush.Vapid;
-using AdsPush.Abstraction;
+﻿using System.Collections.Concurrent;
 using System.Linq.Expressions;
-using System.Collections.Concurrent;
-using CrystaLearn.Shared.Dtos.PushNotification;
+using AdsPush;
+using AdsPush.Abstraction;
+using AdsPush.Vapid;
+using CrystaLearn.Core.Data;
 using CrystaLearn.Core.Models.PushNotification;
+using CrystaLearn.Shared.Dtos.PushNotification;
 
 namespace CrystaLearn.Server.Api.Services;
 
@@ -25,11 +26,11 @@ public partial class PushNotificationService
             .Where(s => s.DeviceId == dto.DeviceId || s.UserSessionId == userSessionId /* pushManager's subscription has been renewed. */)
             .ExecuteDeleteAsync(cancellationToken);
 
-        var subscription = dbContext.PushNotificationSubscriptions.Add(new()
+        var subscription = (await dbContext.PushNotificationSubscriptions.AddAsync(new()
         {
             DeviceId = dto.DeviceId,
             Platform = dto.Platform
-        }).Entity;
+        })).Entity;
 
         dto.Patch(subscription);
 
@@ -59,7 +60,7 @@ public partial class PushNotificationService
     {
         var now = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
 
-        // userRelatedPush: If the BearerTokenExpiration is 14 days, it’s not practical to send push notifications 
+        // userRelatedPush: If the BearerTokenExpiration is 14 days, it's not practical to send push notifications 
         // with sensitive information, like an OTP code to a device where the user hasn't used the app for over 14 days.  
         // This is because, even if the user opens the app, they will be automatically signed out as their session has expired.  
 
@@ -75,11 +76,11 @@ public partial class PushNotificationService
 
         var subscriptions = await query.ToListAsync(cancellationToken);
 
-        _ = Task.Run(async () => // Let's not wait for the push notification to be sent. Consider using a proper message queue or background job system like Hangfire.
+        _ = Task.Run(async () =>
         {
-            await using var scope = rootServiceScopeProvider.Invoke();
+            await using var scope = rootServiceScopeProvider();
             var adsPushSender = scope.ServiceProvider.GetRequiredService<IAdsPushSender>();
-            var logger = scope.ServiceProvider.GetRequiredService<ILogger<PushNotificationService>>();
+            var serverExceptionHandler = scope.ServiceProvider.GetRequiredService<ServerExceptionHandler>();
 
             var payload = new AdsPushBasicSendPayload()
             {
@@ -118,7 +119,8 @@ public partial class PushNotificationService
 
             if (exceptions.IsEmpty is false)
             {
-                logger.LogError(new AggregateException(exceptions), "Failed to send push notifications");
+                serverExceptionHandler.Handle(new AggregateException("Failed to send push notifications", exceptions)
+                    .WithData(new() { { "UserRelatedPush", userRelatedPush } }));
             }
 
         }, default);

@@ -1,4 +1,4 @@
-﻿using CrystaLearn.Shared.Dtos.Identity;
+using CrystaLearn.Shared.Dtos.Identity;
 using CrystaLearn.Shared.Controllers.Identity;
 
 namespace CrystaLearn.Client.Core.Components.Pages.Authorized.Settings;
@@ -23,9 +23,9 @@ public partial class TwoFactorSection
 
     protected override async Task OnInitAsync()
     {
-        await SendTwoFactorAuthRequest(new());
-
         await base.OnInitAsync();
+
+        await SendTwoFactorAuthRequest(new());
     }
 
     private async Task EnableTwoFactorAuth()

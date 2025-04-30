@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging;
+using System.Security.Authentication;
 using CrystaLearn.Client.Maui.Services;
 
 namespace CrystaLearn.Client.Maui;
@@ -14,9 +15,11 @@ public static partial class MauiProgram
 
         services.AddTransient<MainPage>();
 
+        services.AddScoped<IWebAuthnService, MauiWebAuthnService>();
         services.AddScoped<IExceptionHandler, MauiExceptionHandler>();
         services.AddScoped<IBitDeviceCoordinator, MauiDeviceCoordinator>();
         services.AddScoped<IExternalNavigationService, MauiExternalNavigationService>();
+
         services.AddScoped(sp =>
         {
             var handler = sp.GetRequiredService<HttpMessageHandler>();
@@ -29,6 +32,17 @@ public static partial class MauiProgram
                 httpClient.DefaultRequestHeaders.Add("X-Origin", origin.ToString());
             }
             return httpClient;
+        });
+        services.AddKeyedScoped<HttpMessageHandler, SocketsHttpHandler>("PrimaryHttpMessageHandler", (sp, key) => new()
+        {
+            EnableMultipleHttp2Connections = true,
+            EnableMultipleHttp3Connections = true,
+            PooledConnectionLifetime = TimeSpan.FromMinutes(15),
+            AutomaticDecompression = System.Net.DecompressionMethods.All,
+            SslOptions = new()
+            {
+                EnabledSslProtocols = SslProtocols.Tls12 | SslProtocols.Tls13
+            }
         });
 
         services.AddSingleton<IStorageService, MauiStorageService>();

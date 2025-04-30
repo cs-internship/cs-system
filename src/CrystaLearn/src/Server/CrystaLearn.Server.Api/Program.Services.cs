@@ -1,27 +1,29 @@
-﻿using System.Net;
-using System.Net.Mail;
+﻿using System.ClientModel.Primitives;
 using System.IO.Compression;
-using System.Security.Cryptography.X509Certificates;
-using Microsoft.OpenApi.Models;
-using Microsoft.AspNetCore.OData;
-using Microsoft.Net.Http.Headers;
-using Microsoft.IdentityModel.Tokens;
-using Microsoft.AspNetCore.DataProtection;
-using Microsoft.AspNetCore.ResponseCompression;
-using Twilio;
-using PhoneNumbers;
-using FluentStorage;
-using FluentStorage.Blobs;
-using FluentEmail.Core;
+using System.Net;
+using System.Net.Mail;
+using System.Text;
 using AdsPush;
 using AdsPush.Abstraction;
+using CrystaLearn.Core.Data;
 using CrystaLearn.Core.Extensions;
-using CrystaLearn.Server.Api.Services;
-using CrystaLearn.Server.Api.Controllers;
 using CrystaLearn.Core.Models.Identity;
+using CrystaLearn.Server.Api.Services;
 using CrystaLearn.Server.Api.Services.Identity;
-using CrystaLearn.Core.Services;
-using CrystaLearn.Core.Services.Contracts;
+using CrystaLearn.Server.Api.Services.Jobs;
+using Fido2NetLib;
+using FluentEmail.Core;
+using FluentStorage;
+using FluentStorage.Blobs;
+using Ganss.Xss;
+using Hangfire.EntityFrameworkCore;
+using Microsoft.AspNetCore.OData;
+using Microsoft.AspNetCore.ResponseCompression;
+using Microsoft.IdentityModel.Tokens;
+using Microsoft.Net.Http.Headers;
+using Microsoft.OpenApi.Models;
+using PhoneNumbers;
+using Twilio;
 
 namespace CrystaLearn.Server.Api;
 
@@ -38,7 +40,9 @@ public static partial class Program
         configuration.Bind(appSettings);
 
         services.AddScoped<EmailService>();
+        services.AddScoped<EmailServiceJobsRunner>();
         services.AddScoped<PhoneService>();
+        services.AddScoped<PhoneServiceJobsRunner>();
         if (appSettings.Sms?.Configured is true)
         {
             TwilioClient.Init(appSettings.Sms.TwilioAccountSid, appSettings.Sms.TwilioAutoToken);
@@ -78,9 +82,18 @@ public static partial class Program
         });
         services.AddScoped<PushNotificationService>();
 
-        services.AddExceptionHandler<ServerExceptionHandler>();
+        services.AddSingleton<ServerExceptionHandler>();
+        services.AddSingleton(sp => (IProblemDetailsWriter)sp.GetRequiredService<ServerExceptionHandler>());
+        services.AddProblemDetails();
 
-        services.AddResponseCaching();
+        services.AddOutputCache(options =>
+        {
+            options.AddPolicy("AppResponseCachePolicy", policy =>
+            {
+                var builder = policy.AddPolicy<AppResponseCachePolicy>();
+            }, excludeDefaultPolicy: true);
+        });
+        services.AddDistributedMemoryCache();
 
         services.AddHttpContextAccessor();
 
@@ -111,18 +124,34 @@ public static partial class Program
                 policy.SetIsOriginAllowed(origin => settings.IsAllowedOrigin(new Uri(origin)))
                       .AllowAnyHeader()
                       .AllowAnyMethod()
-                      .WithExposedHeaders(HeaderNames.RequestId);
+                      .WithExposedHeaders(HeaderNames.RequestId, "Age", "App-Cache-Response");
             });
         });
 
         services.AddAntiforgery();
 
+        services.AddSingleton(sp =>
+        {
+            JsonSerializerOptions options = new JsonSerializerOptions(AppJsonContext.Default.Options);
+
+            options.TypeInfoResolverChain.Add(IdentityJsonContext.Default);
+            options.TypeInfoResolverChain.Add(ServerJsonContext.Default);
+
+            return options;
+        });
+
         services.ConfigureHttpJsonOptions(options => options.SerializerOptions.TypeInfoResolverChain.AddRange([AppJsonContext.Default, IdentityJsonContext.Default, ServerJsonContext.Default]));
+
+        services.AddSingleton<HtmlSanitizer>();
 
         services
             .AddControllers()
-            .AddJsonOptions(options => options.JsonSerializerOptions.TypeInfoResolverChain.AddRange([AppJsonContext.Default, IdentityJsonContext.Default, ServerJsonContext.Default]))
-            .AddApplicationPart(typeof(AppControllerBase).Assembly)
+            .AddJsonOptions(options =>
+            {
+                options.JsonSerializerOptions.DictionaryKeyPolicy = JsonNamingPolicy.CamelCase;
+                options.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
+                options.JsonSerializerOptions.TypeInfoResolverChain.AddRange([AppJsonContext.Default, IdentityJsonContext.Default, ServerJsonContext.Default]);
+            })
             .AddOData(options => options.EnableQueryFeatures())
             .AddDataAnnotationsLocalization(options => options.DataAnnotationLocalizerProvider = StringLocalizerProvider.ProvideLocalizer)
             .ConfigureApiBehaviorOptions(options =>
@@ -142,6 +171,20 @@ public static partial class Program
             signalRBuilder.AddAzureSignalR(options =>
             {
                 configuration.GetRequiredSection("Azure:SignalR").Bind(options);
+            });
+        }
+
+        services.AddPooledDbContextFactory<AppDbContext>(AddDbContext);
+        services.AddDbContextPool<AppDbContext>(AddDbContext);
+
+        void AddDbContext(DbContextOptionsBuilder options)
+        {
+            options.EnableSensitiveDataLogging(env.IsDevelopment())
+                .EnableDetailedErrors(env.IsDevelopment());
+
+            options.UseSqlServer(configuration.GetConnectionString("SqlServerConnectionString"), dbOptions =>
+            {
+
             });
         }
 
@@ -202,10 +245,162 @@ public static partial class Program
             }
         }
 
-
-        services.AddHttpClient<NugetStatisticsHttpClient>(c =>
+        services.AddHttpClient<GoogleRecaptchaService>(c =>
         {
+            c.Timeout = TimeSpan.FromSeconds(10);
+            c.BaseAddress = new Uri("https://www.google.com/recaptcha/");
+            c.DefaultRequestVersion = HttpVersion.Version20;
+            c.DefaultVersionPolicy = HttpVersionPolicy.RequestVersionOrHigher;
+        }).ConfigurePrimaryHttpMessageHandler(sp => new SocketsHttpHandler()
+        {
+            EnableMultipleHttp2Connections = true,
+            EnableMultipleHttp3Connections = true
+        });
+
+        services.AddHttpClient<NugetStatisticsService>(c =>
+        {
+            c.Timeout = TimeSpan.FromSeconds(3);
             c.BaseAddress = new Uri("https://azuresearch-usnc.nuget.org");
+            c.DefaultRequestVersion = HttpVersion.Version11;
+            c.DefaultVersionPolicy = HttpVersionPolicy.RequestVersionOrHigher;
+        }).ConfigurePrimaryHttpMessageHandler(sp => new SocketsHttpHandler()
+        {
+            EnableMultipleHttp2Connections = true,
+            EnableMultipleHttp3Connections = true
+        });
+
+        services.AddHttpClient<ResponseCacheService>(c =>
+        {
+            c.Timeout = TimeSpan.FromSeconds(10);
+            c.BaseAddress = new Uri("https://api.cloudflare.com/client/v4/zones/");
+            c.DefaultRequestVersion = HttpVersion.Version20;
+            c.DefaultVersionPolicy = HttpVersionPolicy.RequestVersionOrHigher;
+        }).ConfigurePrimaryHttpMessageHandler(sp => new SocketsHttpHandler()
+        {
+            EnableMultipleHttp2Connections = true,
+            EnableMultipleHttp3Connections = true
+        });
+
+        services.AddFido2(options =>
+        {
+
+        });
+
+        services.AddScoped(sp =>
+        {
+            var webAppUrl = sp.GetRequiredService<IHttpContextAccessor>()
+                .HttpContext!.Request.GetWebAppUrl();
+
+            var options = new Fido2Configuration
+            {
+                ServerDomain = webAppUrl.Host,
+                TimestampDriftTolerance = 1000,
+                ServerName = "CrystaLearn WebAuthn",
+                Origins = new HashSet<string>([webAppUrl.AbsoluteUri]),
+                ServerIcon = new Uri(webAppUrl, "images/icons/bit-logo.png").ToString()
+            };
+
+            return options;
+        });
+
+        services.AddHttpClient("AI", c =>
+        {
+            c.DefaultRequestVersion = HttpVersion.Version20;
+            c.DefaultVersionPolicy = HttpVersionPolicy.RequestVersionOrHigher;
+        }).ConfigurePrimaryHttpMessageHandler(sp => new SocketsHttpHandler()
+        {
+            EnableMultipleHttp2Connections = true,
+            EnableMultipleHttp3Connections = true
+        });
+
+        if (string.IsNullOrEmpty(appSettings.AI?.OpenAI?.ChatApiKey) is false)
+        {
+            // https://github.com/dotnet/extensions/tree/main/src/Libraries/Microsoft.Extensions.AI.OpenAI#microsoftextensionsaiopenai
+            services.AddChatClient(sp => new OpenAI.Chat.ChatClient(model: appSettings.AI.OpenAI.ChatModel, credential: new(appSettings.AI.OpenAI.ChatApiKey), options: new()
+            {
+                Endpoint = appSettings.AI.OpenAI.ChatEndpoint,
+                Transport = new HttpClientPipelineTransport(sp.GetRequiredService<IHttpClientFactory>().CreateClient("AI"))
+            }).AsIChatClient())
+            .UseLogging()
+            .UseFunctionInvocation();
+            // .UseDistributedCache()
+            // .UseOpenTelemetry()
+        }
+        else if (string.IsNullOrEmpty(appSettings.AI?.AzureOpenAI?.ChatApiKey) is false)
+        {
+            // https://github.com/dotnet/extensions/tree/main/src/Libraries/Microsoft.Extensions.AI.AzureAIInference#microsoftextensionsaiazureaiinference
+            services.AddChatClient(sp => new Azure.AI.Inference.ChatCompletionsClient(endpoint: appSettings.AI.AzureOpenAI.ChatEndpoint,
+                credential: new Azure.AzureKeyCredential(appSettings.AI.AzureOpenAI.ChatApiKey),
+                options: new()
+                {
+                    Transport = new Azure.Core.Pipeline.HttpClientTransport(sp.GetRequiredService<IHttpClientFactory>().CreateClient("AI"))
+                }).AsIChatClient(appSettings.AI.AzureOpenAI.ChatModel))
+            .UseLogging()
+            .UseFunctionInvocation();
+            // .UseDistributedCache()
+            // .UseOpenTelemetry()
+        }
+
+        if (string.IsNullOrEmpty(appSettings.AI?.OpenAI?.EmbeddingApiKey) is false)
+        {
+            services.AddEmbeddingGenerator(sp => new OpenAI.Embeddings.EmbeddingClient(model: appSettings.AI.OpenAI.EmbeddingModel, credential: new(appSettings.AI.OpenAI.EmbeddingApiKey), options: new()
+            {
+                Endpoint = appSettings.AI.OpenAI.EmbeddingEndpoint,
+                Transport = new HttpClientPipelineTransport(sp.GetRequiredService<IHttpClientFactory>().CreateClient("AI"))
+            }).AsIEmbeddingGenerator())
+            .UseLogging();
+            // .UseDistributedCache()
+            // .UseOpenTelemetry()
+        }
+        else if (string.IsNullOrEmpty(appSettings.AI?.AzureOpenAI?.EmbeddingApiKey) is false)
+        {
+            services.AddEmbeddingGenerator(sp => new Azure.AI.Inference.EmbeddingsClient(endpoint: appSettings.AI.AzureOpenAI.EmbeddingEndpoint,
+                credential: new Azure.AzureKeyCredential(appSettings.AI.AzureOpenAI.EmbeddingApiKey),
+                options: new()
+                {
+                    Transport = new Azure.Core.Pipeline.HttpClientTransport(sp.GetRequiredService<IHttpClientFactory>().CreateClient("AI"))
+                }).AsIEmbeddingGenerator(appSettings.AI.AzureOpenAI.EmbeddingModel))
+            .UseLogging();
+            // .UseDistributedCache()
+            // .UseOpenTelemetry()
+        }
+        builder.Services.AddHangfire(configuration =>
+       {
+           var efCoreStorage = configuration.UseEFCoreStorage(optionsBuilder =>
+           {
+               if (appSettings.Hangfire?.UseIsolatedStorage is true)
+               {
+
+                   var connectionString = "Data Source=CrystaLearnJobs.db;Mode=Memory;Cache=Shared;";
+                   var connection = new Microsoft.Data.Sqlite.SqliteConnection(connectionString);
+                   connection.Open();
+                   AppContext.SetData("ReferenceTheKeepTheInMemorySQLiteDatabaseAlive", connection);
+                   optionsBuilder.UseSqlite(connectionString);
+               }
+               else
+               {
+                   AddDbContext(optionsBuilder);
+               }
+           }, new()
+           {
+               Schema = "jobs",
+               QueuePollInterval = new TimeSpan(0, 0, 1)
+           });
+
+           if (appSettings.Hangfire?.UseIsolatedStorage is true)
+           {
+               efCoreStorage.UseDatabaseCreator();
+           }
+
+           configuration.UseRecommendedSerializerSettings();
+           configuration.UseSimpleAssemblyNameTypeSerializer();
+           configuration.UseIgnoredAssemblyVersionTypeResolver();
+           configuration.SetDataCompatibilityLevel(CompatibilityLevel.Version_180);
+       });
+
+        builder.Services.AddHangfireServer(options =>
+        {
+            options.SchedulePollingInterval = TimeSpan.FromSeconds(5);
         });
     }
 
@@ -217,14 +412,6 @@ public static partial class Program
         ServerApiSettings appSettings = new();
         configuration.Bind(appSettings);
         var identityOptions = appSettings.Identity;
-
-        var certificatePath = Path.Combine(AppContext.BaseDirectory, "DataProtectionCertificate.pfx");
-        var certificate = new X509Certificate2(certificatePath, appSettings.DataProtectionCertificatePassword, AppPlatform.IsWindows ? X509KeyStorageFlags.EphemeralKeySet : X509KeyStorageFlags.DefaultKeySet);
-
-        services.AddDataProtection()
-            .PersistKeysToDbContext<AppDbContext>()
-            .ProtectKeysWithCertificate(certificate);
-
 
         services.AddIdentity<User, Role>()
             .AddEntityFrameworkStores<AppDbContext>()
@@ -251,8 +438,8 @@ public static partial class Program
                 ClockSkew = TimeSpan.Zero,
                 RequireSignedTokens = true,
 
-                ValidateIssuerSigningKey = true,
-                IssuerSigningKey = new X509SecurityKey(certificate),
+                ValidateIssuerSigningKey = env.IsDevelopment() is false,
+                IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(appSettings.Identity.JwtIssuerSigningKeySecret)),
 
                 RequireExpirationTime = true,
                 ValidateLifetime = true,

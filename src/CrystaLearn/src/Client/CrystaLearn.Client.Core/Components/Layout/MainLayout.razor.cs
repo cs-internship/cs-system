@@ -1,4 +1,5 @@
 ﻿using System.Reflection;
+using Microsoft.AspNetCore.Components.Routing;
 
 namespace CrystaLearn.Client.Core.Components.Layout;
 
@@ -6,25 +7,22 @@ public partial class MainLayout : IAsyncDisposable
 {
     private BitDir? currentDir;
     private bool isNavPanelOpen;
+    private bool? isIdentityPage;
+    private bool isNavPanelToggled;
     private readonly BitModalParameters modalParameters = new() { Classes = new() { Root = "modal" } };
 
     /// <summary>
     /// <inheritdoc cref="Parameters.IsOnline"/>
     /// </summary>
-    private bool? isOnline = null;
-    private bool? isAuthenticated;
+    private bool? isOnline;
 
-    /// <summary>
-    /// <inheritdoc cref="Parameters.IsCrossLayoutPage"/>
-    /// </summary>
-    private bool? isCrossLayoutPage;
+    private bool? isAuthenticated;
     private AppThemeType? currentTheme;
     private RouteData? currentRouteData;
     private List<Action> unsubscribers = [];
-    private List<BitNavItem> navPanelItems = [];
-
 
     [AutoInject] private Keyboard keyboard = default!;
+    [AutoInject] private IJSRuntime jsRuntime = default!;
     [AutoInject] private AuthManager authManager = default!;
     [AutoInject] private ThemeService themeService = default!;
     [AutoInject] private PubSubService pubSubService = default!;
@@ -40,12 +38,23 @@ public partial class MainLayout : IAsyncDisposable
 
     protected override async Task OnInitializedAsync()
     {
+        await base.OnInitializedAsync();
+
         try
         {
+            var inPrerenderSession = RendererInfo.IsInteractive is false;
+            isOnline = await prerenderStateService.GetValue<bool?>(nameof(isOnline), async () => isOnline ?? inPrerenderSession is true ? true : null);
+            // During pre-rendering, if any API calls are made, the `isOnline` value will be set 
+            // using PubSub's `ClientPubSubMessages.IS_ONLINE_CHANGED`, depending on the success 
+            // or failure of the API call. However, if a pre-rendered page has no HTTP API call 
+            // dependencies, its value remains null. 
+            // Even though Server.Web and Server.Api may be deployed on different servers, 
+            // we can still assume that if the client is displaying a pre-rendered result, it is online.
+
             InitializeNavPanelItems();
 
-            navigationManager.LocationChanged += NavigationManagerLocationChanged;
-            authManager.AuthenticationStateChanged += AuthenticationStateChanged;
+            navigationManager.LocationChanged += NavigationManager_LocationChanged;
+            authManager.AuthenticationStateChanged += AuthManager_AuthenticationStateChanged;
 
             unsubscribers.Add(pubSubService.Subscribe(ClientPubSubMessages.CULTURE_CHANGED, async _ =>
             {
@@ -63,7 +72,7 @@ public partial class MainLayout : IAsyncDisposable
             unsubscribers.Add(pubSubService.Subscribe(ClientPubSubMessages.ROUTE_DATA_UPDATED, async payload =>
             {
                 currentRouteData = (RouteData?)payload;
-                SetIsCrossLayout();
+                SetRouteData();
                 StateHasChanged();
             }));
 
@@ -76,17 +85,16 @@ public partial class MainLayout : IAsyncDisposable
             unsubscribers.Add(pubSubService.Subscribe(ClientPubSubMessages.OPEN_NAV_PANEL, async _ =>
             {
                 isNavPanelOpen = true;
+                isNavPanelToggled = false;
                 StateHasChanged();
             }));
 
-            isAuthenticated = await prerenderStateService.GetValue(async () => (await AuthenticationStateTask).User.IsAuthenticated());
+            isAuthenticated = (await AuthenticationStateTask).User.IsAuthenticated();
 
             SetCurrentDir();
             currentTheme = await themeService.GetCurrentTheme();
 
             await bitExtraServices.AddRootCssClasses();
-
-            await base.OnInitializedAsync();
         }
         catch (Exception exp)
         {
@@ -105,16 +113,23 @@ public partial class MainLayout : IAsyncDisposable
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
+        await base.OnAfterRenderAsync(firstRender);
+
         if (firstRender)
         {
             await keyboard.Add(ButilKeyCodes.KeyX, OpenDiagnosticModal, ButilModifiers.Ctrl | ButilModifiers.Shift);
         }
-
-        await base.OnAfterRenderAsync(firstRender);
     }
 
 
-    private async void AuthenticationStateChanged(Task<AuthenticationState> task)
+    private void NavigationManager_LocationChanged(object? sender, LocationChangedEventArgs e)
+    {
+        // The sign-in and sign-up buttons href are bound to NavigationManager.GetRelativePath().
+        // To ensure the bound values update with each route change, it's necessary to call StateHasChanged on location changes.
+        StateHasChanged();
+    }
+
+    private async void AuthManager_AuthenticationStateChanged(Task<AuthenticationState> task)
     {
         try
         {
@@ -130,25 +145,16 @@ public partial class MainLayout : IAsyncDisposable
         }
     }
 
-    private void NavigationManagerLocationChanged(object? sender, Microsoft.AspNetCore.Components.Routing.LocationChangedEventArgs e)
-    {
-        StateHasChanged();
-    }
-
-
     private void SetCurrentDir()
     {
         currentDir = CultureInfo.CurrentUICulture.TextInfo.IsRightToLeft ? BitDir.Rtl : null;
     }
 
-    /// <summary>
-    /// <inheritdoc cref="Parameters.IsCrossLayoutPage"/>
-    /// </summary>
-    private void SetIsCrossLayout()
+    private void SetRouteData()
     {
         if (currentRouteData is null)
         {
-            isCrossLayoutPage = true;
+            isIdentityPage = false;
             return;
         }
 
@@ -156,17 +162,18 @@ public partial class MainLayout : IAsyncDisposable
 
         if (type.GetCustomAttributes<AuthorizeAttribute>(inherit: true).Any())
         {
-            isCrossLayoutPage = false;
+            isIdentityPage = false;
             return;
         }
 
-        if (type.Namespace?.Contains("Client.Core.Components.Pages.Identity") ?? false)
+        if (type.Namespace?.Contains("Client.Core.Components.Pages.Identity") is true)
         {
-            isCrossLayoutPage = false;
+            isIdentityPage = true;
+            isNavPanelOpen = false;
             return;
         }
 
-        isCrossLayoutPage = true;
+        isIdentityPage = false;
     }
 
     private void OpenDiagnosticModal()
@@ -174,23 +181,18 @@ public partial class MainLayout : IAsyncDisposable
         pubSubService.Publish(ClientPubSubMessages.SHOW_DIAGNOSTIC_MODAL);
     }
 
-
     private string GetMainCssClass()
     {
-        var authClass = isAuthenticated is false ? "unauthenticated"
-                      : isAuthenticated is true ? "authenticated"
-                      : string.Empty;
-
-        var crossClass = isCrossLayoutPage is true ? " cross-layout" : string.Empty;
-
-        return authClass + crossClass;
+        return isIdentityPage is true ? "identity"
+             : isIdentityPage is false ? "non-identity"
+             : string.Empty;
     }
+
 
     public async ValueTask DisposeAsync()
     {
-        navigationManager.LocationChanged -= NavigationManagerLocationChanged;
-
-        authManager.AuthenticationStateChanged -= AuthenticationStateChanged;
+        navigationManager.LocationChanged -= NavigationManager_LocationChanged;
+        authManager.AuthenticationStateChanged -= AuthManager_AuthenticationStateChanged;
 
         unsubscribers.ForEach(d => d.Invoke());
 

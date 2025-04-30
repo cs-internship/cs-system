@@ -1,11 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using CrystaLearn.Core.Services;
-using CrystaLearn.Core.Services.Contracts;
-using Microsoft.Extensions.Hosting;
+﻿using Microsoft.Extensions.Hosting;
 
 namespace CrystaLearn.Console.Extensions;
 public static class ApplicationBuilderExtensions

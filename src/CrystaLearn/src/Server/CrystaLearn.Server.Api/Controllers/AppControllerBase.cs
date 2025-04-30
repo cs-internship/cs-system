@@ -1,4 +1,6 @@
-﻿namespace CrystaLearn.Server.Api.Controllers;
+﻿using CrystaLearn.Core.Data;
+
+namespace CrystaLearn.Server.Api.Controllers;
 
 public partial class AppControllerBase : ControllerBase
 {

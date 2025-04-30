@@ -1,8 +1,46 @@
-﻿namespace CrystaLearn.Shared.Controllers;
+using CrystaLearn.Shared.Controllers;
 
-public interface IAppController
+namespace CrystaLearn.Shared.Controllers
 {
-    void AddQueryString(string existingQueryString) { }
-    void AddQueryString(string key, object? value) { }
-    void AddQueryStrings(Dictionary<string, object?> queryString) { }
+    public interface IAppController
+    {
+        void AddQueryString(string key, object? value) { }
+        void AddQueryStrings(Dictionary<string, object?> queryString) { }
+    }
+}
+
+namespace CrystaLearn.Shared
+{
+    public static class IAppControllerExtensions
+    {
+        public static TAppController WithQuery<TAppController>(this TAppController controller, string? existingQueryString)
+            where TAppController : IAppController
+        {
+            return controller.WithQuery(queryString: AppQueryStringCollection.Parse(existingQueryString));
+        }
+
+        public static TAppController WithQuery<TAppController>(this TAppController controller, string key, object? value)
+            where TAppController : IAppController
+        {
+            controller.AddQueryString(key, value);
+            return controller;
+        }
+
+        public static TAppController WithQuery<TAppController>(this TAppController controller, Dictionary<string, object?> queryString)
+            where TAppController : IAppController
+        {
+            controller.AddQueryStrings(queryString);
+            return controller;
+        }
+
+        public static TAppController WithQueryIf<TAppController>(this TAppController controller, bool condition, string key, object? value)
+            where TAppController : IAppController
+        {
+            if (condition)
+            {
+                controller.WithQuery(key, value);
+            }
+            return controller;
+        }
+    }
 }

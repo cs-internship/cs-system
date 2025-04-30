@@ -1,4 +1,4 @@
-﻿
+
 namespace CrystaLearn.Shared.Dtos.Identity;
 
 [DtoResourceType(typeof(AppStrings))]
@@ -27,5 +27,10 @@ public partial class IdentityRequestDto : IValidatableObject
                 memberNames: [nameof(UserName), nameof(Email), nameof(PhoneNumber)]
             );
         }
+    }
+
+    public override string? ToString()
+    {
+        return Email ?? PhoneNumber ?? UserName;
     }
 }

@@ -4,17 +4,8 @@
             "commandName": "Project",
             "launchBrowser": true,
             "environmentVariables": {
-                "ASPNETCORE_ENVIRONMENT": "Development"
-            },
-            "dotnetRunMessages": true,
-            "applicationUrl": "http://localhost:5000"
-        },
-        "CrystaLearn.Server.Web-Swagger": {
-            "commandName": "Project",
-            "launchBrowser": true,
-            "launchUrl": "swagger",
-            "environmentVariables": {
-                "ASPNETCORE_ENVIRONMENT": "Development"
+                "ASPNETCORE_ENVIRONMENT": "Development",
+                "IN_APP_SCSS_COMPILER_ENABLED": "true"
             },
             "dotnetRunMessages": true,
             "applicationUrl": "http://localhost:5000"
@@ -24,7 +15,8 @@
             "launchBrowser": true,
             "environmentVariables": {
                 "ASPNETCORE_ENVIRONMENT": "Development",
-                "WebAppRender:BlazorMode": "BlazorWebAssembly"
+                "WebAppRender:BlazorMode": "BlazorWebAssembly",
+                "IN_APP_SCSS_COMPILER_ENABLED": "true"
             },
             "dotnetRunMessages": true,
             "inspectUri": "{wsProtocol}://{url.hostname}:{url.port}/_framework/debug/ws-proxy?browser={browserInspectUri}",
@@ -48,7 +40,7 @@
                 "ASPNETCORE_ENVIRONMENT": "Development",
                 "ConnectionStrings__SqliteConnectionString": "Data Source=/container_volume/App_Data/CrystaLearnDb.db;"
             },
-            "DockerfileRunArguments": "-v C:\\DockerVolumes\\20D5215F-5E46-4176-8D60-2855C0E53204:/container_volume",
+            "DockerfileRunArguments": "-v C:\\DockerVolumes\\AD69594D-685D-441F-B0E1-6AB4212F3C09:/container_volume",
             "publishAllPorts": true,
             "useSSL": false,
             "httpPort": 5000
@@ -65,7 +57,7 @@
         "windowsAuthentication": false,
         "anonymousAuthentication": true,
         "iisExpress": {
-            "applicationUrl": "http://localhost:57278/",
+            "applicationUrl": "http://localhost:55000/",
             "httpPort": 5000
         }
     },

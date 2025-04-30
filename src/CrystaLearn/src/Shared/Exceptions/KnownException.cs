@@ -1,4 +1,4 @@
-﻿namespace CrystaLearn.Shared.Exceptions;
+namespace CrystaLearn.Shared.Exceptions;
 
 public abstract partial class KnownException : Exception
 {
@@ -27,4 +27,27 @@ public abstract partial class KnownException : Exception
     }
 
     public string? Key { get; set; }
+
+    /// <summary>
+    /// Read KnownExceptionExtensions.WithExtensionData comments.
+    /// </summary>
+    public bool TryGetExtensionDataValue<T>(string key, out T value)
+    {
+        value = default!;
+
+        if (Data[key] is object valueObj)
+        {
+            if (valueObj is T)
+            {
+                value = (T)valueObj;
+            }
+            else if (valueObj is JsonElement jsonElement)
+            {
+                value = jsonElement.Deserialize(AppJsonContext.Default.Options.GetTypeInfo<T>())!;
+            }
+            return true;
+        }
+
+        return false;
+    }
 }

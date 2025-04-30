@@ -13,6 +13,9 @@ public class CrystaTask : Entity
     public User? AssignedTo { get; set; }
     public User? CompletedBy { get; set; }
     public User? CreatedBy { get; set; }
+    public string? AssignedToText { get; set; }
+    public string? CompletedByText { get; set; }
+    public string? CreatedByText { get; set; }
     public string? Title { get; set; }
     public string? Description { get; set; }
     public string? DescriptionHtml { get; set; }
@@ -21,9 +24,14 @@ public class CrystaTask : Entity
     public DateTimeOffset? TaskAssignDateTime { get; set; }
     public CrystaTaskStatus? Status { get; set; }
     public string? ProviderTaskUrl { get; set; }
-    public SyncInfo? WorkItemSyncInfo { get; set; }
-    public SyncInfo? RevisionsSyncInfo { get; set; }
-    public SyncInfo? UpdatesSyncInfo { get; set; }
-    public SyncInfo? CommentsSyncInfo { get; set; }
+    public SyncInfo WorkItemSyncInfo { get; set; } = new();
+    public SyncInfo RevisionsSyncInfo { get; set; } = new();
+    public SyncInfo UpdatesSyncInfo { get; set; } = new();
+    public SyncInfo CommentsSyncInfo { get; set; }
     public CrystaProgram? CrystaProgram { get; set; }
+
+    public override string ToString()
+    {
+        return $"{Title} / {Description}";
+    }
 }

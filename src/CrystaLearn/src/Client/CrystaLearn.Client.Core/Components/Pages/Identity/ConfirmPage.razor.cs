@@ -1,4 +1,4 @@
-﻿using CrystaLearn.Shared.Dtos.Identity;
+using CrystaLearn.Shared.Dtos.Identity;
 using CrystaLearn.Shared.Controllers.Identity;
 
 namespace CrystaLearn.Client.Core.Components.Pages.Identity;
@@ -34,6 +34,8 @@ public partial class ConfirmPage
 
     protected override async Task OnInitAsync()
     {
+        await base.OnInitAsync();
+
         if (string.IsNullOrEmpty(EmailQueryString) is false)
         {
             emailModel.Email = EmailQueryString;
@@ -68,8 +70,6 @@ public partial class ConfirmPage
         {
             showEmailConfirmation = showPhoneConfirmation = true;
         }
-
-        await base.OnInitAsync();
     }
 
     private async Task ConfirmEmail()
@@ -99,7 +99,7 @@ public partial class ConfirmPage
 
         await WrapRequest(async () =>
         {
-            await identityController.SendConfirmEmailToken(new() { Email = emailModel.Email }, CurrentCancellationToken);
+            await identityController.SendConfirmEmailToken(new() { Email = emailModel.Email, ReturnUrl = ReturnUrlQueryString }, CurrentCancellationToken);
         });
     }
 

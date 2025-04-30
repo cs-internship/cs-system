@@ -1,4 +1,4 @@
-﻿namespace CrystaLearn.Shared.Controllers;
+namespace CrystaLearn.Shared.Controllers;
 
 public interface IMinimalApiController : IAppController
 {

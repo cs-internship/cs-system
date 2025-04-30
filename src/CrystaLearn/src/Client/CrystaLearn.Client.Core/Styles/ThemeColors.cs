@@ -1,4 +1,4 @@
-﻿namespace CrystaLearn.Client.Core.Styles;
+namespace CrystaLearn.Client.Core.Styles;
 
 public partial class ThemeColors
 {

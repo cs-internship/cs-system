@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.SignalR;
+﻿using System.Web;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.AspNetCore.SignalR.Client;
 using BlazorApplicationInsights.Interfaces;
 using Microsoft.AspNetCore.Components.Routing;
@@ -15,14 +16,12 @@ public partial class ClientAppCoordinator : AppComponentBase
     [AutoInject] private Notification notification = default!;
     [AutoInject] private HubConnection hubConnection = default!;
     [AutoInject] private IApplicationInsights appInsights = default!;
-    [AutoInject] private Navigator navigator = default!;
     [AutoInject] private UserAgent userAgent = default!;
     [AutoInject] private IJSRuntime jsRuntime = default!;
     [AutoInject] private IStorageService storageService = default!;
     [AutoInject] private ILogger<AuthManager> authLogger = default!;
     [AutoInject] private ILogger<Navigator> navigatorLogger = default!;
     [AutoInject] private ILogger<ClientAppCoordinator> logger = default!;
-    [AutoInject] private CultureInfoManager cultureInfoManager = default!;
     [AutoInject] private IBitDeviceCoordinator bitDeviceCoordinator = default!;
     [AutoInject] private IPushNotificationService pushNotificationService = default!;
 
@@ -30,6 +29,8 @@ public partial class ClientAppCoordinator : AppComponentBase
 
     protected override async Task OnInitAsync()
     {
+        await base.OnInitAsync();
+
         if (AppPlatform.IsBlazorHybrid)
         {
             await ConfigureUISetup();
@@ -39,16 +40,27 @@ public partial class ClientAppCoordinator : AppComponentBase
         {
             unsubscribe = PubSubService.Subscribe(ClientPubSubMessages.NAVIGATE_TO, async (uri) =>
             {
-                NavigationManager.NavigateTo(uri!.ToString()!);
+                var uriValue = uri?.ToString()!;
+                var replace = uriValue.Contains("replace=true", StringComparison.InvariantCultureIgnoreCase);
+                var forceLoad = uriValue.Contains("forceLoad=true", StringComparison.InvariantCultureIgnoreCase);
+                NavigationManager.NavigateTo(uriValue.Replace("replace=true", "", StringComparison.InvariantCultureIgnoreCase).Replace("forceLoad=true", "", StringComparison.InvariantCultureIgnoreCase).TrimEnd('&'), forceLoad, replace);
             });
-            TelemetryContext.TimeZone = await jsRuntime.GetTimeZone();
-            TelemetryContext.Culture = CultureInfo.CurrentCulture.Name;
-            TelemetryContext.PageUrl = NavigationManager.Uri;
             if (AppPlatform.IsBlazorHybrid is false)
             {
-                var userAgentData = await userAgent.Extract();
-                TelemetryContext.Platform = string.Join(' ', [userAgentData.Manufacturer, userAgentData.OsName, userAgentData.Name, "browser"]);
+                try
+                {
+                    BitButil.UseFastInvoke(); // Ensures that `TelemetryContext.Platform` is available to components using this value in their `OnInitAsync` method, such as `SignInPage.razor.cs`.
+                    var userAgentData = await userAgent.Extract();
+                    TelemetryContext.Platform = string.Join(' ', [userAgentData.Manufacturer, userAgentData.OsName, userAgentData.Name, "browser"]);
+                }
+                finally
+                {
+                    BitButil.UseNormalInvoke();
+                }
             }
+            TelemetryContext.TimeZone = await jsRuntime.GetTimeZone();
+            TelemetryContext.Culture = CultureInfo.CurrentCulture.Name;
+            TelemetryContext.PageUrl = HttpUtility.UrlDecode(NavigationManager.Uri);
 
             _ = appInsights.AddTelemetryInitializer(new()
             {
@@ -63,16 +75,14 @@ public partial class ClientAppCoordinator : AppComponentBase
             NavigationManager.LocationChanged += NavigationManager_LocationChanged;
             AuthManager.AuthenticationStateChanged += AuthenticationStateChanged;
             SubscribeToSignalREventsMessages();
-            await PropagateUserId(firstRun: true, AuthenticationStateTask);
+            await PropagateAuthState(firstRun: true, AuthenticationStateTask);
         }
-
-        await base.OnInitAsync();
     }
 
     private void NavigationManager_LocationChanged(object? sender, LocationChangedEventArgs e)
     {
-        TelemetryContext.PageUrl = e.Location;
-        navigatorLogger.LogInformation("Navigator's location changed to {Location}", e.Location);
+        TelemetryContext.PageUrl = HttpUtility.UrlDecode(e.Location);
+        navigatorLogger.LogInformation("Navigator's location changed to {Location}", TelemetryContext.PageUrl);
     }
 
     private Guid? lastPropagatedUserId = Guid.Empty;
@@ -80,7 +90,7 @@ public partial class ClientAppCoordinator : AppComponentBase
     /// This code manages the association of a user with sensitive services, such as SignalR, push notifications, App Insights, and others, 
     /// ensuring the user is correctly set or cleared as needed.
     /// </summary>
-    public async Task PropagateUserId(bool firstRun, Task<AuthenticationState> task)
+    public async Task PropagateAuthState(bool firstRun, Task<AuthenticationState> task)
     {
         try
         {
@@ -89,7 +99,7 @@ public partial class ClientAppCoordinator : AppComponentBase
             var userId = isAuthenticated ? user.GetUserId() : (Guid?)null;
             if (lastPropagatedUserId == userId)
                 return;
-            Abort(); // Cancels ongoing user id propagation, because the new authentication state is available.
+            await Abort(); // Cancels ongoing user id propagation, because the new authentication state is available.
             lastPropagatedUserId = userId;
             TelemetryContext.UserId = userId;
             TelemetryContext.UserSessionId = isAuthenticated ? user.GetSessionId() : null;
@@ -119,9 +129,13 @@ public partial class ClientAppCoordinator : AppComponentBase
                 authLogger.LogInformation("Propagating {AuthStateType} {AuthState} authentication state.", firstRun ? "Initial" : "Updated", user.IsAuthenticated() ? "Authenticated" : "Anonymous");
             }
 
-            await pushNotificationService.Subscribe(CurrentCancellationToken);
-
             await StartSignalR();
+
+            if (firstRun)
+            {
+                await Task.Delay(10_000, CurrentCancellationToken); // No rush to subscribe to push notifications.
+            }
+            await pushNotificationService.Subscribe(CurrentCancellationToken);
         }
         catch (Exception exp)
         {
@@ -131,7 +145,7 @@ public partial class ClientAppCoordinator : AppComponentBase
 
     private void AuthenticationStateChanged(Task<AuthenticationState> task)
     {
-        _ = PropagateUserId(firstRun: false, task);
+        _ = PropagateAuthState(firstRun: false, task);
     }
 
     private void SubscribeToSignalREventsMessages()
@@ -163,6 +177,11 @@ public partial class ClientAppCoordinator : AppComponentBase
         {
             logger.LogInformation("SignalR Message {Message} received from server to publish.", message);
             PubSubService.Publish(message, payload);
+        }));
+
+        signalROnDisposables.Add(hubConnection.On<AppProblemDetails>(SignalREvents.EXCEPTION_THROWN, async (appProblemDetails) =>
+        {
+            ExceptionHandler.Handle(appProblemDetails, displayKind: ExceptionDisplayKind.NonInterrupting);
         }));
 
         hubConnection.Closed += HubConnectionStateChange;
@@ -212,9 +231,9 @@ public partial class ClientAppCoordinator : AppComponentBase
 
     private async Task ConfigureUISetup()
     {
-        if (CultureInfoManager.MultilingualEnabled)
+        if (CultureInfoManager.InvariantGlobalization is false)
         {
-            cultureInfoManager.SetCurrentCulture(new Uri(NavigationManager.Uri).GetCulture() ??  // 1- Culture query string OR Route data request culture
+            CultureInfoManager.SetCurrentCulture(new Uri(NavigationManager.Uri).GetCulture() ??  // 1- Culture query string OR Route data request culture
                                                  await storageService.GetItem("Culture") ?? // 2- User settings
                                                  CultureInfo.CurrentUICulture.Name); // 3- OS settings
         }
@@ -223,6 +242,8 @@ public partial class ClientAppCoordinator : AppComponentBase
     private List<IDisposable> signalROnDisposables = [];
     protected override async ValueTask DisposeAsync(bool disposing)
     {
+        await base.DisposeAsync(disposing);
+
         unsubscribe?.Invoke();
 
         NavigationManager.LocationChanged -= NavigationManager_LocationChanged;
@@ -232,7 +253,5 @@ public partial class ClientAppCoordinator : AppComponentBase
         hubConnection.Reconnected -= HubConnectionConnected;
         hubConnection.Reconnecting -= HubConnectionStateChange;
         signalROnDisposables.ForEach(d => d.Dispose());
-
-        await base.DisposeAsync(disposing);
     }
 }

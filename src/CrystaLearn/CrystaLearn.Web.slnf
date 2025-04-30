@@ -1,6 +1,6 @@
 {
   "solution": {
-    "path": "CrystaLearn.sln",
+    "path": "CrystaLearn.slnx",
     "projects": [
       "src\\Client\\CrystaLearn.Client.Core\\CrystaLearn.Client.Core.csproj",
       "src\\Client\\CrystaLearn.Client.Web\\CrystaLearn.Client.Web.csproj",

@@ -1,4 +1,4 @@
-﻿using CrystaLearn.Tests.Extensions;
+using CrystaLearn.Tests.Extensions;
 
 namespace CrystaLearn.Tests;
 

@@ -1,4 +1,4 @@
-﻿using Foundation;
+using Foundation;
 using UIKit;
 using UserNotifications;
 using CrystaLearn.Client.Maui.Platforms.iOS.Services;

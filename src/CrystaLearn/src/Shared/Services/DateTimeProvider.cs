@@ -1,4 +1,4 @@
-﻿namespace CrystaLearn.Shared.Services;
+namespace CrystaLearn.Shared.Services;
 
 public partial class DateTimeProvider : IDateTimeProvider
 {

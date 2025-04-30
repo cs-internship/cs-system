@@ -1,4 +1,4 @@
-﻿using CrystaLearn.Client.Maui.Platforms.MacCatalyst.Services;
+using CrystaLearn.Client.Maui.Platforms.MacCatalyst.Services;
 
 namespace Microsoft.Extensions.DependencyInjection;
 

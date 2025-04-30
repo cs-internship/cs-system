@@ -1,4 +1,4 @@
-﻿namespace CrystaLearn.Shared.Dtos;
+namespace CrystaLearn.Shared.Dtos;
 
 public partial class PagedResult<T>
 {

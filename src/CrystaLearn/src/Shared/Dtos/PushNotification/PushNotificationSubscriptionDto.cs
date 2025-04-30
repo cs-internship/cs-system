@@ -1,4 +1,4 @@
-﻿namespace CrystaLearn.Shared.Dtos.PushNotification;
+namespace CrystaLearn.Shared.Dtos.PushNotification;
 
 [DtoResourceType(typeof(AppStrings))]
 public partial class PushNotificationSubscriptionDto

@@ -12,8 +12,7 @@ public static partial class Urls
 
     public const string AboutPage = "/about";
 
-    public static readonly string[] All = typeof(Urls).GetFields()
-                                                      .Where(f => f.FieldType == typeof(string))
-                                                      .Select(f => f.GetValue(null)!.ToString()!)
-                                                      .ToArray();
+    public const string SystemPrompts = "/system-prompts";
+
+    public const string Authorize = "/authorize";
 }

@@ -1,4 +1,6 @@
-﻿using CrystaLearn.Shared.Dtos.Identity;
+using Fido2NetLib;
+using Fido2NetLib.Objects;
+using CrystaLearn.Shared.Dtos.Identity;
 
 namespace CrystaLearn.Shared.Controllers.Identity;
 
@@ -28,6 +30,7 @@ public interface IIdentityController : IAppController
     Task<TokenResponseDto> Refresh(RefreshRequestDto request, CancellationToken cancellationToken) => default!;
 
     [HttpPost]
+    [NoRetryPolicy] // Please note that retrying requests with Google reCaptcha will not work, as the Google verification mechanism only accepts a captcha response once.
     Task SignUp(SignUpRequestDto request, CancellationToken cancellationToken);
 
     [HttpPost]
@@ -41,4 +44,16 @@ public interface IIdentityController : IAppController
 
     [HttpGet("{?provider,returnUrl,localHttpPort}")]
     Task<string> GetSocialSignInUri(string provider, string? returnUrl = null, int? localHttpPort = null, CancellationToken cancellationToken = default);
+
+    [HttpPost]
+    Task<AssertionOptions> GetWebAuthnAssertionOptions(WebAuthnAssertionOptionsRequestDto request, CancellationToken cancellationToken);
+
+    [HttpPost]
+    Task<VerifyAssertionResult> VerifyWebAuthAssertion(AuthenticatorAssertionRawResponse clientResponse, CancellationToken cancellationToken);
+
+    [HttpPost]
+    Task<SignInResponseDto> VerifyWebAuthAndSignIn(VerifyWebAuthnAndSignInDto request, CancellationToken cancellationToken) => default!;
+
+    [HttpPost]
+    Task VerifyWebAuthAndSendTwoFactorToken(AuthenticatorAssertionRawResponse clientResponse, CancellationToken cancellationToken);
 }

@@ -1,14 +1,12 @@
-﻿using System.Runtime.CompilerServices;
+using System.Runtime.CompilerServices;
 
 namespace CrystaLearn.Client.Core.Services;
 
 /// <summary>
 /// <inheritdoc cref="IPrerenderStateService"/>
 /// </summary>
-public class NoopPrerenderStateService : IPrerenderStateService
+public class NoOpPrerenderStateService : IPrerenderStateService
 {
-    public ValueTask DisposeAsync() => ValueTask.CompletedTask;
-
     public Task<T?> GetValue<T>(Func<Task<T?>> factory, 
         [CallerLineNumber] int lineNumber = 0, 
         [CallerMemberName] string memberName = "", 
@@ -21,4 +19,6 @@ public class NoopPrerenderStateService : IPrerenderStateService
     {
         return factory();
     }
+
+    public ValueTask DisposeAsync() => ValueTask.CompletedTask;
 }

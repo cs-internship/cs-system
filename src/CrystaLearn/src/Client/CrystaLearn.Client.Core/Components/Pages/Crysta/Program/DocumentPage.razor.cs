@@ -1,6 +1,5 @@
 ﻿using CrystaLearn.Shared.Controllers.Crysta;
 using CrystaLearn.Shared.Dtos.Crysta;
-using CrystaLearn.Shared.Services;
 
 namespace CrystaLearn.Client.Core.Components.Pages.Crysta.Program;
 
@@ -33,7 +32,7 @@ public partial class DocumentPage
 
     protected override Task OnParamsSetAsync()
     {
-        
+
 
         return base.OnParamsSetAsync();
     }
@@ -72,7 +71,7 @@ public partial class DocumentPage
                 });
             }
 
-            var allNavItems = root.ChildItems.SelectMany(n => new List<BitNavItem>([n,..(n.ChildItems)])).ToList();
+            var allNavItems = root.ChildItems.SelectMany(n => new List<BitNavItem>([n, .. (n.ChildItems)])).ToList();
             allNavItems.Add(root);
 
             foreach (var item in allNavItems)
@@ -142,7 +141,7 @@ public partial class DocumentPage
         {
             return;
         }
-        
+
         SetCurrentDocument(document);
         //NavigationManager.NavigateTo(Urls.Crysta.Program(ProgramCode).DocPage(document.Code));
     }

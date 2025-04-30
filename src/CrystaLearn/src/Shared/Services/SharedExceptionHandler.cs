@@ -31,7 +31,7 @@ public partial class SharedExceptionHandler
         return exceptionMessageToLog;
     }
 
-    protected Exception UnWrapException(Exception exception)
+    public Exception UnWrapException(Exception exception)
     {
         if (exception is AggregateException aggregateException)
         {
@@ -45,7 +45,7 @@ public partial class SharedExceptionHandler
         return exception;
     }
 
-    protected bool IgnoreException(Exception exception)
+    public bool IgnoreException(Exception exception)
     {
         if (exception is KnownException)
             return false;
@@ -54,5 +54,24 @@ public partial class SharedExceptionHandler
             exception is OperationCanceledException ||
             exception is TimeoutException ||
             (exception.InnerException is not null && IgnoreException(exception.InnerException));
+    }
+
+    protected IDictionary<string, object?> GetExceptionData(Exception exp)
+    {
+        var data = exp.Data.Keys.Cast<string>()
+            .Zip(exp.Data.Values.Cast<object?>())
+            .ToDictionary(item => item.First, item => item.Second);
+
+        if (exp.InnerException is not null)
+        {
+            var innerData = GetExceptionData(exp.InnerException);
+
+            foreach (var innerDataItem in innerData)
+            {
+                data[innerDataItem.Key] = innerDataItem.Value;
+            }
+        }
+
+        return data;
     }
 }

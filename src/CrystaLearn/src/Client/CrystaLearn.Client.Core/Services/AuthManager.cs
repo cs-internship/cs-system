@@ -1,5 +1,6 @@
 ﻿using CrystaLearn.Shared.Dtos.Identity;
 using CrystaLearn.Shared.Controllers.Identity;
+using CrystaLearn.Client.Core.Services.HttpMessageHandlers;
 
 namespace CrystaLearn.Client.Core.Services;
 
@@ -20,7 +21,6 @@ public partial class AuthManager : AuthenticationStateProvider, IAsyncDisposable
     [AutoInject] private IStringLocalizer<AppStrings> localizer = default!;
     [AutoInject] private IIdentityController identityController = default!;
     [AutoInject] private IAuthorizationService authorizationService = default!;
-    [AutoInject] private IPrerenderStateService prerenderStateService = default!;
 
     public void OnInit()
     {
@@ -87,6 +87,7 @@ public partial class AuthManager : AuthenticationStateProvider, IAsyncDisposable
     /// <summary>
     /// To prevent multiple simultaneous refresh token requests.
     /// </summary>
+    private SemaphoreSlim semaphore = new(1, 1);
     private TaskCompletionSource<string?>? accessTokenTsc = null;
 
     public Task<string?> RefreshToken(string requestedBy, string? elevatedAccessToken = null)
@@ -101,41 +102,45 @@ public partial class AuthManager : AuthenticationStateProvider, IAsyncDisposable
 
         async Task RefreshTokenImplementation()
         {
-            authLogger.LogInformation("Refreshing access token requested by {RequestedBy}", requestedBy);
-            string? refreshToken = await storageService.GetItem("refresh_token");
             try
             {
-                if (string.IsNullOrEmpty(refreshToken))
-                    throw new UnauthorizedException(localizer[nameof(AppStrings.YouNeedToSignIn)]);
+                await semaphore.WaitAsync();
+                authLogger.LogInformation("Refreshing access token requested by {RequestedBy}", requestedBy);
+                string? refreshToken = await storageService.GetItem("refresh_token");
+                try
+                {
+                    if (string.IsNullOrEmpty(refreshToken))
+                        throw new UnauthorizedException(localizer[nameof(AppStrings.YouNeedToSignIn)]);
 
-                var refreshTokenResponse = await identityController.Refresh(new()
-                {
-                    RefreshToken = refreshToken,
-                    DeviceInfo = telemetryContext.Platform,
-                    ElevatedAccessToken = elevatedAccessToken
-                }, default);
-                await StoreTokens(refreshTokenResponse);
-                accessTokenTsc.SetResult(refreshTokenResponse.AccessToken!);
-            }
-            catch (Exception exp)
-            {
-                exceptionHandler.Handle(exp, parameters: new()
-                {
-                    { "AdditionalData", "Refreshing access token failed." },
-                    { "RefreshTokenRequestedBy", requestedBy }
-                });
-
-                if (exp is UnauthorizedException // refresh token is also invalid.
-                    || exp is ReusedRefreshTokenException && refreshToken == await storageService.GetItem("refresh_token"))
-                {
-                    await ClearTokens();
+                    var refreshTokenResponse = await identityController.Refresh(new()
+                    {
+                        RefreshToken = refreshToken,
+                        DeviceInfo = telemetryContext.Platform,
+                        ElevatedAccessToken = elevatedAccessToken
+                    }, default);
+                    await StoreTokens(refreshTokenResponse);
+                    accessTokenTsc.SetResult(refreshTokenResponse.AccessToken!);
                 }
+                catch (Exception exp)
+                {
+                    exceptionHandler.Handle(exp, parameters: new()
+                    {
+                        { "AdditionalData", "Refreshing access token failed." },
+                        { "RefreshTokenRequestedBy", requestedBy }
+                    });
 
-                accessTokenTsc.SetResult(null);
+                    if (exp is UnauthorizedException) // refresh token is also invalid
+                    {
+                        await ClearTokens();
+                    }
+
+                    accessTokenTsc.SetResult(null);
+                }
             }
             finally
             {
                 accessTokenTsc = null;
+                semaphore.Release();
             }
         }
     }
@@ -146,14 +151,14 @@ public partial class AuthManager : AuthenticationStateProvider, IAsyncDisposable
     /// - If no access / refresh token exists, an anonymous user object is returned to Blazor.
     /// - If an access token exists, a ClaimsPrincipal is created from it regardless of its expiration status. This ensures:
     ///   - Users can access anonymous-allowed pages without unnecessary delays caused by token refresh attempts **during app startup**.
-    ///   - For protected pages, it is typical for these pages to make HTTP requests to secured APIs. In such cases, the `AuthDelegatingHandler.cs`
+    ///   - For protected pages, it is typical for these pages to make HTTP requests to secured APIs. In such cases, the `<see cref="AuthDelegatingHandler"/>`
     ///     validates the access token and refreshes it if necessary, keeping Blazor updated with the latest authentication state.
     /// </summary>
     public override async Task<AuthenticationState> GetAuthenticationStateAsync()
     {
         try
         {
-            var accessToken = await prerenderStateService.GetValue(() => tokenProvider.GetAccessToken());
+            var accessToken = await tokenProvider.GetAccessToken();
 
             return new AuthenticationState(IAuthTokenProvider.ParseAccessToken(accessToken, validateExpiry: false));
         }
@@ -192,6 +197,20 @@ public partial class AuthManager : AuthenticationStateProvider, IAsyncDisposable
         return string.IsNullOrEmpty(accessToken) is false;
     }
 
+    public async Task<string?> GetFreshAccessToken(string requestedBy)
+    {
+        var accessToken = await tokenProvider.GetAccessToken();
+
+        if (string.IsNullOrEmpty(accessToken))
+            return null;
+
+        var isValid = IAuthTokenProvider.ParseAccessToken(accessToken, validateExpiry: true).IsAuthenticated();
+
+        if (isValid) return accessToken;
+
+        return await RefreshToken(requestedBy);
+    }
+
     private async Task ClearTokens()
     {
         await storageService.RemoveItem("access_token");
@@ -205,6 +224,7 @@ public partial class AuthManager : AuthenticationStateProvider, IAsyncDisposable
 
     public async ValueTask DisposeAsync()
     {
+        semaphore.Dispose();
         unsubscribe?.Invoke();
     }
 }

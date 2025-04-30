@@ -1,4 +1,4 @@
-﻿namespace CrystaLearn.Client.Core.Components.Pages;
+namespace CrystaLearn.Client.Core.Components.Pages;
 
 public partial class NotAuthorizedPage
 {
@@ -10,6 +10,8 @@ public partial class NotAuthorizedPage
 
     protected override async Task OnAfterFirstRenderAsync()
     {
+        await base.OnAfterFirstRenderAsync();
+
         try
         {
             var refreshToken = await StorageService.GetItem("refresh_token");
@@ -36,15 +38,13 @@ public partial class NotAuthorizedPage
             isUpdatingAuthState = false;
             StateHasChanged();
         }
-
-        await base.OnAfterFirstRenderAsync();
     }
 
     private async Task SignOut()
     {
         await AuthManager.SignOut(CurrentCancellationToken);
         var returnUrl = ReturnUrl ?? NavigationManager.GetRelativePath();
-        NavigationManager.NavigateTo(Urls.SignInPage + (string.IsNullOrEmpty(returnUrl) ? string.Empty : $"?return-url={returnUrl}"));
+        NavigationManager.NavigateTo($"{Urls.SignInPage}?return-url={Uri.EscapeDataString(returnUrl)}");
     }
 }
 
@@ -58,6 +58,6 @@ public partial class RedirectToSignInPage : AppComponentBase
 
         await AuthManager.SignOut(CurrentCancellationToken);
         var returnUrl = ReturnUrl ?? NavigationManager.GetRelativePath();
-        NavigationManager.NavigateTo(Urls.SignInPage + (string.IsNullOrEmpty(returnUrl) ? string.Empty : $"?return-url={returnUrl}"));
+        NavigationManager.NavigateTo($"{Urls.SignInPage}?return-url={Uri.EscapeDataString(returnUrl)}");
     }
 }

@@ -1,4 +1,6 @@
-﻿using CrystaLearn.Core.Services.Contracts;
+﻿using System.Web;
+using CrystaLearn.Core.Mappers;
+using CrystaLearn.Core.Services.Contracts;
 using CrystaLearn.Shared.Controllers.Crysta;
 using CrystaLearn.Shared.Dtos.Crysta;
 
@@ -26,9 +28,8 @@ public partial class DocumentController : AppControllerBase, IDocumentController
     public async Task<DocumentDto?> GetContentByCrystaUrl([FromBody] string crystaUrl, string culture,
         CancellationToken cancellationToken)
     {
-        var result = await DocumentRepository.GetDocumentByCrystaUrlAsync(crystaUrl, culture, cancellationToken);
+        var decoded = HttpUtility.UrlDecode(crystaUrl);
+        var result = await DocumentRepository.GetDocumentByCrystaUrlAsync(decoded, culture, cancellationToken);
         return result;
     }
-
-   
 }

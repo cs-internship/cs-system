@@ -1,4 +1,4 @@
-﻿using CrystaLearn.Shared.Dtos.PushNotification;
+using CrystaLearn.Shared.Dtos.PushNotification;
 
 namespace CrystaLearn.Client.Core.Services.Contracts;
 

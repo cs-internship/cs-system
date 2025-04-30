@@ -1,4 +1,4 @@
-﻿using CrystaLearn.Client.Core;
+using CrystaLearn.Client.Core;
 
 namespace CrystaLearn.Client.Maui;
 

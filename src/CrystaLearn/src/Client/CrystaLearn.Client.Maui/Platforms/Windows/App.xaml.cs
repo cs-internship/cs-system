@@ -1,4 +1,4 @@
-﻿namespace CrystaLearn.Client.Maui.Platforms.Windows;
+namespace CrystaLearn.Client.Maui.Platforms.Windows;
 
 public partial class App
 {

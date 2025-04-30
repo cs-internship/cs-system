@@ -1,4 +1,4 @@
-﻿namespace CrystaLearn.Shared.Dtos.Identity;
+namespace CrystaLearn.Shared.Dtos.Identity;
 
 [DtoResourceType(typeof(AppStrings))]
 public partial class RefreshRequestDto

@@ -1,4 +1,4 @@
-﻿namespace CrystaLearn.Shared.Dtos.Identity;
+namespace CrystaLearn.Shared.Dtos.Identity;
 
 [DtoResourceType(typeof(AppStrings))]
 public partial class SignUpRequestDto : IdentityRequestDto
@@ -14,6 +14,8 @@ public partial class SignUpRequestDto : IdentityRequestDto
     [Display(Name = nameof(AppStrings.Password))]
     public string? Password { get; set; }
 
+    /// <example>null</example>
+    public string? GoogleRecaptchaResponse { get; set; }
 
     /// <example>/</example>
     public string? ReturnUrl { get; set; } = Urls.HomePage;

@@ -1,4 +1,4 @@
-﻿using CrystaLearn.Client.Core.Services;
+using CrystaLearn.Client.Core.Services;
 using CrystaLearn.Client.Core.Services.Contracts;
 using CrystaLearn.Shared.Controllers.Identity;
 using CrystaLearn.Tests.Services;

@@ -1,4 +1,4 @@
-﻿namespace CrystaLearn.Client.Core.Services.DiagnosticLog;
+namespace CrystaLearn.Client.Core.Services.DiagnosticLog;
 
 public class DiagnosticLog
 {
