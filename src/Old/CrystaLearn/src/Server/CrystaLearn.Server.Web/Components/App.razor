@@ -1,0 +1,95 @@
+@using CrystaLearn.Client.Web.Components
+@using CrystaLearn.Server.Web.Components.Layout
+@using Microsoft.AspNetCore.Components.Routing
+
+@{
+    var noPrerender = HttpContext.Request.Query["no-prerender"].Count > 0;
+    var renderMode = noPrerender ? noPrerenderBlazorWebAssembly : serverWebSettings.WebAppRender.RenderMode;
+    if (HttpContext.AcceptsInteractiveRouting() is false)
+    {
+        // https://learn.microsoft.com/en-us/aspnet/core/release-notes/aspnetcore-9.0?view=aspnetcore-9.0#add-static-server-side-rendering-ssr-pages-to-a-globally-interactive-blazor-web-app
+        renderMode = null;
+    }
+}
+
+<!DOCTYPE html>
+<html bit-theme="dark">
+
+<head>
+    <base href="/" />
+
+    <meta charset="utf-8" />
+    <meta name="theme-color">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <meta name="description" content="@localizer[nameof(AppStrings.DescriptionMetaTagValue)]" />
+
+    <Script>
+        // disable auto-zoom of iOS Safari when focusing an input
+        (/iPad|iPhone|iPod/.test(navigator.userAgent)) &&
+            (document.querySelector('meta[name="viewport"]').content = 'width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover')
+    </Script>
+
+    <Link rel="preconnect" href="https://www.google.com" />
+    <Link rel="preconnect" href="https://www.gstatic.com" crossorigin />
+
+    <Link rel="preconnect" href="@absoluteServerAddress.ToString()" />@* for PWA *@
+
+    <Link rel="icon" href="favicon.ico" type="image/x-icon" />
+    <HeadOutlet @rendermode=renderMode />
+    <Link rel="preconnect" href="https://js.monitor.azure.com" crossorigin />
+    <!-- Perform the initial static render of ApplicationInsightsInit to start App Insights ASAP. -->
+    <BlazorApplicationInsights.ApplicationInsightsInit />
+    @if (renderMode is not null)
+    {
+        <!-- Initialize IApplicationInsights service using ApplicationInsightsInit with rendermode. -->
+        <!-- Use `IsWasmStandalone` to prevent re-downloading scripts. -->
+        <BlazorApplicationInsights.ApplicationInsightsInit IsWasmStandalone="true" @rendermode=renderMode />
+    }
+    <Link rel="apple-touch-icon" sizes="512x512" href="images/icons/bit-icon-512.png" />
+    <Link rel="manifest" href="manifest.json" />
+</head>
+
+<body class="@BitCss.Class.Color.Background.Primary @BitCss.Class.Color.Foreground.Primary bit-blazor-web">
+
+    <Link rel="stylesheet" href="_content/Bit.BlazorUI/styles/bit.blazorui.css" />
+    <Link rel="stylesheet" href="_content/Bit.BlazorUI.Icons/styles/bit.blazorui.icons.css" />
+    <Link rel="stylesheet" href="_content/Bit.BlazorUI.Assets/styles/bit.blazorui.assets.css" />
+    <Link rel="stylesheet" href="_content/Bit.BlazorUI.Extras/styles/bit.blazorui.extras.css" />
+    <Link rel="stylesheet" href="_content/CrystaLearn.Client.Core/styles/app.css" />
+    <Link rel="stylesheet" href="CrystaLearn.Server.Web.styles.css" />
+
+    @if (renderMode != null && (serverWebSettings.WebAppRender.PrerenderEnabled is false || noPrerender))
+    {
+        <LoadingComponent @rendermode="null" />
+    }
+
+    @if (HttpContext.Request.DisableStreamPrerendering())
+    {
+        // For StreamRenderingDisabledContainer, read comments in App.razor.cs
+        <StreamRenderingDisabledContainer>
+            <Routes @rendermode=renderMode Layout="@(renderMode is null ? typeof(SsrLayout) : null)" />
+        </StreamRenderingDisabledContainer>
+    }
+    else
+    {
+        <StreamRenderingEnabledContainer>
+            <Routes @rendermode=renderMode Layout="@(renderMode is null ? typeof(SsrLayout) : null)" />
+        </StreamRenderingEnabledContainer>
+    }
+
+    @if (HttpContext.Request.IsLightHouseRequest() is false)
+    {
+        <!-- If you don't plan to older browsers and prefer to use the original `blazor.web.js`, follow the instructions in this link: https://github.com/orgs/bitfoundation/discussions/10238#discussioncomment-12493737 -->
+        <Script Src="_content/Bit.BlazorES2019/blazor.web.js" autostart="false"></Script>
+        <Script Src="_content/Bit.Bswup/bit-bswup.js" blazorScript="_content/Bit.BlazorES2019/blazor.web.js"></Script>
+        <Script src="_content/Bit.Bswup/bit-bswup.progress.js"></Script>
+        <AppBswupProgressBar />
+        <Script src="_content/Bit.Butil/bit-butil.js"></Script>
+        <Script src="_content/Bit.BlazorUI/scripts/bit.blazorui.js"></Script>
+        <Script src="_content/CrystaLearn.Client.Core/scripts/app.js"></Script>
+        <Script src="_content/Bit.BlazorUI.Extras/scripts/bit.blazorui.extras.js"></Script>
+    }
+</body>
+
+</html>
+

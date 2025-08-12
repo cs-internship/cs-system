@@ -1,4 +1,4 @@
-using CrystaLearn.Server.Api.Services;
+﻿using CrystaLearn.Server.Api.Services;
 using CrystaLearn.Shared.Dtos.PushNotification;
 using CrystaLearn.Shared.Controllers.PushNotification;
 
@@ -13,12 +13,8 @@ public partial class PushNotificationController : AppControllerBase, IPushNotifi
     [HttpPost]
     public async Task Subscribe([Required] PushNotificationSubscriptionDto subscription, CancellationToken cancellationToken)
     {
-        await pushNotificationService.Subscribe(subscription, cancellationToken);
-    }
+        HttpContext.ThrowIfContainsExpiredAccessToken();
 
-    [HttpPost("{deviceId}")]
-    public async Task Unsubscribe([Required] string deviceId, CancellationToken cancellationToken)
-    {
-        await pushNotificationService.Unsubscribe(deviceId, cancellationToken);
+        await pushNotificationService.Subscribe(subscription, cancellationToken);
     }
 }

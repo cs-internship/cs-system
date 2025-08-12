@@ -1,13 +1,10 @@
-﻿using System.IO.Compression;
-using Microsoft.Net.Http.Headers;
-using Microsoft.AspNetCore.ResponseCompression;
-using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.Net.Http.Headers;
+using CrystaLearn.Server.Api;
 using CrystaLearn.Client.Web;
 using CrystaLearn.Server.Web.Services;
 using Microsoft.AspNetCore.Antiforgery;
 using CrystaLearn.Client.Core.Services.Contracts;
-using CrystaLearn.Client.Web.Services;
-using CrystaLearn.Client.Core.Services;
+using CrystaLearn.Client.Core.Services.HttpMessageHandlers;
 
 namespace CrystaLearn.Server.Web;
 
@@ -19,12 +16,14 @@ public static partial class Program
         var services = builder.Services;
         var configuration = builder.Configuration;
 
-        if (AppEnvironment.IsDev())
+        if (AppEnvironment.IsDevelopment())
         {
             builder.Logging.AddDiagnosticLogger();
         }
 
         services.AddClientWebProjectServices(configuration);
+
+        builder.AddServerApiProjectServices();
 
         services.AddSingleton(sp =>
         {
@@ -32,50 +31,6 @@ public static partial class Program
             configuration.Bind(settings);
             return settings;
         });
-
-        services.AddOutputCache(options =>
-        {
-            options.AddPolicy("AppResponseCachePolicy", policy =>
-            {
-                var builder = policy.AddPolicy<AppResponseCachePolicy>();
-            }, excludeDefaultPolicy: true);
-        });
-        services.AddDistributedMemoryCache();
-
-        services.AddHttpContextAccessor();
-
-        services.AddResponseCompression(opts =>
-        {
-            opts.EnableForHttps = true;
-            opts.MimeTypes = ResponseCompressionDefaults.MimeTypes.Concat(["application/octet-stream"]).ToArray();
-            opts.Providers.Add<BrotliCompressionProvider>();
-            opts.Providers.Add<GzipCompressionProvider>();
-        })
-            .Configure<BrotliCompressionProviderOptions>(opt => opt.Level = CompressionLevel.Fastest)
-            .Configure<GzipCompressionProviderOptions>(opt => opt.Level = CompressionLevel.Fastest);
-
-        services.AddApplicationInsightsTelemetry(configuration);
-
-        services.AddAntiforgery();
-
-        services.AddAuthentication(options =>
-        {
-            options.DefaultScheme = IdentityConstants.BearerScheme;
-        }).AddBearerToken(IdentityConstants.BearerScheme, options =>
-        {
-            options.BearerTokenProtector = new SimpleJwtSecureDataFormat();
-            options.RefreshTokenProtector = new SimpleJwtSecureDataFormat();
-
-            options.Events = new()
-            {
-                OnMessageReceived = async context =>
-                {
-                    // The server accepts the accessToken from either the authorization header, the cookie, or the request URL query string
-                    context.Token ??= context.Request.Query.ContainsKey("access_token") ? context.Request.Query["access_token"] : context.Request.Cookies["access_token"];
-                }
-            };
-        });
-        services.AddAuthorization();
 
         services.AddOptions<ServerWebSettings>()
             .Bind(configuration)
@@ -94,7 +49,7 @@ public static partial class Program
         services.AddTransient<IPrerenderStateService, WebServerPrerenderStateService>();
         services.AddScoped<IExceptionHandler, WebServerExceptionHandler>();
         services.AddScoped<IAuthTokenProvider, ServerSideAuthTokenProvider>();
-        services.AddScoped(sp =>
+        services.AddScoped<HttpClient>(sp =>
         {
             // This HTTP client is utilized during pre-rendering and within Blazor Auto/Server sessions for API calls. 
             // Key headers such as Authorization and AcceptLanguage headers are added in Client/Core/Services/HttpMessageHandlers. 
@@ -112,7 +67,8 @@ public static partial class Program
                 serverAddress = new Uri(currentRequest.GetBaseUrl(), serverAddress);
             }
 
-            var httpClient = new HttpClient(sp.GetRequiredService<HttpMessageHandler>())
+            var handlerFactory = sp.GetRequiredService<HttpMessageHandlersChainFactory>();
+            var httpClient = new HttpClient(handlerFactory.Invoke())
             {
                 BaseAddress = serverAddress
             };
@@ -147,11 +103,6 @@ public static partial class Program
             httpClient.DefaultRequestHeaders.Add("X-Origin", currentRequest.GetBaseUrl().ToString());
 
             return httpClient;
-        });
-        services.AddKeyedScoped<HttpMessageHandler, SocketsHttpHandler>("PrimaryHttpMessageHandler", (sp, key) => new()
-        {
-            EnableMultipleHttp2Connections = true,
-            EnableMultipleHttp3Connections = true
         });
 
         services.AddRazorComponents()

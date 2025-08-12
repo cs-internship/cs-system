@@ -1,4 +1,5 @@
 ﻿using PhoneNumbers;
+using CrystaLearn.Server.Api.Services.Jobs;
 
 namespace CrystaLearn.Server.Api.Services;
 
@@ -9,7 +10,7 @@ public partial class PhoneService
     [AutoInject] private readonly IHostEnvironment hostEnvironment = default!;
     [AutoInject] private readonly ILogger<PhoneService> phoneLogger = default!;
     [AutoInject] private readonly IHttpContextAccessor httpContextAccessor = default!;
-    //[AutoInject] private readonly IBackgroundJobClient backgroundJobClient = default!;
+    [AutoInject] private readonly IBackgroundJobClient backgroundJobClient = default!;
 
     public virtual string? NormalizePhoneNumber(string? phoneNumber)
     {
@@ -37,7 +38,7 @@ public partial class PhoneService
 
         var from = appSettings.Sms!.FromPhoneNumber!;
 
-        //backgroundJobClient.Enqueue<PhoneServiceJobsRunner>(x => x.SendSms(phoneNumber, from, messageText, default));
+        backgroundJobClient.Enqueue<PhoneServiceJobsRunner>(x => x.SendSms(phoneNumber, from, messageText, default));
     }
 
     [LoggerMessage(Level = LogLevel.Information, Message = "SMS: {message} to {phoneNumber}.")]

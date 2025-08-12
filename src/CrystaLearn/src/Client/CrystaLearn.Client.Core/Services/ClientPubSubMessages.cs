@@ -11,6 +11,7 @@ public partial class ClientPubSubMessages
 
     public const string THEME_CHANGED = nameof(THEME_CHANGED);
     public const string OPEN_NAV_PANEL = nameof(OPEN_NAV_PANEL);
+    public const string CLOSE_NAV_PANEL = nameof(CLOSE_NAV_PANEL);
     public const string CULTURE_CHANGED = nameof(CULTURE_CHANGED);
     /// <summary>
     /// <inheritdoc cref="Parameters.IsOnline"/>
@@ -26,4 +27,9 @@ public partial class ClientPubSubMessages
     public const string SHOW_DIAGNOSTIC_MODAL = nameof(SHOW_DIAGNOSTIC_MODAL);
 
 
+
+
+    public const string SOCIAL_SIGN_IN = nameof(SOCIAL_SIGN_IN);
+
+    public const string FORCE_UPDATE = nameof(FORCE_UPDATE);
 }

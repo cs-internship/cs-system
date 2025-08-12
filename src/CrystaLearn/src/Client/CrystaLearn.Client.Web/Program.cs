@@ -11,7 +11,6 @@ public static partial class Program
     {
         var builder = WebAssemblyHostBuilder.CreateDefault(args);
 
-
         AppEnvironment.Set(builder.HostEnvironment.Environment);
 
         builder.Configuration.AddClientConfigurations(clientEntryAssemblyName: "CrystaLearn.Client.Web");
@@ -65,7 +64,7 @@ public static partial class Program
             services.GetRequiredService<IExceptionHandler>().Handle(exp, parameters: new()
             {
                 { nameof(reportedBy), reportedBy }
-            }, displayKind: AppEnvironment.IsDev() ? ExceptionDisplayKind.NonInterrupting : ExceptionDisplayKind.None);
+            }, displayKind: AppEnvironment.IsDevelopment() ? ExceptionDisplayKind.NonInterrupting : ExceptionDisplayKind.None);
         }
         else
         {

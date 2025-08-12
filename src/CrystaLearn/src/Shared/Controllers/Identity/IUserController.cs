@@ -1,5 +1,4 @@
-using Fido2NetLib;
-using CrystaLearn.Shared.Dtos.Identity;
+﻿using CrystaLearn.Shared.Dtos.Identity;
 
 namespace CrystaLearn.Shared.Controllers.Identity;
 
@@ -18,8 +17,11 @@ public interface IUserController : IAppController
     [HttpPost("{id}")]
     Task RevokeSession(Guid id, CancellationToken cancellationToken);
 
+    [HttpPost]
+    Task UpdateSession(UpdateUserSessionRequestDto request, CancellationToken cancellationToken);
+
     [HttpPut]
-    Task<UserDto> Update(EditUserDto userDto, CancellationToken cancellationToken);
+    Task<UserDto> Update(EditUserRequestDto userDto, CancellationToken cancellationToken);
 
     [HttpPost]
     Task ChangePassword(ChangePasswordRequestDto request, CancellationToken cancellationToken);
@@ -50,14 +52,17 @@ public interface IUserController : IAppController
     Task SendElevatedAccessToken(CancellationToken cancellationToken);
 
     [HttpGet]
-    Task<CredentialCreateOptions> GetWebAuthnCredentialOptions(CancellationToken cancellationToken);
+    Task<JsonElement> GetWebAuthnCredentialOptions(CancellationToken cancellationToken) => default!;
 
     [HttpPut]
-    Task CreateWebAuthnCredential(AuthenticatorAttestationRawResponse attestationResponse, CancellationToken cancellationToken);
+    Task CreateWebAuthnCredential(JsonElement attestationResponse, CancellationToken cancellationToken) => default!;
 
     [HttpDelete]
-    Task DeleteWebAuthnCredential(byte[] credentialId, CancellationToken cancellationToken);
+    Task DeleteWebAuthnCredential(JsonElement clientResponse, CancellationToken cancellationToken) => default!;
 
     [HttpDelete]
     Task DeleteAllWebAuthnCredentials(CancellationToken cancellationToken);
+
+    [HttpPost("{userSessionId}")]
+    Task<UserSessionNotificationStatus> ToggleNotification(Guid userSessionId, CancellationToken cancellationToken);
 }

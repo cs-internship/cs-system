@@ -1,0 +1,44 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net9.0</TargetFramework>
+        <Nullable>enable</Nullable>
+        <IsTestProject>true</IsTestProject>
+        <RunSettingsFilePath>$(MSBuildProjectDirectory)\.runsettings</RunSettingsFilePath>
+      <UserSecretsId>3b84084b-a242-44aa-8f47-f144fe1b6b83</UserSecretsId>
+  </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="coverlet.collector">
+          <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+          <PrivateAssets>all</PrivateAssets>
+        </PackageReference>
+        <PackageReference Include="FakeItEasy" />
+        <PackageReference Include="Microsoft.NET.Test.Sdk" />
+        <PackageReference Include="Microsoft.Playwright.MSTest" />
+        <PackageReference Include="MSTest.TestAdapter" />
+        <PackageReference Include="MSTest.TestFramework" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\Server\CrystaLearn.Server.Web\CrystaLearn.Server.Web.csproj" />
+        <ProjectReference Include="..\Server\CrystaLearn.Server.Api\CrystaLearn.Server.Api.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <Using Include="System.Net.Http.Headers" />
+        <Using Include="System.Net.Http.Json" />
+        <Using Include="CrystaLearn.Shared" />
+        <Using Include="CrystaLearn.Server.Web" />
+        <Using Include="CrystaLearn.Shared.Enums" />
+        <Using Include="Microsoft.AspNetCore.Http" />
+        <Using Include="Microsoft.AspNetCore.Components" />
+        <Using Include="Microsoft.VisualStudio.TestTools.UnitTesting" />
+        <Using Include="Microsoft.Playwright" />
+        <Using Include="Microsoft.Playwright.MSTest" />
+        <Using Include="FakeItEasy" />
+                <PackageReference Include="GitHubActionsTestLogger" PrivateAssets="all" />
+            </ItemGroup>
+
+    
+</Project>

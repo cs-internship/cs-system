@@ -14,9 +14,9 @@ public class ScssCompilerService
             return;
 
         if (Environment.GetEnvironmentVariable("IN_APP_SCSS_COMPILER_ENABLED") is not "true")
-            return; // Checkout Visual Studio's launchSettings.json
+            return; // Check out Visual Studio's launchSettings.json
 
-        if (AppPlatform.IsWindows is false)
+        if (OperatingSystem.IsWindows() is false)
             return;
 
         var clientCorePath = Path.Combine(Environment.CurrentDirectory, "../../Client/CrystaLearn.Client.Core");
@@ -31,21 +31,29 @@ public class ScssCompilerService
             return;
         }
 
+        // The ScssCompilerService operates from the Client.Core directory.
+        // Using .:., it locates all .scss files in the `Styles` and `Components` folders of Client.Core (see --load-path),
+        // compiles them to CSS, and saves them alongside the .scss files.
+        // It also compiles app.scss to app.css and places it in the wwwroot/styles folder.
+        // For Client.Web, Client.Maui, or Client.Windows, if present, the process is similar,
+        // but uses ../../Client/CrystaLearn.Client.Web:../../Client/CrystaLearn.Client.Web instead of .:.,
+        // as the working directory remains Client.Core.
+
         var sassPathsToWatch = new List<string>
         {
-            ".:.", "Styles/app.scss:wwwroot/styles/app.css"
+            "Components:Components", "Styles/app.scss:wwwroot/styles/app.css"
         };
 
-        if (Path.Exists(Path.Combine(Environment.CurrentDirectory, "../../Client/CrystaLearn.Client.Maui")))
-            sassPathsToWatch.Add("../../Client/CrystaLearn.Client.Maui:../../Client/CrystaLearn.Client.Maui");
+        if (Path.Exists(Path.Combine(Environment.CurrentDirectory, "../../Client/CrystaLearn.Client.Maui/Components")))
+            sassPathsToWatch.Add("../../Client/CrystaLearn.Client.Maui/Components:../../Client/CrystaLearn.Client.Maui/Components");
 
-        if (Path.Exists(Path.Combine(Environment.CurrentDirectory, "../../Client/CrystaLearn.Client.Windows")))
-            sassPathsToWatch.Add("../../Client/CrystaLearn.Client.Windows:../../Client/CrystaLearn.Client.Windows");
+        if (Path.Exists(Path.Combine(Environment.CurrentDirectory, "../../Client/CrystaLearn.Client.Windows/Components")))
+            sassPathsToWatch.Add("../../Client/CrystaLearn.Client.Windows/Components:../../Client/CrystaLearn.Client.Windows/Components");
 
-        if (Path.Exists(Path.Combine(Environment.CurrentDirectory, "../../Client/CrystaLearn.Client.Web")))
-            sassPathsToWatch.Add("../../Client/CrystaLearn.Client.Web:../../Client/CrystaLearn.Client.Web");
+        if (Path.Exists(Path.Combine(Environment.CurrentDirectory, "../../Client/CrystaLearn.Client.Web/Components")))
+            sassPathsToWatch.Add("../../Client/CrystaLearn.Client.Web/Components:../../Client/CrystaLearn.Client.Web/Components");
 
-        var command = $"{string.Join(" ", sassPathsToWatch)} --style compressed --load-path=. --silence-deprecation=import --update --watch";
+        var command = $"{string.Join(" ", sassPathsToWatch)} --style compressed --silence-deprecation=import --update --watch --color";
 
         // Create a job object to ensure the child process terminates with the parent
         using var job = new JobObject();

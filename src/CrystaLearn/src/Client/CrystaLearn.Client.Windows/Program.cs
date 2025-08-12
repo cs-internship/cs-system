@@ -4,6 +4,7 @@ using CrystaLearn.Client.Core.Components;
 using CrystaLearn.Client.Windows.Services;
 using Microsoft.Extensions.Logging;
 using Microsoft.AspNetCore.Components.WebView.WindowsForms;
+using Velopack.Logging;
 
 namespace CrystaLearn.Client.Windows;
 
@@ -50,11 +51,11 @@ public partial class Program
             Icon = Icon.ExtractAssociatedIcon(Application.ExecutablePath)
         };
         var pubSubService = Services.GetRequiredService<PubSubService>();
-        pubSubService.Subscribe(ClientPubSubMessages.CULTURE_CHANGED, async culture =>
+        _ = pubSubService.Subscribe(ClientPubSubMessages.CULTURE_CHANGED, async culture =>
         {
             Application.Restart();
         });
-        pubSubService.Subscribe(ClientPubSubMessages.PAGE_DATA_CHANGED, async args =>
+        _ = pubSubService.Subscribe(ClientPubSubMessages.PAGE_DATA_CHANGED, async args =>
         {
             var (title, _, __) = ((string? title, string?, bool))args!;
             await form.InvokeAsync(() =>
@@ -64,26 +65,12 @@ public partial class Program
         });
 
         // https://github.com/velopack/velopack
-        VelopackApp.Build().Run(Services.GetRequiredService<ILogger<VelopackApp>>());
+        VelopackApp.Build().Run();
         _ = Task.Run(async () =>
         {
             try
             {
-                var windowsUpdateSettings = Services.GetRequiredService<ClientWindowsSettings>().WindowsUpdate;
-                if (string.IsNullOrEmpty(windowsUpdateSettings?.FilesUrl))
-                {
-                    return;
-                }
-                var updateManager = new UpdateManager(windowsUpdateSettings.FilesUrl);
-                var updateInfo = await updateManager.CheckForUpdatesAsync();
-                if (updateInfo is not null)
-                {
-                    await updateManager.DownloadUpdatesAsync(updateInfo);
-                    if (windowsUpdateSettings.AutoReload)
-                    {
-                        updateManager.ApplyUpdatesAndRestart(updateInfo, args);
-                    }
-                }
+                await ((WindowsAppUpdateService)Services.GetRequiredService<IAppUpdateService>()).Update();
             }
             catch (Exception exp)
             {
@@ -115,7 +102,7 @@ public partial class Program
                 args.State = CoreWebView2PermissionState.Allow;
             };
             var settings = blazorWebView.WebView.CoreWebView2.Settings;
-            if (AppEnvironment.IsDev() is false)
+            if (AppEnvironment.IsDevelopment() is false)
             {
                 settings.IsZoomControlEnabled = false;
                 settings.AreBrowserAcceleratorKeysEnabled = false;
@@ -143,7 +130,7 @@ public partial class Program
             Services.GetRequiredService<IExceptionHandler>().Handle(exp, parameters: new()
             {
                 { nameof(reportedBy), reportedBy }
-            }, displayKind: AppEnvironment.IsDev() ? ExceptionDisplayKind.NonInterrupting : ExceptionDisplayKind.None);
+            }, displayKind: AppEnvironment.IsDevelopment() ? ExceptionDisplayKind.NonInterrupting : ExceptionDisplayKind.None);
         }
         else
         {

@@ -1,6 +1,6 @@
-﻿@attribute [Route(Urls.Crysta.DocsPageRoutePattern + "/{*DocPath}")]
+﻿@using CrystaLearn.Shared.Dtos.Crysta
+@attribute [Route(Urls.Crysta.DocsPageRoutePattern + "/{*DocPath}")]
 @attribute [Route("{culture?}" + Urls.Crysta.DocsPageRoutePattern)]
-@using CrystaLearn.Shared.Dtos.Crysta
 @inherits AppPageBase
 
 <PageTitle>@Localizer[nameof(AppStrings.TermsPageTitle)]</PageTitle>

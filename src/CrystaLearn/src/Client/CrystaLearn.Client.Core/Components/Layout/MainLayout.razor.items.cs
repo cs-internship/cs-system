@@ -2,71 +2,146 @@
 
 public partial class MainLayout
 {
-    private List<BitNavItem> navPanelAuthenticatedItems = [];
-    private List<BitNavItem> navPanelUnAuthenticatedItems = [];
+    private List<BitNavItem> navPanelItems = [];
 
     [AutoInject] protected IStringLocalizer<AppStrings> localizer = default!;
+    [AutoInject] protected IAuthorizationService authorizationService = default!;
 
-    private void InitializeNavPanelItems()
+    private async Task SetNavPanelItems(ClaimsPrincipal authUser)
     {
-        BitNavItem homeNavItem = new()
-        {
-            Text = localizer[nameof(AppStrings.Home)],
-            IconName = BitIconName.Home,
-            Url = Urls.HomePage,
-        };
-
-        BitNavItem termsNavItem = new()
-        {
-            Text = localizer[nameof(AppStrings.Terms)],
-            IconName = BitIconName.EntityExtraction,
-            Url = Urls.TermsPage,
-        };
-
-        navPanelUnAuthenticatedItems = [homeNavItem, termsNavItem];
-
-        navPanelAuthenticatedItems =
+        navPanelItems =
         [
-            homeNavItem,
-            termsNavItem
+            new()
+            {
+                Text = localizer[nameof(AppStrings.Home)],
+                IconName = BitIconName.Home,
+                Url = PageUrls.Home,
+            }
         ];
 
 
-        navPanelAuthenticatedItems.Add(new()
+        var (dashboard, manageProductCatalog) = await (authorizationService.IsAuthorizedAsync(authUser!, AppFeatures.AdminPanel.Dashboard),
+            authorizationService.IsAuthorizedAsync(authUser!, AppFeatures.AdminPanel.ManageProductCatalog));
+
+        if (dashboard || manageProductCatalog)
         {
-            Text = localizer[nameof(AppStrings.SystemPromptsTitle)],
-            IconName = BitIconName.TextDocumentSettings,
-            Url = Urls.SystemPrompts,
-        });
-        navPanelUnAuthenticatedItems.Add(new()
+            BitNavItem adminPanelItem = new()
+            {
+                Text = localizer[nameof(AppStrings.AdminPanel)],
+                IconName = BitIconName.Admin,
+                ChildItems = []
+            };
+
+            navPanelItems.Add(adminPanelItem);
+
+            if (dashboard)
+            {
+                adminPanelItem.ChildItems.Add(new()
+                {
+                    Text = localizer[nameof(AppStrings.Dashboard)],
+                    IconName = BitIconName.BarChartVerticalFill,
+                    Url = PageUrls.Dashboard,
+                });
+            }
+
+            if (manageProductCatalog)
+            {
+                adminPanelItem.ChildItems.AddRange(
+                [
+                    new()
+                        {
+                            Text = localizer[nameof(AppStrings.Categories)],
+                            IconName = BitIconName.BuildQueue,
+                            Url = PageUrls.Categories,
+                        },
+                        new()
+                        {
+                            Text = localizer[nameof(AppStrings.Products)],
+                            IconName = BitIconName.Product,
+                            Url = PageUrls.Products,
+                        }
+                ]);
+            }
+        }
+
+
+
+        navPanelItems.Add(new()
         {
-            Text = localizer[nameof(AppStrings.SystemPromptsTitle)],
-            IconName = BitIconName.TextDocumentSettings,
-            Url = Urls.SystemPrompts,
+            Text = localizer[nameof(AppStrings.Terms)],
+            IconName = BitIconName.EntityExtraction,
+            Url = PageUrls.Terms,
         });
 
-        BitNavItem aboutNavItem = new()
+        navPanelItems.Add(new()
         {
             Text = localizer[nameof(AppStrings.About)],
             IconName = BitIconName.Info,
-            Url = Urls.AboutPage,
-        };
-
-        navPanelAuthenticatedItems.Add(aboutNavItem);
-        navPanelUnAuthenticatedItems.Add(aboutNavItem);
-
-        navPanelAuthenticatedItems.Add(new()
-        {
-            Text = localizer[nameof(AppStrings.Settings)],
-            IconName = BitIconName.Equalizer,
-            Url = Urls.SettingsPage,
-            AdditionalUrls =
-            [
-                $"{Urls.SettingsPage}/{Urls.SettingsSections.Profile}",
-                $"{Urls.SettingsPage}/{Urls.SettingsSections.Account}",
-                $"{Urls.SettingsPage}/{Urls.SettingsSections.Tfa}",
-                $"{Urls.SettingsPage}/{Urls.SettingsSections.Sessions}",
-            ]
+            Url = PageUrls.About,
         });
+
+        var (manageRoles, manageUsers, manageAiPrompt) = await (authorizationService.IsAuthorizedAsync(authUser!, AppFeatures.Management.ManageRoles),
+            authorizationService.IsAuthorizedAsync(authUser!, AppFeatures.Management.ManageUsers),
+            authorizationService.IsAuthorizedAsync(authUser!, AppFeatures.Management.ManageAiPrompt));
+
+        if (manageRoles || manageUsers || manageAiPrompt)
+        {
+            BitNavItem managementItem = new()
+            {
+                Text = localizer[nameof(AppStrings.Management)],
+                IconName = BitIconName.SettingsSecure,
+                ChildItems = []
+            };
+
+            navPanelItems.Add(managementItem);
+
+            if (manageRoles)
+            {
+                managementItem.ChildItems.Add(new()
+                {
+                    Text = localizer[nameof(AppStrings.UserGroups)],
+                    IconName = BitIconName.WorkforceManagement,
+                    Url = PageUrls.Roles,
+                });
+            }
+
+            if (manageUsers)
+            {
+                managementItem.ChildItems.Add(new()
+                {
+                    Text = localizer[nameof(AppStrings.Users)],
+                    IconName = BitIconName.SecurityGroup,
+                    Url = PageUrls.Users,
+                });
+            }
+
+            if (manageAiPrompt)
+            {
+                managementItem.ChildItems.Add(new()
+                {
+                    Text = localizer[nameof(AppStrings.SystemPromptsTitle)],
+                    IconName = BitIconName.TextDocumentSettings,
+                    Url = PageUrls.SystemPrompts,
+                });
+            }
+        }
+
+        if (authUser.IsAuthenticated())
+        {
+            navPanelItems.Add(new()
+            {
+                Text = localizer[nameof(AppStrings.Settings)],
+                IconName = BitIconName.Equalizer,
+                Url = PageUrls.Settings,
+                AdditionalUrls =
+                [
+                    $"{PageUrls.Settings}/{PageUrls.SettingsSections.Profile}",
+                    $"{PageUrls.Settings}/{PageUrls.SettingsSections.Account}",
+                    $"{PageUrls.Settings}/{PageUrls.SettingsSections.Tfa}",
+                    $"{PageUrls.Settings}/{PageUrls.SettingsSections.Sessions}",
+                    $"{PageUrls.Settings}/{PageUrls.SettingsSections.UpgradeAccount}",
+                ]
+            });
+        }
     }
 }

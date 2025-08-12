@@ -1,4 +1,4 @@
-using CrystaLearn.Shared.Dtos.PushNotification;
+﻿using CrystaLearn.Shared.Dtos.PushNotification;
 
 namespace CrystaLearn.Shared.Controllers.PushNotification;
 
@@ -7,7 +7,4 @@ public interface IPushNotificationController : IAppController
 {
     [HttpPost]
     Task Subscribe([Required] PushNotificationSubscriptionDto subscription, CancellationToken cancellationToken);
-
-    [HttpPost("{deviceId}")]
-    Task Unsubscribe([Required] string deviceId, CancellationToken cancellationToken);
 }

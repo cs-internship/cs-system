@@ -48,11 +48,11 @@ class App {
         if (!registration) return null;
 
         const pushManager = registration.pushManager;
-        if (pushManager == null) return null;
+        if (!pushManager) return null;
 
         let subscription = await pushManager.getSubscription();
 
-        if (subscription == null) {
+        if (!subscription) {
             subscription = await pushManager.subscribe({
                 userVisibleOnly: true,
                 applicationServerKey: vapidPublicKey
@@ -71,54 +71,25 @@ class App {
             endpoint: pushChannel.endpoint
         };
     };
+
+    /* Checks for and applies updates if available.
+       Called by `WebAppUpdateService.cs` when the user clicks the app version in `AppShell.razor`
+       or when `ForceUpdateSnackbar.razor` appears after a forced update. */
+    public static async tryUpdatePwa(autoReload: boolean) {
+        const bswup = (window as any).BitBswup; // https://bitplatform.dev/bswup
+        if (!bswup) return;
+
+        if (autoReload) {
+            if (await bswup.skipWaiting()) return; // Use new service worker if available and reload the page.
+        }
+
+        const bswupProgress = (window as any).BitBswupProgress;
+        if (!bswupProgress) return;
+
+        bswupProgress.config({ autoReload });
+
+        bswup.checkForUpdate();
+    }
 }
 
 (window as any).App = App;
-
-window.addEventListener('message', handleMessage);
-window.addEventListener('load', handleLoad);
-window.addEventListener('resize', setCssWindowSizes);
-
-function handleMessage(e: MessageEvent) {
-    // Enable publishing messages from JavaScript's `window.postMessage` to the C# `PubSubService`.
-    if (e.data.key === 'PUBLISH_MESSAGE') {
-        App.publishMessage(e.data.message, e.data.payload);
-    }
-}
-
-function handleLoad() {
-    setCssWindowSizes();
-    if (window.opener != null && (location.pathname == '/sign-in' || location.pathname == '/sign-up')) {
-        // The IExternalNavigationService is responsible for opening pages in a new window,
-        // such as during social sign-in flows. Once the external navigation is complete,
-        // and the user is redirected back to the newly opened window,
-        // the following code ensures that the original window is notified of where it should navigate next.
-        window.opener.postMessage({ key: 'PUBLISH_MESSAGE', message: 'NAVIGATE_TO', payload: window.location.href });
-        setTimeout(() => window.close(), 100);
-    }
-}
-
-function setCssWindowSizes() {
-    document.documentElement.style.setProperty('--win-width', `${window.innerWidth}px`);
-    document.documentElement.style.setProperty('--win-height', `${window.innerHeight}px`);
-}
-
-declare class BitTheme { static init(options: any): void; };
-
-if (typeof BitTheme != "undefined") {
-    BitTheme.init({
-        system: true,
-        persist: true,
-        onChange: (newTheme: string, oldThem: string) => {
-            if (newTheme === 'dark') {
-                document.body.classList.add('theme-dark');
-                document.body.classList.remove('theme-light');
-            } else {
-                document.body.classList.add('theme-light');
-                document.body.classList.remove('theme-dark');
-            }
-            const primaryBgColor = getComputedStyle(document.documentElement).getPropertyValue('--bit-clr-bg-pri');
-            document.querySelector('meta[name=theme-color]')!.setAttribute('content', primaryBgColor);
-        }
-    });
-}

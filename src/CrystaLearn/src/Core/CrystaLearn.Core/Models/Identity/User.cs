@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using CrystaLearn.Server.Api.Models.Identity;
 
 namespace CrystaLearn.Core.Models.Identity;
 
@@ -36,7 +36,13 @@ public partial class User : IdentityUser<Guid>
 
     public List<UserSession> Sessions { get; set; } = [];
 
+
     public List<WebAuthnCredential> WebAuthnCredentials { get; set; } = [];
+
+    public List<UserRole> Roles { get; set; } = [];
+    public List<UserClaim> Claims { get; set; } = [];
+    public List<UserLogin> Logins { get; set; } = [];
+    public List<UserToken> Tokens { get; set; } = [];
 
     public bool HasProfilePicture { get; set; }
 }

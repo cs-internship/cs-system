@@ -1,5 +1,6 @@
-using System.IdentityModel.Tokens.Jwt;
+﻿using System.Text;
 using Microsoft.IdentityModel.Tokens;
+using System.IdentityModel.Tokens.Jwt;
 using Microsoft.AspNetCore.Authentication;
 
 namespace CrystaLearn.Server.Api.Services.Identity;
@@ -7,9 +8,44 @@ namespace CrystaLearn.Server.Api.Services.Identity;
 /// <summary>
 /// Stores bearer token in jwt format
 /// </summary>
-public partial class AppJwtSecureDataFormat(ServerApiSettings appSettings, TokenValidationParameters validationParameters)
+public partial class AppJwtSecureDataFormat
     : ISecureDataFormat<AuthenticationTicket>
 {
+    private readonly string tokenType;
+    private readonly ServerApiSettings appSettings;
+    private readonly ILogger<AppJwtSecureDataFormat> logger;
+    private readonly TokenValidationParameters validationParameters;
+
+    public AppJwtSecureDataFormat(ServerApiSettings appSettings,
+        IHostEnvironment env,
+        ILogger<AppJwtSecureDataFormat> logger,
+        string tokenType)
+    {
+        this.logger = logger;
+        this.tokenType = tokenType;
+        this.appSettings = appSettings;
+
+        validationParameters = new()
+        {
+            ClockSkew = TimeSpan.Zero,
+            RequireSignedTokens = true,
+
+            ValidateIssuerSigningKey = env.IsDevelopment() is false,
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(appSettings.Identity.JwtIssuerSigningKeySecret)),
+
+            RequireExpirationTime = true,
+            ValidateLifetime = tokenType is "AccessToken", /* IdentityController.Refresh will validate expiry itself while refreshing the token */
+
+            ValidateAudience = true,
+            ValidAudience = appSettings.Identity.Audience,
+
+            ValidateIssuer = true,
+            ValidIssuer = appSettings.Identity.Issuer,
+
+            AuthenticationType = IdentityConstants.BearerScheme
+        };
+    }
+
     public AuthenticationTicket? Unprotect(string? protectedText) => Unprotect(protectedText, null);
 
     public AuthenticationTicket? Unprotect(string? protectedText, string? purpose)
@@ -18,7 +54,7 @@ public partial class AppJwtSecureDataFormat(ServerApiSettings appSettings, Token
         {
             if (string.IsNullOrEmpty(protectedText))
             {
-                return NotSignedIn();
+                return Anonymous();
             }
 
             var handler = new JwtSecurityTokenHandler();
@@ -26,22 +62,32 @@ public partial class AppJwtSecureDataFormat(ServerApiSettings appSettings, Token
 
             var validJwt = (JwtSecurityToken)validToken;
             var properties = new AuthenticationProperties() { ExpiresUtc = validJwt.ValidTo };
-            var data = new AuthenticationTicket(principal, properties: properties, IdentityConstants.BearerScheme);
+
+            var identity = new ClaimsIdentity(principal.Identity, principal.Claims, IdentityConstants.BearerScheme, ClaimTypes.NameIdentifier, ClaimTypes.Role);
+
+            if (principal.IsInRole(AppRoles.SuperAdmin))
+            {
+                foreach (var feat in AppFeatures.GetSuperAdminFeatures())
+                {
+                    identity.AddClaim(new Claim(AppClaimTypes.FEATURES, feat.Value));
+                }
+            }
+
+            var result = new ClaimsPrincipal(identity);
+
+            var data = new AuthenticationTicket(result, properties: properties, IdentityConstants.BearerScheme);
 
             return data;
         }
         catch (Exception ex)
         {
-            if (AppEnvironment.IsDev())
-            {
-                Console.WriteLine(ex); // since we do not have access to any logger at this point!
-            }
+            logger.LogWarning(ex, "Failed to unprotect the {TokenType}.", tokenType);
 
-            return NotSignedIn();
+            return Anonymous();
         }
     }
 
-    private static AuthenticationTicket NotSignedIn()
+    private static AuthenticationTicket Anonymous()
     {
         return new AuthenticationTicket(new ClaimsPrincipal(new ClaimsIdentity()), string.Empty);
     }

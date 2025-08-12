@@ -1,6 +1,4 @@
 ﻿using CrystaLearn.Core.Models.Chatbot;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace CrystaLearn.Core.Data.Configurations.Chatbot;
 
@@ -8,10 +6,16 @@ public class SystemPromptConfiguration : IEntityTypeConfiguration<SystemPrompt>
 {
     public void Configure(EntityTypeBuilder<SystemPrompt> builder)
     {
+        builder.HasIndex(sp => sp.PromptKind)
+            .IsUnique();
+
+        var defaultConcurrencyStamp = new byte[] { 0, 0, 0, 0, 0, 0, 0, 0 };
+
         builder.HasData(new SystemPrompt
         {
             Id = Guid.Parse("a8c94d94-0004-4dd0-921c-255e0a581424"),
             PromptKind = PromptKind.Support,
+            ConcurrencyStamp = defaultConcurrencyStamp,
             Markdown = @"You are a assistant for the CrystaLearn app. Below, you will find a markdown document containing information about the app, followed by the user's query.
 
 # CrystaLearn app - Features and usage guide
@@ -101,11 +105,6 @@ These are the primary functional areas of the application beyond account managem
 *   **Description:** A form page for creating a new product or modifying an existing one.
 *   **How to Use:**
     - Navigate to the [Add/Edit Products page](/add-edit-product).
-" +
-@"### 3.6. Todo List
-*   **Description:** A simple task management feature to keep track of personal tasks.
-*   **How to Use:**
-    - Navigate to the [Todo page](/todo).
 " +
 @"## 4. Informational Pages
 

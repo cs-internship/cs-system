@@ -15,6 +15,12 @@
             "type": "dotnet",
             "request": "launch",
             "projectPath": "${workspaceFolder}/src/Server/CrystaLearn.Server.Api/CrystaLearn.Server.Api.csproj"
+        },
+        {
+            "name": ".NET MAUI",
+            "type": "maui",
+            "request": "launch",
+            "preLaunchTask": "maui: Build"
         }
     ]
 }

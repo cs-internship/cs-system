@@ -1,19 +1,41 @@
-// bit version: 9.7.2
+// bit version: 9.11.3
 // https://github.com/bitfoundation/bitplatform/tree/develop/src/Bswup
 
 
 self.addEventListener('push', function (event) {
 
-    const data = event.data.json();
+    const eventData = event.data.json();
 
-    self.registration.showNotification(data.title, {
+    self.registration.showNotification(eventData.title, {
 
-        body: data.message,
-
+        data: eventData.data,
+        body: eventData.message,
         icon: '/images/icons/bit-icon-512.png'
 
     });
 
+});
+
+self.addEventListener('notificationclick', function (event) {
+    event.notification.close();
+    const pageUrl = event.notification.data.pageUrl;
+    if (pageUrl != null) {
+        event.waitUntil(
+            clients
+                .matchAll({
+                    type: 'window',
+                    includeUncontrolled: true,
+                })
+                .then((clientList) => {
+                    for (const client of clientList) {
+                        if (!client.focus || !client.postMessage) continue;
+                        client.postMessage({ key: 'PUBLISH_MESSAGE', message: 'NAVIGATE_TO', payload: pageUrl });
+                        return client.focus();
+                    }
+                    return clients.openWindow(pageUrl);
+                })
+        );
+    }
 });
 
 
@@ -65,7 +87,8 @@ self.serverHandledUrls = [
     /\/signin-/,
     /\/.well-known/,
     /\/sitemap.xml/,
-    /\/sitemap_index.xml/
+    /\/sitemap_index.xml/,
+    /\/web-interop-app/
 ];
 
 self.prerenderMode = 'none'; // Demo: https://adminpanel.bitplatform.dev/ (No-Prerendering + Offline support)
@@ -73,7 +96,5 @@ self.prerenderMode = 'none'; // Demo: https://adminpanel.bitplatform.dev/ (No-Pr
 // On apps with Prerendering enabled, to have the best experience for the end user un-comment one of the following lines:
 // self.prerenderMode = 'always'; // Demo: https://sales.bitplatform.dev/ (Always show pre-render without offline support)
 // self.prerenderMode = 'initial'; // Demo: https://todo.bitplatform.dev/ (Pre-Render on first site visit + Offline support)
-
-self.enableIntegrityCheck = false;
 
 self.importScripts('_content/Bit.Bswup/bit-bswup.sw.js');

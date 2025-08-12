@@ -8,7 +8,6 @@ namespace CrystaLearn.Server.Api.Services;
 /// </summary>
 [JsonSourceGenerationOptions(PropertyNamingPolicy = JsonKnownNamingPolicy.CamelCase)]
 [JsonSerializable(typeof(NugetStatsDto))]
-[JsonSerializable(typeof(GoogleRecaptchaVerificationResponse))]
 [JsonSerializable(typeof(ProblemDetails))]
 [JsonSerializable(typeof(AuthenticatorResponse))]
 public partial class ServerJsonContext : JsonSerializerContext
