@@ -4,6 +4,7 @@ using System.Net.Mail;
 using AdsPush;
 using AdsPush.Abstraction;
 using Azure.Storage.Blobs;
+using CrystaLearn.Core.Extensions;
 using CrystaLearn.Core.Models.Identity;
 using CrystaLearn.Server.Api.Controllers;
 using CrystaLearn.Server.Api.Services;
@@ -215,6 +216,8 @@ public static partial class Program
            .PersistKeysToDbContext<AppDbContext>(); // It's advised to secure database-stored keys with a certificate by invoking ProtectKeysWithCertificate.
 
         AddIdentity(builder);
+
+        builder.AddCrystaServices();
 
         var emailSettings = appSettings.Email ?? throw new InvalidOperationException("Email settings are required.");
         var fluentEmailServiceBuilder = services.AddFluentEmail(emailSettings.DefaultFromEmail);

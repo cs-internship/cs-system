@@ -1,7 +1,4 @@
-﻿
-using Microsoft.AspNetCore.Localization.Routing;
-
-namespace CrystaLearn.Server.Api;
+﻿namespace CrystaLearn.Server.Api;
 
 public static partial class Program
 {

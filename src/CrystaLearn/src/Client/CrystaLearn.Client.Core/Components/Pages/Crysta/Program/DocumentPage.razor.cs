@@ -3,9 +3,11 @@ using CrystaLearn.Shared.Dtos.Crysta;
 
 namespace CrystaLearn.Client.Core.Components.Pages.Crysta.Program;
 
-public partial class DocumentPage
+public partial class DocumentPage : IAsyncDisposable
 {
     [AutoInject] private IDocumentController DocumentController { get; set; } = default!;
+    [AutoInject] private PubSubService pubSubService = default!;
+
     [Parameter]
     public string ProgramCode { get; set; } = default!;
     [Parameter]
@@ -15,7 +17,9 @@ public partial class DocumentPage
     protected override string? Subtitle => string.Empty;
     public List<BitNavItem> DocumentsTree { get; set; } = [];
     public string? CurrentCrystaUrl { get; set; }
-    private bool IsLoadingTree { get; set; } = false;
+    private bool isLoadingTree = false;
+    private List<Action> unsubscribers = [];
+
 
     protected override async Task OnInitAsync()
     {
@@ -24,24 +28,16 @@ public partial class DocumentPage
             CurrentCrystaUrl = Urls.Crysta.Program(ProgramCode).DocPage(DocPath);
         }
 
-
         await RefreshDocuments();
-
+        pubSubService.Publish(ClientPubSubMessages.SHOW_NAV_PANEL, DocumentsTree);
         await base.OnInitAsync();
-    }
-
-    protected override Task OnParamsSetAsync()
-    {
-
-
-        return base.OnParamsSetAsync();
     }
 
     private async Task RefreshDocuments()
     {
         try
         {
-            IsLoadingTree = true;
+            isLoadingTree = true;
             StateHasChanged();
 
             var docs = await DocumentController.GetDocuments(ProgramCode, CurrentCancellationToken);
@@ -83,7 +79,7 @@ public partial class DocumentPage
         }
         finally
         {
-            IsLoadingTree = false;
+            isLoadingTree = false;
             StateHasChanged();
         }
     }
@@ -149,5 +145,10 @@ public partial class DocumentPage
     private void SetCurrentDocument(DocumentDto? document)
     {
         CurrentCrystaUrl = document.CrystaUrl;
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        unsubscribers.ForEach(us => us.Invoke());
     }
 }

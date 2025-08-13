@@ -69,7 +69,7 @@ main {
     &.non-identity {
         .main-container {
             width: auto;
-            height: auto;
+            height: 100%;
             flex-direction: row;
         }
 

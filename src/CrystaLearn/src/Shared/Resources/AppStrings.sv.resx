@@ -1,5 +1,4 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<!-- +:cnd:noEmit -->
 <root>
   <!-- 
     Microsoft ResX Schema 
@@ -118,7 +117,6 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <!-- Exceptions -->
   <data name="ConflictException" xml:space="preserve">
     <value>Begäran kunde inte behandlas på grund av en konflikt</value>
   </data>
@@ -128,7 +126,6 @@
   <data name="UpdateConcurrencyException" xml:space="preserve">
     <value>Posten ändrades av en annan användare efter att du hämtade den ursprungliga informationen. Åtgärden avbröts.</value>
   </data>
-  <!-- CrystaLearn strings -->
   <data name="ProfileSubtitle" xml:space="preserve">
     <value>Redigera din profildata</value>
   </data>

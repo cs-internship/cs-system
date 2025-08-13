@@ -5,36 +5,8 @@
 
 <PageTitle>@Localizer[nameof(AppStrings.TermsPageTitle)]</PageTitle>
 <CascadingValue Value="BitDir.Ltr">
-    <BitSplitter 
-        FirstPanelMinSize="150" 
-        FirstPanelSize="300" 
-        FirstPanelMaxSize="500"
-        SecondPanelSize="2000">
-        <FirstPanel>
-            <BitStack>
-
-                @if (IsLoadingTree)
-                {
-                    <BitEllipsisLoading Style="align-self:center;" />
-                }
-                else
-                {
-                    <BitLabel Typography="BitTypography.Body1">Documents</BitLabel>
-                    <BitNav Items="DocumentsTree"
-                            Style="width: 100%;"
-                            OnItemClick="(BitNavItem item) => OnNavItemClicked(item)" />
-                }
-
-            </BitStack>
-
-        </FirstPanel>
-        <SecondPanel>
-            <BitStack Horizontal>
-                <BitSpacer Width="5"></BitSpacer>
-                <DocumentComponent 
-                    CrystaUrl="@CurrentCrystaUrl"
-                    />
-            </BitStack>
-        </SecondPanel>
-    </BitSplitter>
+    <BitStack Horizontal>
+        <BitSpacer Width="5"></BitSpacer>
+        <DocumentComponent CrystaUrl="@CurrentCrystaUrl" />
+    </BitStack>
 </CascadingValue>

@@ -1,5 +1,4 @@
-﻿using CrystaLearn.Core.Mappers;
-using CrystaLearn.Core.Models.Crysta;
+﻿using CrystaLearn.Core.Models.Crysta;
 using CrystaLearn.Core.Services.Contracts;
 using CrystaLearn.Shared.Controllers.Crysta;
 using CrystaLearn.Shared.Dtos.Crysta;
@@ -13,7 +12,7 @@ public partial class CrystaProgramController : AppControllerBase, ICrystaProgram
 
     [AllowAnonymous]
     [HttpGet]
-    [ResponseCache(Duration = 1 * 24 * 3600, Location = ResponseCacheLocation.Any, VaryByQueryKeys = ["*"])]
+    //[ResponseCache(Duration = 1 * 24 * 3600, Location = ResponseCacheLocation.Any, VaryByQueryKeys = ["*"])]
     public async Task<List<CrystaProgramDto>> GetPrograms(CancellationToken cancellationToken)
     {
         var list = await CrystaProgramRepository.GetCrystaProgramsAsync(cancellationToken);

@@ -8,15 +8,13 @@ public partial class AppShell
     [Parameter] public RenderFragment? ChildContent { get; set; }
     [Parameter] public List<BitNavItem> NavPanelItems { get; set; } = [];
 
-
     [AutoInject] private IAppUpdateService appUpdateService = default!;
     [AutoInject] private SignInModalService signInModalService = default!;
 
-
+    private bool isNavPanelVisible;
     private bool isNavPanelOpen;
     private bool isNavPanelToggled;
     private readonly List<Action> unsubscribers = [];
-
 
     protected override async Task OnInitAsync()
     {
@@ -35,6 +33,19 @@ public partial class AppShell
         {
             isNavPanelOpen = false;
             isNavPanelToggled = false;
+            StateHasChanged();
+        }));
+
+        unsubscribers.Add(PubSubService.Subscribe(ClientPubSubMessages.SHOW_NAV_PANEL, async (items) =>
+        {
+            isNavPanelVisible = true;
+            NavPanelItems = items is not null ? (List<BitNavItem>)items : [];
+            StateHasChanged();
+        }));
+
+        unsubscribers.Add(PubSubService.Subscribe(ClientPubSubMessages.HIDE_NAV_PANEL, async _ =>
+        {
+            isNavPanelVisible = false;
             StateHasChanged();
         }));
     }

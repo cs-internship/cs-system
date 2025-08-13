@@ -4,18 +4,15 @@
 @attribute [AppResponseCache(SharedMaxAge = 3600 * 24, MaxAge = 60 * 5)]
 @inherits AppPageBase
 
-<AppPageData Title="@Localizer[nameof(AppStrings.Home)]"
-             PageTitle="@Localizer[nameof(AppStrings.HomePageTitle)]" />
+<AppPageData PageTitle="@Localizer[nameof(AppStrings.HomePageTitle)]" />
 
 <section>
-    <BitStack Alignment="BitAlignment.Center" Gap="2rem" Class="root-stack">
+    <BitStack Alignment="BitAlignment.Center" Gap="2rem" Class="root-stack" FitHeight>
         <BitText Typography="BitTypography.H4" Align="BitTextAlign.Center">
             @Localizer[nameof(AppStrings.HomePanelTitle)]
-            <br />
-            @Localizer[nameof(AppStrings.HomePanelSubtitle)]
         </BitText>
-        <BitStack Horizontal Gap="2rem" Class="products-stack">
-            @foreach (var program in Programs)
+        <BitStack Horizontal Gap="2rem">
+            @foreach (var program in programs)
             {
                 <BitCard Style="padding:3rem" FullWidth>
                     <BitStack HorizontalAlign="BitAlignment.Center">
@@ -23,7 +20,7 @@
                         <BitText Typography="BitTypography.Body1" Align="BitTextAlign.Center">
                             CS Internship is a cool program.
                         </BitText>
-                        <BitButton Variant="BitVariant.Outline" Href="@Urls.Crysta.Program(program.Code).DocsPage">
+                        <BitButton Variant="BitVariant.Outline" OnClick="WrapHandled(() => NavigateToDocuments(program.Code))">
                             Documents
                         </BitButton>
                         <BitLink Href="https://blazorui.bitplatform.dev/" Target="_blank" NoUnderline>
@@ -35,9 +32,8 @@
                     </BitStack>
                 </BitCard>
             }
-
         </BitStack>
-        <BitText Typography="BitTypography.H6" Align="BitTextAlign.Center">
+        <BitText Typography="BitTypography.H6" Align="BitTextAlign.Start">
             @Localizer[nameof(AppStrings.HomeMessage)]
         </BitText>
     </BitStack>

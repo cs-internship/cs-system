@@ -12,6 +12,8 @@ public partial class ClientPubSubMessages
     public const string THEME_CHANGED = nameof(THEME_CHANGED);
     public const string OPEN_NAV_PANEL = nameof(OPEN_NAV_PANEL);
     public const string CLOSE_NAV_PANEL = nameof(CLOSE_NAV_PANEL);
+    public const string SHOW_NAV_PANEL = nameof(SHOW_NAV_PANEL);
+    public const string HIDE_NAV_PANEL = nameof(HIDE_NAV_PANEL);
     public const string CULTURE_CHANGED = nameof(CULTURE_CHANGED);
     /// <summary>
     /// <inheritdoc cref="Parameters.IsOnline"/>
