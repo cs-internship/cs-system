@@ -30,6 +30,7 @@ public partial class MainLayout : IAsyncDisposable
     private bool? isOnline;
     private BitDir? currentDir;
     private bool? isIdentityPage;
+    private bool isDocPage;
     private UserDto? currentUser;
     private AppThemeType? currentTheme;
     private RouteData? currentRouteData;
@@ -172,6 +173,12 @@ public partial class MainLayout : IAsyncDisposable
             return;
         }
 
+        if (type.Namespace?.Contains("CrystaLearn.Client.Core.Components.Pages.Crysta.Program.Document") is true)
+        {
+            isDocPage = true;
+            return;
+        }
+
         if (type.Namespace?.Contains("Client.Core.Components.Pages.Identity") is true)
         {
             isIdentityPage = true;
@@ -179,6 +186,7 @@ public partial class MainLayout : IAsyncDisposable
             return;
         }
 
+        isDocPage = false;
         isIdentityPage = false;
     }
 

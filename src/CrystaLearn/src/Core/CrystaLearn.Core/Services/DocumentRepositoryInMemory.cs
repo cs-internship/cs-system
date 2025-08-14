@@ -76,9 +76,7 @@ public partial class DocumentRepositoryInMemory : IDocumentRepository
             throw new Exception($"Program with code '{programCode}' not found.");
         }
 
-        string programDocumentUrl = program.DocumentUrl ?? throw new Exception($"Program with code '{programCode}' has no document url.");
-
-        var list = await GitHubService.GetFilesAsync(programDocumentUrl);
+        var list = program.DocumentUrl is not null ? await GitHubService.GetFilesAsync(program.DocumentUrl) : [];
 
         var result = new List<Document>();
 

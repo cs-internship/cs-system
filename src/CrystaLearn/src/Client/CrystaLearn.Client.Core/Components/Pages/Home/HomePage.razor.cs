@@ -8,11 +8,9 @@ public partial class HomePage
 {
     [CascadingParameter] private BitDir? currentDir { get; set; }
     [AutoInject] private ICrystaProgramController CrystaProgramController { get; set; } = default!;
-
-    private List<CrystaProgramDto> programs = [];
-
     [AutoInject] private IStatisticsController statisticsController = default!;
 
+    private List<CrystaProgramDto> programs = [];
 
     protected override async Task OnInitAsync()
     {
@@ -27,6 +25,7 @@ public partial class HomePage
 
     private void NavigateToDocuments(string programCode)
     {
+        PubSubService.Publish(ClientPubSubMessages.SET_PROGRAM_CODE, programCode);
         NavigationManager.NavigateTo(@Urls.Crysta.Program(programCode).DocsPage);
     }
 }

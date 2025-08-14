@@ -38,6 +38,7 @@ main {
 
         .body {
             width: 30%;
+            height: 100%;
             padding: 4rem;
             min-width: 35rem;
             padding-top: 5rem;
@@ -89,6 +90,7 @@ main {
         .body {
             width: 100%;
             height: 100%;
+            overflow: auto;
             padding: 1rem;
             background-color: $bit-color-background-primary;
 

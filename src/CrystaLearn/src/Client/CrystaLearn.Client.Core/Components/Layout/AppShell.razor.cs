@@ -1,19 +1,21 @@
-﻿using Microsoft.AspNetCore.Components.Routing;
+﻿using CrystaLearn.Shared.Dtos.Crysta;
+using Microsoft.AspNetCore.Components.Routing;
 
 namespace CrystaLearn.Client.Core.Components.Layout;
 
 public partial class AppShell
 {
     [Parameter] public bool? IsIdentityPage { get; set; }
+    [Parameter] public bool IsDocPage { get; set; }
     [Parameter] public RenderFragment? ChildContent { get; set; }
-    [Parameter] public List<BitNavItem> NavPanelItems { get; set; } = [];
 
     [AutoInject] private IAppUpdateService appUpdateService = default!;
     [AutoInject] private SignInModalService signInModalService = default!;
+    [AutoInject] private DocumentService documentService = default!;
 
-    private bool isNavPanelVisible;
     private bool isNavPanelOpen;
     private bool isNavPanelToggled;
+    private List<BitNavItem> navPanelItems = [];
     private readonly List<Action> unsubscribers = [];
 
     protected override async Task OnInitAsync()
@@ -36,20 +38,17 @@ public partial class AppShell
             StateHasChanged();
         }));
 
-        unsubscribers.Add(PubSubService.Subscribe(ClientPubSubMessages.SHOW_NAV_PANEL, async (items) =>
+        unsubscribers.Add(PubSubService.Subscribe(ClientPubSubMessages.SET_PROGRAM_CODE, async (programCode) =>
         {
-            isNavPanelVisible = true;
-            NavPanelItems = items is not null ? (List<BitNavItem>)items : [];
-            StateHasChanged();
-        }));
-
-        unsubscribers.Add(PubSubService.Subscribe(ClientPubSubMessages.HIDE_NAV_PANEL, async _ =>
-        {
-            isNavPanelVisible = false;
+            navPanelItems = [];
+            var programCodeStr = programCode as string ?? string.Empty;
+            if (!string.IsNullOrEmpty(programCodeStr))
+            {
+                navPanelItems = await documentService.LoadNavItemsAsync(programCodeStr, CurrentCancellationToken);
+            }
             StateHasChanged();
         }));
     }
-
 
     private string GetMainCssClass()
     {
@@ -85,5 +84,16 @@ public partial class AppShell
         NavigationManager.LocationChanged -= NavigationManager_LocationChanged;
 
         await base.DisposeAsync(disposing);
+    }
+
+    private async Task OnNavItemClicked(BitNavItem item)
+    {
+        var document = item.Data as DocumentDto;
+        if (document is null)
+        {
+            return;
+        }
+
+        PubSubService.Publish(ClientPubSubMessages.SET_CURRENT_CRYSTA_URL, document.CrystaUrl);
     }
 }

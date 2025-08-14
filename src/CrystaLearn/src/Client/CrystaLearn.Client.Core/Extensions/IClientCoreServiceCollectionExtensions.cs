@@ -1,11 +1,11 @@
-﻿using BlazorApplicationInsights;
+﻿using System.Diagnostics.CodeAnalysis;
+using BlazorApplicationInsights;
 using BlazorApplicationInsights.Interfaces;
 using CrystaLearn.Client.Core;
-using System.Diagnostics.CodeAnalysis;
-using Microsoft.AspNetCore.Components.WebAssembly.Services;
 using CrystaLearn.Client.Core.Services.HttpMessageHandlers;
-using Microsoft.AspNetCore.SignalR.Client;
+using Microsoft.AspNetCore.Components.WebAssembly.Services;
 using Microsoft.AspNetCore.Http.Connections;
+using Microsoft.AspNetCore.SignalR.Client;
 
 namespace Microsoft.Extensions.DependencyInjection;
 
@@ -20,6 +20,7 @@ public static partial class IClientCoreServiceCollectionExtensions
 
         services.AddScoped<ThemeService>();
         services.AddScoped<CultureService>();
+        services.AddScoped<DocumentService>();
         services.AddScoped<LazyAssemblyLoader>();
         services.AddScoped<SignInModalService>();
         services.AddScoped<IAuthTokenProvider, ClientSideAuthTokenProvider>();
