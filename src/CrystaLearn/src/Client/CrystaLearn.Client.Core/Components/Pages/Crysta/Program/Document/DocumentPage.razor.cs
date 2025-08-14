@@ -27,7 +27,6 @@ public partial class DocumentPage : IAsyncDisposable
         }
 
         await RefreshDocuments();
-        pubSubService.Publish(ClientPubSubMessages.SHOW_NAV_PANEL, DocumentsTree);
         unsubscribers.Add(pubSubService.Subscribe(ClientPubSubMessages.SET_CURRENT_CRYSTA_URL, async (url) =>
         {
             CurrentCrystaUrl = url as string;
