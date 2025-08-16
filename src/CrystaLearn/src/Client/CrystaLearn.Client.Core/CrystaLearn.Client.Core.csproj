@@ -19,7 +19,6 @@
         <PackageReference Include="Bit.BlazorUI.Icons" />
         <PackageReference Include="Bit.BlazorUI.Assets" />
                 <PackageReference Include="BlazorApplicationInsights" />
-        <PackageReference Include="Fido2.Models" />
         <PackageReference Include="Microsoft.AspNetCore.SignalR.Client" />
         <PackageReference Include="Sentry.Extensions.Logging" />
                 <PackageReference Include="Bit.BlazorUI.Extras" />
@@ -41,6 +40,7 @@
         <Using Include="Bit.BlazorUI" />
         <Using Include="CrystaLearn.Shared" />
         <Using Include="CrystaLearn.Client.Core.Components.Layout" />
+        <Using Include="CrystaLearn.Client.Core.Components.Common" />
         <Using Include="CrystaLearn.Client.Core.Services.Contracts" />
         <Using Include="CrystaLearn.Client.Core.Services" />
     </ItemGroup>
@@ -69,7 +69,7 @@
     </Target>
 
     <Target Name="BuildCssFiles">
-        <Exec Command="node_modules/.bin/sass .:. Styles/app.scss:wwwroot/styles/app.css --style compressed --load-path=. --silence-deprecation=import --update" StandardOutputImportance="high" StandardErrorImportance="high" LogStandardErrorAsError="true" />
+        <Exec Command="node_modules/.bin/sass Components:Components Styles/app.scss:wwwroot/styles/app.css --style compressed --silence-deprecation=import --update --color" StandardOutputImportance="high" StandardErrorImportance="high" LogStandardErrorAsError="true" />
     </Target>
 
     <ItemGroup>

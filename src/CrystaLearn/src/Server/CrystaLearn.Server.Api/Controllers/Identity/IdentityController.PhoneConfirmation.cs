@@ -1,7 +1,7 @@
-﻿using CrystaLearn.Core.Models.Identity;
+﻿using Humanizer;
 using CrystaLearn.Server.Api.Services;
 using CrystaLearn.Shared.Dtos.Identity;
-using Humanizer;
+using CrystaLearn.Core.Models.Identity;
 
 namespace CrystaLearn.Server.Api.Controllers.Identity;
 
@@ -60,7 +60,7 @@ public partial class IdentityController
 
         var token = await userManager.GenerateUserTokenAsync(user, TokenOptions.DefaultPhoneProvider, FormattableString.Invariant($"Otp_Sms,{user.OtpRequestedOn?.ToUniversalTime()}"));
 
-        await SignIn(new() { PhoneNumber = request.PhoneNumber, Otp = token, DeviceInfo = request.DeviceInfo }, cancellationToken);
+        await SignIn(new() { PhoneNumber = request.PhoneNumber, Otp = token }, cancellationToken);
     }
 
 

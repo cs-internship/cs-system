@@ -1,6 +1,4 @@
-using Fido2NetLib;
-using Fido2NetLib.Objects;
-using CrystaLearn.Shared.Dtos.Identity;
+﻿using CrystaLearn.Shared.Dtos.Identity;
 
 namespace CrystaLearn.Shared.Controllers.Identity;
 
@@ -27,10 +25,9 @@ public interface IIdentityController : IAppController
 
     public const string RefreshUri = "api/Identity/Refresh";
     [HttpPost]
-    Task<TokenResponseDto> Refresh(RefreshRequestDto request, CancellationToken cancellationToken) => default!;
+    Task<TokenResponseDto> Refresh(RefreshTokenRequestDto request, CancellationToken cancellationToken) => default!;
 
     [HttpPost]
-    [NoRetryPolicy] // Please note that retrying requests with Google reCaptcha will not work, as the Google verification mechanism only accepts a captcha response once.
     Task SignUp(SignUpRequestDto request, CancellationToken cancellationToken);
 
     [HttpPost]
@@ -46,14 +43,17 @@ public interface IIdentityController : IAppController
     Task<string> GetSocialSignInUri(string provider, string? returnUrl = null, int? localHttpPort = null, CancellationToken cancellationToken = default);
 
     [HttpPost]
-    Task<AssertionOptions> GetWebAuthnAssertionOptions(WebAuthnAssertionOptionsRequestDto request, CancellationToken cancellationToken);
+    Task<JsonElement> GetWebAuthnAssertionOptions(WebAuthnAssertionOptionsRequestDto request, CancellationToken cancellationToken) => default!;
 
     [HttpPost]
-    Task<VerifyAssertionResult> VerifyWebAuthAssertion(AuthenticatorAssertionRawResponse clientResponse, CancellationToken cancellationToken);
+    Task<JsonElement> VerifyWebAuthAssertion(JsonElement clientResponse, CancellationToken cancellationToken) => default!;
 
     [HttpPost]
-    Task<SignInResponseDto> VerifyWebAuthAndSignIn(VerifyWebAuthnAndSignInDto request, CancellationToken cancellationToken) => default!;
+    Task<SignInResponseDto> VerifyWebAuthAndSignIn(VerifyWebAuthnAndSignInRequestDto request, CancellationToken cancellationToken) => default!;
 
     [HttpPost]
-    Task VerifyWebAuthAndSendTwoFactorToken(AuthenticatorAssertionRawResponse clientResponse, CancellationToken cancellationToken);
+    Task VerifyWebAuthAndSendTwoFactorToken(JsonElement clientResponse, CancellationToken cancellationToken) => default!;
+
+    [HttpGet]
+    Task<string[]> GetSupportedSocialAuthSchemes(CancellationToken cancellationToken);
 }

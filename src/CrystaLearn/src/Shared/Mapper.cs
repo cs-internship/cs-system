@@ -1,4 +1,5 @@
-﻿using CrystaLearn.Shared.Dtos.Identity;
+﻿using CrystaLearn.Shared.Dtos.Chatbot;
+using CrystaLearn.Shared.Dtos.Identity;
 using Riok.Mapperly.Abstractions;
 
 namespace CrystaLearn.Shared;
@@ -16,6 +17,7 @@ namespace CrystaLearn.Shared;
 public static partial class Mapper
 {
     public static partial void Patch(this UserDto source, UserDto destination);
-    public static partial void Patch(this EditUserDto source, UserDto destination);
-    public static partial void Patch(this UserDto source, EditUserDto destination);
+    public static partial void Patch(this EditUserRequestDto source, UserDto destination);
+    public static partial void Patch(this UserDto source, EditUserRequestDto destination);
+    public static partial void Patch(this SystemPromptDto source, SystemPromptDto destination);
 }

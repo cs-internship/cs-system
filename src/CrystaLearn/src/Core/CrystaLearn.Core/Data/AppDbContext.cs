@@ -1,15 +1,16 @@
-﻿using CrystaLearn.Core.Data.Configurations;
-using CrystaLearn.Core.Models.Attachments;
+﻿using CrystaLearn.Core.Models.Attachments;
 using CrystaLearn.Core.Models.Chatbot;
-using CrystaLearn.Core.Models.Crysta;
 using CrystaLearn.Core.Models.Identity;
 using CrystaLearn.Core.Models.PushNotification;
+using CrystaLearn.Server.Api.Data.Configurations;
+using CrystaLearn.Server.Api.Models.Identity;
 using Hangfire.EntityFrameworkCore;
+using Microsoft.AspNetCore.DataProtection.EntityFrameworkCore;
 
 namespace CrystaLearn.Core.Data;
 
 public partial class AppDbContext(DbContextOptions<AppDbContext> options)
-    : IdentityDbContext<User, Role, Guid, UserClaim, UserRole, IdentityUserLogin<Guid>, RoleClaim, IdentityUserToken<Guid>>(options)
+    : IdentityDbContext<User, Role, Guid, UserClaim, UserRole, UserLogin, RoleClaim, UserToken>(options), IDataProtectionKeyContext
 {
     public DbSet<UserSession> UserSessions { get; set; } = default!;
 
@@ -21,16 +22,13 @@ public partial class AppDbContext(DbContextOptions<AppDbContext> options)
 
     public DbSet<Attachment> Attachments { get; set; } = default!;
 
+    public DbSet<DataProtectionKey> DataProtectionKeys { get; set; } = default!;
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
 
-
         modelBuilder.OnHangfireModelCreating("jobs");
-
-        //modelBuilder.HasSequence<int>("ProductShortId")
-        //    .StartsAt(10_051) // There are 50 products added by ProductConfiguration.cs
-        //    .IncrementsBy(1);
 
         modelBuilder.HasDefaultSchema("dbo");
 
@@ -39,19 +37,6 @@ public partial class AppDbContext(DbContextOptions<AppDbContext> options)
         ConfigureIdentityTableNames(modelBuilder);
 
         ConfigureConcurrencyStamp(modelBuilder);
-
-        ConfigureCrysta(modelBuilder);
-    }
-    private void ConfigureCrysta(ModelBuilder modelBuilder)
-    {
-        modelBuilder.Entity<Document>()
-            .OwnsOne(o => o.SyncInfo);
-
-        modelBuilder.Entity<CrystaProgram>()
-            .OwnsOne(o => o.BadgeSyncInfo);
-        modelBuilder.Entity<CrystaProgram>()
-                    .OwnsOne(o => o.DocumentSyncInfo);
-
     }
 
     public override int SaveChanges(bool acceptAllChangesOnSuccess)
@@ -111,28 +96,25 @@ public partial class AppDbContext(DbContextOptions<AppDbContext> options)
     private void ConfigureIdentityTableNames(ModelBuilder builder)
     {
         builder.Entity<User>()
-            .ToTable("User");
+            .ToTable("Users");
 
         builder.Entity<Role>()
-            .ToTable("Role");
+            .ToTable("Roles");
 
         builder.Entity<UserRole>()
-            .ToTable("UserRole");
+            .ToTable("UserRoles");
 
         builder.Entity<RoleClaim>()
-            .ToTable("RoleClaim");
+            .ToTable("RoleClaims");
 
         builder.Entity<UserClaim>()
-            .ToTable("UserClaim");
+            .ToTable("UserClaims");
 
-        builder.Entity<IdentityUserLogin<Guid>>()
-            .ToTable("UserLogin");
+        builder.Entity<UserLogin>()
+            .ToTable("UserLogins");
 
-        builder.Entity<IdentityUserToken<Guid>>()
-            .ToTable("UserToken");
-
-        builder.Entity<UserSession>()
-          .ToTable("UserSession");
+        builder.Entity<UserToken>()
+            .ToTable("UserTokens");
     }
 
     private void ConfigureConcurrencyStamp(ModelBuilder modelBuilder)
@@ -151,4 +133,6 @@ public partial class AppDbContext(DbContextOptions<AppDbContext> options)
         }
     }
 
+    // This requires SQL Server 2025+
+    public static readonly bool IsEmbeddingEnabled = false;
 }

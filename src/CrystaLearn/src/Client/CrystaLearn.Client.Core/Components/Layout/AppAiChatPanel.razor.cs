@@ -7,6 +7,14 @@ namespace CrystaLearn.Client.Core.Components.Layout;
 
 public partial class AppAiChatPanel
 {
+    [CascadingParameter] public BitDir? CurrentDir { get; set; }
+
+    [CascadingParameter] public AppThemeType? CurrentTheme { get; set; }
+
+
+    [AutoInject] private HubConnection hubConnection = default!;
+
+
     private bool isOpen;
     private bool isLoading;
     private string? userInput;
@@ -17,18 +25,9 @@ public partial class AppAiChatPanel
     private List<AiChatMessage> chatMessages = []; // TODO: Persist these values in client-side storage to retain them across app restarts.
 
 
-    [AutoInject] private HubConnection hubConnection = default!;
-
-
-    [CascadingParameter(Name = Parameters.CurrentTheme)]
-    private AppThemeType? currentTheme { get; set; }
-
-    [CascadingParameter]
-    private BitDir? currentDir { get; set; }
-
-
     protected override Task OnInitAsync()
     {
+
 
         return base.OnInitAsync();
     }
@@ -45,6 +44,7 @@ public partial class AppAiChatPanel
 
     private async Task HubConnection_Reconnected(string? _)
     {
+        if (channel is null) return;
         await RestartChannel();
     }
 
@@ -117,7 +117,8 @@ public partial class AppAiChatPanel
                                                                          {
                                                                              CultureId = CultureInfo.CurrentCulture.LCID,
                                                                              DeviceInfo = TelemetryContext.Platform,
-                                                                             ChatMessagesHistory = chatMessages
+                                                                             ChatMessagesHistory = chatMessages,
+                                                                             ServerApiAddress = AbsoluteServerAddress.GetAddress()
                                                                          },
                                                                          channel.Reader.ReadAllAsync(CurrentCancellationToken),
                                                                          cancellationToken: CurrentCancellationToken))
@@ -134,7 +135,7 @@ public partial class AppAiChatPanel
                 responseCounter++;
                 if (responseCounter == expectedResponsesCount)
                 {
-                    isLoading = false; // Hide loading only if this is a error for the last user's message.
+                    isLoading = false; // Hide loading only if this is an error for the last user's message.
                 }
                 chatMessages[responseCounter * 2].Successful = false;
             }
@@ -167,6 +168,7 @@ public partial class AppAiChatPanel
 
     protected override async ValueTask DisposeAsync(bool disposing)
     {
+
 
         hubConnection.Reconnected -= HubConnection_Reconnected;
 

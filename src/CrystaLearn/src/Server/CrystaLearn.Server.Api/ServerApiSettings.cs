@@ -1,11 +1,12 @@
 ﻿using AdsPush.Abstraction.Settings;
 using System.Text;
-using System.Text.RegularExpressions;
 using CrystaLearn.Server.Api.Services;
+using CrystaLearn.Server.Shared;
+using CrystaLearn.Core.Models.Identity;
 
 namespace CrystaLearn.Server.Api;
 
-public partial class ServerApiSettings : SharedSettings
+public partial class ServerApiSettings : ServerSharedSettings
 {
     [Required]
     public AppIdentityOptions Identity { get; set; } = default!;
@@ -20,8 +21,6 @@ public partial class ServerApiSettings : SharedSettings
     [Required]
     public string UserProfileImagesDir { get; set; } = default!;
 
-    [Required]
-    public string GoogleRecaptchaSecretKey { get; set; } = default!;
 
     public AdsPushVapidSettings? AdsPushVapid { get; set; }
 
@@ -29,21 +28,14 @@ public partial class ServerApiSettings : SharedSettings
 
     public AdsPushAPNSSettings? AdsPushAPNS { get; set; }
 
-    public ForwardedHeadersOptions? ForwardedHeaders { get; set; }
-
     public CloudflareOptions? Cloudflare { get; set; }
-
-    public ResponseCachingOptions? ResponseCaching { get; set; }
-
-    /// <summary>
-    /// Lists the permitted origins for CORS requests, return URLs following social sign-in and email confirmation, etc., along with allowed origins for Web Auth.
-    /// </summary>
-    public Uri[] TrustedOrigins { get; set; } = [];
 
     [Required]
     public string ProductImagesDir { get; set; } = default!;
 
     public HangfireOptions? Hangfire { get; set; }
+
+    public SupportedAppVersionsOptions? SupportedAppVersions { get; set; }
 
     public override IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
     {
@@ -65,13 +57,9 @@ public partial class ServerApiSettings : SharedSettings
         {
             Validator.TryValidateObject(AdsPushVapid, new ValidationContext(AdsPushVapid), validationResults, true);
         }
-        if (ForwardedHeaders is not null)
+        if (SupportedAppVersions is not null)
         {
-            Validator.TryValidateObject(ForwardedHeaders, new ValidationContext(ForwardedHeaders), validationResults, true);
-        }
-        if (ResponseCaching is not null)
-        {
-            Validator.TryValidateObject(ResponseCaching, new ValidationContext(ResponseCaching), validationResults, true);
+            Validator.TryValidateObject(SupportedAppVersions, new ValidationContext(SupportedAppVersions), validationResults, true);
         }
 
         const int MinimumJwtIssuerSigningKeySecretByteLength = 64; // 512 bits = 64 bytes, minimum for HS512
@@ -83,17 +71,13 @@ public partial class ServerApiSettings : SharedSettings
                 $"({MinimumJwtIssuerSigningKeySecretByteLength * 8} bits) for HS512. Current key is {jwtIssuerSigningKeySecretByteLength} bytes.");
         }
 
-        if (AppEnvironment.IsDev() is false)
+        if (AppEnvironment.IsDevelopment() is false)
         {
             if (Identity.JwtIssuerSigningKeySecret is "VeryLongJWTIssuerSiginingKeySecretThatIsMoreThan64BytesToEnsureCompatibilityWithHS512Algorithm")
             {
                 throw new InvalidOperationException(@"Please replace JwtIssuerSigningKeySecret with a new one.");
             }
 
-            if (GoogleRecaptchaSecretKey is "6LdMKr4pAAAAANvngWNam_nlHzEDJ2t6SfV6L_DS")
-            {
-                throw new InvalidOperationException("The GoogleRecaptchaSecretKey is not set. Please set it in the server's appsettings.json file.");
-            }
 
             if (AdsPushVapid?.PrivateKey is "dMIR1ICj-lDWYZ-ZYCwXKyC2ShYayYYkEL-oOPnpq9c" || AdsPushVapid?.Subject is "mailto:test@bitplatform.dev")
             {
@@ -103,22 +87,6 @@ public partial class ServerApiSettings : SharedSettings
 
         return validationResults;
     }
-
-    internal bool IsAllowedOrigin(Uri origin)
-    {
-        return TrustedOrigins.Any(trustedOrigin => trustedOrigin == origin)
-            || TrustedOriginsRegex().IsMatch(origin.ToString());
-    }
-
-        /// <summary>
-    /// Blazor Hybrid's webview, localhost, devtunnels, github codespaces.
-    /// </summary>
-#if Development
-    [GeneratedRegex(@"^(http|https|app):\/\/(localhost|0\.0\.0\.0|0\.0\.0\.1|127\.0\.0\.1|.*?devtunnels\.ms|.*?github\.dev)(:\d+)?(\/.*)?$")]
-#else
-    [GeneratedRegex(@"^(http|https|app):\/\/(localhost|0\.0\.0\.0|0\.0\.0\.1|127\.0\.0\.1)(:\d+)?(\/.*)?$")]
-#endif
-        private partial Regex TrustedOriginsRegex();
 }
 
 public partial class AppIdentityOptions : IdentityOptions
@@ -150,14 +118,14 @@ public partial class AppIdentityOptions : IdentityOptions
     public TimeSpan TwoFactorTokenLifetime { get; set; }
 
     /// <summary>
-    /// <see cref="SignInManagerExtensions.OtpSignInAsync(SignInManager{Models.Identity.User}, Models.Identity.User, string)"/>
+    /// <see cref="SignInManagerExtensions.OtpSignInAsync(SignInManager{User}, User, string)"/>
     /// </summary>
     public TimeSpan OtpTokenLifetime { get; set; }
 
     /// <summary>
     /// <inheritdoc cref="AuthPolicies.PRIVILEGED_ACCESS"/>
     /// </summary>
-    public int MaxConcurrentPrivilegedSessions { get; set; }
+    public int MaxPrivilegedSessionsCount { get; set; }
 }
 
 public partial class AIOptions
@@ -236,23 +204,36 @@ public partial class SmsOptions
                               string.IsNullOrEmpty(TwilioAutoToken) is false;
 }
 
-public class ResponseCachingOptions
-{
-    /// <summary>
-    /// Enables ASP.NET Core's response output caching
-    /// </summary>
-    public bool EnableOutputCaching { get; set; }
-
-    /// <summary>
-    /// Enables CDN's edge servers caching
-    /// </summary>
-    public bool EnableCdnEdgeCaching { get; set; }
-}
-
 public class HangfireOptions
 {
     /// <summary>
     /// Useful for testing or in production when managing multiple codebases with a single database.
     /// </summary>
     public bool UseIsolatedStorage { get; set; }
+}
+
+public class SupportedAppVersionsOptions
+{
+    public Version? MinimumSupportedAndroidAppVersion { get; set; }
+
+    public Version? MinimumSupportedIosAppVersion { get; set; }
+
+    public Version? MinimumSupportedMacOSAppVersion { get; set; }
+
+    public Version? MinimumSupportedWindowsAppVersion { get; set; }
+
+    public Version? MinimumSupportedWebAppVersion { get; set; }
+
+    public Version? GetMinimumSupportedAppVersion(AppPlatformType platformType)
+    {
+        return platformType switch
+        {
+            AppPlatformType.Android => MinimumSupportedAndroidAppVersion,
+            AppPlatformType.Ios => MinimumSupportedIosAppVersion,
+            AppPlatformType.MacOS => MinimumSupportedMacOSAppVersion,
+            AppPlatformType.Windows => MinimumSupportedWindowsAppVersion,
+            AppPlatformType.Web => MinimumSupportedWebAppVersion,
+            _ => throw new ArgumentOutOfRangeException(nameof(platformType), platformType, null)
+        };
+    }
 }

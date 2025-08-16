@@ -1,10 +1,10 @@
 ﻿using CrystaLearn.Shared.Dtos.Chatbot;
 using CrystaLearn.Shared.Dtos.Crysta;
+using CrystaLearn.Shared.Dtos.Dashboard;
+using CrystaLearn.Shared.Dtos.Diagnostic;
 using CrystaLearn.Shared.Dtos.Identity;
 using CrystaLearn.Shared.Dtos.PushNotification;
 using CrystaLearn.Shared.Dtos.Statistics;
-using Fido2NetLib;
-using Fido2NetLib.Objects;
 
 namespace CrystaLearn.Shared.Dtos;
 
@@ -20,22 +20,22 @@ namespace CrystaLearn.Shared.Dtos;
 [JsonSerializable(typeof(GitHubStats))]
 [JsonSerializable(typeof(NugetStatsDto))]
 [JsonSerializable(typeof(AppProblemDetails))]
+[JsonSerializable(typeof(SendNotificationToRoleDto))]
 [JsonSerializable(typeof(PushNotificationSubscriptionDto))]
-[JsonSerializable(typeof(AssertionOptions))]
-[JsonSerializable(typeof(AuthenticatorAssertionRawResponse))]
-[JsonSerializable(typeof(AuthenticatorAttestationRawResponse))]
-[JsonSerializable(typeof(CredentialCreateOptions))]
-[JsonSerializable(typeof(VerifyAssertionResult))]
-[JsonSerializable(typeof(VerifyWebAuthnAndSignInDto))]
+[JsonSerializable(typeof(List<ProductsCountPerCategoryResponseDto>))]
+[JsonSerializable(typeof(OverallAnalyticsStatsDataResponseDto))]
+[JsonSerializable(typeof(List<ProductPercentagePerCategoryResponseDto>))]
+[JsonSerializable(typeof(VerifyWebAuthnAndSignInRequestDto))]
 [JsonSerializable(typeof(WebAuthnAssertionOptionsRequestDto))]
+[JsonSerializable(typeof(DiagnosticLogDto[]))]
+[JsonSerializable(typeof(StartChatbotRequest))]
+[JsonSerializable(typeof(SystemPromptDto))]
 [JsonSerializable(typeof(DocumentDto))]
 [JsonSerializable(typeof(List<DocumentDto>))]
 [JsonSerializable(typeof(CrystaProgramDto))]
 [JsonSerializable(typeof(CrystaProgramLightDto))]
 [JsonSerializable(typeof(List<CrystaProgramDto>))]
 [JsonSerializable(typeof(SyncInfoDto))]
-
-[JsonSerializable(typeof(UpdateSystemPromptDto))]
 public partial class AppJsonContext : JsonSerializerContext
 {
 }

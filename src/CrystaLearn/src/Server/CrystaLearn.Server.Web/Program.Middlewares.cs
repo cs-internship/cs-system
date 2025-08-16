@@ -1,16 +1,17 @@
 ﻿using System.Net;
-using System.Reflection;
 using System.Runtime.Loader;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.FileProviders;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.AspNetCore.Components.Endpoints;
 using Microsoft.AspNetCore.Localization.Routing;
-using System.Text.RegularExpressions;
 using CrystaLearn.Shared;
 using CrystaLearn.Shared.Attributes;
-using CrystaLearn.Client.Core.Services;
+using Hangfire;
+using CrystaLearn.Server.Api;
+using CrystaLearn.Server.Api.Filters;
+using CrystaLearn.Server.Api.Services;
+using CrystaLearn.Server.Web.Endpoints;
 
 namespace CrystaLearn.Server.Web;
 
@@ -26,29 +27,12 @@ public static partial class Program
 
         ServerWebSettings settings = new();
         configuration.Bind(settings);
-        var forwardedHeadersOptions = settings.ForwardedHeaders;
 
-        if (forwardedHeadersOptions is not null
-            && (app.Environment.IsDevelopment() || forwardedHeadersOptions.AllowedHosts.Any()))
-        {
-            // If the list is empty then all hosts are allowed. Failing to restrict this these values may allow an attacker to spoof links generated for reset password etc.
-            app.UseForwardedHeaders(forwardedHeadersOptions);
-        }
+        app.UseAppForwardedHeaders();
 
-        if (CultureInfoManager.InvariantGlobalization is false)
-        {
-            var supportedCultures = CultureInfoManager.SupportedCultures.Select(sc => sc.Culture).ToArray();
-            var options = new RequestLocalizationOptions
-            {
-                SupportedCultures = supportedCultures,
-                SupportedUICultures = supportedCultures,
-                ApplyCurrentCultureToResponseHeaders = true
-            };
-            options.SetDefaultCulture(CultureInfoManager.DefaultCulture.Name);
-            options.RequestCultureProviders.Insert(1, new RouteDataRequestCultureProvider() { Options = options });
-            app.UseRequestLocalization(options);
-        }
+        app.UseLocalization();
 
+        app.UseExceptionHandler();
 
         if (env.IsDevelopment())
         {
@@ -109,6 +93,7 @@ public static partial class Program
             });
         }
 
+        app.UseCors();
 
         app.UseAuthentication();
         app.UseAuthorization();
@@ -117,8 +102,49 @@ public static partial class Program
 
         app.UseAntiforgery();
 
+        app.MappAppHealthChecks();
+
+        app.UseSwagger();
+
+        app.UseSwaggerUI(options =>
+        {
+            options.InjectJavascript($"/_content/CrystaLearn.Server.Api/scripts/swagger-utils.js?v={Environment.TickCount64}");
+        });
+
+        app.UseHangfireDashboard(options: new()
+        {
+            DarkModeEnabled = true,
+            Authorization = [new HangfireDashboardAuthorizationFilter()]
+        });
+
+        app.MapGet("/api/minimal-api-sample/{routeParameter}", [AppResponseCache(MaxAge = 3600 * 24)] (string routeParameter, [FromQuery] string queryStringParameter) => new
+        {
+            RouteParameter = routeParameter,
+            QueryStringParameter = queryStringParameter
+        }).WithTags("Test").CacheOutput("AppResponseCachePolicy");
+
+        if (string.IsNullOrEmpty(configuration["Azure:SignalR:ConnectionString"]) is false
+            && settings.WebAppRender.BlazorMode is not BlazorWebAppMode.BlazorWebAssembly)
+        {
+            // Azure SignalR is going to send blazor server / auto messages to the Azure Cloud which is useless in this case,
+            // because scale out lots of messages that are related to the current opened tab of browser only is not necessary and will cost you lots of money.
+            // https://github.com/Azure/azure-signalr/issues/1738
+            // Solutions:
+            // - Switch to Blazor WebAssembly in production. Hint: To leverage Blazor server's enhanced development experience in local dev environment, you can disable Azure SignalR by setting "Azure:SignalR:ConnectionString" to null in appsettings.json or appsettings.Development.json.
+            // OR
+            // - Use Standalone API mode:
+            //    Publish and run the Server.Api project independently to serve restful APIs and SignalR services like AppHub (Just like https://adminpanel-api.bitplatform.dev/swagger deployment)
+            //    and use the Server.Web project solely as a Blazor Server or pre-rendering service provider.
+            throw new InvalidOperationException("Azure SignalR is not supported with Blazor Server and Auto");
+        }
+        app.MapHub<Api.SignalR.AppHub>("/app-hub", options => options.AllowStatefulReconnects = true);
+
+        app.MapControllers()
+           .RequireAuthorization()
+           .CacheOutput("AppResponseCachePolicy");
 
         app.UseSiteMap();
+        app.UseWebInteropApp();
 
         // Handle the rest of requests with blazor
         var blazorApp = app.MapRazorComponents<Components.App>()
@@ -132,58 +158,6 @@ public static partial class Program
             blazorApp.AllowAnonymous(); // Server may not check authorization for pages when there's no pre rendering, let the client handle it.
         }
     }
-
-    private static void UseSiteMap(this WebApplication app)
-    {
-        const string siteMapHeader = @"<?xml version=""1.0"" encoding=""UTF-8""?>
-<urlset xmlns=""http://www.sitemaps.org/schemas/sitemap/0.9"">";
-
-        app.MapGet("/sitemap_index.xml", [AppResponseCache(SharedMaxAge = 3600 * 24 * 7)] async (context) =>
-        {
-            const string SITEMAP_INDEX_FORMAT = @"<?xml version=""1.0"" encoding=""UTF-8""?>
-<sitemapindex xmlns=""http://www.sitemaps.org/schemas/sitemap/0.9"">
-   <sitemap>
-      <loc>{0}sitemap.xml</loc>
-   </sitemap>
-</sitemapindex>";
-
-            var baseUrl = context.Request.GetBaseUrl();
-
-            context.Response.Headers.ContentType = "application/xml";
-
-            await context.Response.WriteAsync(string.Format(SITEMAP_INDEX_FORMAT, baseUrl), context.RequestAborted);
-        }).CacheOutput("AppResponseCachePolicy").WithTags("Sitemaps");
-
-        app.MapGet("/sitemap.xml", [AppResponseCache(SharedMaxAge = 3600 * 24 * 7)] async (context) =>
-        {
-            var urls = AssemblyLoadContext.Default.Assemblies.Where(asm => asm.GetName().Name?.Contains("CrystaLearn.Client") is true)
-                 .SelectMany(asm => asm.ExportedTypes)
-                 .Where(att => att.GetCustomAttribute<AuthorizeAttribute>(inherit: true) is null)
-                 .SelectMany(t => t.GetCustomAttributes<Microsoft.AspNetCore.Components.RouteAttribute>())
-                 .Where(att => RouteRegex().IsMatch(att.Template) is false)
-                 .Select(att => att.Template)
-                 .Except([Urls.NotFoundPage, Urls.NotAuthorizedPage])
-                 .ToArray();
-
-            urls = CultureInfoManager.InvariantGlobalization is false
-                    ? urls.Union(CultureInfoManager.SupportedCultures.SelectMany(sc => urls.Select(url => $"{sc.Culture.Name}{url}"))).ToArray()
-                    : urls;
-
-            var baseUrl = context.Request.GetBaseUrl();
-
-            var siteMap = @$"{siteMapHeader}
-    {string.Join(Environment.NewLine, urls.Select(u => $"<url><loc>{new Uri(baseUrl, u)}</loc></url>"))}
-</urlset>";
-
-            context.Response.Headers.ContentType = "application/xml";
-
-            await context.Response.WriteAsync(siteMap, context.RequestAborted);
-        }).CacheOutput("AppResponseCachePolicy").WithTags("Sitemaps");
-
-    }
-
-    [GeneratedRegex(@"\{.*?\}")]
-    private static partial Regex RouteRegex();
 
     /// <summary>
     /// Prior to the introduction of .NET 8, the Blazor router effectively managed NotFound and NotAuthorized components during pre-rendering.
@@ -199,11 +173,11 @@ public static partial class Program
         {
             if (context.Request.Path.HasValue)
             {
-                if (context.Request.Path.Value.Contains(Urls.NotFoundPage, StringComparison.InvariantCultureIgnoreCase))
+                if (context.Request.Path.Value.Contains(PageUrls.NotFound, StringComparison.InvariantCultureIgnoreCase))
                 {
                     context.Response.StatusCode = (int)HttpStatusCode.NotFound;
                 }
-                if (context.Request.Path.Value.Contains(Urls.NotAuthorizedPage, StringComparison.InvariantCultureIgnoreCase))
+                if (context.Request.Path.Value.Contains(PageUrls.NotAuthorized, StringComparison.InvariantCultureIgnoreCase))
                 {
                     context.Response.StatusCode = context.Request.Query["isForbidden"].FirstOrDefault() is "true" ? (int)HttpStatusCode.Forbidden : (int)HttpStatusCode.Unauthorized;
                 }
@@ -226,12 +200,12 @@ public static partial class Program
                     var qs = AppQueryStringCollection.Parse(httpContext.Request.QueryString.Value ?? string.Empty);
                     qs.Remove("try_refreshing_token");
                     var returnUrl = UriHelper.BuildRelative(httpContext.Request.PathBase, httpContext.Request.Path, new QueryString(qs.ToString()));
-                    httpContext.Response.Redirect($"{Urls.NotAuthorizedPage}?return-url={returnUrl}&isForbidden={(is403 ? "true" : "false")}");
+                    httpContext.Response.Redirect($"{PageUrls.NotAuthorized}?return-url={returnUrl}&isForbidden={(is403 ? "true" : "false")}");
                 }
                 else if (httpContext.Response.StatusCode is 404 &&
                     httpContext.GetEndpoint() is null /* Please be aware that certain endpoints, particularly those associated with web API actions, may intentionally return a 404 error. */)
                 {
-                    httpContext.Response.Redirect($"{Urls.NotFoundPage}?url={httpContext.Request.GetEncodedPathAndQuery()}");
+                    httpContext.Response.Redirect($"{PageUrls.NotFound}?url={httpContext.Request.GetEncodedPathAndQuery()}");
                 }
                 else
                 {

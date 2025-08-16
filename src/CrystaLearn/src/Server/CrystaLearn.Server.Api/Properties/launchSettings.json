@@ -8,29 +8,29 @@
                 "ASPNETCORE_ENVIRONMENT": "Development"
             },
             "dotnetRunMessages": true,
-            "applicationUrl": "http://localhost:5029"
+            "applicationUrl": "http://*:5210"
         },
         "WSL": {
             "commandName": "WSL2",
             "launchBrowser": true,
-            "launchUrl": "http://localhost:5029/swagger",
+            "launchUrl": "swagger",
             "environmentVariables": {
                 "ASPNETCORE_ENVIRONMENT": "Development",
-                "ASPNETCORE_URLS": "http://localhost:5029"
+                "ASPNETCORE_URLS": "http://*:5210"
             }
         },
         "Docker": {
             "commandName": "SdkContainer",
             "launchBrowser": true,
             "launchUrl": "{Scheme}://{ServiceHost}:{ServicePort}/swagger",
-            "DockerfileRunArguments": "-v C:\\DockerVolumes\\AD69594D-685D-441F-B0E1-6AB4212F3C09:/container_volume",
+            "DockerfileRunArguments": "-v C:\\DockerVolumes\\5A7440BA-B788-4B1C-86D4-5A2F52B44863:/container_volume",
             "environmentVariables": {
-                "ASPNETCORE_HTTP_PORTS": "5029",
+                "ASPNETCORE_HTTP_PORTS": "5210",
                 "ConnectionStrings__SqliteConnectionString": "Data Source=/container_volume/App_Data/CrystaLearnDb.db;"
             },
             "publishAllPorts": true,
             "useSSL": false,
-            "httpPort": 5029
+            "httpPort": 5210
         },
         "IIS Express": {
             "commandName": "IISExpress",
@@ -39,14 +39,23 @@
             "environmentVariables": {
                 "ASPNETCORE_ENVIRONMENT": "Development"
             }
+        },
+        "IIS": {
+            "commandName": "IIS",
+            "launchBrowser": true,
+            "environmentVariables": {
+                "ASPNETCORE_ENVIRONMENT": "Development"
+            }
         }
     },
     "iisSettings": {
         "windowsAuthentication": false,
         "anonymousAuthentication": true,
+        "iis": {
+            "applicationUrl": "http://localhost:5210/"
+        },
         "iisExpress": {
-            "applicationUrl": "http://localhost:55029/",
-            "httpPort": 5029
+            "applicationUrl": "http://localhost:5210/"
         }
     },
     "$schema": "http://json.schemastore.org/launchsettings.json"

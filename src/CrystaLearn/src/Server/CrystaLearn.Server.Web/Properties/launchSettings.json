@@ -8,7 +8,17 @@
                 "IN_APP_SCSS_COMPILER_ENABLED": "true"
             },
             "dotnetRunMessages": true,
-            "applicationUrl": "http://localhost:5000"
+            "applicationUrl": "http://*:5000"
+        },
+        "CrystaLearn.Server.Web-Swagger": {
+            "commandName": "Project",
+            "launchBrowser": true,
+            "launchUrl": "swagger",
+            "environmentVariables": {
+                "ASPNETCORE_ENVIRONMENT": "Development"
+            },
+            "dotnetRunMessages": true,
+            "applicationUrl": "http://*:5000"
         },
         "CrystaLearn.Server.Web-BlazorWebAssembly": {
             "commandName": "Project",
@@ -20,7 +30,7 @@
             },
             "dotnetRunMessages": true,
             "inspectUri": "{wsProtocol}://{url.hostname}:{url.port}/_framework/debug/ws-proxy?browser={browserInspectUri}",
-            "applicationUrl": "http://localhost:5000"
+            "applicationUrl": "http://*:5000"
         },
         "WSL": {
             "commandName": "WSL2",
@@ -28,7 +38,7 @@
             "launchUrl": "http://localhost:5000/",
             "environmentVariables": {
                 "ASPNETCORE_ENVIRONMENT": "Development",
-                "ASPNETCORE_URLS": "http://localhost:5000"
+                "ASPNETCORE_URLS": "http://*:5000"
             }
         },
         "Docker": {
@@ -40,7 +50,7 @@
                 "ASPNETCORE_ENVIRONMENT": "Development",
                 "ConnectionStrings__SqliteConnectionString": "Data Source=/container_volume/App_Data/CrystaLearnDb.db;"
             },
-            "DockerfileRunArguments": "-v C:\\DockerVolumes\\AD69594D-685D-441F-B0E1-6AB4212F3C09:/container_volume",
+            "DockerfileRunArguments": "-v C:\\DockerVolumes\\5A7440BA-B788-4B1C-86D4-5A2F52B44863:/container_volume",
             "publishAllPorts": true,
             "useSSL": false,
             "httpPort": 5000
@@ -49,16 +59,27 @@
             "commandName": "IISExpress",
             "launchBrowser": true,
             "environmentVariables": {
-                "ASPNETCORE_ENVIRONMENT": "Development"
+                "ASPNETCORE_ENVIRONMENT": "Development",
+                "IN_APP_SCSS_COMPILER_ENABLED": "true"
+            }
+        },
+        "IIS": {
+            "commandName": "IIS",
+            "launchBrowser": true,
+            "environmentVariables": {
+                "ASPNETCORE_ENVIRONMENT": "Development",
+                "IN_APP_SCSS_COMPILER_ENABLED": "true"
             }
         }
     },
     "iisSettings": {
         "windowsAuthentication": false,
         "anonymousAuthentication": true,
+        "iis": {
+            "applicationUrl": "http://localhost:5000/"
+        },
         "iisExpress": {
-            "applicationUrl": "http://localhost:55000/",
-            "httpPort": 5000
+            "applicationUrl": "http://localhost:5000/"
         }
     },
     "$schema": "http://json.schemastore.org/launchsettings.json"

@@ -11,7 +11,7 @@ public partial class SharedExceptionHandler
         if (exception is KnownException)
             return exception.Message;
 
-        if (AppEnvironment.IsDev())
+        if (AppEnvironment.IsDevelopment())
             return exception.ToString();
 
         return Localizer[nameof(AppStrings.UnknownException)];
@@ -45,15 +45,17 @@ public partial class SharedExceptionHandler
         return exception;
     }
 
-    public bool IgnoreException(Exception exception)
+    public virtual bool IgnoreException(Exception exception)
     {
+        // Ignoring exception here will prevent it from being logged in both client and server.
+
+        if (exception is ClientNotSupportedException)
+            return true; // See ExceptionDelegatingHandler
+
         if (exception is KnownException)
             return false;
 
-        return exception is TaskCanceledException ||
-            exception is OperationCanceledException ||
-            exception is TimeoutException ||
-            (exception.InnerException is not null && IgnoreException(exception.InnerException));
+        return exception.InnerException is not null && IgnoreException(exception.InnerException);
     }
 
     protected IDictionary<string, object?> GetExceptionData(Exception exp)
@@ -61,6 +63,17 @@ public partial class SharedExceptionHandler
         var data = exp.Data.Keys.Cast<string>()
             .Zip(exp.Data.Values.Cast<object?>())
             .ToDictionary(item => item.First, item => item.Second);
+
+        if (exp is ResourceValidationException resValExp)
+        {
+            foreach (var detail in resValExp.Payload.Details)
+            {
+                foreach (var error in detail.Errors)
+                {
+                    data[$"{detail.Name}:{error.Key}"] = error.Message;
+                }
+            }
+        }
 
         if (exp.InnerException is not null)
         {

@@ -6,5 +6,8 @@
     "environment.documents.saveEncoding": "utf-8-nobom;65001",
     "languages.defaults.tabs.tabSize": 4,
     "debugging.hotReload.enableHotReload": true,
-    "debugging.hotReload.enableForNoDebugLaunch": true
+    "debugging.hotReload.enableForNoDebugLaunch": true,
+    "projectsAndSolutions.aspNetCore.general.hotReloadCssChanges": true,
+    "copilot.general.completions.enableNextEditSuggestions": true,
+    "copilot.general.editor.enableAdaptivePaste": true
 }

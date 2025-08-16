@@ -1,6 +1,4 @@
 ﻿using CrystaLearn.Core.Models.Identity;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace CrystaLearn.Core.Data.Configurations.Identity;
 

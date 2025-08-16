@@ -2,71 +2,24 @@
 
 public partial class MainLayout
 {
-    private List<BitNavItem> navPanelAuthenticatedItems = [];
-    private List<BitNavItem> navPanelUnAuthenticatedItems = [];
+    private List<BitNavItem> navPanelItems = [];
 
     [AutoInject] protected IStringLocalizer<AppStrings> localizer = default!;
+    [AutoInject] protected IAuthorizationService authorizationService = default!;
 
-    private void InitializeNavPanelItems()
+    private async Task SetNavPanelItems(ClaimsPrincipal authUser)
     {
-        BitNavItem homeNavItem = new()
-        {
-            Text = localizer[nameof(AppStrings.Home)],
-            IconName = BitIconName.Home,
-            Url = Urls.HomePage,
-        };
-
-        BitNavItem termsNavItem = new()
-        {
-            Text = localizer[nameof(AppStrings.Terms)],
-            IconName = BitIconName.EntityExtraction,
-            Url = Urls.TermsPage,
-        };
-
-        navPanelUnAuthenticatedItems = [homeNavItem, termsNavItem];
-
-        navPanelAuthenticatedItems =
-        [
-            homeNavItem,
-            termsNavItem
-        ];
 
 
-        navPanelAuthenticatedItems.Add(new()
-        {
-            Text = localizer[nameof(AppStrings.SystemPromptsTitle)],
-            IconName = BitIconName.TextDocumentSettings,
-            Url = Urls.SystemPrompts,
-        });
-        navPanelUnAuthenticatedItems.Add(new()
-        {
-            Text = localizer[nameof(AppStrings.SystemPromptsTitle)],
-            IconName = BitIconName.TextDocumentSettings,
-            Url = Urls.SystemPrompts,
-        });
+        var (dashboard, manageProductCatalog) = await (authorizationService.IsAuthorizedAsync(authUser!, AppFeatures.AdminPanel.Dashboard),
+            authorizationService.IsAuthorizedAsync(authUser!, AppFeatures.AdminPanel.ManageProductCatalog));
 
-        BitNavItem aboutNavItem = new()
-        {
-            Text = localizer[nameof(AppStrings.About)],
-            IconName = BitIconName.Info,
-            Url = Urls.AboutPage,
-        };
 
-        navPanelAuthenticatedItems.Add(aboutNavItem);
-        navPanelUnAuthenticatedItems.Add(aboutNavItem);
 
-        navPanelAuthenticatedItems.Add(new()
-        {
-            Text = localizer[nameof(AppStrings.Settings)],
-            IconName = BitIconName.Equalizer,
-            Url = Urls.SettingsPage,
-            AdditionalUrls =
-            [
-                $"{Urls.SettingsPage}/{Urls.SettingsSections.Profile}",
-                $"{Urls.SettingsPage}/{Urls.SettingsSections.Account}",
-                $"{Urls.SettingsPage}/{Urls.SettingsSections.Tfa}",
-                $"{Urls.SettingsPage}/{Urls.SettingsSections.Sessions}",
-            ]
-        });
+        var (manageRoles, manageUsers, manageAiPrompt) = await (authorizationService.IsAuthorizedAsync(authUser!, AppFeatures.Management.ManageRoles),
+            authorizationService.IsAuthorizedAsync(authUser!, AppFeatures.Management.ManageUsers),
+            authorizationService.IsAuthorizedAsync(authUser!, AppFeatures.Management.ManageAiPrompt));
+
+
     }
 }

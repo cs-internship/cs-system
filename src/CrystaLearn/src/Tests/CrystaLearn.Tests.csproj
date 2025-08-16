@@ -1,12 +1,11 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
         <TargetFramework>net9.0</TargetFramework>
         <Nullable>enable</Nullable>
         <IsTestProject>true</IsTestProject>
         <RunSettingsFilePath>$(MSBuildProjectDirectory)\.runsettings</RunSettingsFilePath>
-      <UserSecretsId>3b84084b-a242-44aa-8f47-f144fe1b6b83</UserSecretsId>
-  </PropertyGroup>
+    </PropertyGroup>
 
     <ItemGroup>
         <PackageReference Include="coverlet.collector">
@@ -40,5 +39,4 @@
                 <PackageReference Include="GitHubActionsTestLogger" PrivateAssets="all" />
             </ItemGroup>
 
-    
 </Project>

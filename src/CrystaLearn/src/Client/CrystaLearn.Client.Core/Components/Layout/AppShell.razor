@@ -1,0 +1,41 @@
+@inherits AppComponentBase
+
+<BitAppShell PersistScroll>
+    <main class="@GetMainCssClass()">
+        <div class="main-container">
+            @if (IsDocPage)
+            {
+                <BitNavPanel @bind-IsOpen="isNavPanelOpen"
+                         @bind-IsToggled="isNavPanelToggled"
+                         IconNavUrl="/"
+                         Class="nav-panel"
+                         Items="navPanelItems"
+                         Accent="BitColor.SecondaryBackground"
+                         OnItemClick="(BitNavItem item) => OnNavItemClicked(item)"
+                         IconUrl="_content/CrystaLearn.Client.Core/images/bit-logo.svg">
+                    <Footer>
+                        <BitStack Class="footer-stack">
+                            @if (isNavPanelToggled is false)
+                            {
+                                <BitActionButton Class="app-version" OnClick="WrapHandled(UpdateApp)">
+                                    <BitText Typography="BitTypography.Caption2">@TelemetryContext.AppVersion</BitText>
+                                </BitActionButton>
+                            }
+                        </BitStack>
+                    </Footer>
+                </BitNavPanel>
+            }
+
+            <div class="main-body">
+                @if (IsIdentityPage is false)
+                {
+                    <Header />
+                }
+
+                <div class="body">
+                    @ChildContent
+                </div>
+            </div>
+        </div>
+    </main>
+</BitAppShell>

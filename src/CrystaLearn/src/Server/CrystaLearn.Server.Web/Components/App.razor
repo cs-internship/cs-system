@@ -1,3 +1,4 @@
+@using Microsoft.AspNetCore.Http;
 @using CrystaLearn.Client.Web.Components
 @using CrystaLearn.Server.Web.Components.Layout
 @using Microsoft.AspNetCore.Components.Routing
@@ -26,11 +27,9 @@
     <Script>
         // disable auto-zoom of iOS Safari when focusing an input
         (/iPad|iPhone|iPod/.test(navigator.userAgent)) &&
-            (document.querySelector('meta[name="viewport"]').content = 'width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover')
+            (document.querySelector('meta[name="viewport"]').content = 'width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover');
     </Script>
 
-    <Link rel="preconnect" href="https://www.google.com" />
-    <Link rel="preconnect" href="https://www.gstatic.com" crossorigin />
 
     <Link rel="preconnect" href="@absoluteServerAddress.ToString()" />@* for PWA *@
 
@@ -84,10 +83,10 @@
         <Script Src="_content/Bit.Bswup/bit-bswup.js" blazorScript="_content/Bit.BlazorES2019/blazor.web.js"></Script>
         <Script src="_content/Bit.Bswup/bit-bswup.progress.js"></Script>
         <AppBswupProgressBar />
-        <Script src="_content/Bit.Butil/bit-butil.js"></Script>
-        <Script src="_content/Bit.BlazorUI/scripts/bit.blazorui.js"></Script>
-        <Script src="_content/CrystaLearn.Client.Core/scripts/app.js"></Script>
-        <Script src="_content/Bit.BlazorUI.Extras/scripts/bit.blazorui.extras.js"></Script>
+        <Script Src="_content/Bit.Butil/bit-butil.js"></Script>
+        <Script Src="_content/Bit.BlazorUI/scripts/bit.blazorui.js"></Script>
+        <Script Src="_content/CrystaLearn.Client.Core/scripts/app.js"></Script>
+        <Script Src="_content/Bit.BlazorUI.Extras/scripts/bit.blazorui.extras.js"></Script>
     }
 </body>
 

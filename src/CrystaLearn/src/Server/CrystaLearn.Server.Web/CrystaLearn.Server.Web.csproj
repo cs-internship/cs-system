@@ -2,12 +2,12 @@
 
     <PropertyGroup>
         <TargetFramework>net9.0</TargetFramework>
-        <UserSecretsId>AD69594D-685D-441F-B0E1-6AB4212F3C09</UserSecretsId>
+        <UserSecretsId>5A7440BA-B788-4B1C-86D4-5A2F52B44863</UserSecretsId>
         <ValidateExecutableReferencesMatchSelfContained>false</ValidateExecutableReferencesMatchSelfContained>
     </PropertyGroup>
 
-    <PropertyGroup Condition="'$(Environment)' != 'Development'">
-        <SelfContained>true</SelfContained>
+    <PropertyGroup Condition="'$(Environment)' != 'Development' And '$(SelfContained)' == 'true'">
+        <RuntimeIdentifier>linux-x64</RuntimeIdentifier>
         <PublishReadyToRun>true</PublishReadyToRun>
         <PublishReadyToRunComposite>true</PublishReadyToRunComposite>
     </PropertyGroup>
@@ -16,11 +16,12 @@
         <PackageReference Include="NWebsec.AspNetCore.Middleware" />
         <PackageReference Include="Microsoft.AspNetCore.Components.Web" />
         <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Server" />
-        <PackageReference Include="Microsoft.ApplicationInsights.AspNetCore" />
         <PackageReference Include="Sentry.AspNetCore" />
     </ItemGroup>
 
     <ItemGroup>
+        <ProjectReference Include="..\CrystaLearn.Server.Shared\CrystaLearn.Server.Shared.csproj" />
+        <ProjectReference Include="..\CrystaLearn.Server.Api\CrystaLearn.Server.Api.csproj" />
         <ProjectReference Include="..\..\Client\CrystaLearn.Client.Web\CrystaLearn.Client.Web.csproj" />
     </ItemGroup>
 
@@ -29,11 +30,18 @@
     </ItemGroup>
 
     <ItemGroup Condition="'$(Environment)' == 'Development'">
-        <!-- Checkout ScssCompilerService.cs source code. -->
+        <!-- Check out  ScssCompilerService.cs source code. -->
         <PackageReference Include="Meziantou.Framework.Win32.Jobs" />
     </ItemGroup>
     <ItemGroup Condition="'$(Environment)' != 'Development'">
         <Compile Remove="Services\ScssCompilerService.cs" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <None Include="..\CrystaLearn.Server.Api\appsettings*.json">
+            <Link>%(Filename)%(Extension)</Link>
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </None>
     </ItemGroup>
 
     <!--

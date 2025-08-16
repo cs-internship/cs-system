@@ -1,4 +1,4 @@
-using CrystaLearn.Tests.Extensions;
+﻿using CrystaLearn.Tests.Extensions;
 
 namespace CrystaLearn.Tests;
 
@@ -6,7 +6,7 @@ namespace CrystaLearn.Tests;
 public partial class IdentityPagesTests : PageTest
 {
     [TestMethod]
-    public async Task UnauthorizedUser_Should_RedirectToSignInPage()
+    public async Task UnauthorizedUser_Should_RenderNotAuthorizedComponent()
     {
         await using var server = new AppTestServer();
 
@@ -15,9 +15,9 @@ public partial class IdentityPagesTests : PageTest
             // Services registered in this test project will be used instead of the application's services, allowing you to fake certain behaviors during testing.
         }).Start();
 
-        await Page.GotoAsync(new Uri(server.WebAppServerAddress, Urls.SettingsPage).ToString());
+        await Page.GotoAsync(new Uri(server.WebAppServerAddress, PageUrls.Settings).ToString());
 
-        await Expect(Page).ToHaveURLAsync(new Uri(server.WebAppServerAddress, "/sign-in?return-url=settings").ToString());
+        await Expect(Page).ToHaveTitleAsync(AppStrings.NotAuthorizedPageTitle);
     }
 
     [TestMethod]
@@ -26,7 +26,7 @@ public partial class IdentityPagesTests : PageTest
         await using var server = new AppTestServer();
         await server.Build().Start();
 
-        await Page.GotoAsync(new Uri(server.WebAppServerAddress, Urls.SignInPage).ToString());
+        await Page.GotoAsync(new Uri(server.WebAppServerAddress, PageUrls.SignIn).ToString());
 
         await Expect(Page).ToHaveTitleAsync(AppStrings.SignInPageTitle);
 
@@ -36,7 +36,7 @@ public partial class IdentityPagesTests : PageTest
 
         await Page.GetByPlaceholder(AppStrings.EmailPlaceholder).FillAsync(email);
         await Page.GetByPlaceholder(AppStrings.PasswordPlaceholder).FillAsync(password);
-        await Page.GetByRole(AriaRole.Button, new() { Name = AppStrings.SignIn, Exact = true }).ClickAsync();
+        await Page.GetByRole(AriaRole.Button, new() { Name = AppStrings.Continue, Exact = true }).ClickAsync();
 
         await Expect(Page).ToHaveURLAsync(server.WebAppServerAddress.ToString());
         await Expect(Page.GetByRole(AriaRole.Button, new() { Name = userFullName })).ToBeVisibleAsync();

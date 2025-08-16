@@ -16,11 +16,11 @@ public partial class AuthManager : AuthenticationStateProvider, IAsyncDisposable
     [AutoInject] private IUserController userController = default!;
     [AutoInject] private ILogger<AuthManager> authLogger = default!;
     [AutoInject] private IAuthTokenProvider tokenProvider = default!;
-    [AutoInject] private ITelemetryContext telemetryContext = default!;
     [AutoInject] private IExceptionHandler exceptionHandler = default!;
     [AutoInject] private IStringLocalizer<AppStrings> localizer = default!;
     [AutoInject] private IIdentityController identityController = default!;
     [AutoInject] private IAuthorizationService authorizationService = default!;
+    [AutoInject] private AbsoluteServerAddressProvider absoluteServerAddress = default!;
 
     public void OnInit()
     {
@@ -48,7 +48,7 @@ public partial class AuthManager : AuthenticationStateProvider, IAsyncDisposable
     {
         rememberMe ??= await storageService.IsPersistent("refresh_token");
 
-        await storageService.SetItem("access_token", response!.AccessToken, rememberMe is true);
+        await storageService.SetItem("access_token", response!.AccessToken);
         await storageService.SetItem("refresh_token", response!.RefreshToken, rememberMe is true);
 
         if (AppPlatform.IsBlazorHybrid is false && jsRuntime.IsInitialized())
@@ -57,10 +57,11 @@ public partial class AuthManager : AuthenticationStateProvider, IAsyncDisposable
             {
                 Name = "access_token",
                 Value = response.AccessToken,
-                MaxAge = rememberMe is true ? response.ExpiresIn : null, // to create a session cookie
+                MaxAge = response.ExpiresIn,
                 Path = "/",
+                Domain = absoluteServerAddress.GetAddress().Host,
                 SameSite = SameSite.Strict,
-                Secure = AppEnvironment.IsDev() is false
+                Secure = AppEnvironment.IsDevelopment() is false
             });
         }
 
@@ -73,10 +74,11 @@ public partial class AuthManager : AuthenticationStateProvider, IAsyncDisposable
         {
             await userController.SignOut(cancellationToken);
         }
-        catch (Exception exp) when (exp is ServerConnectionException or UnauthorizedException or ResourceNotFoundException)
+        catch (Exception exp) when (exp is ServerConnectionException or UnauthorizedException or ResourceNotFoundException or ClientNotSupportedException)
         {
-            // The user might sign out while the app is offline, making token refresh attempts fail.
-            // These exceptions are intentionally ignored in this case.
+            // If the client's access token is expired, the client would attempt to refresh it,
+            // but if the client is offline or outdated, the refresh token request will fail.
+            // These exceptions are intentionally ignored in these cases.
         }
         finally
         {
@@ -115,7 +117,6 @@ public partial class AuthManager : AuthenticationStateProvider, IAsyncDisposable
                     var refreshTokenResponse = await identityController.Refresh(new()
                     {
                         RefreshToken = refreshToken,
-                        DeviceInfo = telemetryContext.Platform,
                         ElevatedAccessToken = elevatedAccessToken
                     }, default);
                     await StoreTokens(refreshTokenResponse);
@@ -127,7 +128,7 @@ public partial class AuthManager : AuthenticationStateProvider, IAsyncDisposable
                     {
                         { "AdditionalData", "Refreshing access token failed." },
                         { "RefreshTokenRequestedBy", requestedBy }
-                    });
+                    }, displayKind: ExceptionDisplayKind.NonInterrupting);
 
                     if (exp is UnauthorizedException) // refresh token is also invalid
                     {
@@ -172,7 +173,7 @@ public partial class AuthManager : AuthenticationStateProvider, IAsyncDisposable
     public async Task<bool> TryEnterElevatedAccessMode(CancellationToken cancellationToken)
     {
         var user = IAuthTokenProvider.ParseAccessToken(await tokenProvider.GetAccessToken(), validateExpiry: true);
-        var hasElevatedAccess = await authorizationService.AuthorizeAsync(user, AuthPolicies.ELEVATED_ACCESS) is { Succeeded: true };
+        var hasElevatedAccess = await authorizationService.IsAuthorizedAsync(user, AuthPolicies.ELEVATED_ACCESS);
         if (hasElevatedAccess)
             return true;
 
@@ -215,10 +216,14 @@ public partial class AuthManager : AuthenticationStateProvider, IAsyncDisposable
     {
         await storageService.RemoveItem("access_token");
         await storageService.RemoveItem("refresh_token");
-        if (AppPlatform.IsBlazorHybrid is false)
+        await cookie.Remove(new ButilCookie()
         {
-            await cookie.Remove("access_token");
-        }
+            Name = "access_token",
+            Path = "/",
+            Domain = absoluteServerAddress.GetAddress().Host,
+            SameSite = SameSite.Strict,
+            Secure = AppEnvironment.IsDevelopment() is false
+        });
         NotifyAuthenticationStateChanged(Task.FromResult(await GetAuthenticationStateAsync()));
     }
 

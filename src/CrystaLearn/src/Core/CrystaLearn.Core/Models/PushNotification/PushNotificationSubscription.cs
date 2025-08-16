@@ -4,7 +4,9 @@ namespace CrystaLearn.Core.Models.PushNotification;
 
 public class PushNotificationSubscription
 {
-    [Required, Key]
+    public int Id { get; set; }
+
+    [Required]
     public string? DeviceId { get; set; }
 
     [Required, AllowedValues("apns", "fcmV1", "browser")]

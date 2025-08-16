@@ -1,0 +1,12 @@
+﻿@using CrystaLearn.Shared.Dtos.Crysta
+@attribute [Route(Urls.Crysta.DocsPageRoutePattern + "/{*DocPath}")]
+@attribute [Route("{culture?}" + Urls.Crysta.DocsPageRoutePattern)]
+@inherits AppPageBase
+
+<PageTitle>@Localizer[nameof(AppStrings.TermsPageTitle)]</PageTitle>
+<CascadingValue Value="BitDir.Ltr">
+    <BitStack Horizontal>
+        <BitSpacer Width="5"></BitSpacer>
+        <DocumentComponent CrystaUrl="@CurrentCrystaUrl" />
+    </BitStack>
+</CascadingValue>

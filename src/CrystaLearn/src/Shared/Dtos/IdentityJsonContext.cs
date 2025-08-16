@@ -1,4 +1,4 @@
-using CrystaLearn.Shared.Dtos.Identity;
+﻿using CrystaLearn.Shared.Dtos.Identity;
 
 namespace CrystaLearn.Shared.Dtos;
 
@@ -11,9 +11,9 @@ namespace CrystaLearn.Shared.Dtos;
 [JsonSerializable(typeof(SignInRequestDto))]
 [JsonSerializable(typeof(SignInResponseDto))]
 [JsonSerializable(typeof(TokenResponseDto))]
-[JsonSerializable(typeof(RefreshRequestDto))]
+[JsonSerializable(typeof(RefreshTokenRequestDto))]
 [JsonSerializable(typeof(SignUpRequestDto))]
-[JsonSerializable(typeof(EditUserDto))]
+[JsonSerializable(typeof(EditUserRequestDto))]
 [JsonSerializable(typeof(SendEmailTokenRequestDto))]
 [JsonSerializable(typeof(SendPhoneTokenRequestDto))]
 [JsonSerializable(typeof(ConfirmEmailRequestDto))]
@@ -25,6 +25,12 @@ namespace CrystaLearn.Shared.Dtos;
 [JsonSerializable(typeof(TwoFactorAuthRequestDto))]
 [JsonSerializable(typeof(TwoFactorAuthResponseDto))]
 [JsonSerializable(typeof(List<UserSessionDto>))]
+[JsonSerializable(typeof(RoleDto))]
+[JsonSerializable(typeof(List<RoleDto>))]
+[JsonSerializable(typeof(List<UserDto>))]
+[JsonSerializable(typeof(List<ClaimDto>))]
+[JsonSerializable(typeof(UserRoleDto))]
+[JsonSerializable(typeof(UpdateUserSessionRequestDto))]
 public partial class IdentityJsonContext : JsonSerializerContext
 {
 }

@@ -1,6 +1,5 @@
+﻿using UIKit;
 using Foundation;
-using UIKit;
-using UserNotifications;
 using CrystaLearn.Client.Maui.Platforms.iOS.Services;
 
 namespace CrystaLearn.Client.Maui.Platforms.iOS;
@@ -15,21 +14,22 @@ public partial class AppDelegate : MauiUIApplicationDelegate
     [Export("application:didFinishLaunchingWithOptions:")]
     public override bool FinishedLaunching(UIApplication application, NSDictionary launchOptions)
     {
-        NotificationService.IsPushNotificationSupported(default).ContinueWith(task =>
+        NotificationService.IsAvailable(default).ContinueWith(async task =>
         {
             if (task.Result)
             {
-                MainThread.BeginInvokeOnMainThread(() =>
-                {
-                    UIApplication.SharedApplication.RegisterForRemoteNotifications();
-                    UNUserNotificationCenter.Current.Delegate = new AppUNUserNotificationCenterDelegate();
-                });
+                await iOSPushNotificationService.Configure();
             }
         });
 
         // Use the following code the get the action value from the push notification when the app is launched by tapping on the push notification.
-        // using var userInfo = launchOptions?.ObjectForKey(UIApplication.LaunchOptionsRemoteNotificationKey) as NSDictionary;
+        using var userInfo = launchOptions?.ObjectForKey(UIApplication.LaunchOptionsRemoteNotificationKey) as NSDictionary;
         // var actionValue = userInfo?.ObjectForKey(new NSString("action")) as NSString;
+        var pageUrl = userInfo?.ObjectForKey(new NSString("pageUrl")) as NSString;
+        if (pageUrl != null)
+        {
+            _ = Core.Components.Routes.OpenUniversalLink(pageUrl);
+        }
 
         return base.FinishedLaunching(application, launchOptions!);
     }

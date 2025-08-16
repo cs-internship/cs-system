@@ -1,5 +1,4 @@
-﻿using CrystaLearn.Shared.Dtos.Identity;
-using CrystaLearn.Core.Models.PushNotification;
+﻿using CrystaLearn.Core.Models.PushNotification;
 
 namespace CrystaLearn.Core.Models.Identity;
 
@@ -9,11 +8,6 @@ public partial class UserSession
 
     public string? IP { get; set; }
 
-    /// <summary>
-    /// <inheritdoc cref="UserSessionDto.DeviceInfo"/>
-    /// </summary>
-    public string? DeviceInfo { get; set; }
-
     public string? Address { get; set; }
 
     /// <summary>
@@ -21,9 +15,15 @@ public partial class UserSession
     /// </summary>
     public bool Privileged { get; set; }
 
-    public DateTimeOffset StartedOn { get; set; }
+    /// <summary>
+    /// Unix Time Seconds
+    /// </summary>
+    public long StartedOn { get; set; }
 
-    public DateTimeOffset? RenewedOn { get; set; }
+    /// <summary>
+    /// Unix Time Seconds
+    /// </summary>
+    public long? RenewedOn { get; set; }
 
     public Guid UserId { get; set; }
 
@@ -33,4 +33,20 @@ public partial class UserSession
     public PushNotificationSubscription? PushNotificationSubscription { get; set; }
 
     public string? SignalRConnectionId { get; set; }
+
+    public UserSessionNotificationStatus NotificationStatus { get; set; }
+
+    public string? DeviceInfo { get; set; }
+
+    public AppPlatformType? PlatformType { get; set; }
+
+    /// <summary>
+    /// The culture selected by the user for this session.
+    /// </summary>
+    public string? CultureName { get; set; }
+
+    /// <summary>
+    /// The version of the application used for this session.
+    /// </summary>
+    public string? AppVersion { get; set; }
 }

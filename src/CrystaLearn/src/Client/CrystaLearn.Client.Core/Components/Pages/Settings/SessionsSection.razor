@@ -1,0 +1,88 @@
+@inherits AppComponentBase
+
+<section>
+    <BitStack Style="padding:1px">
+        @if (isLoading)
+        {
+            <BitStack Horizontal VerticalAlign="BitAlignment.Center">
+                <BitShimmer Shape="BitShimmerShape.Circle" Height="5rem" />
+                <BitStack Gap="0.5rem">
+                    <BitShimmer Shape="BitShimmerShape.Rectangle" Height="1rem" Width="13rem" />
+                    <BitShimmer Shape="BitShimmerShape.Rectangle" Height="1rem" Width="13rem" />
+                    <BitShimmer Shape="BitShimmerShape.Rectangle" Height="1rem" Width="13rem" />
+                </BitStack>
+            </BitStack>
+        }
+        @if (currentSession is not null)
+        {
+            @if (hasUnlimitedPrivilegedSessions is false)
+            {
+                <BitText Element="pre" Style="word-break:break-all;white-space:break-spaces" Typography="BitTypography.Body1">@Localizer[nameof(AppStrings.PrivilegedDeviceLimitMessage), maxPrivilegedSessionsCount.ToString("N0"), currentPrivilegedSessionsCount.ToString("N0")]</BitText>
+            }
+            <BitText>@Localizer[nameof(AppStrings.CurrentSession)]</BitText>
+            <BitCard FullWidth>
+                <BitStack Horizontal VerticalAlign="BitAlignment.Center" Gap="0">
+                    <BitPersona PrimaryText="@($"{currentSession.Address} ({currentSession.IP})")"
+                                SecondaryText="@GetLastSeenOn(currentSession.RenewedOnDateTimeOffset)"
+                                TertiaryText="@currentSession.DeviceInfo"
+                                Class="session-persona"
+                                Size="BitPersonaSize.Size72"
+                                Styles="@(new() { Image = "width:50%;height:50%" })"
+                                ImageInitials="@(currentSession.Privileged ? "✓" : "✘")"
+                                CoinVariant="@(currentSession.Privileged ? BitVariant.Fill : BitVariant.Outline)"
+                                ImageUrl="@($"/_content/CrystaLearn.Client.Core/images/os/{GetImageUrl(currentSession.DeviceInfo)}")"
+                                Presence="@(IsOnline is null ? BitPersonaPresence.None : IsOnline is true ? BitPersonaPresence.Online : BitPersonaPresence.Offline)" />
+                    <BitSpacer />
+                    <BitButton IconOnly
+                               FixedColor
+                               AutoLoading
+                               Variant="BitVariant.Text"
+                               Color="BitColor.SecondaryBackground"
+                               OnClick="WrapHandled(() => ToggleNotification(currentSession))"
+                               IconName="@(currentSession.NotificationStatus is UserSessionNotificationStatus.Allowed ? BitIconName.Ringer : BitIconName.RingerOff)"
+                               Title="@($"{(currentSession.NotificationStatus is UserSessionNotificationStatus.Allowed ? Localizer[nameof(AppStrings.DisableNotifications)] : Localizer[nameof(AppStrings.EnableNotifications)])}")" />
+                </BitStack>
+            </BitCard>
+        }
+
+        @if (otherSessions is not null && otherSessions.Any())
+        {
+            <br />
+            <BitPullToRefresh OnRefresh="async () => await LoadSessions(false)" ScrollerSelector=".sessions-list" Style="width:100%">
+                <BitText>@Localizer[nameof(AppStrings.OtherSessions)]</BitText>
+                <BitBasicList Items="otherSessions" EnableVirtualization Class="sessions-list">
+                    <RowTemplate Context="session">
+                        <BitCard FullWidth Style="margin-bottom:1rem">
+                            <BitStack Horizontal VerticalAlign="BitAlignment.Center" Gap="0">
+                                <BitPersona PrimaryText="@($"{session.Address} ({session.IP})")"
+                                            SecondaryText="@GetLastSeenOn(session.RenewedOnDateTimeOffset)"
+                                            TertiaryText="@session.DeviceInfo"
+                                            Size="BitPersonaSize.Size72"
+                                            Class="other-session-persona"
+                                            Presence="@GetPresence(session.RenewedOnDateTimeOffset)"
+                                            Styles="@(new() { Image = "width:50%;height:50%" })"
+                                            ImageInitials="@(session.Privileged ? "✓" : "✘")"
+                                            CoinVariant="@(session.Privileged ? BitVariant.Fill : BitVariant.Outline)"
+                                            ImageUrl="@($"/_content/CrystaLearn.Client.Core/images/os/{GetImageUrl(session.DeviceInfo)}")" />
+                                <BitSpacer />
+                                <BitButton Color="BitColor.Error"
+                                           Variant="BitVariant.Text"
+                                           OnClick="WrapHandled(() => RevokeSession(session))"
+                                           IconName="@(revokingSessionIds.Contains(session.Id) ? BitIconName.Process : BitIconName.Delete)" />
+                                <BitButton IconOnly
+                                           FixedColor
+                                           AutoLoading
+                                           Variant="BitVariant.Text"
+                                           Color="BitColor.SecondaryBackground"
+                                           OnClick="WrapHandled(() => ToggleNotification(session))"
+                                           IsEnabled="session.NotificationStatus is not UserSessionNotificationStatus.NotConfigured"
+                                           IconName="@(session.NotificationStatus is UserSessionNotificationStatus.Allowed ? BitIconName.Ringer : BitIconName.RingerOff)"
+                                           Title="@($"{(session.NotificationStatus is UserSessionNotificationStatus.Allowed ? Localizer[nameof(AppStrings.DisableNotifications)] : Localizer[nameof(AppStrings.EnableNotifications)])}")" />
+                            </BitStack>
+                        </BitCard>
+                    </RowTemplate>
+                </BitBasicList>
+            </BitPullToRefresh>
+        }
+    </BitStack>
+</section>

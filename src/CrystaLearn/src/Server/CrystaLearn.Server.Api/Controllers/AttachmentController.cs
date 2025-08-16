@@ -16,26 +16,29 @@ public partial class AttachmentController : AppControllerBase, IAttachmentContro
     [AutoInject] private IBlobStorage blobStorage = default!;
     [AutoInject] private UserManager<User> userManager = default!;
 
+    [AutoInject] private IServiceProvider serviceProvider = default!;
+    [AutoInject] private ILogger<AttachmentController> logger = default!;
+
     [AutoInject] private IHubContext<AppHub> appHubContext = default!;
 
     [AutoInject] private ResponseCacheService responseCacheService = default!;
 
     [HttpPost]
     [RequestSizeLimit(11 * 1024 * 1024 /*11MB*/)]
-    public async Task UploadUserProfilePicture(IFormFile? file, CancellationToken cancellationToken)
+    public async Task<IActionResult> UploadUserProfilePicture(IFormFile? file, CancellationToken cancellationToken)
     {
-        await UploadAttachment(
-            User.GetUserId(),
-            [AttachmentKind.UserProfileImageSmall, AttachmentKind.UserProfileImageOriginal],
-            file,
-            cancellationToken);
+        return await UploadAttachment(
+             User.GetUserId(),
+             [AttachmentKind.UserProfileImageSmall, AttachmentKind.UserProfileImageOriginal],
+             file,
+             cancellationToken);
     }
 
     [HttpPost("{productId}")]
     [RequestSizeLimit(11 * 1024 * 1024 /*11MB*/)]
-    public async Task UploadProductPrimaryImage(Guid productId, IFormFile? file, CancellationToken cancellationToken)
+    public async Task<IActionResult> UploadProductPrimaryImage(Guid productId, IFormFile? file, CancellationToken cancellationToken)
     {
-        await UploadAttachment(
+        return await UploadAttachment(
             productId,
             [AttachmentKind.ProductPrimaryImageMedium, AttachmentKind.ProductPrimaryImageOriginal],
             file,
@@ -45,16 +48,9 @@ public partial class AttachmentController : AppControllerBase, IAttachmentContro
     [AllowAnonymous]
     [HttpGet("{attachmentId}/{kind}")]
     [AppResponseCache(MaxAge = 3600 * 24 * 7, UserAgnostic = true)]
-    public async Task<IActionResult> GetAttachment(Guid attachmentId, AttachmentKind kind, CancellationToken cancellationToken)
+    public async Task<IActionResult> GetAttachment(Guid attachmentId, AttachmentKind kind, CancellationToken cancellationToken = default)
     {
-        var filePath = kind switch
-        {
-            AttachmentKind.ProductPrimaryImageMedium => $"{AppSettings.ProductImagesDir}{attachmentId}_{kind}.webp",
-            AttachmentKind.UserProfileImageSmall => $"{AppSettings.UserProfileImagesDir}{attachmentId}_{kind}.webp",
-            _ => throw new NotImplementedException()
-        };
-
-        filePath = Environment.ExpandEnvironmentVariables(filePath);
+        var filePath = GetFilePath(attachmentId, kind);
 
         if (await blobStorage.ExistsAsync(filePath, cancellationToken) is false)
             throw new ResourceNotFoundException();
@@ -73,7 +69,7 @@ public partial class AttachmentController : AppControllerBase, IAttachmentContro
         await DeleteAttachment(User.GetUserId(), [AttachmentKind.UserProfileImageSmall, AttachmentKind.UserProfileImageOriginal], cancellationToken);
     }
 
-    [HttpDelete("{productId}")]
+    [HttpDelete("{productId}"), Authorize(Policy = AppFeatures.AdminPanel.ManageProductCatalog)]
     public async Task DeleteProductPrimaryImage(Guid productId, CancellationToken cancellationToken)
     {
         await DeleteAttachment(productId, [AttachmentKind.ProductPrimaryImageMedium, AttachmentKind.ProductPrimaryImageOriginal], cancellationToken);
@@ -103,6 +99,18 @@ public partial class AttachmentController : AppControllerBase, IAttachmentContro
 
             await blobStorage.DeleteAsync(filePath, cancellationToken);
 
+            //if (attachment.Kind is AttachmentKind.ProductPrimaryImageOriginal)
+            //{
+            //    var product = await DbContext.Products.FindAsync([attachment.Id], cancellationToken);
+            //    if (product is not null) // else means product is being added to the database.
+            //    {
+            //        product.HasPrimaryImage = false;
+            //        product.PrimaryImageAltText = null;
+            //        await DbContext.SaveChangesAsync(cancellationToken);
+            //        await responseCacheService.PurgeProductCache(product.ShortId);
+            //    }
+            //}
+
             if (attachment.Kind is AttachmentKind.UserProfileImageOriginal)
             {
                 var user = await userManager.FindByIdAsync(User.GetUserId().ToString());
@@ -120,10 +128,12 @@ public partial class AttachmentController : AppControllerBase, IAttachmentContro
         }
     }
 
-    private async Task UploadAttachment(Guid attachmentId, AttachmentKind[] kinds, IFormFile? file, CancellationToken cancellationToken)
+    private async Task<IActionResult> UploadAttachment(Guid attachmentId, AttachmentKind[] kinds, IFormFile? file, CancellationToken cancellationToken)
     {
         if (file is null)
             throw new BadRequestException();
+
+        string? altText = null; // For future use, e.g., AI-generated alt text.
 
         await DbContext.Attachments.Where(att => att.Id == attachmentId).ExecuteDeleteAsync(cancellationToken);
 
@@ -133,44 +143,33 @@ public partial class AttachmentController : AppControllerBase, IAttachmentContro
             {
                 Id = attachmentId,
                 Kind = kind,
-                Path = kind switch
-                {
-                    AttachmentKind.UserProfileImageOriginal => $"{AppSettings.UserProfileImagesDir}{attachmentId}_{kind}{Path.GetExtension(file.FileName)}",
-                    AttachmentKind.UserProfileImageSmall => $"{AppSettings.UserProfileImagesDir}{attachmentId}_{kind}.webp",
-                    AttachmentKind.ProductPrimaryImageOriginal => $"{AppSettings.ProductImagesDir}{attachmentId}_{kind}{Path.GetExtension(file.FileName)}",
-                    AttachmentKind.ProductPrimaryImageMedium => $"{AppSettings.ProductImagesDir}{attachmentId}_{kind}.webp",
-                    _ => throw new NotImplementedException()
-                }
+                Path = GetFilePath(attachmentId, kind, file.FileName),
             };
-
-            attachment.Path = Environment.ExpandEnvironmentVariables(attachment.Path);
 
             if (await blobStorage.ExistsAsync(attachment.Path, cancellationToken))
             {
                 await blobStorage.DeleteAsync(attachment.Path, cancellationToken);
             }
 
-            var needsResize = kind switch
+            (bool NeedsResize, uint Width, uint Height) imageResizeContext = kind switch
             {
-                AttachmentKind.UserProfileImageSmall => true,
-                AttachmentKind.ProductPrimaryImageMedium => true,
-                _ => false
+                AttachmentKind.UserProfileImageSmall => (true, 256, 256),
+                AttachmentKind.ProductPrimaryImageMedium => (true, 512, 512),
+                _ => (false, 0, 0)
             };
 
-            if (needsResize)
-            {
-                var resizedImageSize = kind switch
-                {
-                    AttachmentKind.UserProfileImageSmall => new MagickGeometry(256, 256),
-                    AttachmentKind.ProductPrimaryImageMedium => new MagickGeometry(512, 512),
-                    _ => throw new NotImplementedException()
-                };
+            byte[]? imageBytes = null;
 
+            if (imageResizeContext.NeedsResize)
+            {
                 using MagickImage sourceImage = new(file.OpenReadStream());
 
-                sourceImage.Resize(resizedImageSize);
+                if (sourceImage.Width < imageResizeContext.Width || sourceImage.Height < imageResizeContext.Height)
+                    return BadRequest(Localizer[nameof(AppStrings.ImageTooSmall), imageResizeContext.Width, imageResizeContext.Height, sourceImage.Width, sourceImage.Height].ToString());
 
-                await blobStorage.WriteAsync(attachment.Path, sourceImage.ToByteArray(MagickFormat.WebP), cancellationToken: cancellationToken);
+                sourceImage.Resize(new MagickGeometry(imageResizeContext.Width, imageResizeContext.Height));
+
+                await blobStorage.WriteAsync(attachment.Path, imageBytes = sourceImage.ToByteArray(MagickFormat.WebP), cancellationToken: cancellationToken);
             }
             else
             {
@@ -180,7 +179,40 @@ public partial class AttachmentController : AppControllerBase, IAttachmentContro
             await DbContext.Attachments.AddAsync(attachment, cancellationToken);
             await DbContext.SaveChangesAsync(cancellationToken);
 
-            if (kind is AttachmentKind.UserProfileImageOriginal)
+            if (attachment.Kind is AttachmentKind.ProductPrimaryImageMedium)
+            {
+                if (serviceProvider.GetService<IChatClient>() is IChatClient chatClient)
+                {
+                    var response = await chatClient.GetResponseAsync<AIImageReviewResponse>(
+                        messages: [
+                            new ChatMessage(ChatRole.System, "Return a JSON object with two properties: 'isCar' (boolean, true if the image contains a car, false otherwise) and 'alt' (string, describing the image content). Do not include any other properties or text."),
+                            new ChatMessage(ChatRole.User, "Analyze this image.")
+                            {
+                                Contents = [new DataContent(imageBytes, "image/webp")]
+                            }
+                        ],
+                        cancellationToken: cancellationToken,
+                        options: new()
+                        {
+                            Temperature = 0,
+                            ResponseFormat = ChatResponseFormat.Json,
+                            AdditionalProperties = new()
+                            {
+                                ["response_format"] = new { type = "json_object" }
+                            }
+                        });
+
+                    if (response.Result.IsCar is false)
+                    {
+                        logger.LogWarning("Unexpected AI response for Car detection: {Response}", response.Result.Alt);
+                        return BadRequest(Localizer[nameof(AppStrings.ImageNotCarError)].ToString());
+                    }
+
+                    altText = response.Result.Alt;
+                }
+            }
+
+            if (kind is AttachmentKind.UserProfileImageSmall)
             {
                 var user = await userManager.FindByIdAsync(User.GetUserId().ToString());
                 user!.HasProfilePicture = true;
@@ -192,5 +224,25 @@ public partial class AttachmentController : AppControllerBase, IAttachmentContro
                 await PublishUserProfileUpdated(user, cancellationToken);
             }
         }
+
+        return Ok(altText);
     }
+
+    private string GetFilePath(Guid attachmentId, AttachmentKind kind, string? fileName = null)
+    {
+        var filePath = kind switch
+        {
+            AttachmentKind.ProductPrimaryImageMedium => $"{AppSettings.ProductImagesDir}{attachmentId}_{kind}.webp",
+            AttachmentKind.ProductPrimaryImageOriginal => $"{AppSettings.ProductImagesDir}{attachmentId}_{kind}{Path.GetExtension(fileName)}",
+            AttachmentKind.UserProfileImageSmall => $"{AppSettings.UserProfileImagesDir}{attachmentId}_{kind}.webp",
+            AttachmentKind.UserProfileImageOriginal => $"{AppSettings.UserProfileImagesDir}{attachmentId}_{kind}{Path.GetExtension(fileName)}",
+            _ => throw new NotImplementedException()
+        };
+
+        filePath = Environment.ExpandEnvironmentVariables(filePath);
+
+        return filePath;
+    }
+
+    public record AIImageReviewResponse(bool IsCar, string? Alt);
 }

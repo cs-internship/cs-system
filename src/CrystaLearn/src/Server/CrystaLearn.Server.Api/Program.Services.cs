@@ -1,13 +1,12 @@
 ﻿using System.ClientModel.Primitives;
-using System.IO.Compression;
 using System.Net;
 using System.Net.Mail;
-using System.Text;
 using AdsPush;
 using AdsPush.Abstraction;
-using CrystaLearn.Core.Data;
+using Azure.Storage.Blobs;
 using CrystaLearn.Core.Extensions;
 using CrystaLearn.Core.Models.Identity;
+using CrystaLearn.Server.Api.Controllers;
 using CrystaLearn.Server.Api.Services;
 using CrystaLearn.Server.Api.Services.Identity;
 using CrystaLearn.Server.Api.Services.Jobs;
@@ -17,9 +16,10 @@ using FluentStorage;
 using FluentStorage.Blobs;
 using Ganss.Xss;
 using Hangfire.EntityFrameworkCore;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.OData;
-using Microsoft.AspNetCore.ResponseCompression;
-using Microsoft.IdentityModel.Tokens;
+using Microsoft.Identity.Web;
 using Microsoft.Net.Http.Headers;
 using Microsoft.OpenApi.Models;
 using PhoneNumbers;
@@ -36,6 +36,8 @@ public static partial class Program
         var services = builder.Services;
         var configuration = builder.Configuration;
 
+        builder.AddServerSharedServices();
+
         ServerApiSettings appSettings = new();
         configuration.Bind(appSettings);
 
@@ -51,11 +53,26 @@ public static partial class Program
         services.AddSingleton(_ => PhoneNumberUtil.GetInstance());
         services.AddSingleton<IBlobStorage>(sp =>
         {
-            var azureBlobStorageSasUrl = configuration.GetConnectionString("AzureBlobStorageSasUrl");
-            return (IBlobStorage)(azureBlobStorageSasUrl is "emulator"
-                                 ? StorageFactory.Blobs.AzureBlobStorageWithLocalEmulator()
-                                 : StorageFactory.Blobs.AzureBlobStorageWithSas(azureBlobStorageSasUrl));
+            string GetValue(string connectionString, string key, string? defaultValue = null)
+            {
+                var parts = connectionString.Split(';');
+                foreach (var part in parts)
+                {
+                    if (part.StartsWith($"{key}="))
+                        return part[$"{key}=".Length..];
+                }
+                return defaultValue ?? throw new ArgumentException($"Invalid connection string: '{key}' not found.");
+            }
+
+            var azureBlobStorageConnectionString = configuration.GetConnectionString("AzureBlobStorageConnectionString")!;
+            var blobServiceClient = new BlobServiceClient(azureBlobStorageConnectionString);
+            string accountName = blobServiceClient.AccountName;
+            string accountKey = azureBlobStorageConnectionString is "UseDevelopmentStorage=true" ? "Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==" // https://learn.microsoft.com/en-us/azure/storage/common/storage-use-azurite?tabs=visual-studio%2Cblob-storage#well-known-storage-account-and-key
+                : GetValue(azureBlobStorageConnectionString, "AccountKey");
+            return StorageFactory.Blobs.AzureBlobStorageWithSharedKey(accountName, accountKey, blobServiceClient.Uri);
         });
+
+
         services.AddSingleton(_ =>
         {
             var adsPushSenderBuilder = new AdsPushSenderBuilder();
@@ -81,33 +98,11 @@ public static partial class Program
                 .BuildSender();
         });
         services.AddScoped<PushNotificationService>();
+        services.AddScoped<PushNotificationJobRunner>();
 
         services.AddSingleton<ServerExceptionHandler>();
         services.AddSingleton(sp => (IProblemDetailsWriter)sp.GetRequiredService<ServerExceptionHandler>());
         services.AddProblemDetails();
-
-        services.AddOutputCache(options =>
-        {
-            options.AddPolicy("AppResponseCachePolicy", policy =>
-            {
-                var builder = policy.AddPolicy<AppResponseCachePolicy>();
-            }, excludeDefaultPolicy: true);
-        });
-        services.AddDistributedMemoryCache();
-
-        services.AddHttpContextAccessor();
-
-        services.AddResponseCompression(opts =>
-        {
-            opts.EnableForHttps = true;
-            opts.MimeTypes = ResponseCompressionDefaults.MimeTypes.Concat(["application/octet-stream"]).ToArray();
-            opts.Providers.Add<BrotliCompressionProvider>();
-            opts.Providers.Add<GzipCompressionProvider>();
-        })
-            .Configure<BrotliCompressionProviderOptions>(opt => opt.Level = CompressionLevel.Fastest)
-            .Configure<GzipCompressionProviderOptions>(opt => opt.Level = CompressionLevel.Fastest);
-
-        services.AddApplicationInsightsTelemetry(options => configuration.GetRequiredSection("ApplicationInsights").Bind(options));
 
         services.AddCors(builder =>
         {
@@ -121,14 +116,12 @@ public static partial class Program
                 ServerApiSettings settings = new();
                 configuration.Bind(settings);
 
-                policy.SetIsOriginAllowed(origin => settings.IsAllowedOrigin(new Uri(origin)))
+                policy.SetIsOriginAllowed(origin => Uri.TryCreate(origin, UriKind.Absolute, out var uri) && settings.IsTrustedOrigin(uri))
                       .AllowAnyHeader()
                       .AllowAnyMethod()
                       .WithExposedHeaders(HeaderNames.RequestId, "Age", "App-Cache-Response");
             });
         });
-
-        services.AddAntiforgery();
 
         services.AddSingleton(sp =>
         {
@@ -145,13 +138,20 @@ public static partial class Program
         services.AddSingleton<HtmlSanitizer>();
 
         services
-            .AddControllers()
+            .AddControllers(options =>
+            {
+                if (appSettings.SupportedAppVersions is not null)
+                {
+                    options.Filters.Add<ForceUpdateActionFilter>();
+                }
+            })
             .AddJsonOptions(options =>
             {
                 options.JsonSerializerOptions.DictionaryKeyPolicy = JsonNamingPolicy.CamelCase;
                 options.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
                 options.JsonSerializerOptions.TypeInfoResolverChain.AddRange([AppJsonContext.Default, IdentityJsonContext.Default, ServerJsonContext.Default]);
             })
+            .AddApplicationPart(typeof(AppControllerBase).Assembly)
             .AddOData(options => options.EnableQueryFeatures())
             .AddDataAnnotationsLocalization(options => options.DataAnnotationLocalizerProvider = StringLocalizerProvider.ProvideLocalizer)
             .ConfigureApiBehaviorOptions(options =>
@@ -184,7 +184,10 @@ public static partial class Program
 
             options.UseSqlServer(configuration.GetConnectionString("SqlServerConnectionString"), dbOptions =>
             {
-
+                if (AppDbContext.IsEmbeddingEnabled)
+                {
+                    dbOptions.UseVectorSearch();
+                }
             });
         }
 
@@ -209,6 +212,9 @@ public static partial class Program
 
         AddSwaggerGen(builder);
 
+        services.AddDataProtection()
+           .PersistKeysToDbContext<AppDbContext>(); // It's advised to secure database-stored keys with a certificate by invoking ProtectKeysWithCertificate.
+
         AddIdentity(builder);
 
         builder.AddCrystaServices();
@@ -216,69 +222,46 @@ public static partial class Program
         var emailSettings = appSettings.Email ?? throw new InvalidOperationException("Email settings are required.");
         var fluentEmailServiceBuilder = services.AddFluentEmail(emailSettings.DefaultFromEmail);
 
-        if (emailSettings.UseLocalFolderForEmails)
+        fluentEmailServiceBuilder.AddSmtpSender(() =>
         {
-            var isRunningInsideDocker = Directory.Exists("/container_volume"); // It's supposed to be a mounted volume named /container_volume
-            var sentEmailsFolderPath = Path.Combine(isRunningInsideDocker ? "/container_volume" : Directory.GetCurrentDirectory(), "App_Data", "sent-emails");
-
-            Directory.CreateDirectory(sentEmailsFolderPath);
-
-            fluentEmailServiceBuilder.AddSmtpSender(() => new SmtpClient
+            if (emailSettings.UseLocalFolderForEmails)
             {
-                DeliveryMethod = SmtpDeliveryMethod.SpecifiedPickupDirectory,
-                PickupDirectoryLocation = sentEmailsFolderPath
-            });
-        }
-        else
-        {
+                var isRunningInsideDocker = Directory.Exists("/container_volume"); // It's supposed to be a mounted volume named /container_volume
+                var sentEmailsFolderPath = Path.Combine(isRunningInsideDocker ? "/container_volume" : Directory.GetCurrentDirectory(), "App_Data", "sent-emails");
+
+                Directory.CreateDirectory(sentEmailsFolderPath);
+
+                return new SmtpClient
+                {
+                    DeliveryMethod = SmtpDeliveryMethod.SpecifiedPickupDirectory,
+                    PickupDirectoryLocation = sentEmailsFolderPath
+                };
+            }
+
             if (emailSettings.HasCredential)
             {
-                fluentEmailServiceBuilder.AddSmtpSender(() => new(emailSettings.Host, emailSettings.Port)
+                return new(emailSettings.Host, emailSettings.Port)
                 {
                     Credentials = new NetworkCredential(emailSettings.UserName, emailSettings.Password),
                     EnableSsl = true
-                });
+                };
             }
-            else
-            {
-                fluentEmailServiceBuilder.AddSmtpSender(emailSettings.Host, emailSettings.Port);
-            }
-        }
 
-        services.AddHttpClient<GoogleRecaptchaService>(c =>
-        {
-            c.Timeout = TimeSpan.FromSeconds(10);
-            c.BaseAddress = new Uri("https://www.google.com/recaptcha/");
-            c.DefaultRequestVersion = HttpVersion.Version20;
-            c.DefaultVersionPolicy = HttpVersionPolicy.RequestVersionOrHigher;
-        }).ConfigurePrimaryHttpMessageHandler(sp => new SocketsHttpHandler()
-        {
-            EnableMultipleHttp2Connections = true,
-            EnableMultipleHttp3Connections = true
+            return new(emailSettings.Host, emailSettings.Port);
         });
+
 
         services.AddHttpClient<NugetStatisticsService>(c =>
         {
             c.Timeout = TimeSpan.FromSeconds(3);
             c.BaseAddress = new Uri("https://azuresearch-usnc.nuget.org");
             c.DefaultRequestVersion = HttpVersion.Version11;
-            c.DefaultVersionPolicy = HttpVersionPolicy.RequestVersionOrHigher;
-        }).ConfigurePrimaryHttpMessageHandler(sp => new SocketsHttpHandler()
-        {
-            EnableMultipleHttp2Connections = true,
-            EnableMultipleHttp3Connections = true
         });
 
         services.AddHttpClient<ResponseCacheService>(c =>
         {
             c.Timeout = TimeSpan.FromSeconds(10);
             c.BaseAddress = new Uri("https://api.cloudflare.com/client/v4/zones/");
-            c.DefaultRequestVersion = HttpVersion.Version20;
-            c.DefaultVersionPolicy = HttpVersionPolicy.RequestVersionOrHigher;
-        }).ConfigurePrimaryHttpMessageHandler(sp => new SocketsHttpHandler()
-        {
-            EnableMultipleHttp2Connections = true,
-            EnableMultipleHttp3Connections = true
         });
 
         services.AddFido2(options =>
@@ -303,15 +286,7 @@ public static partial class Program
             return options;
         });
 
-        services.AddHttpClient("AI", c =>
-        {
-            c.DefaultRequestVersion = HttpVersion.Version20;
-            c.DefaultVersionPolicy = HttpVersionPolicy.RequestVersionOrHigher;
-        }).ConfigurePrimaryHttpMessageHandler(sp => new SocketsHttpHandler()
-        {
-            EnableMultipleHttp2Connections = true,
-            EnableMultipleHttp3Connections = true
-        });
+        services.AddHttpClient("AI");
 
         if (string.IsNullOrEmpty(appSettings.AI?.OpenAI?.ChatApiKey) is false)
         {
@@ -322,9 +297,9 @@ public static partial class Program
                 Transport = new HttpClientPipelineTransport(sp.GetRequiredService<IHttpClientFactory>().CreateClient("AI"))
             }).AsIChatClient())
             .UseLogging()
-            .UseFunctionInvocation();
+            .UseFunctionInvocation()
+            .UseOpenTelemetry();
             // .UseDistributedCache()
-            // .UseOpenTelemetry()
         }
         else if (string.IsNullOrEmpty(appSettings.AI?.AzureOpenAI?.ChatApiKey) is false)
         {
@@ -336,9 +311,9 @@ public static partial class Program
                     Transport = new Azure.Core.Pipeline.HttpClientTransport(sp.GetRequiredService<IHttpClientFactory>().CreateClient("AI"))
                 }).AsIChatClient(appSettings.AI.AzureOpenAI.ChatModel))
             .UseLogging()
-            .UseFunctionInvocation();
+            .UseFunctionInvocation()
+            .UseOpenTelemetry();
             // .UseDistributedCache()
-            // .UseOpenTelemetry()
         }
 
         if (string.IsNullOrEmpty(appSettings.AI?.OpenAI?.EmbeddingApiKey) is false)
@@ -348,9 +323,9 @@ public static partial class Program
                 Endpoint = appSettings.AI.OpenAI.EmbeddingEndpoint,
                 Transport = new HttpClientPipelineTransport(sp.GetRequiredService<IHttpClientFactory>().CreateClient("AI"))
             }).AsIEmbeddingGenerator())
-            .UseLogging();
+            .UseLogging()
+            .UseOpenTelemetry();
             // .UseDistributedCache()
-            // .UseOpenTelemetry()
         }
         else if (string.IsNullOrEmpty(appSettings.AI?.AzureOpenAI?.EmbeddingApiKey) is false)
         {
@@ -360,47 +335,48 @@ public static partial class Program
                 {
                     Transport = new Azure.Core.Pipeline.HttpClientTransport(sp.GetRequiredService<IHttpClientFactory>().CreateClient("AI"))
                 }).AsIEmbeddingGenerator(appSettings.AI.AzureOpenAI.EmbeddingModel))
-            .UseLogging();
+            .UseLogging()
+            .UseOpenTelemetry();
             // .UseDistributedCache()
-            // .UseOpenTelemetry()
         }
+
         builder.Services.AddHangfire(configuration =>
-       {
-           var efCoreStorage = configuration.UseEFCoreStorage(optionsBuilder =>
-           {
-               if (appSettings.Hangfire?.UseIsolatedStorage is true)
-               {
+        {
+            var efCoreStorage = configuration.UseEFCoreStorage(optionsBuilder =>
+            {
+                if (appSettings.Hangfire?.UseIsolatedStorage is true)
+                {
+                    var connectionString = "Data Source=CrystaLearnJobs.db;Mode=Memory;Cache=Shared;";
+                    var connection = new Microsoft.Data.Sqlite.SqliteConnection(connectionString);
+                    connection.Open();
+                    AppContext.SetData("ReferenceTheKeepTheInMemorySQLiteDatabaseAlive", connection);
+                    optionsBuilder.UseSqlite(connectionString);
+                }
+                else
+                {
+                    AddDbContext(optionsBuilder);
+                }
+            }, new()
+            {
+                Schema = "jobs",
+                QueuePollInterval = new TimeSpan(0, 0, 1)
+            });
 
-                   var connectionString = "Data Source=CrystaLearnJobs.db;Mode=Memory;Cache=Shared;";
-                   var connection = new Microsoft.Data.Sqlite.SqliteConnection(connectionString);
-                   connection.Open();
-                   AppContext.SetData("ReferenceTheKeepTheInMemorySQLiteDatabaseAlive", connection);
-                   optionsBuilder.UseSqlite(connectionString);
-               }
-               else
-               {
-                   AddDbContext(optionsBuilder);
-               }
-           }, new()
-           {
-               Schema = "jobs",
-               QueuePollInterval = new TimeSpan(0, 0, 1)
-           });
+            if (appSettings.Hangfire?.UseIsolatedStorage is true)
+            {
+                efCoreStorage.UseDatabaseCreator();
+            }
 
-           if (appSettings.Hangfire?.UseIsolatedStorage is true)
-           {
-               efCoreStorage.UseDatabaseCreator();
-           }
-
-           configuration.UseRecommendedSerializerSettings();
-           configuration.UseSimpleAssemblyNameTypeSerializer();
-           configuration.UseIgnoredAssemblyVersionTypeResolver();
-           configuration.SetDataCompatibilityLevel(CompatibilityLevel.Version_180);
-       });
+            configuration.UseRecommendedSerializerSettings();
+            configuration.UseSimpleAssemblyNameTypeSerializer();
+            configuration.UseIgnoredAssemblyVersionTypeResolver();
+            configuration.SetDataCompatibilityLevel(CompatibilityLevel.Version_180);
+        });
 
         builder.Services.AddHangfireServer(options =>
         {
             options.SchedulePollingInterval = TimeSpan.FromSeconds(5);
+            configuration.Bind("Hangfire", options);
         });
     }
 
@@ -420,53 +396,20 @@ public static partial class Program
             .AddClaimsPrincipalFactory<AppUserClaimsPrincipalFactory>()
             .AddApiEndpoints();
 
+        services.AddScoped<UserClaimsService>();
         services.AddScoped<IUserConfirmation<User>, AppUserConfirmation>();
         services.AddScoped(sp => (IUserEmailStore<User>)sp.GetRequiredService<IUserStore<User>>());
         services.AddScoped(sp => (IUserPhoneNumberStore<User>)sp.GetRequiredService<IUserStore<User>>());
         services.AddScoped(sp => (AppUserClaimsPrincipalFactory)sp.GetRequiredService<IUserClaimsPrincipalFactory<User>>());
 
+        services.TryAddEnumerable(ServiceDescriptor.Singleton<IPostConfigureOptions<Microsoft.AspNetCore.Authentication.BearerToken.BearerTokenOptions>, AppBearerTokenOptionsConfigurator>());
         var authenticationBuilder = services.AddAuthentication(options =>
         {
             options.DefaultScheme = IdentityConstants.BearerScheme;
             options.DefaultChallengeScheme = IdentityConstants.BearerScheme;
             options.DefaultAuthenticateScheme = IdentityConstants.BearerScheme;
         })
-        .AddBearerToken(IdentityConstants.BearerScheme, options =>
-        {
-            var validationParameters = new TokenValidationParameters
-            {
-                ClockSkew = TimeSpan.Zero,
-                RequireSignedTokens = true,
-
-                ValidateIssuerSigningKey = env.IsDevelopment() is false,
-                IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(appSettings.Identity.JwtIssuerSigningKeySecret)),
-
-                RequireExpirationTime = true,
-                ValidateLifetime = true,
-
-                ValidateAudience = true,
-                ValidAudience = identityOptions.Audience,
-
-                ValidateIssuer = true,
-                ValidIssuer = identityOptions.Issuer,
-
-                AuthenticationType = IdentityConstants.BearerScheme
-            };
-
-            options.BearerTokenProtector = new AppJwtSecureDataFormat(appSettings, validationParameters);
-            options.RefreshTokenProtector = new AppJwtSecureDataFormat(appSettings, validationParameters);
-
-            options.Events = new()
-            {
-                OnMessageReceived = async context =>
-                {
-                    // The server accepts the accessToken from either the authorization header, the cookie, or the request URL query string
-                    context.Token ??= context.Request.Query.ContainsKey("access_token") ? context.Request.Query["access_token"] : context.Request.Cookies["access_token"];
-                }
-            };
-
-            configuration.GetRequiredSection("Identity").Bind(options);
-        });
+        .AddBearerToken(IdentityConstants.BearerScheme /*Checkout AppBearerTokenOptionsConfigurator*/ );
 
         services.AddAuthorization();
 
@@ -475,6 +418,7 @@ public static partial class Program
             authenticationBuilder.AddGoogle(options =>
             {
                 options.SignInScheme = IdentityConstants.ExternalScheme;
+                options.AdditionalAuthorizationParameters["prompt"] = "select_account";
                 configuration.GetRequiredSection("Authentication:Google").Bind(options);
             });
         }
@@ -507,6 +451,64 @@ public static partial class Program
                     return env.ContentRootFileProvider.GetFileInfo("AppleAuthKey.p8");
                 });
                 configuration.GetRequiredSection("Authentication:Apple").Bind(options);
+            });
+        }
+
+        if (string.IsNullOrEmpty(configuration["Authentication:AzureAD:ClientId"]) is false)
+        {
+            authenticationBuilder.AddMicrosoftIdentityWebApp(options =>
+            {
+                options.SignInScheme = IdentityConstants.ExternalScheme;
+                options.Events = new()
+                {
+                    OnTokenValidated = async context =>
+                    {
+                        var props = new AuthenticationProperties();
+                        props.Items["LoginProvider"] = "AzureAD";
+                        await context.HttpContext.SignInAsync(IdentityConstants.ExternalScheme, context.Principal!, props);
+                    }
+                };
+                configuration.GetRequiredSection("Authentication:AzureAD").Bind(options);
+            }, openIdConnectScheme: "AzureAD");
+        }
+
+        if (string.IsNullOrEmpty(configuration["Authentication:Facebook:AppId"]) is false)
+        {
+            authenticationBuilder.AddFacebook(options =>
+            {
+                options.SignInScheme = IdentityConstants.ExternalScheme;
+                configuration.GetRequiredSection("Authentication:Facebook").Bind(options);
+            });
+        }
+
+        // While Google, GitHub, Twitter(X), Apple and AzureAD needs account creation in their corresponding developer portals,
+        // and configuring the client ID and secret, the following OpenID Connect configuration is for Duende IdentityServer demo server,
+        // which is a public server that allows you to test Social sign-in feature without needing to configure anything.
+        // Note: The following demo server doesn't require licensing.
+        if (builder.Environment.IsDevelopment())
+        {
+            authenticationBuilder.AddOpenIdConnect("IdentityServerDemo", options =>
+            {
+                options.Authority = "https://demo.duendesoftware.com";
+
+                options.ClientId = "interactive.confidential";
+                options.ClientSecret = "secret";
+                options.ResponseType = "code";
+                options.ResponseMode = "query";
+
+                options.Scope.Clear();
+                options.Scope.Add("openid");
+                options.Scope.Add("profile");
+                options.Scope.Add("api");
+                options.Scope.Add("offline_access");
+                options.Scope.Add("email");
+
+                options.MapInboundClaims = false;
+                options.GetClaimsFromUserInfoEndpoint = true;
+                options.SaveTokens = true;
+                options.DisableTelemetry = true;
+
+                options.Prompt = "login"; // Force login every time
             });
         }
     }

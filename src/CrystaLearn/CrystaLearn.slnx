@@ -2,9 +2,6 @@
   <Configurations>
     <BuildType Name="Debug" />
     <BuildType Name="DebugBlazorServer" />
-	<BuildType Name="DebugBlazorWasm" />
-	<BuildType Name="DebugBlazorHybridMaui" />
-	<BuildType Name="DebugBlazorHybridWindows" />
     <BuildType Name="Release" />
   </Configurations>
   <Folder Name="/.SolutionItems/">
@@ -13,48 +10,55 @@
     <File Path=".vsconfig" />
     <File Path="Clean.bat" />
     <File Path="global.json" />
+	<File Path=".vscode/mcp.json" />
     <File Path="README.md" />
 	<File Path="settings.VisualStudio.json" />
     <File Path="Bit.ResxTranslator.json" />
     <File Path="src/Directory.Build.props" />
     <File Path="src/Directory.Packages.props" />
   </Folder>
-#if (pipeline == "Azure")
-  <Folder Name="/.SolutionItems/.azure-devops/" Id="3f1dd063-d3a3-f428-24f8-626958d189fb" />
-  <Folder Name="/.SolutionItems/.azure-devops/workflows/" Id="d5673a47-b807-7464-ee0f-fd95c5542ac5">
+<!--#if (pipeline == "Azure")-->
+  <Folder Name="/.SolutionItems/.azure-devops/" />
+  <Folder Name="/.SolutionItems/.azure-devops/workflows/">
     <File Path=".azure-devops/workflows/cd.yml" />
     <File Path=".azure-devops/workflows/ci.yml" />
   </Folder>
-#elif (pipeline == "GitHub")
-  <Folder Name="/.SolutionItems/.github/" Id="351df30f-2daa-a858-be55-4affc8d70af2" />
-  <Folder Name="/.SolutionItems/.github/workflows/" Id="c0ca9c70-aac5-bd27-2f07-59fab982d30d">
-    <File Path=".github/workflows/cd.yml" />
+<!--#endif-->
+  <Folder Name="/.SolutionItems/.github/">
+	<File Path=".github/copilot-instructions.md" />
+  </Folder>
+  <Folder Name="/.SolutionItems/.github/prompts/">
+    <File Path=".github/prompts/resx.prompt.md" />
+    <File Path=".github/prompts/scaffold.prompt.md" />
+  </Folder>
+<!--#if (pipeline == "GitHub")-->
+  <Folder Name="/.SolutionItems/.github/workflows/">
+    <File Path=".github/workflows/cd-production.yml" />
+    <File Path=".github/workflows/cd-test.yml" />
+    <File Path=".github/workflows/cd-template.yml" />
     <File Path=".github/workflows/ci.yml" />
   </Folder>
-#endif
+<!--#endif-->
   <Folder Name="/Server/">
 	<Project Path="src/Server/CrystaLearn.Server.Web/CrystaLearn.Server.Web.csproj" />
     <Project Path="src/Server/CrystaLearn.Server.Api/CrystaLearn.Server.Api.csproj" />
+	<Project Path="src/Server/CrystaLearn.Server.Shared/CrystaLearn.Server.Shared.csproj" />
+<!--#if (aspire == true)-->
+	<Project Path="src/Server/CrystaLearn.Server.AppHost/CrystaLearn.Server.AppHost.csproj" />
+<!--#endif-->
   </Folder>
   <Folder Name="/Client/">
     <Project Path="src/Client/CrystaLearn.Client.Core/CrystaLearn.Client.Core.csproj" />
     <Project Path="src/Client/CrystaLearn.Client.Maui/CrystaLearn.Client.Maui.csproj">
       <Build Solution="DebugBlazorServer|*" Project="false" />
-      <Build Solution="DebugBlazorWasm|*" Project="false" />
-      <Build Solution="DebugBlazorHybridWindows|*" Project="false" />
-      <Deploy Solution="DebugBlazorHybridMaui|*" />
       <Deploy Solution="Debug|*" />
       <Deploy Solution="Release|*" />
     </Project>
     <Project Path="src/Client/CrystaLearn.Client.Web/CrystaLearn.Client.Web.csproj">
-      <Build Solution="DebugBlazorHybridMaui|*" Project="false" />
       <Build Solution="DebugBlazorServer|*" Project="false" />
-      <Build Solution="DebugBlazorHybridWindows|*" Project="false" />
     </Project>
     <Project Path="src/Client/CrystaLearn.Client.Windows/CrystaLearn.Client.Windows.csproj">
-		<Build Solution="DebugBlazorHybridMaui|*" Project="false" />
 		<Build Solution="DebugBlazorServer|*" Project="false" />
-		<Build Solution="DebugBlazorWasm|*" Project="false" />
 	</Project>
   </Folder>
   <Folder Name="/Shared/">
@@ -62,10 +66,7 @@
   </Folder>
   <Folder Name="/Tests/">
     <Project Path="src/Tests/CrystaLearn.Tests.csproj">
-      <Build Solution="DebugBlazorHybridMaui|*" Project="false" />
       <Build Solution="DebugBlazorServer|*" Project="false" />
-      <Build Solution="DebugBlazorWasm|*" Project="false" />
-      <Build Solution="DebugBlazorHybridWindows|*" Project="false" />
     </Project>
   </Folder>
 </Solution>

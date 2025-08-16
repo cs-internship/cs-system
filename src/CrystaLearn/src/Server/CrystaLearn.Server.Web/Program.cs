@@ -1,5 +1,5 @@
-﻿using CrystaLearn.Server.Web.Services;
-using CrystaLearn.Client.Core.Services.Contracts;
+﻿using CrystaLearn.Client.Core.Services.Contracts;
+using CrystaLearn.Server.Web.Services;
 
 namespace CrystaLearn.Server.Web;
 
@@ -10,6 +10,7 @@ public static partial class Program
         var builder = WebApplication.CreateBuilder(options: new()
         {
             Args = args,
+            ContentRootPath = AppContext.BaseDirectory
         });
 
         AppEnvironment.Set(builder.Environment.EnvironmentName);
@@ -18,12 +19,6 @@ public static partial class Program
 
         builder.WebHost.UseSentry(configureOptions: options => builder.Configuration.GetRequiredSection("Logging:Sentry").Bind(options));
 
-        // The following line (using the * in the URL), allows the emulators and mobile devices to access the app using the host IP address.
-        if (builder.Environment.IsDevelopment() && AppPlatform.IsWindows)
-        {
-            builder.WebHost.UseUrls("http://localhost:5000", "http://*:5000");
-        }
-
         builder.AddServerWebProjectServices();
 
         var app = builder.Build();
@@ -31,13 +26,19 @@ public static partial class Program
         AppDomain.CurrentDomain.UnhandledException += (_, e) => LogException(e.ExceptionObject, reportedBy: nameof(AppDomain.UnhandledException), app);
         TaskScheduler.UnobservedTaskException += (_, e) => { LogException(e.Exception, reportedBy: nameof(TaskScheduler.UnobservedTaskException), app); e.SetObserved(); };
 
+        //if (builder.Environment.IsDevelopment())
+        //{
+        //    await using var scope = app.Services.CreateAsyncScope();
+        //    var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+        //    await dbContext.Database.EnsureCreatedAsync(); // It's recommended to start using ef-core migrations.
+        //}
 
         app.ConfigureMiddlewares();
 
-        #if Development
+#if Development
         _ = ScssCompilerService.WatchScssFiles(app);
 #endif
-        
+
         await app.RunAsync();
     }
 
@@ -49,7 +50,7 @@ public static partial class Program
             scope.ServiceProvider.GetRequiredService<IExceptionHandler>().Handle(exp, parameters: new()
             {
                 { nameof(reportedBy), reportedBy }
-            }, displayKind: AppEnvironment.IsDev() ? ExceptionDisplayKind.NonInterrupting : ExceptionDisplayKind.None);
+            }, displayKind: AppEnvironment.IsDevelopment() ? ExceptionDisplayKind.NonInterrupting : ExceptionDisplayKind.None);
         }
         else
         {
