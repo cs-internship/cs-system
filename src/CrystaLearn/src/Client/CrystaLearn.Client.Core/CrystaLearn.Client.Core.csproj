@@ -79,4 +79,8 @@
         <None Include="tsconfig.json" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Folder Include="wwwroot\images\backgrounds\" />
+    </ItemGroup>
+
 </Project>

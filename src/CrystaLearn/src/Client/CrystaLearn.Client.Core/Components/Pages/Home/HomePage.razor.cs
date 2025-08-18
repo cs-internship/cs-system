@@ -1,5 +1,4 @@
 ﻿using CrystaLearn.Shared.Controllers.Crysta;
-using CrystaLearn.Shared.Controllers.Statistics;
 using CrystaLearn.Shared.Dtos.Crysta;
 
 namespace CrystaLearn.Client.Core.Components.Pages.Home;
@@ -8,7 +7,6 @@ public partial class HomePage
 {
     [CascadingParameter] private BitDir? currentDir { get; set; }
     [AutoInject] private ICrystaProgramController CrystaProgramController { get; set; } = default!;
-    [AutoInject] private IStatisticsController statisticsController = default!;
 
     private List<CrystaProgramDto> programs = [];
 

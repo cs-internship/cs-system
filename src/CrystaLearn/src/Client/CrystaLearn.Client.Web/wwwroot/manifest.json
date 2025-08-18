@@ -6,15 +6,15 @@
     "scope": "/",
     "start_url": "/",
     "orientation": "any",
-    "id": "bitCrystaLearn",
+    "id": "CrystaLearn",
     "display": "standalone",
     "theme_color": "#2EA3FF",
-    "name": "bit CrystaLearn",
+    "name": "CrystaLearn",
     "background_color": "#0D2960",
-    "short_name": "bit CrystaLearn",
+    "short_name": "CrystaLearn",
     "prefer_related_applications": false,
     "display_override": [ "window-controls-overlay" ],
-    "description": "bit CrystaLearn is a project template that includes all the necessary parts to create a fully-featured web app.",
+    "description": "CrystaLearn is a project template that includes all the necessary parts to create a fully-featured web app.",
 
     "related_applications": [],
     "capture_links": "existing-client-navigate",
@@ -30,29 +30,17 @@
     "categories": [
         "utilities"
     ],
-    "icons": [
-        {
-            "sizes": "512x512",
-            "type": "image/png",
-            "src": "images/icons/bit-icon-512.png"
-        }
-    ],
+    //"icons": [
+    //    {
+    //        "sizes": "512x512",
+    //        "type": "image/png",
+    //        "src": "images/icons/bit-icon-512.png"
+    //    }
+    //],
     "shortcuts": [
         {
-            "name": "Terms",
-            "url": "/terms"
-        },
-        {
-            "name": "Categories",
-            "url": "/categories"
-        },
-        {
-            "name": "Products",
-            "url": "/products"
-        },
-        {
-            "name": "Profile",
-            "url": "/profile"
+            "name": "CS Docs",
+            "url": "/cs-internship/docs"
         }
     ]
 }

@@ -6,13 +6,13 @@
             @if (IsDocPage)
             {
                 <BitNavPanel @bind-IsOpen="isNavPanelOpen"
-                         @bind-IsToggled="isNavPanelToggled"
-                         IconNavUrl="/"
-                         Class="nav-panel"
-                         Items="navPanelItems"
-                         Accent="BitColor.SecondaryBackground"
-                         OnItemClick="(BitNavItem item) => OnNavItemClicked(item)"
-                         IconUrl="_content/CrystaLearn.Client.Core/images/bit-logo.svg">
+                             @bind-IsToggled="isNavPanelToggled"
+                             IconNavUrl="/"
+                             Class="nav-panel"
+                             Items="navPanelItems"
+                             Accent="BitColor.SecondaryBackground"
+                             OnSelectItem="(BitNavItem item) => OnNavItemClicked(item)"
+                             NavMode="BitNavMode.Manual">
                     <Footer>
                         <BitStack Class="footer-stack">
                             @if (isNavPanelToggled is false)

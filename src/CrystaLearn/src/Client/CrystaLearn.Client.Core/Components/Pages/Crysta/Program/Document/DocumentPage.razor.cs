@@ -11,7 +11,7 @@ public partial class DocumentPage : IAsyncDisposable
     [Parameter] public string? DocPath { get; set; } = default!;
 
 
-    protected override string? Title => Localizer[nameof(AppStrings.Terms)];
+    protected override string? Title => Localizer[nameof(AppStrings.DocumentsPageTitle)];
     protected override string? Subtitle => string.Empty;
     public List<BitNavItem> DocumentsTree { get; set; } = [];
     public string? CurrentCrystaUrl { get; set; }
@@ -27,6 +27,7 @@ public partial class DocumentPage : IAsyncDisposable
         }
 
         await RefreshDocuments();
+        pubSubService.Publish(ClientPubSubMessages.SET_PROGRAM_CODE, ProgramCode);
         unsubscribers.Add(pubSubService.Subscribe(ClientPubSubMessages.SET_CURRENT_CRYSTA_URL, async (url) =>
         {
             CurrentCrystaUrl = url as string;

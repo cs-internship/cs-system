@@ -55,6 +55,9 @@
     <ItemGroup>
         <BlazorWebAssemblyLazyLoad Include="Newtonsoft.Json.wasm" />
     </ItemGroup>
+    <ItemGroup>
+      <Folder Include="wwwroot\images\icons\" />
+    </ItemGroup>
     
     <Target Name="BeforeBuildTasks" AfterTargets="CoreCompile">
         <CallTarget Targets="BuildCssFiles" />

@@ -27,7 +27,7 @@ public static partial class AppPlatform
     public static bool IsMacOS => IsBlazorHybrid && OperatingSystem.IsMacOS() || OperatingSystem.IsMacCatalyst() || IsIosOnMacOS;
 
     /// <summary>
-    /// This is not supported yet in bit CrystaLearn.
+    /// This is not supported yet in CrystaLearn.
     /// </summary>
     public static bool IsLinux => IsBlazorHybrid && OperatingSystem.IsLinux();
 
