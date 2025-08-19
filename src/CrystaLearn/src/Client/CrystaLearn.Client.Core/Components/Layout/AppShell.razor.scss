@@ -111,7 +111,9 @@ main {
     }
 
     .nav-panel {
-        width: 280px;
+        width: 360px;
+        height: 100%;
+        overflow: auto;
 
         @include lt-md {
             width: 210px;

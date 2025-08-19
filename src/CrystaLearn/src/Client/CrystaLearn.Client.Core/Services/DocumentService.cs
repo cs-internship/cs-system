@@ -107,7 +107,13 @@ public partial class DocumentService
         if (string.Equals(item.Url, url, StringComparison.InvariantCultureIgnoreCase)) return item;
 
         foreach (var child in item.ChildItems)
-            return Contains(child, url);
+        {
+            var found = Contains(child, url);
+            if (found is not null)
+            {
+                return found;
+            }
+        }
 
         return null;
     }
