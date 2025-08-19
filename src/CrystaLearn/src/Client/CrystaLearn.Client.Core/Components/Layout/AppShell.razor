@@ -5,7 +5,14 @@
         <div class="main-container">
             @if (IsDocPage)
             {
-                <BitNavPanel @bind-IsOpen="isNavPanelOpen"
+                <BitNav @bind-SelectedItem="selectedItem"
+                        Items="navPanelItems"
+                        Class="nav-panel"
+                        Mode="BitNavMode.Manual"
+                        OnSelectItem="(BitNavItem item) => OnNavItemClicked(item)"
+                        Accent="BitColor.SecondaryBackground" />
+
+                @*  <BitNavPanel @bind-IsOpen="isNavPanelOpen"
                              @bind-IsToggled="isNavPanelToggled"
                              IconNavUrl="/"
                              Class="nav-panel"
@@ -23,7 +30,7 @@
                             }
                         </BitStack>
                     </Footer>
-                </BitNavPanel>
+                </BitNavPanel> *@
             }
 
             <div class="main-body">

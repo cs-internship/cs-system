@@ -1,4 +1,5 @@
-﻿using CrystaLearn.Shared.Dtos.Crysta;
+﻿using CrystaLearn.Client.Core.Models;
+using CrystaLearn.Shared.Dtos.Crysta;
 using Microsoft.AspNetCore.Components.Routing;
 
 namespace CrystaLearn.Client.Core.Components.Layout;
@@ -15,6 +16,7 @@ public partial class AppShell
 
     private bool isNavPanelOpen;
     private bool isNavPanelToggled;
+    private BitNavItem? selectedItem;
     private List<BitNavItem> navPanelItems = [];
     private readonly List<Action> unsubscribers = [];
 
@@ -38,15 +40,16 @@ public partial class AppShell
             StateHasChanged();
         }));
 
-        unsubscribers.Add(PubSubService.Subscribe(ClientPubSubMessages.SET_PROGRAM_CODE, async (programCode) =>
+        unsubscribers.Add(PubSubService.Subscribe(ClientPubSubMessages.SET_PROGRAM_CODE, async (payload) =>
         {
             navPanelItems = [];
-            var programCodeStr = programCode as string ?? string.Empty;
-            if (!string.IsNullOrEmpty(programCodeStr))
+            var payloadValue = payload as InitNavPayload;
+            if (payloadValue is not null && !string.IsNullOrEmpty(payloadValue.ProgramCode))
             {
-                navPanelItems = await documentService.LoadNavItemsAsync(programCodeStr, CurrentCancellationToken);
+                navPanelItems = await documentService.LoadNavItemsAsync(payloadValue.ProgramCode, CurrentCancellationToken);
+                selectedItem = !string.IsNullOrEmpty(payloadValue.CurrentCrystaUrl) ? documentService.FindNavItem(navPanelItems, payloadValue.CurrentCrystaUrl) : navPanelItems.FirstOrDefault();
+                StateHasChanged();
             }
-            StateHasChanged();
         }));
     }
 

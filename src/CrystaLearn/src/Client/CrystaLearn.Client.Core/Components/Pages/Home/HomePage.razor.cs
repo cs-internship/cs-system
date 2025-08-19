@@ -23,7 +23,7 @@ public partial class HomePage
 
     private void NavigateToDocuments(string programCode)
     {
-        PubSubService.Publish(ClientPubSubMessages.SET_PROGRAM_CODE, programCode);
+        //PubSubService.Publish(ClientPubSubMessages.SET_PROGRAM_CODE, programCode);
         NavigationManager.NavigateTo(@Urls.Crysta.Program(programCode).DocsPage);
     }
 }
