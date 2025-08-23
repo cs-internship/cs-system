@@ -12,6 +12,18 @@ main {
 
     .main-container {
         display: flex;
+        flex-direction: column;
+        padding: 0 4rem;
+    }
+
+    .class1 {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .class2 {
+        display: flex;
+        flex-direction: row;
     }
 
     .main-body {
@@ -108,16 +120,6 @@ main {
         text-align: start;
         line-height: 16px;
         color: $bit-color-error;
-    }
-
-    .nav-panel {
-        width: 360px;
-        height: 100%;
-        overflow: auto;
-
-        @include lt-md {
-            width: 210px;
-        }
     }
 
     .footer-stack {

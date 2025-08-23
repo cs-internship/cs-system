@@ -1,46 +1,20 @@
+@using CrystaLearn.Client.Core.Components.CrystaComponents
 @inherits AppComponentBase
 
 <BitAppShell PersistScroll>
     <main class="@GetMainCssClass()">
         <div class="main-container">
-            @if (IsDocPage)
-            {
-                <BitNav @bind-SelectedItem="selectedItem"
-                        Items="navPanelItems"
-                        Class="nav-panel"
-                        Mode="BitNavMode.Manual"
-                        OnSelectItem="(BitNavItem item) => OnNavItemClicked(item)"
-                        Accent="BitColor.SecondaryBackground" />
-
-                @*  <BitNavPanel @bind-IsOpen="isNavPanelOpen"
-                             @bind-IsToggled="isNavPanelToggled"
-                             IconNavUrl="/"
-                             Class="nav-panel"
-                             Items="navPanelItems"
-                             Accent="BitColor.SecondaryBackground"
-                             OnSelectItem="(BitNavItem item) => OnNavItemClicked(item)"
-                             NavMode="BitNavMode.Manual">
-                    <Footer>
-                        <BitStack Class="footer-stack">
-                            @if (isNavPanelToggled is false)
-                            {
-                                <BitActionButton Class="app-version" OnClick="WrapHandled(UpdateApp)">
-                                    <BitText Typography="BitTypography.Caption2">@TelemetryContext.AppVersion</BitText>
-                                </BitActionButton>
-                            }
-                        </BitStack>
-                    </Footer>
-                </BitNavPanel> *@
-            }
-
-            <div class="main-body">
-                @if (IsIdentityPage is false)
-                {
-                    <Header />
-                }
-
-                <div class="body">
-                    @ChildContent
+            <div class="class1">
+                <Header />
+                <div class="class2">
+                    <CrystaNav @bind-SelectedItem="selectedItem"
+                               Items="navPanelItems"
+                               OnSelectItem="(BitNavItem item) => OnSelectNavItem(item)" />
+                    <div class="main-body">
+                        <div class="body">
+                            @ChildContent
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
