@@ -111,16 +111,6 @@ main {
         color: $bit-color-error;
     }
 
-    .nav-panel {
-        width: 360px;
-        height: 100%;
-        overflow: auto;
-
-        @include lt-md {
-            width: 210px;
-        }
-    }
-
     .footer-stack {
         position: relative;
     }

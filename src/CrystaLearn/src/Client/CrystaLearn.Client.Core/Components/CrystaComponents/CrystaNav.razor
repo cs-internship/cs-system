@@ -1,0 +1,9 @@
+@inherits AppComponentBase
+<div>
+    <BitNav @bind-SelectedItem="SelectedItem"
+            Items="Items"
+            Class="nav-panel"
+            Mode="BitNavMode.Manual"
+            OnSelectItem="(BitNavItem item) => HandleSelectItem(item)"
+            Accent="BitColor.SecondaryBackground" />
+</div>

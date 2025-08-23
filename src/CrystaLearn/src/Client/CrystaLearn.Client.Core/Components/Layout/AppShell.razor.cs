@@ -89,7 +89,7 @@ public partial class AppShell
         await base.DisposeAsync(disposing);
     }
 
-    private async Task OnNavItemClicked(BitNavItem item)
+    private async Task OnSelectNavItem(BitNavItem item)
     {
         var document = item.Data as DocumentDto;
         if (document is null)
