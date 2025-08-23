@@ -12,10 +12,13 @@ main {
 
     .main-container {
         display: flex;
+        height: 100%;
+        overflow: auto;
     }
 
     .main-body {
         display: flex;
+        overflow: auto;
         width: calc(100% - 280px);
 
         @include lt-md {
@@ -26,7 +29,6 @@ main {
     &.identity {
         .main-container {
             width: 100%;
-            height: 100%;
             flex-direction: column;
         }
 
@@ -70,7 +72,6 @@ main {
     &.non-identity {
         .main-container {
             width: auto;
-            height: 100%;
             flex-direction: row;
         }
 
