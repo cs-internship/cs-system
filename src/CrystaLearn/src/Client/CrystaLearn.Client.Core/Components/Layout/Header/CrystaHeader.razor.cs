@@ -2,7 +2,7 @@
 
 namespace CrystaLearn.Client.Core.Components.Layout.Header;
 
-public partial class Header : AppComponentBase
+public partial class CrystaHeader : AppComponentBase
 {
     [CascadingParameter] public BitDir? CurrentDir { get; set; }
 

@@ -2,21 +2,26 @@
 @inherits AppComponentBase
 
 <BitAppShell PersistScroll>
-    <main class="@GetMainCssClass()">
-        <div class="main-container">
-            <div class="class1">
-                <Header />
-                <div class="class2">
-                    <CrystaNav @bind-SelectedItem="selectedItem"
-                               Items="navPanelItems"
-                               OnSelectItem="(BitNavItem item) => OnSelectNavItem(item)" />
-                    <div class="main-body">
-                        <div class="body">
-                            @ChildContent
-                        </div>
-                    </div>
-                </div>
+    <BitLayout StickyHeader Styles="@(new()
+                            {
+                                Main = "height:fit-content",
+                                NavPanel = "top: 4rem;position: sticky;overflow: hidden auto;height: var(--bit-env-height-avl);"
+                            })">
+        <Header>
+            <CrystaHeader />
+        </Header>
+        <NavPanel>
+            <CrystaNav @bind-SelectedItem="selectedItem"
+                       Items="navPanelItems"
+                       OnSelectItem="(BitNavItem item) => OnSelectNavItem(item)" />
+        </NavPanel>
+        <Main>
+            <div class="site-content">
+                @ChildContent
             </div>
-        </div>
-    </main>
+        </Main>
+        <Footer>
+            <div class="footer">Footer</div>
+        </Footer>
+    </BitLayout>
 </BitAppShell>
