@@ -2,15 +2,20 @@
 
 <header>
     <BitStack Horizontal VerticalAlign="BitAlignment.Center" Gap="0.25rem">
-        <BitButton IconOnly FixedColor
+        <BitActionButton OnClick="WrapHandled(OnLogoClicked)">
+            <BitText Typography="BitTypography.H5" Style="text-wrap-mode: nowrap;padding: 1rem;">
+                Crysta Learn
+            </BitText>
+        </BitActionButton>
+        @*  <BitButton IconOnly FixedColor
                    Class="menu-btn"
                    Size="BitSize.Large"
                    OnClick="OpenNavPanel"
                    Variant="BitVariant.Text"
                    Color="BitColor.SecondaryBackground"
-                   IconName="@BitIconName.CollapseMenu" />
+                   IconName="@BitIconName.CollapseMenu" /> *@
 
-        <BitStack VerticalAlign="BitAlignment.Center" Gap="0.5rem" AutoSize>
+        @*  <BitStack VerticalAlign="BitAlignment.Center" Gap="0.5rem" AutoSize>
             <BitStack VerticalAlign="BitAlignment.Center" Gap="0.25rem" Horizontal>
                 @if (showGoBackButton)
                 {
@@ -29,10 +34,16 @@
                     @pageSubtitle
                 </BitText>
             }
-        </BitStack>
+        </BitStack> *@
 
         <DiagnosticSpacer />
 
+        <BitActionButton Class="theme-icon-container light-theme" OnClick="WrapHandled(ToggleTheme)">
+            <span class="icon-container"><i class="bit-icon bit-icon--ClearNight"></i></span>
+        </BitActionButton>
+        <BitActionButton Class="theme-icon-container dark-theme" OnClick="WrapHandled(ToggleTheme)">
+            <span class="icon-container"><i class="bit-icon bit-icon--Sunny"></i></span>
+        </BitActionButton>
         @* <AppMenu /> *@
     </BitStack>
 </header>

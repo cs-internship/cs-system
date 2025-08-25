@@ -5,16 +5,15 @@ namespace CrystaLearn.Client.Core.Components.Layout.Header;
 public partial class CrystaHeader : AppComponentBase
 {
     [CascadingParameter] public BitDir? CurrentDir { get; set; }
-
+    [CascadingParameter] public AppThemeType? CurrentTheme { get; set; }
 
     [AutoInject] private History history = default!;
-
+    [AutoInject] private ThemeService themeService = default!;
 
     private string? pageTitle;
     private string? pageSubtitle;
     private bool showGoBackButton;
     private Action unsubscribePageTitleChanged = default!;
-
 
     protected override async Task OnInitAsync()
     {
@@ -55,5 +54,15 @@ public partial class CrystaHeader : AppComponentBase
 
         unsubscribePageTitleChanged?.Invoke();
         NavigationManager.LocationChanged -= NavigationManager_LocationChanged;
+    }
+
+    private async Task ToggleTheme()
+    {
+        await themeService.ToggleTheme();
+    }
+
+    private void OnLogoClicked()
+    {
+        NavigationManager.NavigateTo("/");
     }
 }

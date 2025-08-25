@@ -1,9 +1,16 @@
 @inherits AppComponentBase
 <div>
-    <BitNav @bind-SelectedItem="SelectedItem"
+    @* <BitNav @bind-SelectedItem="SelectedItem"
             Items="Items"
             Class="nav-panel"
             Mode="BitNavMode.Manual"
             OnSelectItem="(BitNavItem item) => HandleSelectItem(item)"
-            Accent="BitColor.SecondaryBackground" />
+            Accent="BitColor.SecondaryBackground" /> *@
+
+    <BitNavPanel Top="65"
+                 NoPad NoToggle
+                 Items="Items"
+                 Style="width:360px"
+                 SearchBoxPlaceholder="Search component"
+                 SearchBoxStyles="@(new() { Root = "padding-inline:8px" })" />
 </div>

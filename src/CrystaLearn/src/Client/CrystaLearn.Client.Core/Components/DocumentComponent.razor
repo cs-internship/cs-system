@@ -1,10 +1,9 @@
 ﻿@inherits AppComponentBase
 
-<BitStack Gap="2rem" Class="content-full">
-    
+<BitStack Alignment="BitAlignment.Center"  Style="padding:2rem;">
     @if (IsLoadingDocument)
     {
-        <BitEllipsisLoading Style="align-self:center;" />
+        <BitHourglassLoading />
     }
     else
     {
