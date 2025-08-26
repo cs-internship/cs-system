@@ -7,7 +7,8 @@
             OnSelectItem="(BitNavItem item) => HandleSelectItem(item)"
             Accent="BitColor.SecondaryBackground" /> *@
 
-    <BitNavPanel Top="65"
+    <BitNavPanel @bind-IsOpen="IsNavPanelOpen"
+                 Top="65"
                  NoPad NoToggle
                  Items="Items"
                  Style="width:360px"

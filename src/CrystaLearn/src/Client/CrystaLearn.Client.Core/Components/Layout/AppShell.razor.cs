@@ -14,6 +14,7 @@ public partial class AppShell
     [AutoInject] private SignInModalService signInModalService = default!;
     [AutoInject] private DocumentService documentService = default!;
 
+    private BitAppShell? _appShellRef;
     private bool isNavPanelOpen;
     private bool isNavPanelToggled;
     private BitNavItem? selectedItem;

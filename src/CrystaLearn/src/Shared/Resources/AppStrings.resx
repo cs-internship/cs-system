@@ -500,10 +500,10 @@ After reaching {0}, extra sign-ins will have reduced functions.</value>
     <value>CS System is a versatile software designed to run the CS Internship program. However, its flexibility allows it to be used for any education program. Companies and organizations can easily integrate their own documentation and policies into CS System, making it a comprehensive solution for managing educational programs.</value>
   </data>
   <data name="HomePageTitle" xml:space="preserve">
-    <value>CrystaLearn</value>
+    <value>Crysta Learn</value>
   </data>
   <data name="HomePanelTitle" xml:space="preserve">
-    <value>Welcome to CrystaLearn!</value>
+    <value>Welcome to Crysta Learn!</value>
   </data>
   <data name="WatchVideo" xml:space="preserve">
     <value>Watch video</value>
@@ -1203,5 +1203,11 @@ After reaching {0}, extra sign-ins will have reduced functions.</value>
   </data>
   <data name="DocumentsPageTitle" xml:space="preserve">
     <value>Document</value>
+  </data>
+  <data name="FooterText" xml:space="preserve">
+    <value>CS System is a versatile software designed to run the CS Internship program. However, its flexibility allows it to be used for any education program. Companies and organizations can easily integrate their own documentation and policies into CS System, making it a comprehensive solution for managing educational programs.</value>
+  </data>
+  <data name="CopyRight" xml:space="preserve">
+    <value>Copyright © {0} crysta learn | All Rights Reserved</value>
   </data>
 </root>

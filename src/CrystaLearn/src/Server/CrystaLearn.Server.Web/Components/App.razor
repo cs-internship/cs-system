@@ -57,10 +57,10 @@
     <Link rel="stylesheet" href="_content/CrystaLearn.Client.Core/styles/app.css" />
     <Link rel="stylesheet" href="CrystaLearn.Server.Web.styles.css" />
 
-    @if (renderMode != null && (serverWebSettings.WebAppRender.PrerenderEnabled is false || noPrerender))
+   @*  @if (renderMode != null && (serverWebSettings.WebAppRender.PrerenderEnabled is false || noPrerender))
     {
         <LoadingComponent @rendermode="null" />
-    }
+    } *@
 
     @if (HttpContext.Request.DisableStreamPrerendering())
     {

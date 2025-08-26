@@ -8,33 +8,41 @@
 
 <section>
     <BitStack Alignment="BitAlignment.Center" Gap="2rem" Class="root-stack" FitHeight>
-        <BitText Typography="BitTypography.H4" Align="BitTextAlign.Center">
-            @Localizer[nameof(AppStrings.HomePanelTitle)]
-        </BitText>
-        <BitStack Horizontal Gap="2rem">
-            @foreach (var program in programs)
-            {
-                <BitCard Style="padding:3rem" FullWidth>
-                    <BitStack HorizontalAlign="BitAlignment.Center">
-                        <BitText Typography="BitTypography.H5">@program.Title</BitText>
-                        <BitText Typography="BitTypography.Body1" Align="BitTextAlign.Center">
-                            CS Internship is a cool program.
-                        </BitText>
-                        <BitButton Variant="BitVariant.Outline" OnClick="WrapHandled(() => NavigateToDocuments(program.Code))">
-                            Documents
-                        </BitButton>
-                        <BitLink Href="https://blazorui.bitplatform.dev/" Target="_blank" NoUnderline>
-                            <BitStack Horizontal VerticalAlign="BitAlignment.Baseline" Gap="0.5rem">
-                                @program.DocumentSyncInfo.SyncHash
-                                <BitIcon Size="BitSize.Small" IconName="@(currentDir is BitDir.Rtl ? BitIconName.ChromeBack : BitIconName.ChromeBackMirrored)" />
-                            </BitStack>
-                        </BitLink>
-                    </BitStack>
-                </BitCard>
-            }
-        </BitStack>
-        <BitText Typography="BitTypography.H6" Align="BitTextAlign.Start">
-            @Localizer[nameof(AppStrings.HomeMessage)]
-        </BitText>
+        @if (isLoading)
+        {
+            @* <BitGridLoading /> *@
+            <LoadingComponent />
+        }
+        else
+        {
+            <BitText Typography="BitTypography.H4" Align="BitTextAlign.Center">
+                @Localizer[nameof(AppStrings.HomePanelTitle)]
+            </BitText>
+            <BitStack Horizontal Gap="2rem">
+                @foreach (var program in programs)
+                {
+                    <BitCard Style="padding:3rem" FullWidth>
+                        <BitStack HorizontalAlign="BitAlignment.Center">
+                            <BitText Typography="BitTypography.H5">@program.Title</BitText>
+                            <BitText Typography="BitTypography.Body1" Align="BitTextAlign.Center">
+                                CS Internship is a cool program.
+                            </BitText>
+                            <BitButton Variant="BitVariant.Outline" OnClick="WrapHandled(() => NavigateToDocuments(program.Code))">
+                                Documents
+                            </BitButton>
+                            <BitLink Href="https://blazorui.bitplatform.dev/" Target="_blank" NoUnderline>
+                                <BitStack Horizontal VerticalAlign="BitAlignment.Baseline" Gap="0.5rem">
+                                    @program.DocumentSyncInfo.SyncHash
+                                    <BitIcon Size="BitSize.Small" IconName="@(currentDir is BitDir.Rtl ? BitIconName.ChromeBack : BitIconName.ChromeBackMirrored)" />
+                                </BitStack>
+                            </BitLink>
+                        </BitStack>
+                    </BitCard>
+                }
+            </BitStack>
+            <BitText Typography="BitTypography.H6" Align="BitTextAlign.Start">
+                @Localizer[nameof(AppStrings.HomeMessage)]
+            </BitText>
+        }
     </BitStack>
 </section>

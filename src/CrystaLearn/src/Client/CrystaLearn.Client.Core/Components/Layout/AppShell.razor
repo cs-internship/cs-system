@@ -1,19 +1,23 @@
-@using CrystaLearn.Client.Core.Components.CrystaComponents
+@using CrystaLearn.Client.Core.Components.Layout.Footer
+@using CrystaLearn.Client.Core.Components.Layout.Nav
 @inherits AppComponentBase
 
-<BitAppShell PersistScroll>
-    <BitLayout StickyHeader Styles="@(new()
-                            {
-                                Main = "height:fit-content",
-                                NavPanel = "top: 4rem;position: sticky;overflow: hidden auto;height: var(--bit-env-height-avl);"
-                            })">
+<BitAppShell PersistScroll @ref="_appShellRef">
+    <BitLayout StickyHeader
+               Styles="@(new()
+               {
+                   Main = "height:fit-content",
+                   NavPanel = "top: 4rem;position: sticky;overflow: hidden auto;height: var(--bit-env-height-avl);"
+               })">
         <Header>
             <CrystaHeader />
         </Header>
         <NavPanel>
-            <CrystaNav @bind-SelectedItem="selectedItem"
-                       Items="navPanelItems"
-                       OnSelectItem="(BitNavItem item) => OnSelectNavItem(item)" />
+            @if(IsDocPage)
+            {
+                <CrystaNav @bind-IsNavPanelOpen="isNavPanelOpen"
+                       Items="navPanelItems" />
+            }
         </NavPanel>
         <Main>
             <div class="site-content">
@@ -21,7 +25,7 @@
             </div>
         </Main>
         <Footer>
-            <div class="footer">Footer</div>
+            <CrystaFooter AppShell="_appShellRef"/>
         </Footer>
     </BitLayout>
 </BitAppShell>

@@ -3,7 +3,7 @@
 <header>
     <BitStack Horizontal VerticalAlign="BitAlignment.Center" Gap="0.25rem">
         <BitActionButton OnClick="WrapHandled(OnLogoClicked)">
-            <BitText Typography="BitTypography.H5" Style="text-wrap-mode: nowrap;padding: 1rem;">
+            <BitText Typography="BitTypography.H5" NoWrap Style="padding: 1rem;">
                 Crysta Learn
             </BitText>
         </BitActionButton>
@@ -38,10 +38,10 @@
 
         <DiagnosticSpacer />
 
-        <BitActionButton Class="theme-icon-container light-theme" OnClick="WrapHandled(ToggleTheme)">
+        <BitActionButton Class="toggle-theme-btn theme-light" OnClick="WrapHandled(ToggleTheme)">
             <span class="icon-container"><i class="bit-icon bit-icon--ClearNight"></i></span>
         </BitActionButton>
-        <BitActionButton Class="theme-icon-container dark-theme" OnClick="WrapHandled(ToggleTheme)">
+        <BitActionButton Class="toggle-theme-btn theme-dark" OnClick="WrapHandled(ToggleTheme)">
             <span class="icon-container"><i class="bit-icon bit-icon--Sunny"></i></span>
         </BitActionButton>
         @* <AppMenu /> *@

@@ -24,9 +24,9 @@ public partial class DocumentComponent
 
     public List<BitBreadcrumbItem> BreadcrumbItems { get; set; } = [];
 
-    protected override async Task OnParamsSetAsync()
+    protected override async Task OnInitAsync()
     {
-        await base.OnParamsSetAsync();
+        await base.OnInitAsync();
         await LoadDocument();
     }
 

@@ -198,4 +198,10 @@
   <data name="DocumentsPageTitle" xml:space="preserve">
     <value />
   </data>
+  <data name="FooterText" xml:space="preserve">
+    <value />
+  </data>
+  <data name="CopyRight" xml:space="preserve">
+    <value />
+  </data>
 </root>

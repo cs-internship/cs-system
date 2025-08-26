@@ -8,6 +8,7 @@ public partial class HomePage
     [CascadingParameter] private BitDir? currentDir { get; set; }
     [AutoInject] private ICrystaProgramController CrystaProgramController { get; set; } = default!;
 
+    private bool isLoading;
     private List<CrystaProgramDto> programs = [];
 
     protected override async Task OnInitAsync()
@@ -18,7 +19,16 @@ public partial class HomePage
 
     private async Task LoadPrograms()
     {
-        programs = await CrystaProgramController.GetPrograms(CurrentCancellationToken);
+        try
+        {
+            isLoading = true;
+            programs = await CrystaProgramController.GetPrograms(CurrentCancellationToken);
+
+        }
+        finally
+        {
+            isLoading = false;
+        }
     }
 
     private void NavigateToDocuments(string programCode)

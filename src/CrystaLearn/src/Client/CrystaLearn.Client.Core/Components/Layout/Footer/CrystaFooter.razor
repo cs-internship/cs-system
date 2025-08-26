@@ -1,0 +1,41 @@
+@inherits AppComponentBase;
+
+<div class="footer">
+    <section>
+        <div>
+            <BitText Typography="BitTypography.H5">Crysta Learn</BitText>
+            <BitText Typography="BitTypography.Body2">
+                @Localizer[AppStrings.FooterText]
+            </BitText>
+        </div>
+
+        <div class="links-container">
+            <div class="column">
+                <BitText Typography="BitTypography.H6" Gutter>Explore</BitText>
+                <BitLink Href="overview" Target="_blank">Docs</BitLink>
+            </div>
+
+            <div class="column">
+                <BitText Typography="BitTypography.H6" Gutter>Quick links</BitText>
+                <BitLink Href="https://github.com/cs-internship" Target="_blank">Github Org</BitLink>
+                <BitLink Href="https://github.com/cs-internship/cs-internship-spec" Target="_blank">Github Repo</BitLink>
+                <BitLink Href="https://github.com/cs-internship/cs-internship-spec/issues" Target="_blank">Github Issues</BitLink>
+            </div>
+
+            <button class="go-to-top" @onclick="GoToTop">Go to top</button>
+        </div>
+    </section>
+
+    <section>
+        <div></div>
+        <div>
+            <div class="social-link-group">
+                <a class="social-link twitter-link" target="_self" href="#"></a>
+                <a class="social-link github-link" target="_blank" href="https://github.com/cs-internship/cs-internship-spec"></a>
+                <a class="social-link youtube-link" target="_self" href="#"></a>
+                <a class="social-link linkedin-link" target="_self" href="#"></a>
+            </div>
+            <div class="copy-right-txt">@Localizer[nameof(AppStrings.CopyRight), DateTime.Now.Year] </div>
+        </div>
+    </section>
+</div>
