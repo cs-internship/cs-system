@@ -204,4 +204,28 @@
   <data name="CopyRight" xml:space="preserve">
     <value />
   </data>
+  <data name="Explore" xml:space="preserve">
+    <value />
+  </data>
+  <data name="Docs" xml:space="preserve">
+    <value />
+  </data>
+  <data name="QuickLinks" xml:space="preserve">
+    <value />
+  </data>
+  <data name="GithubOrg" xml:space="preserve">
+    <value />
+  </data>
+  <data name="GithubRepo" xml:space="preserve">
+    <value />
+  </data>
+  <data name="GithubIssues" xml:space="preserve">
+    <value />
+  </data>
+  <data name="GoToTop" xml:space="preserve">
+    <value />
+  </data>
+  <data name="NoDocumentSelected" xml:space="preserve">
+    <value />
+  </data>
 </root>

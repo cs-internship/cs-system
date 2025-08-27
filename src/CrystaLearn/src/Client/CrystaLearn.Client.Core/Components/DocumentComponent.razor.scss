@@ -1,1 +1,8 @@
-﻿
+﻿@import '../Styles/abstracts/_bit-css-variables.scss';
+
+::deep {
+    .crst-crd {
+        padding: 3rem;
+        background-color: $bit-color-background-primary;
+    }
+}

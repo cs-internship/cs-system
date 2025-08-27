@@ -1,6 +1,6 @@
 ﻿@inherits AppComponentBase
 
-<BitStack Alignment="BitAlignment.Center"  Style="padding:2rem;">
+<BitStack Alignment="BitAlignment.Center" Style="padding:2rem;">
     @if (IsLoadingDocument)
     {
         //<BitGridLoading />
@@ -11,37 +11,39 @@
         {
             <BitStack Gap="0" FitHeight>
                 <BitStack Horizontal VerticalAlign="BitAlignment.Center">
-                    <BitBreadcrumb 
-                        Items="BreadcrumbItems" />
+                    <BitBreadcrumb Items="BreadcrumbItems" />
                     <BitSpacer />
                     <BitDropdown Items="GetLanguages(LoadedDocument)"
-                        ocPrefix="@GetCultureMessage(LoadedDocument)"
-                        FitWidth NoBorder Transparent
-                        Value="SelectedCulture"
-                        OnChange="WrapHandled((string c) => OnCultureChanged(c))"/>
+                                 ocPrefix="@GetCultureMessage(LoadedDocument)"
+                                 FitWidth NoBorder Transparent
+                                 Value="SelectedCulture"
+                                 OnChange="WrapHandled((string c) => OnCultureChanged(c))" />
                     <BitButtonGroup Variant="BitVariant.Outline" Items="MenuItems" />
                 </BitStack>
                 <BitStack Horizontal Gap="3rem" VerticalAlign="BitAlignment.End">
                     <BitText Typography="BitTypography.Subtitle1">@LoadedDocument.SyncInfo.SyncStartDateTime?.ToString("yyyy/MM/dd HH:mm")</BitText>
                     <BitText Typography="BitTypography.Subtitle1">@GetCulture(LoadedDocument)</BitText>
-                    <BitText Typography="BitTypography.Subtitle1">@LoadedDocument.SyncInfo.SyncHash?.Substring(0,5)...</BitText>
-                    
+                    <BitText Typography="BitTypography.Subtitle1">@LoadedDocument.SyncInfo.SyncHash?.Substring(0, 5)...</BitText>
+
                 </BitStack>
             </BitStack>
-            <BitStack>
-                <BitText 
-                    Typography="BitTypography.Body1"
-                         Dir="@GetCultureDir(LoadedDocument)">
-                    @((MarkupString)(LoadedDocument.Content ?? ""))
-                </BitText>
-            </BitStack>
+            <div>
+                <BitCard Class="crst-crd">
+                    <BitStack>
+                        <BitText Typography="BitTypography.Body1"
+                                 Dir="@GetCultureDir(LoadedDocument)">
+                            @((MarkupString)(LoadedDocument.Content ?? ""))
+                        </BitText>
+                    </BitStack>
+                </BitCard>
+            </div>
         }
         else
         {
             <BitStack Alignment="BitAlignment.Center">
-                <BitText Typography="BitTypography.H5">No document selected</BitText>
+                <BitText Typography="BitTypography.H5">@Localizer[nameof(AppStrings.NoDocumentSelected)]</BitText>
             </BitStack>
         }
     }
-    
+
 </BitStack>

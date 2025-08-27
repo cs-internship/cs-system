@@ -1210,4 +1210,28 @@ After reaching {0}, extra sign-ins will have reduced functions.</value>
   <data name="CopyRight" xml:space="preserve">
     <value>Copyright © {0} crysta learn | All Rights Reserved</value>
   </data>
+  <data name="Explore" xml:space="preserve">
+    <value>Explore</value>
+  </data>
+  <data name="Docs" xml:space="preserve">
+    <value>Docs</value>
+  </data>
+  <data name="QuickLinks" xml:space="preserve">
+    <value>Quick links</value>
+  </data>
+  <data name="GithubOrg" xml:space="preserve">
+    <value>Github Org</value>
+  </data>
+  <data name="GithubRepo" xml:space="preserve">
+    <value>Github Repo</value>
+  </data>
+  <data name="GithubIssues" xml:space="preserve">
+    <value>Github Issues</value>
+  </data>
+  <data name="GoToTop" xml:space="preserve">
+    <value>Go to top</value>
+  </data>
+  <data name="NoDocumentSelected" xml:space="preserve">
+    <value>No document selected</value>
+  </data>
 </root>

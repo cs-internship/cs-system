@@ -11,18 +11,18 @@
 
         <div class="links-container">
             <div class="column">
-                <BitText Typography="BitTypography.H6" Gutter>Explore</BitText>
-                <BitLink Href="overview" Target="_blank">Docs</BitLink>
+                <BitText Typography="BitTypography.H6" Gutter>@Localizer[nameof(AppStrings.Explore)]</BitText>
+                <BitLink Href="cs-internship/docs" Target="_blank">@Localizer[nameof(AppStrings.Docs)]</BitLink>
             </div>
 
             <div class="column">
                 <BitText Typography="BitTypography.H6" Gutter>Quick links</BitText>
-                <BitLink Href="https://github.com/cs-internship" Target="_blank">Github Org</BitLink>
-                <BitLink Href="https://github.com/cs-internship/cs-internship-spec" Target="_blank">Github Repo</BitLink>
-                <BitLink Href="https://github.com/cs-internship/cs-internship-spec/issues" Target="_blank">Github Issues</BitLink>
+                <BitLink Href="https://github.com/cs-internship" Target="_blank">@Localizer[nameof(AppStrings.GithubOrg)]</BitLink>
+                <BitLink Href="https://github.com/cs-internship/cs-internship-spec" Target="_blank">@Localizer[nameof(AppStrings.GithubRepo)]</BitLink>
+                <BitLink Href="https://github.com/cs-internship/cs-internship-spec/issues" Target="_blank">@Localizer[nameof(AppStrings.GithubIssues)]</BitLink>
             </div>
 
-            <button class="go-to-top" @onclick="GoToTop">Go to top</button>
+            <button class="go-to-top" @onclick="GoToTop">@Localizer[nameof(AppStrings.GoToTop)]</button>
         </div>
     </section>
 

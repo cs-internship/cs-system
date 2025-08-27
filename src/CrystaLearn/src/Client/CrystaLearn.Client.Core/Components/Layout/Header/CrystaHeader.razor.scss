@@ -34,10 +34,22 @@ header {
         }
     }
 
-    &.dark-theme {
+    /*&.dark-theme {
         .icon-container {
             padding: 2px 0px 0 1px;
         }
+    }*/
+}
+
+.theme-light {
+    * ::deep .dark-theme {
+        display: none;
+    }
+}
+
+.theme-dark {
+    * ::deep .light-theme {
+        display: none;
     }
 }
 

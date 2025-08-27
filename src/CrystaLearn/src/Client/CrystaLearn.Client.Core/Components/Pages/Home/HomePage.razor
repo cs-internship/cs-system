@@ -10,7 +10,6 @@
     <BitStack Alignment="BitAlignment.Center" Gap="2rem" Class="root-stack" FitHeight>
         @if (isLoading)
         {
-            @* <BitGridLoading /> *@
             <LoadingComponent />
         }
         else
@@ -21,7 +20,7 @@
             <BitStack Horizontal Gap="2rem">
                 @foreach (var program in programs)
                 {
-                    <BitCard Style="padding:3rem" FullWidth>
+                    <BitCard Class="crst-crd" FullWidth>
                         <BitStack HorizontalAlign="BitAlignment.Center">
                             <BitText Typography="BitTypography.H5">@program.Title</BitText>
                             <BitText Typography="BitTypography.Body1" Align="BitTextAlign.Center">
@@ -30,12 +29,12 @@
                             <BitButton Variant="BitVariant.Outline" OnClick="WrapHandled(() => NavigateToDocuments(program.Code))">
                                 Documents
                             </BitButton>
-                            <BitLink Href="https://blazorui.bitplatform.dev/" Target="_blank" NoUnderline>
+                           @*  <BitLink Href="https://blazorui.bitplatform.dev/" Target="_blank" NoUnderline>
                                 <BitStack Horizontal VerticalAlign="BitAlignment.Baseline" Gap="0.5rem">
                                     @program.DocumentSyncInfo.SyncHash
                                     <BitIcon Size="BitSize.Small" IconName="@(currentDir is BitDir.Rtl ? BitIconName.ChromeBack : BitIconName.ChromeBackMirrored)" />
                                 </BitStack>
-                            </BitLink>
+                            </BitLink> *@
                         </BitStack>
                     </BitCard>
                 }
