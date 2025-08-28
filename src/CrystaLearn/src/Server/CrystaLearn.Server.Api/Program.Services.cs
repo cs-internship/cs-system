@@ -250,14 +250,6 @@ public static partial class Program
             return new(emailSettings.Host, emailSettings.Port);
         });
 
-
-        services.AddHttpClient<NugetStatisticsService>(c =>
-        {
-            c.Timeout = TimeSpan.FromSeconds(3);
-            c.BaseAddress = new Uri("https://azuresearch-usnc.nuget.org");
-            c.DefaultRequestVersion = HttpVersion.Version11;
-        });
-
         services.AddHttpClient<ResponseCacheService>(c =>
         {
             c.Timeout = TimeSpan.FromSeconds(10);
@@ -280,7 +272,7 @@ public static partial class Program
                 TimestampDriftTolerance = 1000,
                 ServerName = "CrystaLearn WebAuthn",
                 Origins = new HashSet<string>([webAppUrl.AbsoluteUri]),
-                ServerIcon = new Uri(webAppUrl, "images/icons/bit-logo.png").ToString()
+                //ServerIcon = new Uri(webAppUrl, "images/icons/bit-logo.png").ToString()
             };
 
             return options;

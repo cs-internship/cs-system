@@ -1,13 +1,13 @@
 ﻿using System.Text;
 using System.Text.Encodings.Web;
-using QRCoder;
-using Humanizer;
-using CrystaLearn.Server.Api.Services;
-using CrystaLearn.Shared.Dtos.Identity;
-using CrystaLearn.Shared.Controllers.Identity;
-using Microsoft.AspNetCore.SignalR;
-using CrystaLearn.Server.Api.SignalR;
 using CrystaLearn.Core.Models.Identity;
+using CrystaLearn.Server.Api.Services;
+using CrystaLearn.Server.Api.SignalR;
+using CrystaLearn.Shared.Controllers.Identity;
+using CrystaLearn.Shared.Dtos.Identity;
+using Humanizer;
+using Microsoft.AspNetCore.SignalR;
+using QRCoder;
 
 namespace CrystaLearn.Server.Api.Controllers.Identity;
 
@@ -472,7 +472,7 @@ public partial class UserController : AppControllerBase, IUserController
     {
         return string.Format(CultureInfo.InvariantCulture,
         AUTHENTICATOR_URI_FORMAT,
-        urlEncoder.Encode("bit platform CrystaLearn"),
+        urlEncoder.Encode("CrystaLearn"),
                              urlEncoder.Encode(user),
                              unformattedKey);
     }

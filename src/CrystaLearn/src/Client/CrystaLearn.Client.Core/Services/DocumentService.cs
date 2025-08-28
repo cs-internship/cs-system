@@ -4,6 +4,7 @@ namespace CrystaLearn.Client.Core.Services;
 public partial class DocumentService
 {
     [AutoInject] private IDocumentController DocumentController { get; set; } = default!;
+    private BitNavItem selectedNavItem;
 
     public async Task<List<BitNavItem>> LoadNavItemsAsync(string programCode, CancellationToken cancellationToken)
     {
@@ -30,7 +31,8 @@ public partial class DocumentService
             {
                 Text = doc.Title,
                 Data = doc,
-                IconName = BitIconName.TextDocument
+                IconName = BitIconName.TextDocument,
+                Url = doc.CrystaUrl
             });
         }
 
@@ -84,5 +86,35 @@ public partial class DocumentService
         }
 
         return GetOrCreateNavItem(foundFolder, folderParts.Skip(1).ToArray());
+    }
+
+    public BitNavItem? FindNavItem(List<BitNavItem> items, string url)
+    {
+        BitNavItem? selectedItem = null;
+        foreach (var item in items)
+        {
+            selectedItem = Contains(item, url);
+            if (selectedItem is not null)
+            {
+                break;
+            }
+        }
+        return selectedItem;
+    }
+
+    BitNavItem? Contains(BitNavItem item, string url)
+    {
+        if (string.Equals(item.Url, url, StringComparison.InvariantCultureIgnoreCase)) return item;
+
+        foreach (var child in item.ChildItems)
+        {
+            var found = Contains(child, url);
+            if (found is not null)
+            {
+                return found;
+            }
+        }
+
+        return null;
     }
 }

@@ -1,4 +1,5 @@
-﻿using CrystaLearn.Shared.Controllers.Crysta;
+﻿using CrystaLearn.Client.Core.Models;
+using CrystaLearn.Shared.Controllers.Crysta;
 
 namespace CrystaLearn.Client.Core.Components.Pages.Crysta.Program.Document;
 
@@ -11,13 +12,12 @@ public partial class DocumentPage : IAsyncDisposable
     [Parameter] public string? DocPath { get; set; } = default!;
 
 
-    protected override string? Title => Localizer[nameof(AppStrings.Terms)];
+    protected override string? Title => Localizer[nameof(AppStrings.DocumentsPageTitle)];
     protected override string? Subtitle => string.Empty;
     public List<BitNavItem> DocumentsTree { get; set; } = [];
     public string? CurrentCrystaUrl { get; set; }
     private bool isLoadingTree = false;
     private List<Action> unsubscribers = [];
-
 
     protected override async Task OnInitAsync()
     {
@@ -27,6 +27,12 @@ public partial class DocumentPage : IAsyncDisposable
         }
 
         await RefreshDocuments();
+        var payload = new InitNavPayload()
+        {
+            ProgramCode = ProgramCode,
+            CurrentCrystaUrl = CurrentCrystaUrl
+        };
+        pubSubService.Publish(ClientPubSubMessages.SET_PROGRAM_CODE, payload);
         unsubscribers.Add(pubSubService.Subscribe(ClientPubSubMessages.SET_CURRENT_CRYSTA_URL, async (url) =>
         {
             CurrentCrystaUrl = url as string;

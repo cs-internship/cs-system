@@ -1,0 +1,68 @@
+@import '../../../Styles/abstracts/_media-queries.scss';
+@import '../../../Styles/abstracts/_bit-css-variables.scss';
+
+header {
+    top: 0;
+    z-index: 1;
+    width: 100%;
+    height: 4rem;
+    padding: 0.5rem;
+    position: sticky;
+    padding-block: 0.5rem;
+    background-color: $bit-color-background-primary;
+}
+
+.toggle-theme-btn {
+    padding: 0;
+    border: none;
+    cursor: pointer;
+    height: rem2(35px);
+    min-width: rem2(35px);
+    border-radius: 50%;
+    color: $bit-color-primary-text;
+    background-color: $bit-color-primary;
+
+    .icon-container {
+        height: 100%;
+        display: flex;
+        flex-wrap: nowrap;
+        align-items: center;
+        justify-content: center;
+
+        .bit-icon {
+            margin: 0 rem2(4px);
+        }
+    }
+
+    /*&.dark-theme {
+        .icon-container {
+            padding: 2px 0px 0 1px;
+        }
+    }*/
+}
+
+.theme-light {
+    * ::deep .dark-theme {
+        display: none;
+    }
+}
+
+.theme-dark {
+    * ::deep .light-theme {
+        display: none;
+    }
+}
+
+::deep {
+    .menu-btn {
+        @include gt-sm {
+            display: none;
+        }
+    }
+
+    .identity-button {
+        @include lt-sm {
+            display: none;
+        }
+    }
+}

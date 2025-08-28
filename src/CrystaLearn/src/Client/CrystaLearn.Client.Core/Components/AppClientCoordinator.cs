@@ -1,10 +1,10 @@
 ﻿using System.Web;
+using BlazorApplicationInsights.Interfaces;
+using CrystaLearn.Client.Core.Services.DiagnosticLog;
+using CrystaLearn.Shared.Controllers.Identity;
+using Microsoft.AspNetCore.Components.Routing;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.AspNetCore.SignalR.Client;
-using BlazorApplicationInsights.Interfaces;
-using Microsoft.AspNetCore.Components.Routing;
-using CrystaLearn.Shared.Controllers.Identity;
-using CrystaLearn.Client.Core.Services.DiagnosticLog;
 
 namespace CrystaLearn.Client.Core.Components;
 
@@ -164,7 +164,7 @@ public partial class AppClientCoordinator : AppComponentBase
                 // Note that this code has nothing to do with push notification.
                 await notification.Show("CrystaLearn SignalR", new()
                 {
-                    Icon = "/images/icons/bit-icon-512.png",
+                    //Icon = "/images/icons/bit-icon-512.png",
                     Body = message,
                     Data = data
                 });

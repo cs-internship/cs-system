@@ -1,5 +1,4 @@
 ﻿using System.Net.Http.Headers;
-using CrystaLearn.Shared.Controllers.Identity;
 
 namespace CrystaLearn.Client.Core.Services.HttpMessageHandlers;
 
@@ -41,26 +40,26 @@ public partial class AuthDelegatingHandler(IJSRuntime jsRuntime,
             // Let's update the access token by refreshing it when a refresh token is available.
             // Following this procedure, the newly acquired access token may now include the necessary roles or claims.
 
-            if (isInternalRequest is false)
-                throw;
+            //if (isInternalRequest is false)
+            //    throw;
 
-            if (AppPlatform.IsBlazorHybrid is false && jsRuntime.IsInitialized() is false)
-                throw; // The `refreshToken` is not accessible during the pre-rendering phase.
+            //if (AppPlatform.IsBlazorHybrid is false && jsRuntime.IsInitialized() is false)
+            //    throw; // The `refreshToken` is not accessible during the pre-rendering phase.
 
-            var isRefreshTokenRequest = request.RequestUri?.LocalPath?.Contains(IIdentityController.RefreshUri, StringComparison.InvariantCultureIgnoreCase) is true;
+            //var isRefreshTokenRequest = request.RequestUri?.LocalPath?.Contains(IIdentityController.RefreshUri, StringComparison.InvariantCultureIgnoreCase) is true;
 
-            if (isRefreshTokenRequest)
-                throw; // To prevent refresh token loop
+            //if (isRefreshTokenRequest)
+            //    throw; // To prevent refresh token loop
 
-            var refreshToken = await storageService.GetItem("refresh_token");
-            if (string.IsNullOrEmpty(refreshToken)) throw;
+            //var refreshToken = await storageService.GetItem("refresh_token");
+            //if (string.IsNullOrEmpty(refreshToken)) throw;
 
-            var authManager = serviceProvider.GetRequiredService<AuthManager>();
+            //var authManager = serviceProvider.GetRequiredService<AuthManager>();
 
-            logScopeData["RefreshTokenRequested"] = true;
-            var accessToken = await authManager.RefreshToken(requestedBy: nameof(AuthDelegatingHandler));
+            //logScopeData["RefreshTokenRequested"] = true;
+            //var accessToken = await authManager.RefreshToken(requestedBy: nameof(AuthDelegatingHandler));
 
-            request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
+            //request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
 
             return await base.SendAsync(request, cancellationToken);
         }

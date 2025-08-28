@@ -1,0 +1,13 @@
+@import '../../../Styles/abstracts/_media-queries.scss';
+
+::deep {
+    .nav-panel {
+        width: 360px;
+        height: 100%;
+        overflow: auto;
+
+        @include lt-md {
+            width: 210px;
+        }
+    }
+}

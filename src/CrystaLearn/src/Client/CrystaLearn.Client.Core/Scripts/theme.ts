@@ -18,8 +18,15 @@ type onThemeChangeType = (newThemeName: string, oldThemeName: string) => void;
         system: true,
         persist: true,
         onChange: (newTheme: string, oldTheme: string) => {
-            document.body.classList.add('theme-' + newTheme);
-            document.body.classList.remove('theme-' + oldTheme);
+            //document.body.classList.add('theme-' + newTheme);
+            //document.body.classList.remove('theme-' + oldTheme);
+            if (newTheme === 'dark') {
+                document.body.classList.add('theme-dark');
+                document.body.classList.remove('theme-light');
+            } else {
+                document.body.classList.add('theme-light');
+                document.body.classList.remove('theme-dark');
+            }
 
             const primaryBgColor = getComputedStyle(document.documentElement).getPropertyValue('--bit-clr-bg-pri');
             if (!primaryBgColor) return;

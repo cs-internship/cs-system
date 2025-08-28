@@ -79,4 +79,9 @@
         <None Include="tsconfig.json" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Folder Include="Components\CrystaComponents\" />
+      <Folder Include="wwwroot\images\backgrounds\" />
+    </ItemGroup>
+
 </Project>

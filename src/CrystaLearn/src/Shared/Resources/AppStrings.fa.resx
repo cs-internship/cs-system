@@ -265,12 +265,6 @@
   <data name="FullName" xml:space="preserve">
     <value>نام کامل</value>
   </data>
-  <data name="TermsPageTitle" xml:space="preserve">
-    <value>شرایط</value>
-  </data>
-  <data name="Terms" xml:space="preserve">
-    <value>شرایط</value>
-  </data>
   <data name="ProfileUpdatedSuccessfullyMessage" xml:space="preserve">
     <value>پروفایل با موفقیت به روز شد.</value>
   </data>
@@ -516,15 +510,6 @@
   </data>
   <data name="LearnMore" xml:space="preserve">
     <value>بیشتر بدانید</value>
-  </data>
-  <data name="BitPlatformMessage" xml:space="preserve">
-    <value>ابزارهایی برای دولوپرهای دات نت در پلتفرهای گوناگون</value>
-  </data>
-  <data name="BitBlazorUIMessage" xml:space="preserve">
-    <value>مجموعه ای از کمپوننتهای کارا، ساده و زیبای بلیزری</value>
-  </data>
-  <data name="BitProjectTemplateMessage" xml:space="preserve">
-    <value>تمپلیت پروژه ای فول امکانات که همه جا کار میکند</value>
   </data>
   <data name="DescriptionMetaTagValue" xml:space="preserve">
     <value>پروژه CrystaLearn با ASP.NET Core, Identity, Web API, EF Core و Blazor ساخته شده</value>
@@ -919,15 +904,6 @@
   <data name="AboutPageTitle" xml:space="preserve">
     <value>درباره</value>
   </data>
-  <data name="CategoryCouldNotBeFound" xml:space="preserve">
-    <value>دسته مورد نظر پیدا نشد</value>
-  </data>
-  <data name="ProductCouldNotBeFound" xml:space="preserve">
-    <value>محصول پیدا نشد</value>
-  </data>
-  <data name="Category" xml:space="preserve">
-    <value>دسته</value>
-  </data>
   <data name="AltText" xml:space="preserve">
     <value>متن جایگزین</value>
   </data>
@@ -967,44 +943,14 @@
   <data name="AddCategory" xml:space="preserve">
     <value>دسته جدید</value>
   </data>
-  <data name="CategoriesPageTitle" xml:space="preserve">
-    <value>دسته بندی ها</value>
-  </data>
   <data name="EnterCategoryName" xml:space="preserve">
     <value>نام دسته را وارد کنید</value>
   </data>
   <data name="EnterProductName" xml:space="preserve">
     <value>نام محصول را وارد کنید</value>
   </data>
-  <data name="CategoriesWithProductCount" xml:space="preserve">
-    <value>تعداد دسته های دارای محصول</value>
-  </data>
   <data name="SearchOnName" xml:space="preserve">
     <value>جستجو در نام</value>
-  </data>
-  <data name="ProductsCountPerCategoryChart" xml:space="preserve">
-    <value>چارت تعداد محصولات در هر دسته</value>
-  </data>
-  <data name="ProductsCountPerCategoryChartText" xml:space="preserve">
-    <value>این نمودار تعداد محصولات در هر دسته را نشان می دهد.</value>
-  </data>
-  <data name="ProductsPageTitle" xml:space="preserve">
-    <value>محصولات</value>
-  </data>
-  <data name="ProductsPercentagePerCategory" xml:space="preserve">
-    <value>درصد محصولات هر دسته</value>
-  </data>
-  <data name="ProductsPercentagePerCategoryText" xml:space="preserve">
-    <value>این نمودار درصد محصولات هر دسته را نشان می دهد.</value>
-  </data>
-  <data name="Categories" xml:space="preserve">
-    <value>دسته ها</value>
-  </data>
-  <data name="Products" xml:space="preserve">
-    <value>محصولات</value>
-  </data>
-  <data name="CategoryNotEmpty" xml:space="preserve">
-    <value>این دسته دارای محصول است، بنابراین نمی توانید ان را حذف کنید</value>
   </data>
   <data name="AreYouSureWannaDeleteProduct" xml:space="preserve">
     <value>آیا مطمئن هستید که می خواهید محصول {0} را حذف کنید؟</value>
@@ -1254,5 +1200,38 @@
   </data>
   <data name="ImageNotCarError" xml:space="preserve">
     <value>تصویر ارائه شده حاوی ماشین نیست.</value>
+  </data>
+  <data name="DocumentsPageTitle" xml:space="preserve">
+    <value>داکیومنت</value>
+  </data>
+  <data name="FooterText" xml:space="preserve">
+    <value />
+  </data>
+  <data name="CopyRight" xml:space="preserve">
+    <value />
+  </data>
+  <data name="Explore" xml:space="preserve">
+    <value />
+  </data>
+  <data name="Docs" xml:space="preserve">
+    <value />
+  </data>
+  <data name="QuickLinks" xml:space="preserve">
+    <value />
+  </data>
+  <data name="GithubOrg" xml:space="preserve">
+    <value />
+  </data>
+  <data name="GithubRepo" xml:space="preserve">
+    <value />
+  </data>
+  <data name="GithubIssues" xml:space="preserve">
+    <value />
+  </data>
+  <data name="GoToTop" xml:space="preserve">
+    <value />
+  </data>
+  <data name="NoDocumentSelected" xml:space="preserve">
+    <value />
   </data>
 </root>
