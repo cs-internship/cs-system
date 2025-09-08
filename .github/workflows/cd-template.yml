@@ -114,7 +114,10 @@ jobs:
       - name: Run EF Core migrations
         run: |
           dotnet tool install --global dotnet-ef
-          dotnet ef database update --project src/Server/CrystaLearn.Server.Web/CrystaLearn.Server.Web.csproj --context AppDbContext
+          dotnet ef database update \
+            --project src/Core/CrystaLearn.Core/CrystaLearn.Core.csproj \
+            --startup-project src/Server/CrystaLearn.Server.Api/CrystaLearn.Server.Api.csproj \
+            --context AppDbContext
 
       - name: Purge Cloudflare cache
         uses: jakejarvis/cloudflare-purge-action@v0.3.0
