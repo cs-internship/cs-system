@@ -54,6 +54,7 @@ jobs:
 
       - name: Publish
         run: dotnet publish src/Server/CrystaLearn.Server.Web/CrystaLearn.Server.Web.csproj -c Release --self-contained -r linux-x64 -o ${{env.DOTNET_ROOT}}/server -p:Version="${{ vars.APP_VERSION }}" -p:Environment=${{ inputs.ENV_NAME }}
+
       - name: Upload server artifact
         uses: actions/upload-artifact@v4
         with:
@@ -87,7 +88,8 @@ jobs:
     environment:
       name: ${{ inputs.ENV_NAME }}
       url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
-
+    container: hamravesh.hamdocker.ir/public/darkube-cli:v1.1
+    
     steps:
 
       - name: Retrieve server bundle
@@ -103,13 +105,18 @@ jobs:
       #     slot-name: 'production'
       #     publish-profile: ${{ secrets.AZURE_PUBLISH_PROFILE }}
       #     package: .
-      - name: Deploy to Azure Web App (Container)
-        uses: azure/webapps-deploy@v3
-        with:
-          app-name: ${{ vars.APP_SERVICE_NAME }}
-          images: ${{ env.TAG }}    # The fully qualified image name with tag
-          slot-name: 'production'
-          publish-profile: ${{ secrets.AZURE_PUBLISH_PROFILE }}
+      # - name: Deploy to Azure Web App (Container)
+      #   uses: azure/webapps-deploy@v3
+      #   with:
+      #     app-name: ${{ vars.APP_SERVICE_NAME }}
+      #     images: ${{ env.TAG }}    # The fully qualified image name with tag
+      #     slot-name: 'production'
+      #     publish-profile: ${{ secrets.AZURE_PUBLISH_PROFILE }}
+      - name: Deploy to darkube
+        run: darkube deploy --ref develop --token ${DARKUBE_DEPLOY_TOKEN} --app-id ${DARKUBE_APP_ID}  --image-tag "${GITHUB_SHA:0:7}" --job-id "$GITHUB_RUN_ID" --stateless-app true
+        env:
+          DARKUBE_DEPLOY_TOKEN: ${{ vars.DARKUBE_DEPLOY_TOKEN }}
+          DARKUBE_APP_ID: ${{ vars.DARKUBE_APP_ID }}
 
       - name: Run EF Core migrations
         run: |
