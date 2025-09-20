@@ -47,12 +47,12 @@ public partial class UserConfiguration : IEntityTypeConfiguration<User>
 
         builder
             .HasIndex(b => b.Email)
-            .HasFilter($"[{nameof(User.Email)}] IS NOT NULL")
+            .HasFilter($"\"{nameof(User.Email)}\" IS NOT NULL")
             .IsUnique();
 
         builder
             .HasIndex(b => b.PhoneNumber)
-            .HasFilter($"[{nameof(User.PhoneNumber)}] IS NOT NULL")
+            .HasFilter($"\"{nameof(User.PhoneNumber)}\" IS NOT NULL")
             .IsUnique();
     }
 }

@@ -30,7 +30,7 @@ public partial class AppDbContext(DbContextOptions<AppDbContext> options)
 
         modelBuilder.OnHangfireModelCreating("jobs");
 
-        modelBuilder.HasDefaultSchema("dbo");
+        modelBuilder.HasDefaultSchema("CrystaLearn");
 
         modelBuilder.ApplyConfigurationsFromAssembly(typeof(AppDbContext).Assembly);
 
@@ -88,7 +88,7 @@ public partial class AppDbContext(DbContextOptions<AppDbContext> options)
     {
 
 
-        configurationBuilder.Conventions.Add(_ => new SqlServerPrimaryKeySequentialGuidDefaultValueConvention());
+        configurationBuilder.Conventions.Add(_ => new PostgresPrimaryKeySequentialGuidDefaultValueConvention());
 
         base.ConfigureConventions(configurationBuilder);
     }

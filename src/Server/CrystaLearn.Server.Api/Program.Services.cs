@@ -182,13 +182,7 @@ public static partial class Program
             options.EnableSensitiveDataLogging(env.IsDevelopment())
                 .EnableDetailedErrors(env.IsDevelopment());
 
-            options.UseSqlServer(configuration.GetConnectionString("SqlServerConnectionString"), dbOptions =>
-            {
-                if (AppDbContext.IsEmbeddingEnabled)
-                {
-                    dbOptions.UseVectorSearch();
-                }
-            });
+            options.UseNpgsql(configuration.GetConnectionString("PostgresConnectionString"));
         }
 
         services.AddOptions<IdentityOptions>()

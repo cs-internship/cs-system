@@ -1,5 +1,4 @@
-﻿using System;
-using Microsoft.EntityFrameworkCore.Migrations;
+﻿using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
 
@@ -13,20 +12,22 @@ namespace CrystaLearn.Core.Migrations
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.Sql("CREATE EXTENSION IF NOT EXISTS \"pgcrypto\";");
+
             migrationBuilder.EnsureSchema(
-                name: "dbo");
+                name: "CrystaLearn");
 
             migrationBuilder.EnsureSchema(
                 name: "jobs");
 
             migrationBuilder.CreateTable(
                 name: "Attachments",
-                schema: "dbo",
+                schema: "CrystaLearn",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false, defaultValueSql: "NewSequentialID()"),
-                    Kind = table.Column<int>(type: "int", nullable: false),
-                    Path = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                    Id = table.Column<Guid>(type: "uuid", nullable: false, defaultValueSql: "gen_random_uuid()"),
+                    Kind = table.Column<int>(type: "integer", nullable: false),
+                    Path = table.Column<string>(type: "text", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -35,13 +36,13 @@ namespace CrystaLearn.Core.Migrations
 
             migrationBuilder.CreateTable(
                 name: "DataProtectionKeys",
-                schema: "dbo",
+                schema: "CrystaLearn",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    FriendlyName = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Xml = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    FriendlyName = table.Column<string>(type: "text", nullable: true),
+                    Xml = table.Column<string>(type: "text", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -54,10 +55,10 @@ namespace CrystaLearn.Core.Migrations
                 columns: table => new
                 {
                     Id = table.Column<long>(type: "bigint", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Key = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: false),
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    Key = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: false),
                     Value = table.Column<long>(type: "bigint", nullable: false),
-                    ExpireAt = table.Column<DateTime>(type: "datetime2", nullable: true)
+                    ExpireAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -69,10 +70,10 @@ namespace CrystaLearn.Core.Migrations
                 schema: "jobs",
                 columns: table => new
                 {
-                    Key = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: false),
-                    Field = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: false),
-                    Value = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    ExpireAt = table.Column<DateTime>(type: "datetime2", nullable: true)
+                    Key = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: false),
+                    Field = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: false),
+                    Value = table.Column<string>(type: "text", nullable: true),
+                    ExpireAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -84,10 +85,10 @@ namespace CrystaLearn.Core.Migrations
                 schema: "jobs",
                 columns: table => new
                 {
-                    Key = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: false),
-                    Position = table.Column<int>(type: "int", nullable: false),
-                    Value = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    ExpireAt = table.Column<DateTime>(type: "datetime2", nullable: true)
+                    Key = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: false),
+                    Position = table.Column<int>(type: "integer", nullable: false),
+                    Value = table.Column<string>(type: "text", nullable: true),
+                    ExpireAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -99,8 +100,8 @@ namespace CrystaLearn.Core.Migrations
                 schema: "jobs",
                 columns: table => new
                 {
-                    Id = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: false),
-                    AcquiredAt = table.Column<DateTime>(type: "datetime2", nullable: false)
+                    Id = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: false),
+                    AcquiredAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -112,11 +113,11 @@ namespace CrystaLearn.Core.Migrations
                 schema: "jobs",
                 columns: table => new
                 {
-                    Id = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: false),
-                    StartedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    Heartbeat = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    WorkerCount = table.Column<int>(type: "int", nullable: false),
-                    Queues = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    Id = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: false),
+                    StartedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    Heartbeat = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    WorkerCount = table.Column<int>(type: "integer", nullable: false),
+                    Queues = table.Column<string>(type: "text", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -128,10 +129,10 @@ namespace CrystaLearn.Core.Migrations
                 schema: "jobs",
                 columns: table => new
                 {
-                    Key = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
-                    Value = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: false),
-                    Score = table.Column<double>(type: "float", nullable: false),
-                    ExpireAt = table.Column<DateTime>(type: "datetime2", nullable: true)
+                    Key = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
+                    Value = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: false),
+                    Score = table.Column<double>(type: "double precision", nullable: false),
+                    ExpireAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -140,13 +141,13 @@ namespace CrystaLearn.Core.Migrations
 
             migrationBuilder.CreateTable(
                 name: "Roles",
-                schema: "dbo",
+                schema: "CrystaLearn",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false, defaultValueSql: "NewSequentialID()"),
-                    Name = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true),
-                    NormalizedName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
-                    ConcurrencyStamp = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                    Id = table.Column<Guid>(type: "uuid", nullable: false, defaultValueSql: "gen_random_uuid()"),
+                    Name = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: true),
+                    NormalizedName = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
+                    ConcurrencyStamp = table.Column<string>(type: "text", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -155,13 +156,13 @@ namespace CrystaLearn.Core.Migrations
 
             migrationBuilder.CreateTable(
                 name: "SystemPrompts",
-                schema: "dbo",
+                schema: "CrystaLearn",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false, defaultValueSql: "NewSequentialID()"),
-                    PromptKind = table.Column<int>(type: "int", nullable: false),
-                    Markdown = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    ConcurrencyStamp = table.Column<byte[]>(type: "rowversion", rowVersion: true, nullable: false)
+                    Id = table.Column<Guid>(type: "uuid", nullable: false, defaultValueSql: "gen_random_uuid()"),
+                    PromptKind = table.Column<int>(type: "integer", nullable: false),
+                    Markdown = table.Column<string>(type: "text", nullable: false),
+                    ConcurrencyStamp = table.Column<byte[]>(type: "bytea", rowVersion: true, nullable: false)
                 },
                 constraints: table =>
                 {
@@ -170,34 +171,34 @@ namespace CrystaLearn.Core.Migrations
 
             migrationBuilder.CreateTable(
                 name: "Users",
-                schema: "dbo",
+                schema: "CrystaLearn",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false, defaultValueSql: "NewSequentialID()"),
-                    FullName = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Gender = table.Column<int>(type: "int", nullable: true),
-                    BirthDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
-                    EmailTokenRequestedOn = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
-                    PhoneNumberTokenRequestedOn = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
-                    ResetPasswordTokenRequestedOn = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
-                    TwoFactorTokenRequestedOn = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
-                    OtpRequestedOn = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
-                    ElevatedAccessTokenRequestedOn = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
-                    HasProfilePicture = table.Column<bool>(type: "bit", nullable: false),
-                    UserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
-                    NormalizedUserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
-                    Email = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
-                    NormalizedEmail = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
-                    EmailConfirmed = table.Column<bool>(type: "bit", nullable: false),
-                    PasswordHash = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    SecurityStamp = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    ConcurrencyStamp = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    PhoneNumber = table.Column<string>(type: "nvarchar(450)", nullable: true),
-                    PhoneNumberConfirmed = table.Column<bool>(type: "bit", nullable: false),
-                    TwoFactorEnabled = table.Column<bool>(type: "bit", nullable: false),
-                    LockoutEnd = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
-                    LockoutEnabled = table.Column<bool>(type: "bit", nullable: false),
-                    AccessFailedCount = table.Column<int>(type: "int", nullable: false)
+                    Id = table.Column<Guid>(type: "uuid", nullable: false, defaultValueSql: "gen_random_uuid()"),
+                    FullName = table.Column<string>(type: "text", nullable: true),
+                    Gender = table.Column<int>(type: "integer", nullable: true),
+                    BirthDate = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true),
+                    EmailTokenRequestedOn = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true),
+                    PhoneNumberTokenRequestedOn = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true),
+                    ResetPasswordTokenRequestedOn = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true),
+                    TwoFactorTokenRequestedOn = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true),
+                    OtpRequestedOn = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true),
+                    ElevatedAccessTokenRequestedOn = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true),
+                    HasProfilePicture = table.Column<bool>(type: "boolean", nullable: false),
+                    UserName = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
+                    NormalizedUserName = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
+                    Email = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
+                    NormalizedEmail = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
+                    EmailConfirmed = table.Column<bool>(type: "boolean", nullable: false),
+                    PasswordHash = table.Column<string>(type: "text", nullable: true),
+                    SecurityStamp = table.Column<string>(type: "text", nullable: true),
+                    ConcurrencyStamp = table.Column<string>(type: "text", nullable: true),
+                    PhoneNumber = table.Column<string>(type: "text", nullable: true),
+                    PhoneNumberConfirmed = table.Column<bool>(type: "boolean", nullable: false),
+                    TwoFactorEnabled = table.Column<bool>(type: "boolean", nullable: false),
+                    LockoutEnd = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true),
+                    LockoutEnabled = table.Column<bool>(type: "boolean", nullable: false),
+                    AccessFailedCount = table.Column<int>(type: "integer", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -206,14 +207,14 @@ namespace CrystaLearn.Core.Migrations
 
             migrationBuilder.CreateTable(
                 name: "RoleClaims",
-                schema: "dbo",
+                schema: "CrystaLearn",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    RoleId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    ClaimType = table.Column<string>(type: "nvarchar(450)", nullable: true),
-                    ClaimValue = table.Column<string>(type: "nvarchar(450)", nullable: true)
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    RoleId = table.Column<Guid>(type: "uuid", nullable: false),
+                    ClaimType = table.Column<string>(type: "text", nullable: true),
+                    ClaimValue = table.Column<string>(type: "text", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -221,7 +222,7 @@ namespace CrystaLearn.Core.Migrations
                     table.ForeignKey(
                         name: "FK_RoleClaims_Roles_RoleId",
                         column: x => x.RoleId,
-                        principalSchema: "dbo",
+                        principalSchema: "CrystaLearn",
                         principalTable: "Roles",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
@@ -229,14 +230,14 @@ namespace CrystaLearn.Core.Migrations
 
             migrationBuilder.CreateTable(
                 name: "UserClaims",
-                schema: "dbo",
+                schema: "CrystaLearn",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    ClaimType = table.Column<string>(type: "nvarchar(450)", nullable: true),
-                    ClaimValue = table.Column<string>(type: "nvarchar(450)", nullable: true)
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    UserId = table.Column<Guid>(type: "uuid", nullable: false),
+                    ClaimType = table.Column<string>(type: "text", nullable: true),
+                    ClaimValue = table.Column<string>(type: "text", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -244,7 +245,7 @@ namespace CrystaLearn.Core.Migrations
                     table.ForeignKey(
                         name: "FK_UserClaims_Users_UserId",
                         column: x => x.UserId,
-                        principalSchema: "dbo",
+                        principalSchema: "CrystaLearn",
                         principalTable: "Users",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
@@ -252,13 +253,13 @@ namespace CrystaLearn.Core.Migrations
 
             migrationBuilder.CreateTable(
                 name: "UserLogins",
-                schema: "dbo",
+                schema: "CrystaLearn",
                 columns: table => new
                 {
-                    LoginProvider = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    ProviderKey = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    ProviderDisplayName = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
+                    LoginProvider = table.Column<string>(type: "text", nullable: false),
+                    ProviderKey = table.Column<string>(type: "text", nullable: false),
+                    ProviderDisplayName = table.Column<string>(type: "text", nullable: true),
+                    UserId = table.Column<Guid>(type: "uuid", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -266,7 +267,7 @@ namespace CrystaLearn.Core.Migrations
                     table.ForeignKey(
                         name: "FK_UserLogins_Users_UserId",
                         column: x => x.UserId,
-                        principalSchema: "dbo",
+                        principalSchema: "CrystaLearn",
                         principalTable: "Users",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
@@ -274,11 +275,11 @@ namespace CrystaLearn.Core.Migrations
 
             migrationBuilder.CreateTable(
                 name: "UserRoles",
-                schema: "dbo",
+                schema: "CrystaLearn",
                 columns: table => new
                 {
-                    UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false, defaultValueSql: "NewSequentialID()"),
-                    RoleId = table.Column<Guid>(type: "uniqueidentifier", nullable: false, defaultValueSql: "NewSequentialID()")
+                    UserId = table.Column<Guid>(type: "uuid", nullable: false, defaultValueSql: "gen_random_uuid()"),
+                    RoleId = table.Column<Guid>(type: "uuid", nullable: false, defaultValueSql: "gen_random_uuid()")
                 },
                 constraints: table =>
                 {
@@ -286,14 +287,14 @@ namespace CrystaLearn.Core.Migrations
                     table.ForeignKey(
                         name: "FK_UserRoles_Roles_RoleId",
                         column: x => x.RoleId,
-                        principalSchema: "dbo",
+                        principalSchema: "CrystaLearn",
                         principalTable: "Roles",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_UserRoles_Users_UserId",
                         column: x => x.UserId,
-                        principalSchema: "dbo",
+                        principalSchema: "CrystaLearn",
                         principalTable: "Users",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
@@ -301,22 +302,22 @@ namespace CrystaLearn.Core.Migrations
 
             migrationBuilder.CreateTable(
                 name: "UserSessions",
-                schema: "dbo",
+                schema: "CrystaLearn",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false, defaultValueSql: "NewSequentialID()"),
-                    IP = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Address = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Privileged = table.Column<bool>(type: "bit", nullable: false),
+                    Id = table.Column<Guid>(type: "uuid", nullable: false, defaultValueSql: "gen_random_uuid()"),
+                    IP = table.Column<string>(type: "text", nullable: true),
+                    Address = table.Column<string>(type: "text", nullable: true),
+                    Privileged = table.Column<bool>(type: "boolean", nullable: false),
                     StartedOn = table.Column<long>(type: "bigint", nullable: false),
                     RenewedOn = table.Column<long>(type: "bigint", nullable: true),
-                    UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    SignalRConnectionId = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    NotificationStatus = table.Column<int>(type: "int", nullable: false),
-                    DeviceInfo = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    PlatformType = table.Column<int>(type: "int", nullable: true),
-                    CultureName = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    AppVersion = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                    UserId = table.Column<Guid>(type: "uuid", nullable: false),
+                    SignalRConnectionId = table.Column<string>(type: "text", nullable: true),
+                    NotificationStatus = table.Column<int>(type: "integer", nullable: false),
+                    DeviceInfo = table.Column<string>(type: "text", nullable: true),
+                    PlatformType = table.Column<int>(type: "integer", nullable: true),
+                    CultureName = table.Column<string>(type: "text", nullable: true),
+                    AppVersion = table.Column<string>(type: "text", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -324,7 +325,7 @@ namespace CrystaLearn.Core.Migrations
                     table.ForeignKey(
                         name: "FK_UserSessions_Users_UserId",
                         column: x => x.UserId,
-                        principalSchema: "dbo",
+                        principalSchema: "CrystaLearn",
                         principalTable: "Users",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
@@ -332,13 +333,13 @@ namespace CrystaLearn.Core.Migrations
 
             migrationBuilder.CreateTable(
                 name: "UserTokens",
-                schema: "dbo",
+                schema: "CrystaLearn",
                 columns: table => new
                 {
-                    UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false, defaultValueSql: "NewSequentialID()"),
-                    LoginProvider = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    Name = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    Value = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                    UserId = table.Column<Guid>(type: "uuid", nullable: false, defaultValueSql: "gen_random_uuid()"),
+                    LoginProvider = table.Column<string>(type: "text", nullable: false),
+                    Name = table.Column<string>(type: "text", nullable: false),
+                    Value = table.Column<string>(type: "text", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -346,7 +347,7 @@ namespace CrystaLearn.Core.Migrations
                     table.ForeignKey(
                         name: "FK_UserTokens_Users_UserId",
                         column: x => x.UserId,
-                        principalSchema: "dbo",
+                        principalSchema: "CrystaLearn",
                         principalTable: "Users",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
@@ -354,22 +355,22 @@ namespace CrystaLearn.Core.Migrations
 
             migrationBuilder.CreateTable(
                 name: "WebAuthnCredential",
-                schema: "dbo",
+                schema: "CrystaLearn",
                 columns: table => new
                 {
-                    Id = table.Column<byte[]>(type: "varbinary(900)", nullable: false),
-                    UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    PublicKey = table.Column<byte[]>(type: "varbinary(max)", nullable: true),
+                    Id = table.Column<byte[]>(type: "bytea", nullable: false),
+                    UserId = table.Column<Guid>(type: "uuid", nullable: false),
+                    PublicKey = table.Column<byte[]>(type: "bytea", nullable: true),
                     SignCount = table.Column<long>(type: "bigint", nullable: false),
-                    Transports = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    IsBackupEligible = table.Column<bool>(type: "bit", nullable: false),
-                    IsBackedUp = table.Column<bool>(type: "bit", nullable: false),
-                    AttestationObject = table.Column<byte[]>(type: "varbinary(max)", nullable: true),
-                    AttestationClientDataJson = table.Column<byte[]>(type: "varbinary(max)", nullable: true),
-                    UserHandle = table.Column<byte[]>(type: "varbinary(max)", nullable: true),
-                    AttestationFormat = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    RegDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
-                    AaGuid = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
+                    Transports = table.Column<int[]>(type: "integer[]", nullable: true),
+                    IsBackupEligible = table.Column<bool>(type: "boolean", nullable: false),
+                    IsBackedUp = table.Column<bool>(type: "boolean", nullable: false),
+                    AttestationObject = table.Column<byte[]>(type: "bytea", nullable: true),
+                    AttestationClientDataJson = table.Column<byte[]>(type: "bytea", nullable: true),
+                    UserHandle = table.Column<byte[]>(type: "bytea", nullable: true),
+                    AttestationFormat = table.Column<string>(type: "text", nullable: true),
+                    RegDate = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
+                    AaGuid = table.Column<Guid>(type: "uuid", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -377,7 +378,7 @@ namespace CrystaLearn.Core.Migrations
                     table.ForeignKey(
                         name: "FK_WebAuthnCredential_Users_UserId",
                         column: x => x.UserId,
-                        principalSchema: "dbo",
+                        principalSchema: "CrystaLearn",
                         principalTable: "Users",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
@@ -385,19 +386,19 @@ namespace CrystaLearn.Core.Migrations
 
             migrationBuilder.CreateTable(
                 name: "PushNotificationSubscriptions",
-                schema: "dbo",
+                schema: "CrystaLearn",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    DeviceId = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Platform = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    PushChannel = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    P256dh = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Auth = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Endpoint = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    UserSessionId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
-                    Tags = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    DeviceId = table.Column<string>(type: "text", nullable: false),
+                    Platform = table.Column<string>(type: "text", nullable: false),
+                    PushChannel = table.Column<string>(type: "text", nullable: false),
+                    P256dh = table.Column<string>(type: "text", nullable: true),
+                    Auth = table.Column<string>(type: "text", nullable: true),
+                    Endpoint = table.Column<string>(type: "text", nullable: true),
+                    UserSessionId = table.Column<Guid>(type: "uuid", nullable: true),
+                    Tags = table.Column<string[]>(type: "text[]", nullable: false),
                     ExpirationTime = table.Column<long>(type: "bigint", nullable: false),
                     RenewedOn = table.Column<long>(type: "bigint", nullable: false)
                 },
@@ -407,7 +408,7 @@ namespace CrystaLearn.Core.Migrations
                     table.ForeignKey(
                         name: "FK_PushNotificationSubscriptions_UserSessions_UserSessionId",
                         column: x => x.UserSessionId,
-                        principalSchema: "dbo",
+                        principalSchema: "CrystaLearn",
                         principalTable: "UserSessions",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.SetNull);
@@ -419,12 +420,12 @@ namespace CrystaLearn.Core.Migrations
                 columns: table => new
                 {
                     Id = table.Column<long>(type: "bigint", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     StateId = table.Column<long>(type: "bigint", nullable: true),
-                    StateName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
-                    ExpireAt = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    InvocationData = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    StateName = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
+                    ExpireAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    InvocationData = table.Column<string>(type: "text", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -437,8 +438,8 @@ namespace CrystaLearn.Core.Migrations
                 columns: table => new
                 {
                     JobId = table.Column<long>(type: "bigint", nullable: false),
-                    Name = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: false),
-                    Value = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                    Name = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: false),
+                    Value = table.Column<string>(type: "text", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -458,10 +459,10 @@ namespace CrystaLearn.Core.Migrations
                 columns: table => new
                 {
                     Id = table.Column<long>(type: "bigint", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     JobId = table.Column<long>(type: "bigint", nullable: false),
-                    Queue = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: false),
-                    FetchedAt = table.Column<DateTime>(type: "datetime2", nullable: true)
+                    Queue = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: false),
+                    FetchedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -481,12 +482,12 @@ namespace CrystaLearn.Core.Migrations
                 columns: table => new
                 {
                     Id = table.Column<long>(type: "bigint", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     JobId = table.Column<long>(type: "bigint", nullable: false),
-                    Name = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: false),
-                    Reason = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    Data = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    Name = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: false),
+                    Reason = table.Column<string>(type: "text", nullable: true),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    Data = table.Column<string>(type: "text", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -501,7 +502,7 @@ namespace CrystaLearn.Core.Migrations
                 });
 
             migrationBuilder.InsertData(
-                schema: "dbo",
+                schema: "CrystaLearn",
                 table: "Roles",
                 columns: new[] { "Id", "ConcurrencyStamp", "Name", "NormalizedName" },
                 values: new object[,]
@@ -511,13 +512,13 @@ namespace CrystaLearn.Core.Migrations
                 });
 
             migrationBuilder.InsertData(
-                schema: "dbo",
+                schema: "CrystaLearn",
                 table: "Users",
                 columns: new[] { "Id", "AccessFailedCount", "BirthDate", "ConcurrencyStamp", "ElevatedAccessTokenRequestedOn", "Email", "EmailConfirmed", "EmailTokenRequestedOn", "FullName", "Gender", "HasProfilePicture", "LockoutEnabled", "LockoutEnd", "NormalizedEmail", "NormalizedUserName", "OtpRequestedOn", "PasswordHash", "PhoneNumber", "PhoneNumberConfirmed", "PhoneNumberTokenRequestedOn", "ResetPasswordTokenRequestedOn", "SecurityStamp", "TwoFactorEnabled", "TwoFactorTokenRequestedOn", "UserName" },
                 values: new object[] { new Guid("8ff71671-a1d6-4f97-abb9-d87d7b47d6e7"), 0, new DateTimeOffset(new DateTime(2023, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), "315e1a26-5b3a-4544-8e91-2760cd28e231", null, "test@bitplatform.dev", true, new DateTimeOffset(new DateTime(2023, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), "CrystaLearn test account", 0, false, true, null, "TEST@BITPLATFORM.DEV", "TEST", null, "AQAAAAIAAYagAAAAEP0v3wxkdWtMkHA3Pp5/JfS+42/Qto9G05p2mta6dncSK37hPxEHa3PGE4aqN30Aag==", "+31684207362", true, null, null, "959ff4a9-4b07-4cc1-8141-c5fc033daf83", false, null, "test" });
 
             migrationBuilder.InsertData(
-                schema: "dbo",
+                schema: "CrystaLearn",
                 table: "RoleClaims",
                 columns: new[] { "Id", "ClaimType", "ClaimValue", "RoleId" },
                 values: new object[,]
@@ -529,7 +530,7 @@ namespace CrystaLearn.Core.Migrations
                 });
 
             migrationBuilder.InsertData(
-                schema: "dbo",
+                schema: "CrystaLearn",
                 table: "UserRoles",
                 columns: new[] { "RoleId", "UserId" },
                 values: new object[] { new Guid("8ff71671-a1d6-5f97-abb9-d87d7b47d6e7"), new Guid("8ff71671-a1d6-4f97-abb9-d87d7b47d6e7") });
@@ -614,99 +615,96 @@ namespace CrystaLearn.Core.Migrations
 
             migrationBuilder.CreateIndex(
                 name: "IX_PushNotificationSubscriptions_UserSessionId",
-                schema: "dbo",
+                schema: "CrystaLearn",
                 table: "PushNotificationSubscriptions",
                 column: "UserSessionId",
                 unique: true,
-                filter: "[UserSessionId] IS NOT NULL");
+                filter: "\"UserSessionId\" IS NOT NULL");
 
             migrationBuilder.CreateIndex(
                 name: "IX_RoleClaims_RoleId_ClaimType_ClaimValue",
-                schema: "dbo",
+                schema: "CrystaLearn",
                 table: "RoleClaims",
                 columns: new[] { "RoleId", "ClaimType", "ClaimValue" });
 
             migrationBuilder.CreateIndex(
                 name: "IX_Roles_Name",
-                schema: "dbo",
+                schema: "CrystaLearn",
                 table: "Roles",
                 column: "Name",
-                unique: true,
-                filter: "[Name] IS NOT NULL");
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "RoleNameIndex",
-                schema: "dbo",
+                schema: "CrystaLearn",
                 table: "Roles",
                 column: "NormalizedName",
-                unique: true,
-                filter: "[NormalizedName] IS NOT NULL");
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_SystemPrompts_PromptKind",
-                schema: "dbo",
+                schema: "CrystaLearn",
                 table: "SystemPrompts",
                 column: "PromptKind",
                 unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_UserClaims_UserId_ClaimType_ClaimValue",
-                schema: "dbo",
+                schema: "CrystaLearn",
                 table: "UserClaims",
                 columns: new[] { "UserId", "ClaimType", "ClaimValue" });
 
             migrationBuilder.CreateIndex(
                 name: "IX_UserLogins_UserId",
-                schema: "dbo",
+                schema: "CrystaLearn",
                 table: "UserLogins",
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_UserRoles_RoleId_UserId",
-                schema: "dbo",
+                schema: "CrystaLearn",
                 table: "UserRoles",
                 columns: new[] { "RoleId", "UserId" },
                 unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "EmailIndex",
-                schema: "dbo",
+                schema: "CrystaLearn",
                 table: "Users",
                 column: "NormalizedEmail");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Users_Email",
-                schema: "dbo",
+                schema: "CrystaLearn",
                 table: "Users",
                 column: "Email",
                 unique: true,
-                filter: "[Email] IS NOT NULL");
+                filter: "\"Email\" IS NOT NULL");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Users_PhoneNumber",
-                schema: "dbo",
+                schema: "CrystaLearn",
                 table: "Users",
                 column: "PhoneNumber",
                 unique: true,
-                filter: "[PhoneNumber] IS NOT NULL");
+                filter: "\"PhoneNumber\" IS NOT NULL");
 
             migrationBuilder.CreateIndex(
                 name: "UserNameIndex",
-                schema: "dbo",
+                schema: "CrystaLearn",
                 table: "Users",
                 column: "NormalizedUserName",
-                unique: true,
-                filter: "[NormalizedUserName] IS NOT NULL");
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_UserSessions_UserId",
-                schema: "dbo",
+                schema: "CrystaLearn",
                 table: "UserSessions",
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_WebAuthnCredential_UserId",
-                schema: "dbo",
+                schema: "CrystaLearn",
                 table: "WebAuthnCredential",
                 column: "UserId");
 
@@ -730,11 +728,11 @@ namespace CrystaLearn.Core.Migrations
 
             migrationBuilder.DropTable(
                 name: "Attachments",
-                schema: "dbo");
+                schema: "CrystaLearn");
 
             migrationBuilder.DropTable(
                 name: "DataProtectionKeys",
-                schema: "dbo");
+                schema: "CrystaLearn");
 
             migrationBuilder.DropTable(
                 name: "HangfireCounter",
@@ -770,47 +768,47 @@ namespace CrystaLearn.Core.Migrations
 
             migrationBuilder.DropTable(
                 name: "PushNotificationSubscriptions",
-                schema: "dbo");
+                schema: "CrystaLearn");
 
             migrationBuilder.DropTable(
                 name: "RoleClaims",
-                schema: "dbo");
+                schema: "CrystaLearn");
 
             migrationBuilder.DropTable(
                 name: "SystemPrompts",
-                schema: "dbo");
+                schema: "CrystaLearn");
 
             migrationBuilder.DropTable(
                 name: "UserClaims",
-                schema: "dbo");
+                schema: "CrystaLearn");
 
             migrationBuilder.DropTable(
                 name: "UserLogins",
-                schema: "dbo");
+                schema: "CrystaLearn");
 
             migrationBuilder.DropTable(
                 name: "UserRoles",
-                schema: "dbo");
+                schema: "CrystaLearn");
 
             migrationBuilder.DropTable(
                 name: "UserTokens",
-                schema: "dbo");
+                schema: "CrystaLearn");
 
             migrationBuilder.DropTable(
                 name: "WebAuthnCredential",
-                schema: "dbo");
+                schema: "CrystaLearn");
 
             migrationBuilder.DropTable(
                 name: "UserSessions",
-                schema: "dbo");
+                schema: "CrystaLearn");
 
             migrationBuilder.DropTable(
                 name: "Roles",
-                schema: "dbo");
+                schema: "CrystaLearn");
 
             migrationBuilder.DropTable(
                 name: "Users",
-                schema: "dbo");
+                schema: "CrystaLearn");
 
             migrationBuilder.DropTable(
                 name: "HangfireState",

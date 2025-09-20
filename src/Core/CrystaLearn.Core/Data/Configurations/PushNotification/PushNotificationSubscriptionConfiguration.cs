@@ -14,7 +14,7 @@ public class PushNotificationSubscriptionConfiguration : IEntityTypeConfiguratio
 
         builder
             .HasIndex(b => b.UserSessionId)
-            .HasFilter($"[{nameof(PushNotificationSubscription.UserSessionId)}] IS NOT NULL")
+            .HasFilter($"\"{nameof(PushNotificationSubscription.UserSessionId)}\" IS NOT NULL")
             .IsUnique();
     }
 }

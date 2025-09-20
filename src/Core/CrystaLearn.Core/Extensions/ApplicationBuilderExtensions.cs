@@ -4,7 +4,6 @@ using CrystaLearn.Core.Services.AzureBoard;
 using CrystaLearn.Core.Services.Contracts;
 using CrystaLearn.Core.Services.GitHub;
 using CrystaLearn.Core.Services.Sync;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Hosting;
 using Octokit;
 
@@ -27,10 +26,7 @@ public static class ApplicationBuilderExtensions
             options.EnableSensitiveDataLogging(env.IsDevelopment())
                    .EnableDetailedErrors(env.IsDevelopment());
 
-            options.UseSqlServer(configuration.GetConnectionString("SqlServerConnectionString"), dbOptions =>
-            {
-
-            });
+            options.UseNpgsql(configuration.GetConnectionString("PostgresConnectionString"));
         }
         ;
 
