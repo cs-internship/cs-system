@@ -15,6 +15,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".SolutionItems", ".Solution
 		Clean.bat = Clean.bat
 		src\Directory.Build.props = src\Directory.Build.props
 		src\Directory.Packages.props = src\Directory.Packages.props
+		Dockerfile = Dockerfile
 		global.json = global.json
 		.vscode\mcp.json = .vscode\mcp.json
 		README.md = README.md
@@ -44,8 +45,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "prompts", "prompts", "{4A5D
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "workflows", "workflows", "{2347E3B2-FDDE-427E-A0AE-E4DCD47C2989}"
 	ProjectSection(SolutionItems) = preProject
-		.github\workflows\cd-production.yml = .github\workflows\cd-production.yml
 		.github\workflows\cd-develop.yml = .github\workflows\cd-develop.yml
+		.github\workflows\cd-production.yml = .github\workflows\cd-production.yml
 		.github\workflows\cd-template.yml = .github\workflows\cd-template.yml
 		.github\workflows\ci.yml = .github\workflows\ci.yml
 	EndProjectSection
@@ -71,6 +72,11 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CrystaLearn.Core", "src\Core\CrystaLearn.Core\CrystaLearn.Core.csproj", "{50DBE157-AA16-7B4F-BC02-CD74DAE45AA2}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CrystaLearn.Core.Test", "src\Core\CrystaLearn.Core.Test\CrystaLearn.Core.Test.csproj", "{DFF2B3BF-3F9B-4016-944E-885962FF1AE6}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".azure", ".azure", "{6F2F419F-1348-4115-9082-46DFDD9D5347}"
+	ProjectSection(SolutionItems) = preProject
+		.azure\ci.yml = .azure\ci.yml
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -148,6 +154,7 @@ Global
 		{6C8EDFC0-69D1-8076-B327-B819E911EC55} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
 		{50DBE157-AA16-7B4F-BC02-CD74DAE45AA2} = {C36CFF28-CAFE-4DD4-8819-2B72613691A8}
 		{DFF2B3BF-3F9B-4016-944E-885962FF1AE6} = {C36CFF28-CAFE-4DD4-8819-2B72613691A8}
+		{6F2F419F-1348-4115-9082-46DFDD9D5347} = {5CF43F76-BB71-4B5B-B4DF-1C753E042A8F}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {E82D1976-7A33-41F5-8B81-2F6B4034CFE3}
