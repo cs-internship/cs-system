@@ -48,6 +48,10 @@ public static class ApplicationBuilderExtensions
 
         var productHeaderValue = new ProductHeaderValue("CS-System");
         var gitHubToken = configuration["GitHub:GitHubAccessToken"];
+        if (string.IsNullOrEmpty(gitHubToken))
+        {
+            return;
+        }
         var tokenAuth = new Credentials(gitHubToken);
         var client = new GitHubClient(productHeaderValue)
         {
