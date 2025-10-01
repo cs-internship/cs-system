@@ -69,21 +69,21 @@ https://learn.microsoft.com/en-us/azure/devops/organizations/accounts/use-person
 ### Initialize and set the secrets
 
 ```bash
-cd /src/CrystaLearn/src/Server/CrystaLearn.Server.Web
+cd src/Server/CrystaLearn.Server.Web
 dotnet user-secrets init
-dotnet user-secrets set "ConnectionStrings:SqlServerConnectionString" "Your SQL Server Connection String"
+dotnet user-secrets set "ConnectionStrings:PostgresConnectionString" "Your SQL Server Connection String"
 dotnet user-secrets set "GitHub:GitHubAccessToken" "Your GitHub Access Token"
 dotnet user-secrets set "AzureDevOps:PersonalAccessToken" "Your Azure DevOps Personal Access Token"
 
-cd /src/CrystaLearn/src/Console/CrystaLearn.Console
+cd src/Console/CrystaLearn.Console
 dotnet user-secrets init
-dotnet user-secrets set "ConnectionStrings:SqlServerConnectionString" "Your SQL Server Connection String"
+dotnet user-secrets set "ConnectionStrings:PostgresConnectionString" "Your SQL Server Connection String"
 dotnet user-secrets set "GitHub:GitHubAccessToken" "Your GitHub Access Token"
 dotnet user-secrets set "AzureDevOps:PersonalAccessToken" "Your Azure DevOps Personal Access Token"
 
-cd /src/CrystaLearn/src/Core/CrystaLearn.Core.Tests
+cd src/Core/CrystaLearn.Core.Test
 dotnet user-secrets init
-dotnet user-secrets set "ConnectionStrings:SqlServerConnectionString" "Your SQL Server Connection String"
+dotnet user-secrets set "ConnectionStrings:PostgresConnectionString" "Your SQL Server Connection String"
 dotnet user-secrets set "GitHub:GitHubAccessToken" "Your GitHub Access Token"
 dotnet user-secrets set "AzureDevOps:PersonalAccessToken" "Your Azure DevOps Personal Access Token"
 ```
