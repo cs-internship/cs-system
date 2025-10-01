@@ -27,7 +27,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Core\CrystaLearn.Core\CrystaLearn.Core.csproj" />
+    <ProjectReference Include="..\..\Core\CrystaLearn.Core\CrystaLearn.Core.csproj" />
   </ItemGroup>
 
 </Project>
