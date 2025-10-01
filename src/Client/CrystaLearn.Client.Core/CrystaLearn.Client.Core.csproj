@@ -46,10 +46,6 @@
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\..\Shared\CrystaLearn.Shared.csproj" />
-    </ItemGroup>
-
-    <ItemGroup>
         <TypeScriptFiles Include="**\*.ts" Exclude="node_modules\**\*.ts" />
     </ItemGroup>
 
@@ -82,6 +78,10 @@
     <ItemGroup>
       <Folder Include="Components\CrystaComponents\" />
       <Folder Include="wwwroot\images\backgrounds\" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\..\Shared\CrystaLearn.Shared\CrystaLearn.Shared.csproj" />
     </ItemGroup>
 
 </Project>

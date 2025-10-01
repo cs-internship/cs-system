@@ -20,11 +20,6 @@
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\Server\CrystaLearn.Server.Web\CrystaLearn.Server.Web.csproj" />
-        <ProjectReference Include="..\Server\CrystaLearn.Server.Api\CrystaLearn.Server.Api.csproj" />
-    </ItemGroup>
-
-    <ItemGroup>
         <Using Include="System.Net.Http.Headers" />
         <Using Include="System.Net.Http.Json" />
         <Using Include="CrystaLearn.Shared" />
@@ -38,5 +33,10 @@
         <Using Include="FakeItEasy" />
                 <PackageReference Include="GitHubActionsTestLogger" PrivateAssets="all" />
             </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\..\Server\CrystaLearn.Server.Api\CrystaLearn.Server.Api.csproj" />
+      <ProjectReference Include="..\..\Server\CrystaLearn.Server.Web\CrystaLearn.Server.Web.csproj" />
+    </ItemGroup>
 
 </Project>
