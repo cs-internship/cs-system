@@ -1,0 +1,1149 @@
+@font-face {
+    font-family: 'CsLearn-Icons';
+    src: url('/_content/CrystaLearn.Client.Core/fonts/CrystaLearn-FontIcon/CsLearn-Icons-v2.73-2025-07-20.eot?9bxq4c');
+    src: url('/_content/CrystaLearn.Client.Core/fonts/CrystaLearn-FontIcon/CsLearn-Icons-v2.73-2025-07-20?9bxq4c#iefix') format('embedded-opentype'), url('/_content/CrystaLearn.Client.Core/fonts/CrystaLearn-FontIcon/CsLearn-Icons-v2.73-2025-07-20.ttf?9bxq4c') format('truetype'), url('/_content/CrystaLearn.Client.Core/fonts/CrystaLearn-FontIcon/CsLearn-Icons-v2.73-2025-07-20.woff?9bxq4c') format('woff'), url('/_content/CrystaLearn.Client.Core/fonts/CrystaLearn-FontIcon/CsLearn-Icons-v2.73-2025-07-20.svg?9bxq4c#CsLearn-Icons') format('svg');
+    font-weight: normal;
+    font-style: normal;
+    font-display: block;
+}
+
+[class^="icon-"], [class*=" icon-"] {
+    /* use !important to prevent issues with browser extensions that change fonts */
+    font-family: 'CsLearn-Icons' !important;
+    speak: never;
+    font-style: normal;
+    font-weight: normal;
+    font-variant: normal;
+    text-transform: none;
+    line-height: 1;
+    /* Better Font Rendering =========== */
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+.icon-zoning-not-available:before {
+  content: "\ea5b";
+}
+.icon-play--no-border:before {
+  content: "\ea5c";
+}
+.icon-pause--no-border:before {
+  content: "\ea5d";
+}
+.icon-language-2:before {
+  content: "\ea5e";
+}
+.icon-language:before {
+  content: "\ea5f";
+}
+.icon-filled--profile .path1:before {
+  content: "\ea60";
+  color: rgb(0, 50, 63);
+}
+.icon-filled--profile .path2:before {
+  content: "\ea61";
+  margin-left: -1em;
+  color: rgb(255, 255, 255);
+}
+.icon-filled--profile .path3:before {
+  content: "\ea62";
+  margin-left: -1em;
+  color: rgb(255, 255, 255);
+}
+.icon-avm-pin:before {
+  content: "\ea63";
+}
+.icon-additional-considerations--overlay:before {
+  content: "\ea57";
+}
+.icon-additional-considerations--hazard-land:before {
+  content: "\ea58";
+}
+.icon-additional-considerations--conservation-land:before {
+  content: "\ea59";
+}
+.icon-additional-considerations--appeal:before {
+  content: "\ea5a";
+}
+.icon-directory:before {
+  content: "\ea56";
+}
+.icon-change-mic:before {
+  content: "\ea55";
+}
+.icon-additional-considerations--general-provision:before {
+  content: "\ea4f";
+}
+.icon-additional-considerations--hold:before {
+  content: "\ea50";
+}
+.icon-additional-considerations--other:before {
+  content: "\ea51";
+}
+.icon-additional-considerations--special-provision:before {
+  content: "\ea52";
+}
+.icon-additional-considerations--temporary:before {
+  content: "\ea53";
+}
+.icon-additional-considerations--exceptions:before {
+  content: "\ea54";
+}
+.icon-apple--filled:before {
+  content: "\ea4b";
+}
+.icon-microsoft--filled:before {
+  content: "\ea4c";
+}
+.icon-facebook--letter:before {
+  content: "\ea4d";
+}
+.icon-google--letter:before {
+  content: "\ea4e";
+}
+.icon-interrupt:before {
+  content: "\ea4a";
+}
+.icon-microsoft:before {
+  content: "\ea47";
+}
+.icon-google:before {
+  content: "\ea48";
+}
+.icon-apple:before {
+  content: "\ea49";
+}
+.icon-farsi:before {
+  content: "\ea40";
+}
+.icon-chineese:before {
+  content: "\ea41";
+}
+.icon-french:before {
+  content: "\ea42";
+}
+.icon-english:before {
+  content: "\ea43";
+}
+.icon-pause:before {
+  content: "\ea44";
+}
+.icon-play:before {
+  content: "\ea45";
+}
+.icon-satelite:before {
+  content: "\ea46";
+}
+.icon-light-mode:before {
+  content: "\ea3f";
+}
+.icon-setting:before {
+  content: "\ea3c";
+}
+.icon-pin-point:before {
+  content: "\ea3d";
+}
+.icon-Menu:before {
+  content: "\ea3e";
+}
+.icon-enhanced-zoning-report:before {
+  content: "\ea39";
+}
+.icon-Location .path1:before {
+  content: "\ea34";
+  color: rgb(0, 50, 63);
+}
+.icon-Location .path2:before {
+  content: "\ea35";
+  margin-left: -0.9599609375em;
+  color: rgb(0, 50, 63);
+}
+.icon-Location .path3:before {
+  content: "\ea36";
+  margin-left: -0.9599609375em;
+  color: rgb(0, 50, 63);
+  opacity: 0.1;
+}
+.icon-Location .path4:before {
+  content: "\ea37";
+  margin-left: -0.9599609375em;
+  color: rgb(0, 50, 63);
+}
+.icon-zoning:before {
+  content: "\ea38";
+}
+.icon-basic-zoning-report:before {
+  content: "\ea30";
+}
+.icon-demographics-report:before {
+  content: "\ea32";
+}
+.icon-psa:before {
+  content: "\ea33";
+}
+.icon-sidebar:before {
+  content: "\ea31";
+}
+.icon-zone:before {
+  content: "\ea27";
+}
+.icon-school2:before {
+  content: "\ea28";
+}
+.icon-school1:before {
+  content: "\ea29";
+}
+.icon-restaurant:before {
+  content: "\ea2a";
+}
+.icon-phone:before {
+  content: "\ea2b";
+}
+.icon-money-up:before {
+  content: "\ea2c";
+}
+.icon-money-down:before {
+  content: "\ea2d";
+}
+.icon-lot-frontage:before {
+  content: "\ea2e";
+}
+.icon-lot-depth:before {
+  content: "\ea2f";
+}
+.icon-multiple-unit-townhouse-dwelling:before {
+  content: "\ea05";
+}
+.icon-freehold-townhouse:before {
+  content: "\ea06";
+}
+.icon-common-element-townhouse:before {
+  content: "\ea07";
+}
+.icon-cluster-townhouse-dwelling:before {
+  content: "\ea08";
+}
+.icon-Back-to-back-townhouse:before {
+  content: "\ea0b";
+}
+.icon-two-side-arrow:before {
+  content: "\ea0c";
+}
+.icon-library:before {
+  content: "\ea0d";
+}
+.icon-fitness:before {
+  content: "\ea0e";
+}
+.icon-store:before {
+  content: "\ea0f";
+}
+.icon-park:before {
+  content: "\ea10";
+}
+.icon-home-add:before {
+  content: "\ea11";
+}
+.icon-website:before {
+  content: "\ea12";
+}
+.icon-Unemployed:before {
+  content: "\ea13";
+}
+.icon-tools-layer:before {
+  content: "\ea14";
+  color: #c1c1c1;
+}
+.icon-change:before {
+  content: "\ea15";
+}
+.icon-pro:before {
+  content: "\ea16";
+}
+.icon-f-toolbar:before {
+  content: "\ea17";
+}
+.icon-policy-text:before {
+  content: "\ea18";
+}
+.icon-permitted-uses:before {
+  content: "\ea19";
+}
+.icon-permitted-dwellings:before {
+  content: "\ea1a";
+}
+.icon-councilor:before {
+  content: "\ea1b";
+}
+.icon-shape:before {
+  content: "\ea1c";
+}
+.icon-source:before {
+  content: "\ea1d";
+}
+.icon-watch:before {
+  content: "\ea1e";
+}
+.icon-clock:before {
+  content: "\ea1e";
+}
+.icon-time:before {
+  content: "\ea1e";
+}
+.icon-Loading:before {
+  content: "\ea1e";
+}
+.icon-zoom-to-context:before {
+  content: "\ea1f";
+}
+.icon-Facebook:before {
+  content: "\ea20";
+}
+.icon-Instagram:before {
+  content: "\ea21";
+}
+.icon-Linkedin:before {
+  content: "\ea22";
+}
+.icon-spot:before {
+  content: "\ea23";
+  color: #d9d9d9;
+}
+.icon-loading1:before {
+  content: "\ea24";
+}
+.icon-waiting:before {
+  content: "\ea24";
+}
+.icon-dots-horizontal:before {
+  content: "\ea25";
+}
+.icon-onboarding:before {
+  content: "\ea26";
+}
+.icon-ai-chat:before {
+  content: "\e9f5";
+}
+.icon-amortization:before {
+  content: "\e9ef";
+}
+.icon-mic-on:before {
+  content: "\e9f0";
+}
+.icon-profit:before {
+  content: "\ea04";
+}
+.icon-zoning-copilot:before {
+  content: "\ea0a";
+}
+.icon-lock:before {
+  content: "\e9eb";
+}
+.icon-reload:before {
+  content: "\e9ec";
+}
+.icon-no-photo:before {
+  content: "\e9ed";
+}
+.icon-mic-off:before {
+  content: "\e9ee";
+}
+.icon-real-estate-copilot:before {
+  content: "\e9f1";
+}
+.icon-multiplex-assessment:before {
+  content: "\e9f2";
+}
+.icon-cma:before {
+  content: "\e9f3";
+}
+.icon-real-estate:before {
+  content: "\e9f4";
+}
+.icon-calculator:before {
+  content: "\e9f6";
+}
+.icon-category-off .path1:before {
+  content: "\e9f7";
+  color: rgb(50, 50, 50);
+  opacity: 0.2;
+}
+.icon-category-off .path2:before {
+  content: "\e9f8";
+  margin-left: -1em;
+  color: rgb(50, 50, 50);
+  opacity: 0.2;
+}
+.icon-category-off .path3:before {
+  content: "\e9f9";
+  margin-left: -1em;
+  color: rgb(50, 50, 50);
+}
+.icon-category-off .path4:before {
+  content: "\e9fa";
+  margin-left: -1em;
+  color: rgb(50, 50, 50);
+}
+.icon-category-off .path5:before {
+  content: "\e9fb";
+  margin-left: -1em;
+  color: rgb(50, 50, 50);
+}
+.icon-category-off .path6:before {
+  content: "\e9fc";
+  margin-left: -1em;
+  color: rgb(50, 50, 50);
+}
+.icon-category-on:before {
+  content: "\e9fd";
+}
+.icon-dollar:before {
+  content: "\e9fe";
+}
+.icon-percentage:before {
+  content: "\e9ff";
+}
+.icon-real-estate-module:before {
+  content: "\ea00";
+}
+.icon-sort-a2z:before {
+  content: "\ea01";
+}
+.icon-sort-default:before {
+  content: "\ea02";
+}
+.icon-sort-z2a:before {
+  content: "\ea03";
+}
+.icon-turnofflayers:before {
+  content: "\ea09";
+}
+.icon-real-estate-tools:before {
+  content: "\e9ea";
+}
+.icon-arrow-replace:before {
+  content: "\e9e8";
+}
+.icon-delete2:before {
+  content: "\e9e9";
+}
+.icon-Warning:before {
+  content: "\e9e7";
+}
+.icon-date:before {
+  content: "\e9e4";
+}
+.icon-permit:before {
+  content: "\e9e5";
+}
+.icon-plus-add:before {
+  content: "\e9e6";
+}
+.icon-panel-access:before {
+  content: "\e9de";
+}
+.icon-warning1:before {
+  content: "\e9df";
+}
+.icon-property-details:before {
+  content: "\e9e0";
+}
+.icon-ai:before {
+  content: "\e9e1";
+}
+.icon-estimate:before {
+  content: "\e9e2";
+}
+.icon-scenario:before {
+  content: "\e9e3";
+}
+.icon-ic-deselect:before {
+  content: "\e9dd";
+}
+.icon-object-select:before {
+  content: "\e9dc";
+}
+.icon-emails:before {
+  content: "\e9da";
+}
+.icon-site-selection:before {
+  content: "\e9db";
+}
+.icon-freehold:before {
+  content: "\e9d8";
+}
+.icon-land-pin:before {
+  content: "\e9d9";
+}
+.icon-school .path1:before {
+  content: "\e9d3";
+  color: rgb(0, 0, 0);
+}
+.icon-school .path2:before {
+  content: "\e9d4";
+  margin-left: -1em;
+  color: rgb(0, 0, 0);
+}
+.icon-school .path3:before {
+  content: "\e9d5";
+  margin-left: -1em;
+  color: rgb(255, 255, 255);
+}
+.icon-school .path4:before {
+  content: "\e9d6";
+  margin-left: -1em;
+  color: rgb(255, 255, 255);
+}
+.icon-home-style:before {
+  content: "\e9a2";
+}
+.icon-home-Status:before {
+  content: "\e9c8";
+}
+.icon-house-age:before {
+  content: "\e9d2";
+}
+.icon-Tax:before {
+  content: "\e9d7";
+}
+.icon-exit-round:before {
+  content: "\e9a0";
+}
+.icon-realestate:before {
+  content: "\e9a1";
+}
+.icon-warning-triangle:before {
+  content: "\e94c";
+}
+.icon-notification:before {
+  content: "\e99f";
+}
+.icon-multiple-unit-townhouse-dwelling1:before {
+  content: "\e98e";
+}
+.icon-position:before {
+  content: "\e98f";
+}
+.icon-street-townhouse-building:before {
+  content: "\e9a3";
+}
+.icon-bathroom:before {
+  content: "\e9a4";
+}
+.icon-calendar:before {
+  content: "\e9a5";
+}
+.icon-water-supply:before {
+  content: "\e9a6";
+}
+.icon-documents-plus:before {
+  content: "\e9a7";
+}
+.icon-cursor-object-select:before {
+  content: "\e9a8";
+}
+.icon-brand:before {
+  content: "\e9a9";
+}
+.icon-parcels:before {
+  content: "\e9aa";
+}
+.icon-accessory-dwelling-unit:before {
+  content: "\e9ab";
+}
+.icon-age:before {
+  content: "\e9ac";
+}
+.icon-air-conditioning:before {
+  content: "\e9ad";
+}
+.icon-ancillary-home:before {
+  content: "\e990";
+}
+.icon-appartment-measure:before {
+  content: "\e9ae";
+}
+.icon-appartment:before {
+  content: "\e991";
+}
+.icon-arrow:before {
+  content: "\e9af";
+}
+.icon-back-to-back-townhouse:before {
+  content: "\e9b0";
+}
+.icon-basement:before {
+  content: "\e9b1";
+}
+.icon-block-townhouse-dwelling:before {
+  content: "\e9b2";
+}
+.icon-block-townhouse:before {
+  content: "\e9b3";
+}
+.icon-cluster-townhouse-dwelling1:before {
+  content: "\e9b4";
+}
+.icon-cluster-homes:before {
+  content: "\e99b";
+}
+.icon-common-element-townhouse1:before {
+  content: "\e9b5";
+}
+.icon-decrease:before {
+  content: "\e9b6";
+}
+.icon-detached-house:before {
+  content: "\e9b7";
+}
+.icon-douplex:before {
+  content: "\e992";
+}
+.icon-fourplex:before {
+  content: "\e993";
+}
+.icon-freehold-townhouse1:before {
+  content: "\e9b8";
+}
+.icon-garage:before {
+  content: "\e994";
+}
+.icon-ground-heating:before {
+  content: "\e9b9";
+}
+.icon-increase:before {
+  content: "\e9ba";
+}
+.icon-independent-living-facility:before {
+  content: "\e9bb";
+}
+.icon-linked-dwelling:before {
+  content: "\e995";
+}
+.icon-list:before {
+  content: "\e9bc";
+}
+.icon-mixed-use-building:before {
+  content: "\e9bd";
+}
+.icon-non-residential:before {
+  content: "\e9be";
+}
+.icon-open-platforms:before {
+  content: "\e9bf";
+}
+.icon-parking:before {
+  content: "\e9c0";
+}
+.icon-podium-townhouse:before {
+  content: "\e99c";
+}
+.icon-pool:before {
+  content: "\e9c1";
+}
+.icon-residential-unit:before {
+  content: "\e9c2";
+}
+.icon-retirement-home:before {
+  content: "\e996";
+}
+.icon-retirement-residence:before {
+  content: "\e998";
+}
+.icon-semi-detached:before {
+  content: "\e999";
+}
+.icon-sewer:before {
+  content: "\e9c3";
+}
+.icon-stacked-townhouse:before {
+  content: "\e99a";
+}
+.icon-status:before {
+  content: "\e9c4";
+}
+.icon-street-townhouse:before {
+  content: "\e9c5";
+}
+.icon-supportive-home:before {
+  content: "\e9c6";
+}
+.icon-tax:before {
+  content: "\e99e";
+}
+.icon-townhouse:before {
+  content: "\e9c7";
+}
+.icon-triplex:before {
+  content: "\e99d";
+}
+.icon-target:before {
+  content: "\e9c9";
+}
+.icon-brightness:before {
+  content: "\e9ca";
+}
+.icon-filter-sort:before {
+  content: "\e9cb";
+}
+.icon-zoom:before {
+  content: "\e9cc";
+}
+.icon-layers:before {
+  content: "\e9cd";
+}
+.icon-list-bullets:before {
+  content: "\e9ce";
+}
+.icon-refresh-loading-circle:before {
+  content: "\e9cf";
+}
+.icon-layer:before {
+  content: "\e9d0";
+}
+.icon-shapes-triangle-circle-sqaure:before {
+  content: "\e9d1";
+}
+.icon-unarchive:before {
+  content: "\e98c";
+}
+.icon-privacy:before {
+  content: "\e98d";
+}
+.icon-attention:before {
+  content: "\e900";
+}
+.icon-favourable:before {
+  content: "\e901";
+}
+.icon-google-street-view .path1:before {
+  content: "\e902";
+  color: rgb(26, 115, 232);
+}
+.icon-google-street-view .path2:before {
+  content: "\e903";
+  margin-left: -1em;
+  color: rgb(234, 67, 53);
+}
+.icon-google-street-view .path3:before {
+  content: "\e904";
+  margin-left: -1em;
+  color: rgb(66, 133, 244);
+}
+.icon-google-street-view .path4:before {
+  content: "\e944";
+  margin-left: -1em;
+  color: rgb(251, 188, 4);
+}
+.icon-google-street-view .path5:before {
+  content: "\e946";
+  margin-left: -1em;
+  color: rgb(52, 168, 83);
+}
+.icon-informative:before {
+  content: "\e947";
+}
+.icon-warning:before {
+  content: "\e98b";
+}
+.icon-indigenous:before {
+  content: "\e942";
+}
+.icon-users:before {
+  content: "\e997";
+}
+.icon-copy:before {
+  content: "\e987";
+}
+.icon-load-to-map:before {
+  content: "\e988";
+}
+.icon-reports:before {
+  content: "\e989";
+}
+.icon-archive:before {
+  content: "\e98a";
+}
+.icon-bookmark:before {
+  content: "\e986";
+}
+.icon-bookmark-fill:before {
+  content: "\e916";
+}
+.icon-folder:before {
+  content: "\e92c";
+}
+.icon-servers:before {
+  content: "\e905";
+}
+.icon-edit:before {
+  content: "\e906";
+}
+.icon-satellite:before {
+  content: "\e907";
+}
+.icon-share:before {
+  content: "\e908";
+}
+.icon-light:before {
+  content: "\e909";
+}
+.icon-draw-square:before {
+  content: "\e90a";
+}
+.icon-file:before {
+  content: "\e90b";
+}
+.icon-bug:before {
+  content: "\e90c";
+}
+.icon-2d-view:before {
+  content: "\e90d";
+}
+.icon-3d-view:before {
+  content: "\e90e";
+}
+.icon-arrow-down:before {
+  content: "\e90f";
+}
+.icon-arrow-up:before {
+  content: "\e910";
+}
+.icon-arrow-left:before {
+  content: "\e911";
+}
+.icon-arrow-right:before {
+  content: "\e912";
+}
+.icon-arrow-4:before {
+  content: "\e913";
+}
+.icon-arrow-5:before {
+  content: "\e914";
+}
+.icon-arrow-6:before {
+  content: "\e915";
+}
+.icon-boundary:before {
+  content: "\e917";
+}
+.icon-message:before {
+  content: "\e918";
+}
+.icon-todo:before {
+  content: "\e919";
+}
+.icon-circle-checkmark:before {
+  content: "\e91a";
+}
+.icon-clock-time-timer:before {
+  content: "\e91b";
+}
+.icon-cloud:before {
+  content: "\e91c";
+}
+.icon-compass:before {
+  content: "\e91d";
+}
+.icon-creditcard:before {
+  content: "\e91e";
+}
+.icon-delete:before {
+  content: "\e91f";
+}
+.icon-delete1:before {
+  content: "\e920";
+}
+.icon-disabled-1:before {
+  content: "\e920";
+}
+.icon-check:before {
+  content: "\e921";
+}
+.icon-dots:before {
+  content: "\e922";
+}
+.icon-double-chevron-right:before {
+  content: "\e923";
+}
+.icon-double-chevron-left:before {
+  content: "\e924";
+}
+.icon-download-save-upload:before {
+  content: "\e925";
+}
+.icon-draw-line:before {
+  content: "\e926";
+}
+.icon-exit:before {
+  content: "\e927";
+}
+.icon-link:before {
+  content: "\e928";
+}
+.icon-eye-hidden:before {
+  content: "\e929";
+}
+.icon-eye-show-visible:before {
+  content: "\e92a";
+}
+.icon-folder-plus:before {
+  content: "\e92b";
+}
+.icon-grid:before {
+  content: "\e92d";
+}
+.icon-layout:before {
+  content: "\e92e";
+}
+.icon-info:before {
+  content: "\e92f";
+}
+.icon-land:before {
+  content: "\e930";
+}
+.icon-legend:before {
+  content: "\e931";
+}
+.icon-loading:before {
+  content: "\e932";
+}
+.icon-map:before {
+  content: "\e933";
+}
+.icon-minus:before {
+  content: "\e934";
+}
+.icon-pen:before {
+  content: "\e935";
+}
+.icon-pin:before {
+  content: "\e936";
+}
+.icon-plus:before {
+  content: "\e937";
+}
+.icon-question:before {
+  content: "\e938";
+}
+.icon-ruler:before {
+  content: "\e939";
+}
+.icon-sale:before {
+  content: "\e93a";
+}
+.icon-bag:before {
+  content: "\e93b";
+}
+.icon-search:before {
+  content: "\e93c";
+}
+.icon-send:before {
+  content: "\e93d";
+}
+.icon-settings:before {
+  content: "\e93e";
+}
+.icon-trash:before {
+  content: "\e93f";
+}
+.icon-upload-loading-arrow:before {
+  content: "\e940";
+}
+.icon-profile:before {
+  content: "\e941";
+}
+.icon-arrow11:before {
+  content: "\e943";
+}
+.icon-facebook:before {
+  content: "\e945";
+}
+.icon-instagram:before {
+  content: "\e948";
+}
+.icon-email:before {
+  content: "\e949";
+}
+.icon-linkedin:before {
+  content: "\e94a";
+}
+.icon-location:before {
+  content: "\e94b";
+}
+.icon-01:before {
+  content: "\e94d";
+  color: #0af;
+}
+.icon-04:before {
+  content: "\e94e";
+  color: #0af;
+}
+.icon-05:before {
+  content: "\e94f";
+  color: #0af;
+}
+.icon-03:before {
+  content: "\e950";
+  color: #0af;
+}
+.icon-02:before {
+  content: "\e951";
+  color: #0af;
+}
+.icon-citizen:before {
+  content: "\e952";
+}
+.icon-not-citizen:before {
+  content: "\e953";
+}
+.icon-uniE954:before {
+  content: "\e954";
+}
+.icon-application-status:before {
+  content: "\e955";
+}
+.icon-application-type:before {
+  content: "\e956";
+}
+.icon-arrow-down-line:before {
+  content: "\e957";
+}
+.icon-arrow-up-line:before {
+  content: "\e958";
+}
+.icon-bedroom:before {
+  content: "\e959";
+}
+.icon-block:before {
+  content: "\e95a";
+}
+.icon-children:before {
+  content: "\e95b";
+}
+.icon-community-centre:before {
+  content: "\e95c";
+}
+.icon-commuting:before {
+  content: "\e95d";
+}
+.icon-concession:before {
+  content: "\e95e";
+}
+.icon-condo:before {
+  content: "\e95f";
+}
+.icon-councillor-name:before {
+  content: "\e960";
+}
+.icon-couple:before {
+  content: "\e961";
+}
+.icon-cultural-origins:before {
+  content: "\e962";
+}
+.icon-distance:before {
+  content: "\e963";
+}
+.icon-employed:before {
+  content: "\e964";
+}
+.icon-empty:before {
+  content: "\e965";
+}
+.icon-family:before {
+  content: "\e966";
+}
+.icon-full-time:before {
+  content: "\e967";
+}
+.icon-geographic-township:before {
+  content: "\e968";
+}
+.icon-greenspace:before {
+  content: "\e969";
+}
+.icon-highway-access:before {
+  content: "\e96a";
+}
+.icon-hospital:before {
+  content: "\e96b";
+}
+.icon-immigrant:before {
+  content: "\e96c";
+}
+.icon-lot:before {
+  content: "\e96d";
+}
+.icon-man:before {
+  content: "\e96e";
+}
+.icon-material:before {
+  content: "\e96f";
+}
+.icon-money:before {
+  content: "\e970";
+}
+.icon-name:before {
+  content: "\e971";
+}
+.icon-neighborhood:before {
+  content: "\e972";
+}
+.icon-non-condo:before {
+  content: "\e973";
+}
+.icon-number:before {
+  content: "\e974";
+}
+.icon-part-time:before {
+  content: "\e975";
+}
+.icon-people:before {
+  content: "\e976";
+}
+.icon-police-station:before {
+  content: "\e977";
+}
+.icon-public-transit:before {
+  content: "\e978";
+}
+.icon-rented:before {
+  content: "\e979";
+}
+.icon-room:before {
+  content: "\e97a";
+}
+.icon-shopping:before {
+  content: "\e97b";
+}
+.icon-smileys:before {
+  content: "\e97c";
+}
+.icon-train-station:before {
+  content: "\e97d";
+}
+.icon-unemployed:before {
+  content: "\e97e";
+}
+.icon-visible-minorities:before {
+  content: "\e97f";
+}
+.icon-woman:before {
+  content: "\e980";
+}
+.icon-legal-scale:before {
+  content: "\e981";
+}
+.icon-census-area:before {
+  content: "\e982";
+}
+.icon-household:before {
+  content: "\e983";
+}
+.icon-forward-sortation-Area:before {
+  content: "\e984";
+}
+.icon-fire-station:before {
+  content: "\e985";
+}

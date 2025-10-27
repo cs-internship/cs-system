@@ -17,6 +17,8 @@ using FluentStorage.Blobs;
 using Ganss.Xss;
 using Hangfire.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.OData;
 using Microsoft.Identity.Web;
@@ -183,6 +185,7 @@ public static partial class Program
                 .EnableDetailedErrors(env.IsDevelopment());
 
             options.UseNpgsql(configuration.GetConnectionString("PostgresConnectionString"));
+            AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
         }
 
         services.AddOptions<IdentityOptions>()
@@ -440,22 +443,42 @@ public static partial class Program
             });
         }
 
-        if (string.IsNullOrEmpty(configuration["Authentication:AzureAD:ClientId"]) is false)
+        if (string.IsNullOrEmpty(configuration["Authentication:Microsoft:ClientId"]) is false)
         {
-            authenticationBuilder.AddMicrosoftIdentityWebApp(options =>
+            authenticationBuilder.AddCookie().AddOpenIdConnect("Microsoft", options =>
+        {
+            options.Authority = "https://login.microsoftonline.com/common/v2.0";
+            var validIssuers = new List<string>
             {
-                options.SignInScheme = IdentityConstants.ExternalScheme;
-                options.Events = new()
+                "https://login.microsoftonline.com/9188040d-6c67-4c5b-b112-36a304b66dad/v2.0", // Microsoft consumer tenant
+                "https://login.microsoftonline.com/common/v2.0"
+            };
+
+            var tenantId = configuration["Authentication:Microsoft:TenantId"];
+            if (!string.IsNullOrWhiteSpace(tenantId))
+            {
+                validIssuers.Insert(0,$"https://login.microsoftonline.com/{tenantId}/v2.0");
+            }
+
+            options.TokenValidationParameters.ValidIssuers = validIssuers;
+
+            options.ResponseType = "code";
+            options.SaveTokens = true;
+            options.Scope.Add("email");
+            options.Scope.Add("profile");
+            options.SignInScheme = IdentityConstants.ExternalScheme;
+            options.Events = new()
+            {
+                OnTokenValidated = async context =>
                 {
-                    OnTokenValidated = async context =>
-                    {
-                        var props = new AuthenticationProperties();
-                        props.Items["LoginProvider"] = "AzureAD";
-                        await context.HttpContext.SignInAsync(IdentityConstants.ExternalScheme, context.Principal!, props);
-                    }
-                };
-                configuration.GetRequiredSection("Authentication:AzureAD").Bind(options);
-            }, openIdConnectScheme: "AzureAD");
+                    var props = new AuthenticationProperties();
+                    props.Items["LoginProvider"] = "OpenIdConnect";
+                    await context.HttpContext.SignInAsync(IdentityConstants.ExternalScheme, context.Principal!, props);
+                }
+            };
+            
+            configuration.GetRequiredSection("Authentication:Microsoft").Bind(options);
+        });
         }
 
         if (string.IsNullOrEmpty(configuration["Authentication:Facebook:AppId"]) is false)

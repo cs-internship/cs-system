@@ -1234,4 +1234,49 @@ After reaching {0}, extra sign-ins will have reduced functions.</value>
   <data name="NoDocumentSelected" xml:space="preserve">
     <value>No document selected</value>
   </data>
+  <data name="Login" xml:space="preserve">
+    <value>Login</value>
+  </data>
+  <data name="YourName" xml:space="preserve">
+    <value>Your Name</value>
+  </data>
+  <data name="YourEmail" xml:space="preserve">
+    <value>Your Email</value>
+  </data>
+  <data name="DarkMode" xml:space="preserve">
+    <value>Dark Mode</value>
+  </data>
+  <data name="LogOut" xml:space="preserve">
+    <value>Logout</value>
+  </data>
+  <data name="LoginToUnlockFullDetails" xml:space="preserve">
+    <value>Log in to unlock full details.</value>
+  </data>
+  <data name="ContinueWithYour" xml:space="preserve">
+    <value>Continue with your</value>
+  </data>
+  <data name="AuthenticatingModal" xml:space="preserve">
+    <value>Authenticating...</value>
+  </data>
+  <data name="WillTakeSeconds" xml:space="preserve">
+    <value>This will take just a few seconds.</value>
+  </data>
+  <data name="WelcomeForModal" xml:space="preserve">
+    <value>Welcome!</value>
+  </data>
+  <data name="SuccessfullyLoggedIn" xml:space="preserve">
+    <value>You’ve successfully logged in.</value>
+  </data>
+  <data name="MicrosoftLoginButtonText" xml:space="preserve">
+    <value>Login with Microsoft</value>
+  </data>
+  <data name="GoogleLoginButtonText" xml:space="preserve">
+    <value>Login with Google</value>
+  </data>
+  <data name="FacebookLoginButtonText" xml:space="preserve">
+    <value>Login with Facebook</value>
+  </data>
+  <data name="AppleLoginButtonText" xml:space="preserve">
+    <value>Login with Apple</value>
+  </data>
 </root>

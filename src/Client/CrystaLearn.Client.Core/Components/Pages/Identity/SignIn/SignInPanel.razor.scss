@@ -1,4 +1,5 @@
 @import '../../../../Styles/abstracts/_media-queries.scss';
+@import '../../../../Styles/abstracts/_vars.scss';
 
 section {
     width: 100%;
@@ -6,6 +7,10 @@ section {
 }
 
 ::deep {
+    form {
+        width: 100%;
+    }
+
     .lg-sep {
         @include lt-md {
             display: none;
@@ -16,5 +21,30 @@ section {
         @include gt-sm {
             display: none;
         }
+    }
+}
+
+
+.brain-bg-style {
+    margin: 0 auto;
+    width: 12rem;
+    height: auto;
+    object-fit: contain;
+}
+
+::deep {
+    .header-text {
+        font: var(--font-subtitle-1);
+        color: var(--bit-clr-fg-pri);
+    }
+
+    .desc-text {
+        font: var(--font-body-2);
+        color: var(--bit-clr-inf-dark);
+    }
+
+    .icons-text {
+        font: var(--font-body-2);
+        color: var(--bit-clr-brd-ter);
     }
 }

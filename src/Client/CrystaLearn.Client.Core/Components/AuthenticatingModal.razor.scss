@@ -1,0 +1,75 @@
+@import '../Styles/abstracts/_vars.scss';
+@import '../Styles/abstracts/_colors.scss';
+
+section {
+    margin: 0 auto;
+}
+
+::deep {
+
+    .loading-color {
+        margin: 0 auto;
+        --bit-ldn-color: var(--bit-ckr-thmb-sld-4) !important;
+    }
+
+    .cslearn-modal-container {
+        width: 100%;
+        align-items: center !important;
+        border-radius: 1.6rem 1.6rem 0.8rem 0.8rem;
+        background-color: var(--bit-clr-bg-ter-3);
+    }
+
+    .cslearn-close-icon {
+        font-size: 2.4rem;
+        cursor: pointer;
+
+        &::before {
+            color: var(--bit-clr-fg-pri-3);
+        }
+    }
+
+    .cslearn-header-text {
+        font: var(--font-subtitle-1);
+        color: var(--bit-clr-fg-pre-2);
+    }
+
+    .cslearn-desc-text {
+        font: var(--font-body-2);
+        color: var(--bit-clr-inf-dark);
+    }
+}
+
+.page-heading {
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: contain;
+    height: 12rem;
+    min-height: 12rem;
+    width: 12rem;
+    margin: 0 auto;
+}
+
+.cslearn-dark-theme {
+    * ::deep .light-theme {
+        display: none;
+    }
+
+    .page-heading {
+        background-image: url('images/backgrounds/Authenticating-dark.png');
+    }
+}
+
+.cslearn-light-theme {
+    * ::deep .dark-theme {
+        display: none;
+    }
+
+    .page-heading {
+        background-image: url('images/backgrounds/Authenticating-light.png');
+    }
+}
+
+@media screen and (min-width: $breakpoint-md) {
+
+    ::deep {}
+}

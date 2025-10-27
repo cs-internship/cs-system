@@ -33,7 +33,7 @@ public partial class IdentityController
         string? signInPageUri;
         ExternalLoginInfo? info = null;
 
-        try
+        try 
         {
             info = await signInManager.GetExternalLoginInfoAsync() ?? throw new BadRequestException();
             var email = info.Principal.GetEmail();

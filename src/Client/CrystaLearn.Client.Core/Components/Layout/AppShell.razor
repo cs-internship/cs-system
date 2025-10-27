@@ -3,29 +3,44 @@
 @inherits AppComponentBase
 
 <BitAppShell PersistScroll @ref="_appShellRef">
-    <BitLayout StickyHeader
-               Styles="@(new()
-               {
-                   Main = "height:fit-content",
-                   NavPanel = "top: 4rem;position: sticky;overflow: hidden auto;height: var(--bit-env-height-avl);"
-               })">
-        <Header>
-            <CrystaHeader />
-        </Header>
-        <NavPanel>
-            @if(IsDocPage)
-            {
-                <CrystaNav @bind-IsNavPanelOpen="isNavPanelOpen"
-                       Items="navPanelItems" />
-            }
-        </NavPanel>
-        <Main>
-            <div class="site-content">
-                @ChildContent
-            </div>
-        </Main>
-        <Footer>
-            <CrystaFooter AppShell="_appShellRef"/>
-        </Footer>
-    </BitLayout>
+	<BitLayout StickyHeader
+			   Styles="@(new()
+	  {
+		  Main = "height:fit-content",
+		  NavPanel = "top: 4rem;position: sticky;overflow: hidden auto;height: var(--bit-env-height-avl);"
+	  })">
+		<Header>
+			<CrystaHeader />
+		</Header>
+		<NavPanel>
+			@if (IsDocPage)
+			{
+				<CrystaNav @bind-IsNavPanelOpen="isNavPanelOpen"
+						   Items="navPanelItems" />
+			}
+		</NavPanel>
+		<Main>
+			<div class="site-content">
+				@ChildContent
+
+				<BitPanel IsOpen=@(isOpenButtonShit)
+						  Class="cslearn-root-panel"
+						  Position="BitPanelPosition.Bottom"
+						  Classes="@(new() {
+
+								Container = "cslearn-panel-container",
+     	 	 	   				Overlay = "cslearn-panel-overlay" })">
+					@if (panelComponentMetadata is not null)
+					{
+						<DynamicComponent Type="panelComponentMetadata?.Type"
+										  Parameters="@panelComponentMetadata?.Parameters" />
+					}
+
+				</BitPanel>
+			</div>
+		</Main>
+		<Footer>
+			<CrystaFooter AppShell="_appShellRef" />
+		</Footer>
+	</BitLayout>
 </BitAppShell>

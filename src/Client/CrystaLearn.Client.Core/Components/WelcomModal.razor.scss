@@ -1,0 +1,44 @@
+@import '../Styles/abstracts/_vars.scss';
+@import '../Styles/abstracts/_colors.scss';
+
+
+::deep {
+
+    .cslearn-modal-container {
+        width: 100%;
+        align-items: flex-end;
+        border-radius: 2rem 2rem 0 0;
+        background-color: var(--bit-clr-bg-ter-3);
+    }
+
+    .cslearn-close-icon {
+        font-size: 2.4rem;
+        cursor: pointer;
+
+        &::before {
+            color: var(--bit-clr-fg-pri-3);
+        }
+    }
+
+    .cslearn-icon-style {
+        width: 6.4rem;
+        height: 6.4rem;
+        border-radius: 100%;
+        background-color: var(--bit-clr-bg-ico-2);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 5.4rem;
+        color: var( --bit-green-shade-2);
+    }
+
+    .cslearn-header-text {
+        font: var(--font-subtitle-1);
+        color: var(--bit-clr-fg-pre-2);
+    }
+
+    .cslearn-desc-text {
+        font: var(--font-body-2);
+        color: var(--bit-clr-inf-dark-3);
+    }
+}
