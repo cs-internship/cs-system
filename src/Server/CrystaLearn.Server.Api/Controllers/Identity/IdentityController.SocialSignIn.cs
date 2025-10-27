@@ -12,8 +12,8 @@ public partial class IdentityController
     [AppResponseCache(SharedMaxAge = 3600 * 24 * 7, MaxAge = 60 * 5)]
     public async Task<string> GetSocialSignInUri(string provider, string? returnUrl = null, int? localHttpPort = null, CancellationToken cancellationToken = default)
     {
-        var uri = Url.Action(nameof(SocialSignIn), new { provider, returnUrl, localHttpPort, origin = Request.GetWebAppUrl() })!;
-        return new Uri(Request.GetBaseUrl(), uri).ToString();
+        var uri = Url.Action(nameof(SocialSignIn), new { provider, returnUrl, localHttpPort, origin = Request.GetWebAppUrl().UpgradeToHttpsIfNotLocalhost() })!;
+        return new Uri(Request.GetBaseUrl().UpgradeToHttpsIfNotLocalhost(), uri).ToString();
     }
 
     [HttpGet]
