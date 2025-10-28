@@ -453,7 +453,7 @@ public static partial class Program
                 "https://login.microsoftonline.com/9188040d-6c67-4c5b-b112-36a304b66dad/v2.0", // Microsoft consumer tenant
                 "https://login.microsoftonline.com/common/v2.0"
             };
-
+            
             var tenantId = configuration["Authentication:Microsoft:TenantId"];
             if (!string.IsNullOrWhiteSpace(tenantId))
             {
@@ -461,7 +461,7 @@ public static partial class Program
             }
 
             options.TokenValidationParameters.ValidIssuers = validIssuers;
-
+            
             options.ResponseType = "code";
             options.SaveTokens = true;
             options.Scope.Add("email");
@@ -474,6 +474,12 @@ public static partial class Program
                     var props = new AuthenticationProperties();
                     props.Items["LoginProvider"] = "OpenIdConnect";
                     await context.HttpContext.SignInAsync(IdentityConstants.ExternalScheme, context.Principal!, props);
+                },
+                OnRedirectToIdentityProvider = context =>
+                {
+                    var redirectUri = new Uri(context.ProtocolMessage.RedirectUri);
+                    context.ProtocolMessage.RedirectUri = redirectUri.UpgradeToHttpsIfNotLocalhost().ToString();
+                    return Task.CompletedTask;
                 }
             };
             
