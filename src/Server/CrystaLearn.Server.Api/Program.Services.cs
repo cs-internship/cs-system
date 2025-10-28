@@ -459,6 +459,12 @@ public static partial class Program
                         var props = new AuthenticationProperties();
                         props.Items["LoginProvider"] = "AzureAD";
                         await context.HttpContext.SignInAsync(IdentityConstants.ExternalScheme, context.Principal!, props);
+                    },
+                    OnRedirectToIdentityProvider = context =>
+                    {
+                        var redirectUri = new Uri(context.ProtocolMessage.RedirectUri);
+                        context.ProtocolMessage.RedirectUri = redirectUri.UpgradeToHttpsIfNotLocalhost().ToString();
+                        return Task.CompletedTask;
                     }
                 };
                 configuration.GetRequiredSection("Authentication:Microsoft").Bind(options);
