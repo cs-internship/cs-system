@@ -17,7 +17,7 @@ public partial class SocialRow
 
     private async Task HandleMicrosoft()
     {
-        await OnClick.InvokeAsync("Microsoft");
+        await OnClick.InvokeAsync("AzureAD");
     }
 
     private async Task HandleApple()

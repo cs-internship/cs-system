@@ -445,46 +445,68 @@ public static partial class Program
 
         if (string.IsNullOrEmpty(configuration["Authentication:Microsoft:ClientId"]) is false)
         {
-            authenticationBuilder.AddCookie().AddOpenIdConnect("Microsoft", options =>
-        {
-            options.Authority = "https://login.microsoftonline.com/common/v2.0";
-            var validIssuers = new List<string>
-            {
-                "https://login.microsoftonline.com/9188040d-6c67-4c5b-b112-36a304b66dad/v2.0", // Microsoft consumer tenant
-                "https://login.microsoftonline.com/common/v2.0"
-            };
-            
-            var tenantId = configuration["Authentication:Microsoft:TenantId"];
-            if (!string.IsNullOrWhiteSpace(tenantId))
-            {
-                validIssuers.Insert(0,$"https://login.microsoftonline.com/{tenantId}/v2.0");
-            }
 
-            options.TokenValidationParameters.ValidIssuers = validIssuers;
-            
-            options.ResponseType = "code";
-            options.SaveTokens = true;
-            options.Scope.Add("email");
-            options.Scope.Add("profile");
-            options.SignInScheme = IdentityConstants.ExternalScheme;
-            options.Events = new()
+            authenticationBuilder.AddMicrosoftIdentityWebApp(options =>
             {
-                OnTokenValidated = async context =>
+                options.SignInScheme = IdentityConstants.ExternalScheme;
+                options.Scope.Add("Email");
+                options.Scope.Add("profile");
+                options.Scope.Add("User.Read");
+                options.Events = new()
                 {
-                    var props = new AuthenticationProperties();
-                    props.Items["LoginProvider"] = "OpenIdConnect";
-                    await context.HttpContext.SignInAsync(IdentityConstants.ExternalScheme, context.Principal!, props);
-                },
-                OnRedirectToIdentityProvider = context =>
-                {
-                    var redirectUri = new Uri(context.ProtocolMessage.RedirectUri);
-                    context.ProtocolMessage.RedirectUri = redirectUri.UpgradeToHttpsIfNotLocalhost().ToString();
-                    return Task.CompletedTask;
-                }
-            };
+                    OnTokenValidated = async context =>
+                    {
+                        var props = new AuthenticationProperties();
+                        props.Items["LoginProvider"] = "AzureAD";
+                        await context.HttpContext.SignInAsync(IdentityConstants.ExternalScheme, context.Principal!, props);
+                    }
+                };
+                configuration.GetRequiredSection("Authentication:Microsoft").Bind(options);
+            }, openIdConnectScheme: "AzureAD");
+
+
+
+
+        //    authenticationBuilder.AddCookie().AddOpenIdConnect("Microsoft", options =>
+        //{
+        //    options.Authority = "https://login.microsoftonline.com/common/v2.0";
+        //    var validIssuers = new List<string>
+        //    {
+        //        "https://login.microsoftonline.com/9188040d-6c67-4c5b-b112-36a304b66dad/v2.0", // Microsoft consumer tenant
+        //        "https://login.microsoftonline.com/common/v2.0"
+        //    };
             
-            configuration.GetRequiredSection("Authentication:Microsoft").Bind(options);
-        });
+        //    var tenantId = configuration["Authentication:Microsoft:TenantId"];
+        //    if (!string.IsNullOrWhiteSpace(tenantId))
+        //    {
+        //        validIssuers.Insert(0,$"https://login.microsoftonline.com/{tenantId}/v2.0");
+        //    }
+
+        //    options.TokenValidationParameters.ValidIssuers = validIssuers;
+            
+        //    options.ResponseType = "code";
+        //    options.SaveTokens = true;
+        //    options.Scope.Add("email");
+        //    options.Scope.Add("profile");
+        //    options.SignInScheme = IdentityConstants.ExternalScheme;
+        //    options.Events = new()
+        //    {
+        //        OnTokenValidated = async context =>
+        //        {
+        //            var props = new AuthenticationProperties();
+        //            props.Items["LoginProvider"] = "OpenIdConnect";
+        //            await context.HttpContext.SignInAsync(IdentityConstants.ExternalScheme, context.Principal!, props);
+        //        },
+        //        OnRedirectToIdentityProvider = context =>
+        //        {
+        //            var redirectUri = new Uri(context.ProtocolMessage.RedirectUri);
+        //            context.ProtocolMessage.RedirectUri = redirectUri.UpgradeToHttpsIfNotLocalhost().ToString();
+        //            return Task.CompletedTask;
+        //        }
+        //    };
+            
+        //    configuration.GetRequiredSection("Authentication:Microsoft").Bind(options);
+        //});
         }
 
         if (string.IsNullOrEmpty(configuration["Authentication:Facebook:AppId"]) is false)
