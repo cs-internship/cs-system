@@ -449,7 +449,7 @@ public static partial class Program
             authenticationBuilder.AddMicrosoftIdentityWebApp(options =>
             {
                 options.SignInScheme = IdentityConstants.ExternalScheme;
-                options.Scope.Add("Email");
+                options.Scope.Add("email");
                 options.Scope.Add("profile");
                 options.Scope.Add("User.Read");
                 options.Events = new()
