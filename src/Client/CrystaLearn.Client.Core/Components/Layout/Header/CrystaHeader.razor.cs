@@ -104,7 +104,7 @@ public partial class CrystaHeader : AppComponentBase
         await cultureService.ChangeCulture(cultureName);
     }
 
-    private List<BitMenuButtonItem> dirItems = new()
+    private readonly List<BitMenuButtonItem> dirItems = new()
     {
         new() { Text = "Country", Key = "Country" },
         new() { Text = "State", Key = "State" },
