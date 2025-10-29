@@ -14,7 +14,7 @@ public partial class CrystaHeader : AppComponentBase
     [AutoInject] private ThemeService themeService = default!;
     [AutoInject] private SignInModalService signInModalService = default!;
     [AutoInject] private CultureService cultureService = default!;
-    [AutoInject] private IUserController userController = default!;
+    [AutoInject] private readonly IUserController userController = default!;
     [AutoInject] private ITelemetryContext telemetryContext = default!;
     [AutoInject] private PubSubService pubSubService { get; set; } = default!;
     private BitDropdownItem<string>[] cultures = default!;
