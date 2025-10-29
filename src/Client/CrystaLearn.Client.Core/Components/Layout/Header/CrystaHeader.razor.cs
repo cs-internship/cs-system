@@ -129,7 +129,6 @@ public partial class CrystaHeader : AppComponentBase
 
     private async Task GetCurrentUser(Task<AuthenticationState> task)
     {
-        var temp = (await AuthenticationStateTask).User.IsAuthenticated();
         isAuthenticated = (await task).User.IsAuthenticated();
         try
         {
