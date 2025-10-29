@@ -61,12 +61,9 @@ public static partial class UriExtensions
         return uriBuilder.Path;
     }
 
-    public static Uri UpgradeToHttpsIfNotLocalhost(this Uri uri)
+    public static Uri? UpgradeToHttpsIfNotLocalhost(this Uri? uri)
     {
-        if (uri == null)
-            return null;
-
-        if (uri.Scheme == Uri.UriSchemeHttp && !string.Equals(uri.Host, "localhost", StringComparison.OrdinalIgnoreCase))
+        if (uri?.Scheme == Uri.UriSchemeHttp && !string.Equals(uri.Host, "localhost", StringComparison.OrdinalIgnoreCase))
         {
             var builder = new UriBuilder(uri)
             {
