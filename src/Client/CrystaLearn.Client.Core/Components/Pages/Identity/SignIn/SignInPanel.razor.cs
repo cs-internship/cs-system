@@ -247,7 +247,7 @@ public partial class SignInPanel
                 }
 
                 queryParams.TryGetValue("return-url", out var returnUrl);
-                ReturnUrlQueryString = GetValue(returnUrl?? PageUrls.Home);
+                ReturnUrlQueryString = GetValue(returnUrl ?? PageUrls.Home);
                 queryParams.TryGetValue("userName", out var userName);
                 UserNameQueryString = GetValue(userName);
                 queryParams.TryGetValue("email", out var email);
