@@ -9,7 +9,7 @@ public static class StringExtensions
             "en-US" => CsLearnIconName.English,
             "fr-FR" => CsLearnIconName.French,
             "fa-IR" => CsLearnIconName.Farsi,
-            "zh-CN" => CsLearnIconName.Chinese,
+            "zh-CN" => CsLearnIconName.Chineese,
             _ => CsLearnIconName.English
         };
 
