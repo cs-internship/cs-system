@@ -1,10 +1,14 @@
-@import '../Styles/abstracts/_media-queries.scss';
-@import '../Styles/abstracts/_bit-css-variables.scss';
+@import 'abstracts/_media-queries.scss';
+@import 'abstracts/_bit-css-variables.scss';
+@import 'abstracts/_font-icon.scss';
+@import 'abstracts/_font-icon-illustrator.scss';
+@import 'abstracts/_vars.scss';
 
 :root[bit-theme="dark"] {
     //--bit-clr-bg-pri: #010409;
     // In case you need to change the background color, make sure to also update ThemeColors.cs's PrimaryDarkBgColor accordingly.
 }
+
 
 * {
     box-sizing: border-box;

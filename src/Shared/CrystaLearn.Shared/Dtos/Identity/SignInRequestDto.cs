@@ -27,6 +27,7 @@ public partial class SignInRequestDto : IdentityRequestDto
     [Display(Name = nameof(AppStrings.TwoFactorCode))]
     public string? TwoFactorCode { get; set; }
 
+    public string? DeviceInfo { get; set; }
     public override IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
     {
         var result = base.Validate(validationContext).ToList();

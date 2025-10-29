@@ -1,4 +1,5 @@
 ﻿using CrystaLearn.Client.Core.Models;
+using CrystaLearn.Client.Core.Services;
 using CrystaLearn.Shared.Dtos.Crysta;
 using Microsoft.AspNetCore.Components.Routing;
 
@@ -17,9 +18,11 @@ public partial class AppShell
     private BitAppShell? _appShellRef;
     private bool isNavPanelOpen;
     private bool isNavPanelToggled;
+    private bool isOpenButtonShit;
     private BitNavItem? selectedItem;
     private List<BitNavItem> navPanelItems = [];
     private readonly List<Action> unsubscribers = [];
+    private ComponentMetadata? panelComponentMetadata { get; set; }
 
     protected override async Task OnInitAsync()
     {
@@ -39,6 +42,19 @@ public partial class AppShell
             isNavPanelOpen = false;
             isNavPanelToggled = false;
             StateHasChanged();
+        }));
+
+        unsubscribers.Add(PubSubService.Subscribe(ClientPubSubMessages.OPEN_BUTTON_SHIT, async dynamic =>
+        {
+            panelComponentMetadata = (ComponentMetadata)dynamic!;
+            isOpenButtonShit = true;
+            await InvokeAsync(StateHasChanged);
+        }));
+
+        unsubscribers.Add(PubSubService.Subscribe(ClientPubSubMessages.CLOSE_BUTTON_SHIT, async _ =>
+        {
+            isOpenButtonShit = false;
+            await InvokeAsync(StateHasChanged);
         }));
 
         unsubscribers.Add(PubSubService.Subscribe(ClientPubSubMessages.SET_PROGRAM_CODE, async (payload) =>

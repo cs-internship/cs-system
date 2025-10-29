@@ -18,10 +18,11 @@ public partial class SignInPanel
     private SignInPanelType internalSignInPanelType;
     private readonly SignInRequestDto model = new();
     private AppDataAnnotationsValidator? validatorRef;
-    private string GetReturnUrl() => ReturnUrl ?? ReturnUrlQueryString ?? PageUrls.Home;
+    private string ReturnUrl => ReturnUrlQueryString ?? PageUrls.Home;
+    private SignInPanelMode currentMode = SignInPanelMode.DefaultMode;
 
-    [Parameter]
-    public string? ReturnUrl { get; set; }
+    [Parameter] public Action? OnClose { get; set; }
+
 
     [Parameter, SupplyParameterFromQuery(Name = "return-url")]
     public string? ReturnUrlQueryString { get; set; }
@@ -40,6 +41,12 @@ public partial class SignInPanel
 
     [Parameter, SupplyParameterFromQuery(Name = "error")]
     public string? ErrorQueryString { get; set; }
+
+    [Parameter]
+    public string? Title { get; set; }
+
+    [Parameter]
+    public string? SubTitle { get; set; }
 
     [Parameter] public Action? OnSuccess { get; set; } // The SignInModalService will show this page as a modal dialog, and this action will be invoked when the sign-in is successful.
     [Parameter] public SignInPanelType SignInPanelType { get; set; } // Check out SignInModalService for more details
@@ -121,7 +128,8 @@ public partial class SignInPanel
                         new VerifyWebAuthnAndSignInRequestDto
                         {
                             ClientResponse = webAuthnAssertion.Value,
-                            TfaCode = model.TwoFactorCode
+                            TfaCode = model.TwoFactorCode,
+                            DeviceInfo = telemetryContext.Platform
                         },
                         CurrentCancellationToken);
 
@@ -141,7 +149,8 @@ public partial class SignInPanel
 
                 if (isNewUser is false)
                 {
-                    model.ReturnUrl = GetReturnUrl();
+                    model.ReturnUrl = ReturnUrl;
+                    model.DeviceInfo = telemetryContext.Platform;
 
                     requiresTwoFactor = await AuthManager.SignIn(model, CurrentCancellationToken);
 
@@ -154,7 +163,8 @@ public partial class SignInPanel
                         var signInResponse = await identityController.ConfirmEmail(new()
                         {
                             Token = model.Otp,
-                            Email = model.Email
+                            Email = model.Email,
+                            DeviceInfo = telemetryContext.Platform
                         }, CurrentCancellationToken);
 
                         await AuthManager.StoreTokens(signInResponse, true);
@@ -164,7 +174,8 @@ public partial class SignInPanel
                         var signInResponse = await identityController.ConfirmPhone(new()
                         {
                             Token = model.Otp,
-                            PhoneNumber = model.PhoneNumber
+                            PhoneNumber = model.PhoneNumber,
+                            DeviceInfo = telemetryContext.Platform
                         }, CurrentCancellationToken);
 
                         await AuthManager.StoreTokens(signInResponse, true);
@@ -181,11 +192,17 @@ public partial class SignInPanel
             {
                 if (OnSuccess is not null)
                 {
+
+                    await Task.Delay(1000);
+                    currentMode = SignInPanelMode.WelcomeMode;
+                    await InvokeAsync(StateHasChanged);
+                    await Task.Delay(2000);
+
                     OnSuccess.Invoke();
                 }
                 else
                 {
-                    NavigationManager.NavigateTo(GetReturnUrl(), replace: true);
+                    NavigationManager.NavigateTo(ReturnUrl, replace: true);
                 }
             }
         }
@@ -208,6 +225,8 @@ public partial class SignInPanel
 
     private async Task SocialSignIn(string provider)
     {
+        currentMode = SignInPanelMode.AuthenticatingMode;
+        StateHasChanged();
         try
         {
             pubSubUnsubscribe?.Invoke();
@@ -245,55 +264,13 @@ public partial class SignInPanel
 
             var port = localHttpServer.EnsureStarted();
 
-            var redirectUrl = await identityController.GetSocialSignInUri(provider, GetReturnUrl(), port is -1 ? null : port, CurrentCancellationToken);
+            var redirectUrl = await identityController.GetSocialSignInUri(provider, ReturnUrl, port is -1 ? null : port, CurrentCancellationToken);
 
             await externalNavigationService.NavigateToAsync(redirectUrl);
         }
         catch (KnownException e)
         {
             SnackBarService.Error(e.Message);
-        }
-    }
-
-    private async Task PasswordlessSignIn()
-    {
-        isWaiting = true;
-
-        try
-        {
-            var userIds = await webAuthnService.GetWebAuthnConfiguredUserIds();
-
-            if (AppPlatform.IsBlazorHybrid)
-            {
-                localHttpServer.EnsureStarted();
-            }
-
-            var options = await identityController
-                .WithQueryIf(AppPlatform.IsBlazorHybrid, "origin", localHttpServer.Origin)
-                .GetWebAuthnAssertionOptions(new() { UserIds = userIds }, CurrentCancellationToken);
-
-            try
-            {
-                webAuthnAssertion = await webAuthnService.GetWebAuthnCredential(options);
-            }
-            catch (Exception ex)
-            {
-                // we can safely handle the exception thrown here since it mostly because of a timeout or user cancelling the native ui.
-                ExceptionHandler.Handle(ex, AppEnvironment.IsDevelopment() ? ExceptionDisplayKind.NonInterrupting : ExceptionDisplayKind.None);
-                webAuthnAssertion = null;
-                return;
-            }
-
-            await DoSignIn();
-        }
-        catch (KnownException e)
-        {
-            webAuthnAssertion = null;
-            SnackBarService.Error(e.Message);
-        }
-        finally
-        {
-            isWaiting = false;
         }
     }
 
@@ -321,7 +298,7 @@ public partial class SignInPanel
 
             var request = new IdentityRequestDto { UserName = model.UserName, Email = model.Email, PhoneNumber = model.PhoneNumber };
 
-            await identityController.SendOtp(request, GetReturnUrl(), CurrentCancellationToken);
+            await identityController.SendOtp(request, ReturnUrl, CurrentCancellationToken);
 
             isOtpSent = true;
         }
@@ -376,27 +353,26 @@ public partial class SignInPanel
 
     private void CleanModel()
     {
-        if (internalSignInPanelType is SignInPanelType.Otp)
-        {
-            model.Password = null;
-            validatorRef?.EditContext.NotifyFieldChanged(validatorRef.EditContext.Field(nameof(SignInRequestDto.Password)));
-        }
-        else if (internalSignInPanelType is SignInPanelType.Password && isOtpSent is false)
-        {
-            model.Otp = null;
-            validatorRef?.EditContext.NotifyFieldChanged(validatorRef.EditContext.Field(nameof(SignInRequestDto.Otp)));
-        }
-
         if (currentTab is SignInPanelTab.Email)
         {
             model.PhoneNumber = null;
-            validatorRef?.EditContext.NotifyFieldChanged(validatorRef.EditContext.Field(nameof(SignInRequestDto.PhoneNumber)));
+            if (validatorRef is null) return;
+
+            validatorRef.EditContext.NotifyFieldChanged(validatorRef.EditContext.Field(nameof(SignInRequestDto.PhoneNumber)));
         }
         else
         {
             model.Email = null;
-            validatorRef?.EditContext.NotifyFieldChanged(validatorRef.EditContext.Field(nameof(SignInRequestDto.Email)));
+            if (validatorRef is null) return;
+
+            validatorRef.EditContext.NotifyFieldChanged(validatorRef.EditContext.Field(nameof(SignInRequestDto.Email)));
         }
+    }
+
+    private void CloseModal()
+    {
+        currentMode = SignInPanelMode.DefaultMode;
+        OnClose?.Invoke();
     }
 
     /// <summary>
@@ -435,3 +411,13 @@ public partial class SignInPanel
         internalSignInPanelType = type;
     }
 }
+
+public enum SignInPanelMode
+{
+    AuthenticatingMode,
+    WelcomeMode,
+    DefaultMode
+}
+
+
+

@@ -1,4 +1,5 @@
 @inherits AppComponentBase
+@using CrystaLearn.Client.Core.Extensions;
 
 <header>
     <BitStack Horizontal VerticalAlign="BitAlignment.Center" Gap="0.25rem">
@@ -45,5 +46,102 @@
             <span class="icon-container"><i class="bit-icon bit-icon--Sunny"></i></span>
         </BitActionButton>
         @* <AppMenu /> *@
+
+         <BitDropMenu @bind-IsOpen="isOpen" OnDismiss="SlideBack" Class="menu-icon-container" Classes="@(new() {
+                                Callout=$"cslearn-header-callout-box {(isAuthenticated is true ? "stretch-container" : "")}",
+                                 })">
+                <Template>
+                    <CsLearnIcon Class="icon-style-profile" IconName="icon-profile" />
+                </Template>
+                <Body>
+                    <BitStack Horizontal Gap="1.5rem" Class="@($"main-menu-content-container {(ShowLanguages ? "slide-to-languages" : "")}")">
+                        <BitStack Gap="1rem" style="flex-shrink:0;" Class="main-menu-content first-slide">
+                            @if (isAuthenticated is false)
+                            {
+                                <BitStack Dir="BitDir.Auto" Class="menu-items-container" Gap="0.8rem">
+
+                                    <BitActionButton IconName=" icon-profile" OnClick="@ModalSignIn" Classes="@(new() { Root = "cslearn-menu-btn-root",
+                                    Icon = "cslearn-menu-btn-icon",
+                                    Content = "cslearn-menu-btn-content" })">@Localizer[AppStrings.Login]</BitActionButton>
+
+                                </BitStack>
+                            }
+                            else
+                            {
+                                <BitStack Horizontal Gap="0.8rem" Class="user-info-container">
+                                    @if (user?.HasProfilePicture == true)
+                                    {
+                                        <img class="user-image" src="@user?.GetProfileImageUrl(absoluteServerAddress)" />
+                                    }
+                                    else
+                                    {
+                                        <CsLearnIcon IconName="icon-profile" Class="no-user-icon" />
+                                    }
+                                    <BitStack Gap="0.4rem" Class="user-email-name">
+                                        <BitText Class="user-name">
+                                            @(user?.FullName ?? Localizer[AppStrings.YourName])
+                                        </BitText>
+                                        <BitText Class="user-email">
+
+                                            @(user?.Email ?? Localizer[AppStrings.YourEmail])
+                                        </BitText>
+                                    </BitStack>
+                                </BitStack>
+                            }
+                            <BitStack Dir="BitDir.Auto" Class="menu-items-container" Gap="0.8rem">
+
+                                <BitActionButton IconName=" icon-language-2" OnClick="@HandleShowLanguages" Classes="@(new() { Root = "cslearn-menu-btn-root",
+                                    Icon = "cslearn-menu-btn-icon",
+                                    Content = "cslearn-menu-btn-content" })">@Localizer[AppStrings.Language]</BitActionButton>
+
+                            </BitStack>
+
+                            <BitStack Dir="BitDir.Auto" Gap="0.8rem" Horizontal Class="menu-items-container darkmode-toggle-container">
+                                <CsLearnIcon IconName="@CsLearnIconName.LightMode" Class="cslearn-menu-btn-icon" />
+                                <BitToggle onchange="ToggleTheme" Value="@isDarkMode" Label=@Localizer[AppStrings.DarkMode] FullWidth Inline Classes="@(new() {
+                              Thumb = "cslearn-header-toggle-thumb",
+                              Button = "cslearn-header-toggle-button",
+                              Container = "cslearn-header-toggle-container",
+                              Root = "cslearn-header-toggle-root",
+                              Label = "cslearn-header-toggle-label",
+                              Checked = "cslearn-header-toggle-checked" } )" />
+                            </BitStack>
+                            @if (isAuthenticated is true)
+                            {
+                                <BitStack Dir="BitDir.Auto" Class="menu-items-container" Gap="0.8rem">
+
+                                    <BitActionButton Class="logout-btn"
+                                                     IconName=" icon-exit"
+                                                     OnClick="WrapHandled(SignOut)" Classes="@(new() { Root = "cslearn-menu-btn-root",
+                                    Icon = "cslearn-menu-btn-icon",
+                                    Content = "cslearn-menu-btn-content" })">
+                                        @Localizer[AppStrings.LogOut]
+                                    </BitActionButton>
+
+
+                                </BitStack>
+                            }
+
+                        </BitStack>
+                        <BitStack Gap="0" Style="flex-shrink:0;" Class="main-menu-content last-slide">
+                            <BitActionButton Dir="BitDir.Auto" OnClick="@SlideBack">
+                                <BitText Class="select-lang-title">@Localizer[AppStrings.SelectLanguage]</BitText>
+                            </BitActionButton>
+                            <BitStack Gap="0.8rem">
+                                @foreach (var culture in cultures)
+                                {
+                                    <BitActionButton Class="language-item" Dir="BitDir.Auto" OnClick="async () => await OnCultureChanged(culture.Value)">
+                                        <CsLearnIcon Class="@($"cslearn-items-icon {(culture.Value == CultureInfo.CurrentUICulture.Name ? "cslearn-select-icon" : "")}")"
+                                                 IconName="@culture.Value.GetLanguageIconName()" />
+                                        <BitText Class="@($"cslearn-text  {(culture.Value == CultureInfo.CurrentUICulture.Name ? "cslearn-select-text" : "")}")">@culture.Value.GetLanguageName()</BitText>
+                                    </BitActionButton>
+                                }
+                            </BitStack>
+
+                        </BitStack>
+                    </BitStack>
+
+                </Body>
+            </BitDropMenu>
     </BitStack>
 </header>

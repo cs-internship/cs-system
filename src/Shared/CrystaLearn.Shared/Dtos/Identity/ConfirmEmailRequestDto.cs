@@ -11,6 +11,8 @@ public partial class ConfirmEmailRequestDto
 
     [Required(ErrorMessage = nameof(AppStrings.RequiredAttribute_ValidationError))]
     public string? Token { get; set; }
+
+    public string? DeviceInfo { get; set; }
 }
 
 public partial class ChangeEmailRequestDto : ConfirmEmailRequestDto

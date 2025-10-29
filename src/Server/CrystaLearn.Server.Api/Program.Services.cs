@@ -17,6 +17,8 @@ using FluentStorage.Blobs;
 using Ganss.Xss;
 using Hangfire.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.OData;
 using Microsoft.Identity.Web;
@@ -183,6 +185,7 @@ public static partial class Program
                 .EnableDetailedErrors(env.IsDevelopment());
 
             options.UseNpgsql(configuration.GetConnectionString("PostgresConnectionString"));
+            AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
         }
 
         services.AddOptions<IdentityOptions>()
@@ -440,11 +443,15 @@ public static partial class Program
             });
         }
 
-        if (string.IsNullOrEmpty(configuration["Authentication:AzureAD:ClientId"]) is false)
+        if (string.IsNullOrEmpty(configuration["Authentication:Microsoft:ClientId"]) is false)
         {
+
             authenticationBuilder.AddMicrosoftIdentityWebApp(options =>
             {
                 options.SignInScheme = IdentityConstants.ExternalScheme;
+                options.Scope.Add("email");
+                options.Scope.Add("profile");
+                options.Scope.Add("User.Read");
                 options.Events = new()
                 {
                     OnTokenValidated = async context =>
@@ -452,9 +459,15 @@ public static partial class Program
                         var props = new AuthenticationProperties();
                         props.Items["LoginProvider"] = "AzureAD";
                         await context.HttpContext.SignInAsync(IdentityConstants.ExternalScheme, context.Principal!, props);
+                    },
+                    OnRedirectToIdentityProvider = context =>
+                    {
+                        var redirectUri = new Uri(context.ProtocolMessage.RedirectUri);
+                        context.ProtocolMessage.RedirectUri = redirectUri.UpgradeToHttpsIfNotLocalhost().ToString();
+                        return Task.CompletedTask;
                     }
                 };
-                configuration.GetRequiredSection("Authentication:AzureAD").Bind(options);
+                configuration.GetRequiredSection("Authentication:Microsoft").Bind(options);
             }, openIdConnectScheme: "AzureAD");
         }
 

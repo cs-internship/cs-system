@@ -1,0 +1,14 @@
+@inherits AppComponentBase;
+
+
+<section>
+    <BitStack Dir="BitDir.Auto" Gap="0.8rem" Class="cslearn-modal-container">
+        <BitStack Gap="0.8rem">
+            <BitOrbitingDotsLoading Class="loading-color" CustomSize="80" />
+            <BitStack Gap="0.4rem" Style="align-items:flex-start;justify-content:flex-start;">
+                <BitText Class="cslearn-header-text">@Localizer[nameof(AppStrings.AuthenticatingModal)]</BitText>
+                <BitText Class="cslearn-desc-text">@Localizer[nameof(AppStrings.WillTakeSeconds)]</BitText>
+            </BitStack>
+        </BitStack>
+    </BitStack>
+</section>

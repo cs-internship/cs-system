@@ -18,18 +18,6 @@ public static class ApplicationBuilderExtensions
 
         builder.AddGitHubClient();
 
-        services.AddPooledDbContextFactory<AppDbContext>(AddDbContext);
-        services.AddDbContextPool<AppDbContext>(AddDbContext);
-
-        void AddDbContext(DbContextOptionsBuilder options)
-        {
-            options.EnableSensitiveDataLogging(env.IsDevelopment())
-                   .EnableDetailedErrors(env.IsDevelopment());
-
-            options.UseNpgsql(configuration.GetConnectionString("PostgresConnectionString"));
-        }
-        ;
-
         services.AddSingleton<IDocumentRepository, DocumentRepositoryInMemory>();
         services.AddTransient<ICrystaProgramRepository, CrystaProgramRepositoryFake>();
         services.AddTransient<IGitHubService, GitHubService>();

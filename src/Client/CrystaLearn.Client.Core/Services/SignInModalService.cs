@@ -12,51 +12,82 @@ namespace CrystaLearn.Client.Core.Services;
 /// </summary>
 public partial class SignInModalService : IAsyncDisposable
 {
-    public SignInModalService(BitModalService modalService, NavigationManager navigationManager)
+    public SignInModalService(NavigationManager navigationManager,
+                             PubSubService pubSubService,
+                             IStringLocalizer<AppStrings> Localizer)
     {
-        this.modalService = modalService;
         this.navigationManager = navigationManager;
+        this.pubSubService = pubSubService;
+        this.Localizer = Localizer;
         this.navigationManager.LocationChanged += NavigationManager_LocationChanged;
     }
 
-    private BitModalService modalService;
     private NavigationManager navigationManager;
-    private BitModalReference? modalReference = null;
-    private TaskCompletionSource<bool>? signInModalTcs;
+    private readonly PubSubService pubSubService;
+    private TaskCompletionSource<bool>? signInPanelTcs;
+    private IStringLocalizer<AppStrings> Localizer;
 
-    public async Task<bool> SignIn(string? returnUrl = null)
+    public async Task<bool> SignIn(string? returnUrl = null, string? panelTitle = null, string? panelSubTitle = null)
     {
-        signInModalTcs?.TrySetCanceled();
-        signInModalTcs = new();
+        signInPanelTcs?.TrySetCanceled();
+        signInPanelTcs = new();
 
-        Dictionary<string, object> signInParameters = new()
+        panelTitle ??= Localizer[nameof(AppStrings.Login)]; //or AppStrings.MoreDetailsText
+        panelSubTitle ??= Localizer[nameof(AppStrings.LoginToUnlockFullDetails)]; //or AppStrings.JustLogUnlock
+
+        var panelMetadata = new ComponentMetadata
         {
-            { nameof(SignInModal.ReturnUrl), returnUrl ?? navigationManager.GetRelativePath() },
-            { nameof(SignInModal.OnClose), () => { signInModalTcs.SetResult(false); modalReference?.Close(); } },
-            { nameof(SignInModal.OnSuccess), () => { signInModalTcs.SetResult(true); modalReference?.Close(); } },
-        };
-        var modalParameters = new BitModalParameters()
-        {
-            Draggable = true,
-            DragElementSelector = ".header-stack",
-            OnOverlayClick = EventCallback.Factory.Create<MouseEventArgs>(this, () => signInModalTcs.SetResult(false))
+            Type = typeof(SignInModal),
+            Parameters = new()
+            {
+                {
+                    nameof(SignInModal.OnClose),
+                    new Action(CloseSignInPanel)
+                },
+                {
+                    nameof(SignInModal.OnSuccess),
+                    new Action(CloseSignInPanel)
+                },
+                {
+                    nameof(SignInModal.ReturnUrl),
+                    returnUrl ?? navigationManager.GetRelativePath()
+                },
+                {
+                    nameof(SignInModal.Title),
+                    panelTitle
+                },
+                {
+                    nameof(SignInModal.SubTitle),
+                    panelSubTitle
+                }
+            }
         };
 
-        modalReference = await modalService.Show<SignInModal>(signInParameters, modalParameters);
+        pubSubService.Publish(ClientPubSubMessages.OPEN_BUTTON_SHIT, panelMetadata);
 
-        return await signInModalTcs.Task;
+        return await signInPanelTcs.Task;
     }
 
+    private void CloseSignInPanel()
+    {
+        if (signInPanelTcs is null)
+        {
+            return;
+        }
+
+        pubSubService.Publish(ClientPubSubMessages.CLOSE_BUTTON_SHIT);
+        signInPanelTcs.TrySetResult(false);
+    }
     private void NavigationManager_LocationChanged(object? sender, LocationChangedEventArgs e)
     {
-        modalReference?.Close();
-        signInModalTcs?.TrySetResult(false);
+        //modalReference?.Close();
+        signInPanelTcs?.TrySetResult(false);
     }
 
     public async ValueTask DisposeAsync()
     {
-        modalReference?.Close();
-        signInModalTcs?.TrySetResult(false);
+        //modalReference?.Close();
+        signInPanelTcs?.TrySetResult(false);
         navigationManager.LocationChanged -= NavigationManager_LocationChanged;
     }
 }

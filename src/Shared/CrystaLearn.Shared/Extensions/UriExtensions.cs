@@ -1,4 +1,4 @@
-namespace System;
+﻿namespace System;
 
 public static partial class UriExtensions
 {
@@ -59,5 +59,20 @@ public static partial class UriExtensions
     {
         var uriBuilder = new UriBuilder(uri.GetUrlWithoutCulture()) { Query = string.Empty, Fragment = string.Empty };
         return uriBuilder.Path;
+    }
+
+    public static Uri? UpgradeToHttpsIfNotLocalhost(this Uri? uri)
+    {
+        if (uri?.Scheme == Uri.UriSchemeHttp && !string.Equals(uri.Host, "localhost", StringComparison.OrdinalIgnoreCase))
+        {
+            var builder = new UriBuilder(uri)
+            {
+                Scheme = Uri.UriSchemeHttps,
+                Port = uri.Port == 80 ? 443 : uri.Port
+            };
+            return builder.Uri;
+        }
+
+        return uri;
     }
 }

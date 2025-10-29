@@ -1234,4 +1234,49 @@
   <data name="NoDocumentSelected" xml:space="preserve">
     <value />
   </data>
+  <data name="Login" xml:space="preserve">
+    <value>ورود</value>
+  </data>
+  <data name="YourName" xml:space="preserve">
+    <value>نام شما</value>
+  </data>
+  <data name="YourEmail" xml:space="preserve">
+    <value>ایمیل شما</value>
+  </data>
+  <data name="DarkMode" xml:space="preserve">
+    <value>حالت تاریک</value>
+  </data>
+  <data name="LogOut" xml:space="preserve">
+    <value>خروج از حساب کاربری</value>
+  </data>
+  <data name="LoginToUnlockFullDetails" xml:space="preserve">
+    <value>برای دسترسی به جزئیات کامل وارد شوید.</value>
+  </data>
+  <data name="ContinueWithYour" xml:space="preserve">
+    <value>ادامه دهید با شما</value>
+  </data>
+  <data name="AuthenticatingModal" xml:space="preserve">
+    <value>احراز هویت در حال انجام است...</value>
+  </data>
+  <data name="WillTakeSeconds" xml:space="preserve">
+    <value>این فقط چند ثانیه طول می‌کشد.</value>
+  </data>
+  <data name="WelcomeForModal" xml:space="preserve">
+    <value>خوش آمدید!</value>
+  </data>
+  <data name="SuccessfullyLoggedIn" xml:space="preserve">
+    <value>شما با موفقیت وارد شده‌اید.</value>
+  </data>
+  <data name="MicrosoftLoginButtonText" xml:space="preserve">
+    <value>وارد شوید با مایکروسافت</value>
+  </data>
+  <data name="GoogleLoginButtonText" xml:space="preserve">
+    <value>ورود با گوگل</value>
+  </data>
+  <data name="FacebookLoginButtonText" xml:space="preserve">
+    <value>ورود با فیس‌بوک</value>
+  </data>
+  <data name="AppleLoginButtonText" xml:space="preserve">
+    <value>ورود با اپل</value>
+  </data>
 </root>

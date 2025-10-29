@@ -74,18 +74,27 @@ dotnet user-secrets init
 dotnet user-secrets set "ConnectionStrings:PostgresConnectionString" "Your SQL Server Connection String"
 dotnet user-secrets set "GitHub:GitHubAccessToken" "Your GitHub Access Token"
 dotnet user-secrets set "AzureDevOps:PersonalAccessToken" "Your Azure DevOps Personal Access Token"
+dotnet user-secrets set "Authentication:Microsoft:TenantId" "Crysta Learn TenantId"
+dotnet user-secrets set "Authentication:Microsoft:ClientId" "Crysta Learn ClientId"
+dotnet user-secrets set "Authentication:Microsoft:ClientSecret" "Crysta Learn Client Secret"
 
 cd src/Console/CrystaLearn.Console
 dotnet user-secrets init
 dotnet user-secrets set "ConnectionStrings:PostgresConnectionString" "Your SQL Server Connection String"
 dotnet user-secrets set "GitHub:GitHubAccessToken" "Your GitHub Access Token"
 dotnet user-secrets set "AzureDevOps:PersonalAccessToken" "Your Azure DevOps Personal Access Token"
+dotnet user-secrets set "Authentication:Microsoft:TenantId" "Crysta Learn TenantId"
+dotnet user-secrets set "Authentication:Microsoft:ClientId" "Crysta Learn ClientId"
+dotnet user-secrets set "Authentication:Microsoft:ClientSecret" "Crysta Learn Client Secret"
 
 cd src/Core/CrystaLearn.Core.Test
 dotnet user-secrets init
 dotnet user-secrets set "ConnectionStrings:PostgresConnectionString" "Your SQL Server Connection String"
 dotnet user-secrets set "GitHub:GitHubAccessToken" "Your GitHub Access Token"
 dotnet user-secrets set "AzureDevOps:PersonalAccessToken" "Your Azure DevOps Personal Access Token"
+dotnet user-secrets set "Authentication:Microsoft:TenantId" "Crysta Learn TenantId"
+dotnet user-secrets set "Authentication:Microsoft:ClientId" "Crysta Learn ClientId"
+dotnet user-secrets set "Authentication:Microsoft:ClientSecret" "Crysta Learn Client Secret"
 ```
 
 Remember to replace `"Your SQL Server Connection String"` and `"Your GitHub Access Token"` with your actual connection string and access token.
