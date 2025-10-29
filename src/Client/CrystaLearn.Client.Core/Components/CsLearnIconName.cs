@@ -21,7 +21,7 @@ public static class CsLearnIconName
     public const string Pin = "icon-pin";
     public const string Pro = "icon-pro";
     public const string Zoning = "icon-zoning";
-    public const string checkMark = "icon-circle-checkmark";
+    public const string CheckMark = "icon-circle-checkmark";
     public const string Message = "icon-message";
     public const string ArrowToRight = "icon-arrow-4";
     public const string WarningCircle = "icon-warning1";
