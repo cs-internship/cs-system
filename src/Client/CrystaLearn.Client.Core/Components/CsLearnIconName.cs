@@ -6,7 +6,7 @@ public static class CsLearnIconName
     public const string Bed = "icon-bedroom";
     public const string Brightness = "icon-brightness";
     public const string Check = "icon-check";
-    public const string Chineese = "icon-chineese";
+    public const string Chinese = "icon-chinese";
     public const string Delete = "icon-delete";
     public const string English = "icon-english";
     public const string Farsi = "icon-farsi";
