@@ -12,6 +12,7 @@ jobs:
     env:
       AZUREDEVOPS__PERSONALACCESSTOKEN: ${{ secrets.AZUREDEVOPS__PERSONALACCESSTOKEN }}
       CONNECTIONSTRINGS__POSTGRESCONNECTIONSTRING: ${{ secrets.CONNECTIONSTRINGS__POSTGRESCONNECTIONSTRING }}
+      GitHub__GitHubAccessToken : ${{ secrets.GITHUBACCESSTOKEN }}
     steps:
       - name: Checkout source code
         uses: actions/checkout@v4
