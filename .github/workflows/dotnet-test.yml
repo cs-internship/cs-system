@@ -9,7 +9,9 @@ on:
 jobs:
   build-and-test:
     runs-on: ubuntu-latest
-
+    env:
+      AZUREDEVOPS__PERSONALACCESSTOKEN: ${{ secrets.AZUREDEVOPS__PERSONALACCESSTOKEN }}
+      CONNECTIONSTRINGS__POSTGRESCONNECTIONSTRING: ${{ secrets.CONNECTIONSTRINGS__POSTGRESCONNECTIONSTRING }}
     steps:
       - name: Checkout source code
         uses: actions/checkout@v4
