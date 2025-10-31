@@ -25,12 +25,12 @@ jobs:
 
       - name: Install wasm
         run:  cd src && dotnet workload install wasm-tools
-        
+
       - name: Restore dependencies
-        run: dotnet restore CrystaLearn.sln
+        run: dotnet restore CrystaLearn.TestOnly.sln
 
       - name: Build
-        run: dotnet build CrystaLearn.sln --no-restore
+        run: dotnet build CrystaLearn.TestOnly.sln --no-restore
 
       - name: Run tests
-        run: dotnet test CrystaLearn.sln --no-build --verbosity normal
+        run: dotnet test CrystaLearn.TestOnly.sln --no-build --verbosity normal
