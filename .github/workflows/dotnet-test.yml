@@ -32,14 +32,14 @@ jobs:
       - name: Restore dependencies
         run: dotnet restore CrystaLearn.TestOnly.sln
 
+      - name: Build
+        run: dotnet build CrystaLearn.TestOnly.sln --no-restore
+
       - name: Install Playwright Browsers
         run:  |
             cd src/Test/CrystaLearn.Test
             dotnet tool install Microsoft.Playwright.CLI
             dotnet playwright install
-
-      - name: Build
-        run: dotnet build CrystaLearn.TestOnly.sln --no-restore
-
+            
       - name: Run tests
         run: dotnet test CrystaLearn.TestOnly.sln --no-build --verbosity normal
