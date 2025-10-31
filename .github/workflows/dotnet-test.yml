@@ -2,9 +2,9 @@ name: .NET Test
 
 on:
   push:
-    branches: [ develop,main ]
+    branches: [ develop, main ]
   pull_request:
-    branches: [ develop,main ]
+    branches: [ develop, main ]
 
 jobs:
   build-and-test:
