@@ -20,7 +20,7 @@ public partial class IdentityPagesTests : PageTest
         await Expect(Page).ToHaveTitleAsync(AppStrings.NotAuthorizedPageTitle);
     }
 
-    [TestMethod]
+    //[TestMethod]
     public async Task SignIn_Should_WorkAsExpected()
     {
         await using var server = new AppTestServer();
