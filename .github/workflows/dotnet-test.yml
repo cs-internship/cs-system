@@ -23,11 +23,14 @@ jobs:
         with:
           node-version: 23
 
+      - name: Install wasm
+        run:  cd src && dotnet workload install wasm-tools
+        
       - name: Restore dependencies
-        run: dotnet restore .\CrystaLearn.sln
+        run: dotnet restore CrystaLearn.sln
 
       - name: Build
-        run: dotnet build .\CrystaLearn.sln --no-restore
+        run: dotnet build CrystaLearn.sln --no-restore
 
       - name: Run tests
-        run: dotnet test .\CrystaLearn.sln --no-build --verbosity normal
+        run: dotnet test CrystaLearn.sln --no-build --verbosity normal
