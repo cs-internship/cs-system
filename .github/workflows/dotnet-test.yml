@@ -30,9 +30,10 @@ jobs:
         run:  cd src && dotnet workload install wasm-tools
 
       - name: Restore dependencies
-        run: |
-            dotnet restore CrystaLearn.TestOnly.sln
-            dotnet playwright install
+        run: dotnet restore CrystaLearn.TestOnly.sln
+
+      - name: Install Playwright Browsers
+        run:  dotnet playwright install
 
       - name: Build
         run: dotnet build CrystaLearn.TestOnly.sln --no-restore
