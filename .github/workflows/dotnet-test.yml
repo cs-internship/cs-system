@@ -33,7 +33,10 @@ jobs:
         run: dotnet restore CrystaLearn.TestOnly.sln
 
       - name: Install Playwright Browsers
-        run:  dotnet playwright install
+        run:  |
+            cd src/Test/CrystaLearn.Test
+            dotnet tool install Microsoft.Playwright.CLI
+            dotnet playwright install
 
       - name: Build
         run: dotnet build CrystaLearn.TestOnly.sln --no-restore
