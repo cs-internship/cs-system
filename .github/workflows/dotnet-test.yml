@@ -1,0 +1,38 @@
+name: .NET Test
+
+on:
+  push:
+    branches: [ develop,main ]
+  pull_request:
+    branches: [ develop,main ]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout source code
+        uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          global-json-file: global.json
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 23
+
+      - name: Use Bit.ResxTranslator
+        run: |
+          dotnet tool install --global Bit.ResxTranslator
+          bit-resx-translate
+
+      - name: Restore dependencies
+        run: dotnet restore .\CrystaLearn.sln
+
+      - name: Build
+        run: dotnet build .\CrystaLearn.sln --no-restore
+
+      - name: Run tests
+        run: dotnet test .\CrystaLearn.sln --no-build --verbosity normal
