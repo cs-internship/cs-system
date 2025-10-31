@@ -38,7 +38,7 @@ jobs:
       - name: Install Playwright Browsers
         run:  |
             cd src/Test/CrystaLearn.Test
-            dotnet tool install Microsoft.Playwright.CLI
+            dotnet tool restore
             dotnet playwright install
             
       - name: Run tests
