@@ -23,11 +23,6 @@ jobs:
         with:
           node-version: 23
 
-      - name: Use Bit.ResxTranslator
-        run: |
-          dotnet tool install --global Bit.ResxTranslator
-          bit-resx-translate
-
       - name: Restore dependencies
         run: dotnet restore .\CrystaLearn.sln
 
