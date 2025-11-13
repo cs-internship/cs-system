@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace CrystaLearn.Core.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20251113113537_SyncAzureDevOpsTasks")]
+    [Migration("20251113120438_SyncAzureDevOpsTasks")]
     partial class SyncAzureDevOpsTasks
     {
         /// <inheritdoc />
@@ -134,8 +134,7 @@ namespace CrystaLearn.Core.Migrations
                         .HasColumnType("uuid");
 
                     b.Property<string>("AssignedToText")
-                        .HasMaxLength(255)
-                        .HasColumnType("character varying(255)");
+                        .HasColumnType("text");
 
                     b.Property<int>("AttachmentsCount")
                         .HasColumnType("integer");
@@ -155,7 +154,7 @@ namespace CrystaLearn.Core.Migrations
                         .HasMaxLength(200)
                         .HasColumnType("character varying(200)");
 
-                    b.Property<DateTimeOffset>("ChangedDate")
+                    b.Property<DateTimeOffset?>("ChangedDate")
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<DateTimeOffset?>("ClosedDate")
@@ -168,8 +167,7 @@ namespace CrystaLearn.Core.Migrations
                         .HasColumnType("uuid");
 
                     b.Property<string>("CompletedByText")
-                        .HasMaxLength(255)
-                        .HasColumnType("character varying(255)");
+                        .HasColumnType("text");
 
                     b.Property<double?>("CompletedWork")
                         .HasColumnType("double precision");
@@ -177,7 +175,7 @@ namespace CrystaLearn.Core.Migrations
                     b.Property<DateTimeOffset>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<string>("CreatedBy")
+                    b.Property<string>("CreatedByDisplayName")
                         .HasMaxLength(255)
                         .HasColumnType("character varying(255)");
 
@@ -185,14 +183,13 @@ namespace CrystaLearn.Core.Migrations
                         .HasMaxLength(200)
                         .HasColumnType("character varying(200)");
 
-                    b.Property<string>("CreatedByText")
-                        .HasMaxLength(255)
-                        .HasColumnType("character varying(255)");
-
-                    b.Property<Guid?>("CreatedByUserId")
+                    b.Property<Guid?>("CreatedById1")
                         .HasColumnType("uuid");
 
-                    b.Property<DateTimeOffset>("CreatedDate")
+                    b.Property<string>("CreatedByText")
+                        .HasColumnType("text");
+
+                    b.Property<DateTimeOffset?>("CreatedDate")
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<int?>("CreatedFromRevisionId")
@@ -208,8 +205,7 @@ namespace CrystaLearn.Core.Migrations
                         .HasColumnType("text");
 
                     b.Property<string>("DescriptionHtml")
-                        .HasMaxLength(2000)
-                        .HasColumnType("character varying(2000)");
+                        .HasColumnType("text");
 
                     b.Property<DateTimeOffset?>("DueDate")
                         .HasColumnType("timestamp with time zone");
@@ -240,19 +236,18 @@ namespace CrystaLearn.Core.Migrations
                     b.Property<int?>("Priority")
                         .HasColumnType("integer");
 
-                    b.Property<Guid>("ProjectId")
+                    b.Property<Guid?>("ProjectId")
                         .HasColumnType("uuid");
 
                     b.Property<string>("ProjectName")
                         .HasMaxLength(255)
                         .HasColumnType("character varying(255)");
 
-                    b.Property<int>("ProviderTaskId")
-                        .HasColumnType("integer");
+                    b.Property<string>("ProviderTaskId")
+                        .HasColumnType("text");
 
                     b.Property<string>("ProviderTaskUrl")
-                        .HasMaxLength(1000)
-                        .HasColumnType("character varying(1000)");
+                        .HasColumnType("text");
 
                     b.Property<string>("RawJson")
                         .HasColumnType("text");
@@ -314,8 +309,7 @@ namespace CrystaLearn.Core.Migrations
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("Title")
-                        .HasMaxLength(500)
-                        .HasColumnType("character varying(500)");
+                        .HasColumnType("text");
 
                     b.Property<DateTimeOffset>("UpdatedAt")
                         .HasColumnType("timestamp with time zone");
@@ -332,7 +326,7 @@ namespace CrystaLearn.Core.Migrations
 
                     b.HasIndex("CompletedById");
 
-                    b.HasIndex("CreatedByUserId");
+                    b.HasIndex("CreatedById1");
 
                     b.HasIndex("CreatedDate");
 
@@ -1493,9 +1487,9 @@ namespace CrystaLearn.Core.Migrations
                         .WithMany()
                         .HasForeignKey("CompletedById");
 
-                    b.HasOne("CrystaLearn.Core.Models.Identity.User", "CreatedByUser")
+                    b.HasOne("CrystaLearn.Core.Models.Identity.User", "CreatedBy")
                         .WithMany()
-                        .HasForeignKey("CreatedByUserId");
+                        .HasForeignKey("CreatedById1");
 
                     b.HasOne("CrystaLearn.Core.Models.Crysta.CrystaProgram", "CrystaProgram")
                         .WithMany()
@@ -1664,7 +1658,7 @@ namespace CrystaLearn.Core.Migrations
 
                     b.Navigation("CompletedBy");
 
-                    b.Navigation("CreatedByUser");
+                    b.Navigation("CreatedBy");
 
                     b.Navigation("CrystaProgram");
 

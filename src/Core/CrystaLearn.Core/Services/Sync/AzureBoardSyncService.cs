@@ -195,7 +195,7 @@ public partial class AzureBoardSyncService : IAzureBoardSyncService
         
         var task = new CrystaTask
         {
-            ProviderTaskId = workItem.Id ?? 0,
+            ProviderTaskId = workItem.Id?.ToString(),
             Title = title,
             //Description = description,
             //DescriptionHtml = description,
