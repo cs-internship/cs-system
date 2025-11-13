@@ -5,11 +5,70 @@ namespace CrystaLearn.Core.Models.Crysta;
 
 public class CrystaTaskComment : Entity
 {
+    // Azure Work Item ID this comment belongs to
+    public int AzureWorkItemId { get; set; }
+
+    // Azure comment/discussion id
+    [MaxLength(200)]
+    public string? AzureCommentId { get; set; }
+
+    // Thread identifiers for threaded discussions
+    public int? ThreadId { get; set; }
+    public int? ParentCommentId { get; set; }
+
+    // Comment content
+    public string? Text { get; set; }
+    public string? FormattedText { get; set; }
+
+    // Author information
+    [MaxLength(255)]
+    public string? CreatedBy { get; set; }
+
+    [MaxLength(200)]
+    public string? CreatedById { get; set; }
+
+    public DateTimeOffset CreatedDate { get; set; }
+
+    // Edit information
+    [MaxLength(255)]
+    public string? EditedBy { get; set; }
+
+    [MaxLength(200)]
+    public string? EditedById { get; set; }
+
+    public DateTimeOffset? EditedDate { get; set; }
+
+    // Status flags
+    public bool IsDeleted { get; set; }
+    public bool IsSystem { get; set; }
+
+    // Comment metadata
+    [MaxLength(100)]
+    public string? CommentType { get; set; }
+
+    [MaxLength(100)]
+    public string? Visibility { get; set; }
+
+    // Raw data
+    public string? RawJson { get; set; }
+
+    [MaxLength(1000)]
+    public string? ProviderCommentUrl { get; set; }
+
+    public string? Reactions { get; set; }
+
+    // Revision number when this comment was recorded
+    public int Revision { get; set; }
+
+    // Relationships
     public Guid CrystaTaskId { get; set; }
     public CrystaTask CrystaTask { get; set; } = default!;
+
+    // Legacy fields for backward compatibility
     public User? User { get; set; }
     public SyncInfo? SyncInfo { get; set; }
     public CrystaProgram? CrystaProgram { get; set; }
+    
     public string? Content { get; set; }
     public string? ContentHtml { get; set; }
 }
