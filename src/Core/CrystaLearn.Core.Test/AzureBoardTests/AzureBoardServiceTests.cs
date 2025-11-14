@@ -197,11 +197,24 @@ public partial class AzureBoardServiceTests : TestBase
         // Arrange
         var services = CreateServiceProvider();
         var service = services.GetRequiredService<IAzureBoardService>();
+        var configuration = services.GetRequiredService<IConfiguration>();
+        var organization = "cs-internship";
+        var pat = configuration["AzureDevOps:PersonalAccessToken"]
+                  ?? throw new Exception("No PAT provided.");
+
+        var project = "CS Internship Program";
+
+        var config = new AzureBoardSyncConfig
+        {
+            Organization = organization,
+            PersonalAccessToken = pat,
+            Project = project
+        };
 
 
         // Act
         var fields = new string[] { "System.Id", "System.Title", "System.State", "System.Tags", "System.WorkItemType", "System.AssignedTo", "System.CreatedDate", "System.ChangedDate" };
-        var list = await service.GetRevisionsAsync(10455);
+        var list = await service.GetRevisionsAsync(config, 10455);
 
         // Assert
     }
@@ -212,11 +225,24 @@ public partial class AzureBoardServiceTests : TestBase
         // Arrange
         var services = CreateServiceProvider();
         var service = services.GetRequiredService<IAzureBoardService>();
+        var configuration = services.GetRequiredService<IConfiguration>();
+        var organization = "cs-internship";
+        var pat = configuration["AzureDevOps:PersonalAccessToken"]
+                  ?? throw new Exception("No PAT provided.");
+
+        var project = "CS Internship Program";
+
+        var config = new AzureBoardSyncConfig
+        {
+            Organization = organization,
+            PersonalAccessToken = pat,
+            Project = project
+        };
 
 
         // Act
         var fields = new string[] { "System.Id", "System.Title", "System.State", "System.Tags", "System.WorkItemType", "System.AssignedTo", "System.CreatedDate", "System.ChangedDate" };
-        var list = await service.GetUpdatesAsync(10455);
+        var list = await service.GetUpdatesAsync(config, 10455);
 
         // Assert
     }

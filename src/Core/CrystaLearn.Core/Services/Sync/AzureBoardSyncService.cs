@@ -54,32 +54,39 @@ public partial class AzureBoardSyncService : IAzureBoardSyncService
                  [Changed Date] Asc
              """;
 
+        var totalResult = new SyncResult { AddCount = 0, UpdateCount = 0, SameCount = 0 };
+
         await foreach (var workItems in AzureBoardService.EnumerateWorkItemsQueryAsync(config, query, top: 200))
         {
             var tasks = workItems
                         .Select(ToCrystaTask)
                         .ToList();
             
-            await SyncWorkItemsAsync(tasks);
-            await SyncUpdatesAsync(tasks);
-            await SyncCommentsAsync(tasks);
-            await SyncRevisionsAsync(tasks);
+            var workItemResult = await SyncWorkItemsAsync(tasks);
+            var updatesResult = await SyncUpdatesAsync(config, tasks);
+            var commentsResult = await SyncCommentsAsync(config, tasks);
+            var revisionsResult = await SyncRevisionsAsync(config, tasks);
+
+            // Aggregate results
+            totalResult.AddCount += workItemResult.AddCount + updatesResult.AddCount + commentsResult.AddCount + revisionsResult.AddCount;
+            totalResult.UpdateCount += workItemResult.UpdateCount + updatesResult.UpdateCount + commentsResult.UpdateCount + revisionsResult.UpdateCount;
+            totalResult.SameCount += workItemResult.SameCount + updatesResult.SameCount + commentsResult.SameCount + revisionsResult.SameCount;
         }
 
-        return new SyncResult
-        {
-            AddCount = 0,
-            UpdateCount = 0,
-            SameCount = 0
-        };
+        // Update module sync info
+        module.SyncInfo.LastSyncDateTime = DateTimeOffset.Now;
+        module.SyncInfo.SyncStatus = SyncStatus.Success;
+
+        return totalResult;
     }
 
     /// <summary>
     /// Sync CrystaTaskUpdate
     /// </summary>
+    /// <param name="config"></param>
     /// <param name="tasks"></param>
     /// <returns></returns>
-    private async Task<SyncResult> SyncUpdatesAsync(List<CrystaTask> tasks)
+    private async Task<SyncResult> SyncUpdatesAsync(AzureBoardSyncConfig config, List<CrystaTask> tasks)
     {
         var allUpdates = new List<CrystaTaskUpdate>();
         
@@ -90,7 +97,6 @@ public partial class AzureBoardSyncService : IAzureBoardSyncService
                 continue;
             }
 
-            var config = await GetConfigFromTask(task);
             var azureUpdates = await AzureBoardService.GetUpdatesAsync(config, workItemId);
             
             foreach (var update in azureUpdates)
@@ -149,9 +155,10 @@ public partial class AzureBoardSyncService : IAzureBoardSyncService
     /// <summary>
     /// Sync CrystaTaskComment
     /// </summary>
+    /// <param name="config"></param>
     /// <param name="tasks"></param>
     /// <returns></returns>
-    private async Task<SyncResult> SyncCommentsAsync(List<CrystaTask> tasks)
+    private async Task<SyncResult> SyncCommentsAsync(AzureBoardSyncConfig config, List<CrystaTask> tasks)
     {
         var allComments = new List<CrystaTaskComment>();
         
@@ -162,7 +169,6 @@ public partial class AzureBoardSyncService : IAzureBoardSyncService
                 continue;
             }
 
-            var config = await GetConfigFromTask(task);
             var azureComments = await AzureBoardService.GetCommentsAsync(config, workItemId);
             
             foreach (var comment in azureComments)
@@ -222,9 +228,10 @@ public partial class AzureBoardSyncService : IAzureBoardSyncService
     /// <summary>
     /// Sync CrystaTaskRevision
     /// </summary>
+    /// <param name="config"></param>
     /// <param name="tasks"></param>
     /// <returns></returns>
-    private async Task<SyncResult> SyncRevisionsAsync(List<CrystaTask> tasks)
+    private async Task<SyncResult> SyncRevisionsAsync(AzureBoardSyncConfig config, List<CrystaTask> tasks)
     {
         var allRevisions = new List<CrystaTaskRevision>();
         
@@ -235,7 +242,6 @@ public partial class AzureBoardSyncService : IAzureBoardSyncService
                 continue;
             }
 
-            var config = await GetConfigFromTask(task);
             var azureRevisions = await AzureBoardService.GetRevisionsAsync(config, workItemId);
             
             foreach (var revision in azureRevisions)
@@ -520,22 +526,6 @@ public partial class AzureBoardSyncService : IAzureBoardSyncService
             CreatedDate = createdDate,
             ProjectId = Guid.Empty, // Will be set from context if needed
             ProjectName = revision.Fields?.GetValueOrDefault("System.TeamProject")?.ToString()
-        };
-    }
-
-    private async Task<AzureBoardSyncConfig> GetConfigFromTask(CrystaTask task)
-    {
-        // For now, return a default config from Configuration
-        // In production, this should be retrieved from the CrystaProgramSyncModule
-        var organization = Configuration["AzureDevOps:Organization"] ?? "cs-internship";
-        var pat = Configuration["AzureDevOps:PersonalAccessToken"] ?? throw new Exception("No PAT provided");
-        var project = Configuration["AzureDevOps:Project"] ?? "CS Internship Program";
-
-        return new AzureBoardSyncConfig
-        {
-            Organization = organization,
-            PersonalAccessToken = pat,
-            Project = project
         };
     }
 }
