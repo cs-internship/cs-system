@@ -18,4 +18,9 @@ public interface ICrystaTaskRepository
     Task AddOrUpdateCrystaTaskCommentsAsync(List<CrystaTaskComment> comments);
     Task AddOrUpdateCrystaTaskUpdatesAsync(List<CrystaTaskUpdate> updates);
     Task AddOrUpdateCrystaTaskRevisionsAsync(List<CrystaTaskRevision> revisions);
+    Task<int> MarkCrystaTasksAsDeletedAsync(List<string> syncIds);
+    Task<int> DeleteCrystaTaskCommentsAsync(List<string> syncIds);
+    Task<int> DeleteCrystaTaskUpdatesAsync(List<string> syncIds);
+    Task<int> DeleteCrystaTaskRevisionsAsync(List<string> syncIds);
+    Task<List<string>> GetAllWorkItemSyncIdsAsync(string project);
 }

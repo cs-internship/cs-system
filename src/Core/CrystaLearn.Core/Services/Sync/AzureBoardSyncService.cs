@@ -54,13 +54,25 @@ public partial class AzureBoardSyncService : IAzureBoardSyncService
                  [Changed Date] Asc
              """;
 
-        var totalResult = new SyncResult { AddCount = 0, UpdateCount = 0, SameCount = 0 };
+        var totalResult = new SyncResult { AddCount = 0, UpdateCount = 0, SameCount = 0, DeleteCount = 0 };
+
+        // Collect all active work item IDs from Azure Board
+        var activeWorkItemIds = new HashSet<string>();
 
         await foreach (var workItems in AzureBoardService.EnumerateWorkItemsQueryAsync(config, query, top: 200))
         {
             var tasks = workItems
                         .Select(ToCrystaTask)
                         .ToList();
+            
+            // Collect active work item IDs
+            foreach (var task in tasks)
+            {
+                if (!string.IsNullOrEmpty(task.WorkItemSyncInfo.SyncId))
+                {
+                    activeWorkItemIds.Add(task.WorkItemSyncInfo.SyncId);
+                }
+            }
             
             var workItemResult = await SyncWorkItemsAsync(tasks);
             var updatesResult = await SyncUpdatesAsync(config, tasks);
@@ -71,6 +83,16 @@ public partial class AzureBoardSyncService : IAzureBoardSyncService
             totalResult.AddCount += workItemResult.AddCount + updatesResult.AddCount + commentsResult.AddCount + revisionsResult.AddCount;
             totalResult.UpdateCount += workItemResult.UpdateCount + updatesResult.UpdateCount + commentsResult.UpdateCount + revisionsResult.UpdateCount;
             totalResult.SameCount += workItemResult.SameCount + updatesResult.SameCount + commentsResult.SameCount + revisionsResult.SameCount;
+        }
+
+        // Handle deletions - find tasks in our DB that are no longer in Azure Board
+        var allLocalWorkItemIds = await CrystaTaskRepository.GetAllWorkItemSyncIdsAsync(project);
+        var deletedWorkItemIds = allLocalWorkItemIds.Except(activeWorkItemIds).ToList();
+        
+        if (deletedWorkItemIds.Count > 0)
+        {
+            var deleteCount = await CrystaTaskRepository.MarkCrystaTasksAsDeletedAsync(deletedWorkItemIds);
+            totalResult.DeleteCount += deleteCount;
         }
 
         // Update module sync info

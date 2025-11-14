@@ -284,4 +284,101 @@ public partial class CrystaTaskRepository : ICrystaTaskRepository
 
         await DbContext.SaveChangesAsync();
     }
+
+    public async Task<int> MarkCrystaTasksAsDeletedAsync(List<string> syncIds)
+    {
+        if (syncIds == null || syncIds.Count == 0)
+        {
+            return 0;
+        }
+
+        var tasksToDelete = await DbContext.CrystaTasks
+            .Where(t => syncIds.Contains(t.WorkItemSyncInfo.SyncId ?? ""))
+            .ToListAsync();
+
+        foreach (var task in tasksToDelete)
+        {
+            task.IsDeleted = true;
+            task.WorkItemSyncInfo.SyncStatus = SyncStatus.Deleted;
+            task.WorkItemSyncInfo.LastSyncDateTime = DateTimeOffset.Now;
+        }
+
+        await DbContext.SaveChangesAsync();
+        return tasksToDelete.Count;
+    }
+
+    public async Task<int> DeleteCrystaTaskCommentsAsync(List<string> syncIds)
+    {
+        if (syncIds == null || syncIds.Count == 0)
+        {
+            return 0;
+        }
+
+        var commentsToDelete = await DbContext.CrystaTaskComments
+            .Where(c => c.SyncInfo != null && syncIds.Contains(c.SyncInfo.SyncId ?? ""))
+            .ToListAsync();
+
+        foreach (var comment in commentsToDelete)
+        {
+            comment.IsDeleted = true;
+            if (comment.SyncInfo != null)
+            {
+                comment.SyncInfo.SyncStatus = SyncStatus.Deleted;
+                comment.SyncInfo.LastSyncDateTime = DateTimeOffset.Now;
+            }
+        }
+
+        await DbContext.SaveChangesAsync();
+        return commentsToDelete.Count;
+    }
+
+    public async Task<int> DeleteCrystaTaskUpdatesAsync(List<string> syncIds)
+    {
+        if (syncIds == null || syncIds.Count == 0)
+        {
+            return 0;
+        }
+
+        var updatesToDelete = await DbContext.CrystaTaskUpdates
+            .Where(u => u.SyncInfo != null && syncIds.Contains(u.SyncInfo.SyncId ?? ""))
+            .ToListAsync();
+
+#pragma warning disable NonAsyncEFCoreMethodsUsageAnalyzer
+        DbContext.CrystaTaskUpdates.RemoveRange(updatesToDelete);
+#pragma warning restore NonAsyncEFCoreMethodsUsageAnalyzer
+
+        await DbContext.SaveChangesAsync();
+        return updatesToDelete.Count;
+    }
+
+    public async Task<int> DeleteCrystaTaskRevisionsAsync(List<string> syncIds)
+    {
+        if (syncIds == null || syncIds.Count == 0)
+        {
+            return 0;
+        }
+
+        var revisionsToDelete = await DbContext.CrystaTaskRevisions
+            .Where(r => syncIds.Contains($"{r.AzureWorkItemId}-{r.RevisionNumber}"))
+            .ToListAsync();
+
+#pragma warning disable NonAsyncEFCoreMethodsUsageAnalyzer
+        DbContext.CrystaTaskRevisions.RemoveRange(revisionsToDelete);
+#pragma warning restore NonAsyncEFCoreMethodsUsageAnalyzer
+
+        await DbContext.SaveChangesAsync();
+        return revisionsToDelete.Count;
+    }
+
+    public async Task<List<string>> GetAllWorkItemSyncIdsAsync(string project)
+    {
+        // Get all non-deleted tasks sync IDs
+        var syncIds = await DbContext.CrystaTasks
+            .Where(t => !t.IsDeleted)
+            .Select(t => t.WorkItemSyncInfo.SyncId ?? "")
+            .Where(id => !string.IsNullOrEmpty(id))
+            .ToListAsync();
+
+        return syncIds;
+    }
 }
