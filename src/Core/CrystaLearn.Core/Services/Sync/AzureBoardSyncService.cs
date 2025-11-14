@@ -74,6 +74,11 @@ public partial class AzureBoardSyncService : IAzureBoardSyncService
         };
     }
 
+    /// <summary>
+    /// Sync CrystaTask
+    /// </summary>
+    /// <param name="tasks"></param>
+    /// <returns></returns>
     private async Task<SyncResult> SyncUpdatesAsync(List<CrystaTask> tasks)
     {
         return new SyncResult
@@ -84,6 +89,11 @@ public partial class AzureBoardSyncService : IAzureBoardSyncService
         };
     }
 
+    /// <summary>
+    /// Sync CrystaTaskComment
+    /// </summary>
+    /// <param name="tasks"></param>
+    /// <returns></returns>
     private async Task<SyncResult> SyncCommentsAsync(List<CrystaTask> tasks)
     {
         return new SyncResult
@@ -94,6 +104,12 @@ public partial class AzureBoardSyncService : IAzureBoardSyncService
         };
     }
 
+
+    /// <summary>
+    /// Sync CrystaTaskRevision
+    /// </summary>
+    /// <param name="tasks"></param>
+    /// <returns></returns>
     private async Task<SyncResult> SyncRevisionsAsync(List<CrystaTask> tasks)
     {
         return new SyncResult
@@ -104,6 +120,11 @@ public partial class AzureBoardSyncService : IAzureBoardSyncService
         };
     }
 
+    /// <summary>
+    /// Sync CrystaTask
+    /// </summary>
+    /// <param name="tasks"></param>
+    /// <returns></returns>
     private async Task<SyncResult> SyncWorkItemsAsync(List<CrystaTask> tasks)
     {
         var boardSyncItems = tasks
@@ -130,7 +151,7 @@ public partial class AzureBoardSyncService : IAzureBoardSyncService
 
         var sameList = remainedList.Except(toUpdateList).ToList();
 
-        // ToDo: do the real sync
+        // ToDo: do the real sync CrystaTask
 
         return new SyncResult
         {
