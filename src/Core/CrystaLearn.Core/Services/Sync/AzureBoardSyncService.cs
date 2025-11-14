@@ -75,17 +75,74 @@ public partial class AzureBoardSyncService : IAzureBoardSyncService
     }
 
     /// <summary>
-    /// Sync CrystaTask
+    /// Sync CrystaTaskUpdate
     /// </summary>
     /// <param name="tasks"></param>
     /// <returns></returns>
     private async Task<SyncResult> SyncUpdatesAsync(List<CrystaTask> tasks)
     {
+        var allUpdates = new List<CrystaTaskUpdate>();
+        
+        foreach (var task in tasks)
+        {
+            if (string.IsNullOrEmpty(task.ProviderTaskId) || !int.TryParse(task.ProviderTaskId, out var workItemId))
+            {
+                continue;
+            }
+
+            var config = await GetConfigFromTask(task);
+            var azureUpdates = await AzureBoardService.GetUpdatesAsync(config, workItemId);
+            
+            foreach (var update in azureUpdates)
+            {
+                var crystaUpdate = ToCrystaTaskUpdate(update, task.Id, workItemId);
+                if (crystaUpdate != null)
+                {
+                    allUpdates.Add(crystaUpdate);
+                }
+            }
+        }
+
+        if (allUpdates.Count == 0)
+        {
+            return new SyncResult { AddCount = 0, UpdateCount = 0, SameCount = 0 };
+        }
+
+        var updateSyncItems = allUpdates
+            .Select(u => new SyncItem 
+            { 
+                Id = u.Id,
+                SyncInfo = u.SyncInfo ?? new SyncInfo()
+            })
+            .ToList();
+
+        var ids = updateSyncItems.Select(u => u.SyncInfo.SyncId ?? "").Where(id => !string.IsNullOrEmpty(id)).ToList();
+        var existingUpdateSyncItems = await CrystaTaskRepository.GetUpdatesSyncItemsAsync(ids);
+
+        var toAddList = updateSyncItems
+                        .Where(board => existingUpdateSyncItems.All(existing => board.SyncInfo.SyncId != existing.SyncInfo.SyncId))
+                        .ToList();
+
+        var remainedList = updateSyncItems.Except(toAddList).ToList();
+
+        var toUpdateList = remainedList
+                           .Where(board =>
+                               existingUpdateSyncItems.Any(existing => board.SyncInfo.SyncId == existing.SyncInfo.SyncId && board.SyncInfo.ContentHash != existing.SyncInfo.ContentHash))
+                           .ToList();
+
+        var sameList = remainedList.Except(toUpdateList).ToList();
+
+        var toAddOrUpdate = allUpdates
+            .Where(u => toAddList.Any(s => s.Id == u.Id) || toUpdateList.Any(s => s.Id == u.Id))
+            .ToList();
+
+        await CrystaTaskRepository.AddOrUpdateCrystaTaskUpdatesAsync(toAddOrUpdate);
+
         return new SyncResult
         {
-            AddCount = 0,
-            UpdateCount = 0,
-            SameCount = 0
+            AddCount = toAddList.Count,
+            UpdateCount = toUpdateList.Count,
+            SameCount = sameList.Count
         };
     }
 
@@ -96,11 +153,68 @@ public partial class AzureBoardSyncService : IAzureBoardSyncService
     /// <returns></returns>
     private async Task<SyncResult> SyncCommentsAsync(List<CrystaTask> tasks)
     {
+        var allComments = new List<CrystaTaskComment>();
+        
+        foreach (var task in tasks)
+        {
+            if (string.IsNullOrEmpty(task.ProviderTaskId) || !int.TryParse(task.ProviderTaskId, out var workItemId))
+            {
+                continue;
+            }
+
+            var config = await GetConfigFromTask(task);
+            var azureComments = await AzureBoardService.GetCommentsAsync(config, workItemId);
+            
+            foreach (var comment in azureComments)
+            {
+                var crystaComment = ToCrystaTaskComment(comment, task.Id, workItemId);
+                if (crystaComment != null)
+                {
+                    allComments.Add(crystaComment);
+                }
+            }
+        }
+
+        if (allComments.Count == 0)
+        {
+            return new SyncResult { AddCount = 0, UpdateCount = 0, SameCount = 0 };
+        }
+
+        var commentSyncItems = allComments
+            .Select(c => new SyncItem 
+            { 
+                Id = c.Id,
+                SyncInfo = c.SyncInfo ?? new SyncInfo()
+            })
+            .ToList();
+
+        var ids = commentSyncItems.Select(c => c.SyncInfo.SyncId ?? "").Where(id => !string.IsNullOrEmpty(id)).ToList();
+        var existingCommentSyncItems = await CrystaTaskRepository.GetCommentsSyncItemsAsync(ids);
+
+        var toAddList = commentSyncItems
+                        .Where(board => existingCommentSyncItems.All(existing => board.SyncInfo.SyncId != existing.SyncInfo.SyncId))
+                        .ToList();
+
+        var remainedList = commentSyncItems.Except(toAddList).ToList();
+
+        var toUpdateList = remainedList
+                           .Where(board =>
+                               existingCommentSyncItems.Any(existing => board.SyncInfo.SyncId == existing.SyncInfo.SyncId && board.SyncInfo.ContentHash != existing.SyncInfo.ContentHash))
+                           .ToList();
+
+        var sameList = remainedList.Except(toUpdateList).ToList();
+
+        var toAddOrUpdate = allComments
+            .Where(c => toAddList.Any(s => s.Id == c.Id) || toUpdateList.Any(s => s.Id == c.Id))
+            .ToList();
+
+        await CrystaTaskRepository.AddOrUpdateCrystaTaskCommentsAsync(toAddOrUpdate);
+
         return new SyncResult
         {
-            AddCount = 0,
-            UpdateCount = 0,
-            SameCount = 0
+            AddCount = toAddList.Count,
+            UpdateCount = toUpdateList.Count,
+            SameCount = sameList.Count
         };
     }
 
@@ -112,11 +226,72 @@ public partial class AzureBoardSyncService : IAzureBoardSyncService
     /// <returns></returns>
     private async Task<SyncResult> SyncRevisionsAsync(List<CrystaTask> tasks)
     {
+        var allRevisions = new List<CrystaTaskRevision>();
+        
+        foreach (var task in tasks)
+        {
+            if (string.IsNullOrEmpty(task.ProviderTaskId) || !int.TryParse(task.ProviderTaskId, out var workItemId))
+            {
+                continue;
+            }
+
+            var config = await GetConfigFromTask(task);
+            var azureRevisions = await AzureBoardService.GetRevisionsAsync(config, workItemId);
+            
+            foreach (var revision in azureRevisions)
+            {
+                var crystaRevision = ToCrystaTaskRevision(revision, task.Id, workItemId);
+                if (crystaRevision != null)
+                {
+                    allRevisions.Add(crystaRevision);
+                }
+            }
+        }
+
+        if (allRevisions.Count == 0)
+        {
+            return new SyncResult { AddCount = 0, UpdateCount = 0, SameCount = 0 };
+        }
+
+        var revisionSyncItems = allRevisions
+            .Select(r => new SyncItem 
+            { 
+                Id = r.Id,
+                SyncInfo = new SyncInfo 
+                { 
+                    SyncId = $"{r.AzureWorkItemId}-{r.RevisionNumber}",
+                    ContentHash = r.SnapshotJson?.Sha() ?? ""
+                }
+            })
+            .ToList();
+
+        var ids = revisionSyncItems.Select(r => r.SyncInfo.SyncId ?? "").Where(id => !string.IsNullOrEmpty(id)).ToList();
+        var existingRevisionSyncItems = await CrystaTaskRepository.GetRevisionsSyncItemsAsync(ids);
+
+        var toAddList = revisionSyncItems
+                        .Where(board => existingRevisionSyncItems.All(existing => board.SyncInfo.SyncId != existing.SyncInfo.SyncId))
+                        .ToList();
+
+        var remainedList = revisionSyncItems.Except(toAddList).ToList();
+
+        var toUpdateList = remainedList
+                           .Where(board =>
+                               existingRevisionSyncItems.Any(existing => board.SyncInfo.SyncId == existing.SyncInfo.SyncId && board.SyncInfo.ContentHash != existing.SyncInfo.ContentHash))
+                           .ToList();
+
+        var sameList = remainedList.Except(toUpdateList).ToList();
+
+        var toAddOrUpdate = allRevisions
+            .Where(r => toAddList.Any(s => s.Id == r.Id) || toUpdateList.Any(s => s.Id == r.Id))
+            .ToList();
+
+        await CrystaTaskRepository.AddOrUpdateCrystaTaskRevisionsAsync(toAddOrUpdate);
+
         return new SyncResult
         {
-            AddCount = 0,
-            UpdateCount = 0,
-            SameCount = 0
+            AddCount = toAddList.Count,
+            UpdateCount = toUpdateList.Count,
+            SameCount = sameList.Count
         };
     }
 
@@ -130,11 +305,12 @@ public partial class AzureBoardSyncService : IAzureBoardSyncService
         var boardSyncItems = tasks
             .Select(task => new SyncItem 
             { 
+                Id = task.Id,
                 SyncInfo = task.WorkItemSyncInfo 
             })
             .ToList();
 
-        var ids = boardSyncItems.Select(wi => wi.SyncInfo.SyncId).ToList();
+        var ids = boardSyncItems.Select(wi => wi.SyncInfo.SyncId ?? "").Where(id => !string.IsNullOrEmpty(id)).ToList();
 
         var existingWorkItemSyncItems = await CrystaTaskRepository.GetWorkItemSyncItemsAsync(ids);
 
@@ -146,12 +322,16 @@ public partial class AzureBoardSyncService : IAzureBoardSyncService
 
         var toUpdateList = remainedList
                            .Where(board =>
-                               existingWorkItemSyncItems.Any(existing => board.SyncInfo.SyncId == existing.SyncInfo.SyncId && board.SyncInfo.SyncHash != existing.SyncInfo.SyncHash))
+                               existingWorkItemSyncItems.Any(existing => board.SyncInfo.SyncId == existing.SyncInfo.SyncId && board.SyncInfo.ContentHash != existing.SyncInfo.ContentHash))
                            .ToList();
 
         var sameList = remainedList.Except(toUpdateList).ToList();
 
-        // ToDo: do the real sync CrystaTask
+        var toAddOrUpdate = tasks
+            .Where(t => toAddList.Any(s => s.Id == t.Id) || toUpdateList.Any(s => s.Id == t.Id))
+            .ToList();
+
+        await CrystaTaskRepository.AddOrUpdateCrystaTasksAsync(toAddOrUpdate);
 
         return new SyncResult
         {
@@ -169,7 +349,7 @@ public partial class AzureBoardSyncService : IAzureBoardSyncService
         var syncInfo = new SyncInfo
         {
             SyncId = workItem.Id.ToString() ?? throw new Exception("Work Item with no ID from board is not valid."),
-            SyncHash = hash,
+            ContentHash = hash,
             LastSyncDateTime = DateTimeOffset.Now,
             LastSyncOffset = workItem.Id.ToString()
         };
@@ -229,5 +409,133 @@ public partial class AzureBoardSyncService : IAzureBoardSyncService
 
 
         return task;
+    }
+
+    private CrystaTaskComment? ToCrystaTaskComment(WorkItemComment comment, Guid crystaTaskId, int workItemId)
+    {
+        if (comment == null)
+        {
+            return null;
+        }
+
+        var json = JsonSerializer.Serialize(comment);
+        var hash = json.Sha();
+
+        // WorkItemComment properties: Text, RenderedText
+        return new CrystaTaskComment
+        {
+            CrystaTaskId = crystaTaskId,
+            AzureWorkItemId = workItemId,
+            Text = comment.Text,
+            FormattedText = comment.RenderedText,
+            Revision = 0, // Will be populated from context if available
+            CreatedDate = DateTimeOffset.Now,
+            RawJson = json,
+            SyncInfo = new SyncInfo
+            {
+                SyncId = $"{workItemId}-comment-{hash.Substring(0, 8)}",
+                ContentHash = hash,
+                LastSyncDateTime = DateTimeOffset.Now,
+                SyncStatus = SyncStatus.Success
+            }
+        };
+    }
+
+    private CrystaTaskUpdate? ToCrystaTaskUpdate(WorkItemUpdate update, Guid crystaTaskId, int workItemId)
+    {
+        if (update == null || update.Fields == null)
+        {
+            return null;
+        }
+
+        var json = JsonSerializer.Serialize(update);
+        var hash = json.Sha();
+
+        // Get the first field change for simplicity - in production you might create multiple updates
+        var firstFieldChange = update.Fields.FirstOrDefault();
+        
+        return new CrystaTaskUpdate
+        {
+            CrystaTaskId = crystaTaskId,
+            AzureWorkItemId = workItemId,
+            AzureUpdateId = update.Id.ToString(),
+            Revision = update.Rev,
+            ChangedBy = update.RevisedBy?.DisplayName,
+            ChangedById = update.RevisedBy?.Id.ToString(),
+            ChangedDate = update.RevisedDate,
+            FieldName = firstFieldChange.Key,
+            OldValue = firstFieldChange.Value?.OldValue?.ToString(),
+            NewValue = firstFieldChange.Value?.NewValue?.ToString(),
+            RawJson = json,
+            SyncInfo = new SyncInfo
+            {
+                SyncId = $"{workItemId}-update-{update.Id}",
+                ContentHash = hash,
+                LastSyncDateTime = DateTimeOffset.Now,
+                SyncStatus = SyncStatus.Success
+            }
+        };
+    }
+
+    private CrystaTaskRevision? ToCrystaTaskRevision(WorkItem revision, Guid crystaTaskId, int workItemId)
+    {
+        if (revision == null)
+        {
+            return null;
+        }
+
+        var json = JsonSerializer.Serialize(revision);
+        var hash = json.Sha();
+
+        var revisionNumber = revision.Rev ?? 0;
+        var title = revision.Fields?.GetValueOrDefault("System.Title")?.ToString();
+        var description = revision.Fields?.GetValueOrDefault("System.Description")?.ToString();
+        var state = revision.Fields?.GetValueOrDefault("System.State")?.ToString();
+        var changedBy = revision.Fields?.GetValueOrDefault("System.ChangedBy") as IdentityRef;
+        
+        DateTimeOffset changedDate = DateTimeOffset.Now;
+        if (revision.Fields?.GetValueOrDefault("System.ChangedDate") is string changedDateStr)
+        {
+            DateTimeOffset.TryParse(changedDateStr, out changedDate);
+        }
+        
+        DateTimeOffset createdDate = DateTimeOffset.Now;
+        if (revision.Fields?.GetValueOrDefault("System.CreatedDate") is string createdDateStr)
+        {
+            DateTimeOffset.TryParse(createdDateStr, out createdDate);
+        }
+
+        return new CrystaTaskRevision
+        {
+            CrystaTaskId = crystaTaskId,
+            AzureWorkItemId = workItemId,
+            RevisionNumber = revisionNumber,
+            SnapshotJson = json,
+            RawJson = json,
+            Title = title,
+            Description = description,
+            State = state,
+            ChangedBy = changedBy?.DisplayName,
+            ChangedDate = changedDate,
+            CreatedDate = createdDate,
+            ProjectId = Guid.Empty, // Will be set from context if needed
+            ProjectName = revision.Fields?.GetValueOrDefault("System.TeamProject")?.ToString()
+        };
+    }
+
+    private async Task<AzureBoardSyncConfig> GetConfigFromTask(CrystaTask task)
+    {
+        // For now, return a default config from Configuration
+        // In production, this should be retrieved from the CrystaProgramSyncModule
+        var organization = Configuration["AzureDevOps:Organization"] ?? "cs-internship";
+        var pat = Configuration["AzureDevOps:PersonalAccessToken"] ?? throw new Exception("No PAT provided");
+        var project = Configuration["AzureDevOps:Project"] ?? "CS Internship Program";
+
+        return new AzureBoardSyncConfig
+        {
+            Organization = organization,
+            PersonalAccessToken = pat,
+            Project = project
+        };
     }
 }

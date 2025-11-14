@@ -15,4 +15,39 @@ public class CrystaTaskRepositoryFake : ICrystaTaskRepository
     {
         return [];
     }
+
+    public async Task<List<SyncItem>> GetCommentsSyncItemsAsync(List<string> ids)
+    {
+        return [];
+    }
+
+    public async Task<List<SyncItem>> GetUpdatesSyncItemsAsync(List<string> ids)
+    {
+        return [];
+    }
+
+    public async Task<List<SyncItem>> GetRevisionsSyncItemsAsync(List<string> ids)
+    {
+        return [];
+    }
+
+    public async Task AddOrUpdateCrystaTasksAsync(List<CrystaTask> tasks)
+    {
+        // Fake implementation - does nothing
+    }
+
+    public async Task AddOrUpdateCrystaTaskCommentsAsync(List<CrystaTaskComment> comments)
+    {
+        // Fake implementation - does nothing
+    }
+
+    public async Task AddOrUpdateCrystaTaskUpdatesAsync(List<CrystaTaskUpdate> updates)
+    {
+        // Fake implementation - does nothing
+    }
+
+    public async Task AddOrUpdateCrystaTaskRevisionsAsync(List<CrystaTaskRevision> revisions)
+    {
+        // Fake implementation - does nothing
+    }
 }
