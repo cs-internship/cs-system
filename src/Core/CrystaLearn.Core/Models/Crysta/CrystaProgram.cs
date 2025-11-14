@@ -13,7 +13,6 @@ public class CrystaProgram : Entity
     public virtual string? BadgeSystemUrl { get; set; }
     [MaxLength(300)]
     public virtual string? DocumentUrl { get; set; }
-    public virtual SyncInfo DocumentSyncInfo { get; set; } = new();
-    public virtual SyncInfo BadgeSyncInfo { get; set; } = new();
+    
     public virtual bool IsActive { get; set; }
 }
