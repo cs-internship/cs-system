@@ -8,8 +8,5 @@ public class CrystaProgramConfiguration : IEntityTypeConfiguration<CrystaProgram
     {
         builder.HasIndex(p => p.Code).IsUnique();
         builder.HasIndex(p => p.IsActive);
-
-        builder.OwnsOne(p => p.DocumentSyncInfo);
-        builder.OwnsOne(p => p.BadgeSyncInfo);
     }
 }

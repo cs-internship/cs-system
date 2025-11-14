@@ -5,4 +5,5 @@ public class SyncResult
     public int AddCount { get; set; }
     public int UpdateCount { get; set; }
     public int SameCount { get; set; }
+    public int DeleteCount { get; set; }
 }
