@@ -5,15 +5,14 @@ namespace CrystaLearn.Core.Models.Crysta;
 
 public class CrystaTaskUpdate : Entity
 {
-    // Azure Work Item ID this update belongs to
-    public int AzureWorkItemId { get; set; }
-
-    // Azure update/entry id
     [MaxLength(200)]
-    public string? AzureUpdateId { get; set; }
+    public string? ProviderUpdateId { get; set; }
+
+    [MaxLength(200)]
+    public string? ProviderTaskId { get; set; }
 
     // Revision number where this update occurred
-    public int Revision { get; set; }
+    public string Revision { get; set; }
 
     // Actor information
     [MaxLength(255)]
