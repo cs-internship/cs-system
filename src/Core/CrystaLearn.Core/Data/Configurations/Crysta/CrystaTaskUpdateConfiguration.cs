@@ -1,4 +1,4 @@
-using CrystaLearn.Core.Models.Crysta;
+﻿using CrystaLearn.Core.Models.Crysta;
 
 namespace CrystaLearn.Core.Data.Configurations.Crysta;
 
@@ -6,7 +6,7 @@ public class CrystaTaskUpdateConfiguration : IEntityTypeConfiguration<CrystaTask
 {
     public void Configure(EntityTypeBuilder<CrystaTaskUpdate> builder)
     {
-        builder.HasIndex(u => u.AzureWorkItemId);
+        builder.HasIndex(u => u.ProviderTaskId);
         builder.HasIndex(u => u.CrystaTaskId);
         builder.HasIndex(u => u.Revision);
         builder.HasIndex(u => u.ChangedDate);

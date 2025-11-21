@@ -23,7 +23,7 @@ public partial class AzureBoardSyncService : IAzureBoardSyncService
 
         if (string.IsNullOrWhiteSpace(module.SyncConfig))
         {
-            throw new ArgumentNullException(nameof(module.CrystaProgram));
+            throw new ArgumentNullException(nameof(module.SyncConfig));
         }
 
         var config = JsonSerializer.Deserialize<AzureBoardSyncConfig>(module.SyncConfig)
@@ -59,7 +59,7 @@ public partial class AzureBoardSyncService : IAzureBoardSyncService
         // Collect all active work item IDs from Azure Board
         var activeWorkItemIds = new HashSet<string>();
 
-        await foreach (var workItems in AzureBoardService.EnumerateWorkItemsQueryAsync(config, query, top: 200))
+        await foreach (var workItems in AzureBoardService.EnumerateWorkItemsQueryAsync(config, query))
         {
             var tasks = workItems
                         .Select(ToCrystaTask)
@@ -485,9 +485,9 @@ public partial class AzureBoardSyncService : IAzureBoardSyncService
         return new CrystaTaskUpdate
         {
             CrystaTaskId = crystaTaskId,
-            AzureWorkItemId = workItemId,
-            AzureUpdateId = update.Id.ToString(),
-            Revision = update.Rev,
+            ProviderTaskId = workItemId.ToString(),
+            ProviderUpdateId = update.Id.ToString(),
+            Revision = update.Rev.ToString(),
             ChangedBy = update.RevisedBy?.DisplayName,
             ChangedById = update.RevisedBy?.Id.ToString(),
             ChangedDate = update.RevisedDate,
