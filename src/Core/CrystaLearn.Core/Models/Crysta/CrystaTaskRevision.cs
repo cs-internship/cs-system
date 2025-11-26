@@ -2,6 +2,7 @@
 
 namespace CrystaLearn.Core.Models.Crysta;
 
+[Table("CrystaTaskRevisions",Schema = "CrystaLearn")]
 public class CrystaTaskRevision : CrystaTask
 {
     public Guid CrystaTaskId { get; set; }
