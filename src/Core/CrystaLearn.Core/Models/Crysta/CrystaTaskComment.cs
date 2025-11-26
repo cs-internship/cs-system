@@ -5,12 +5,11 @@ namespace CrystaLearn.Core.Models.Crysta;
 
 public class CrystaTaskComment : Entity
 {
-    // Azure Work Item ID this comment belongs to
-    public int AzureWorkItemId { get; set; }
-
-    // Azure comment/discussion id
     [MaxLength(200)]
-    public string? AzureCommentId { get; set; }
+    public string ProviderTaskId { get; set; }
+
+    [MaxLength(200)]
+    public string? ProviderCommentId { get; set; }
 
     // Thread identifiers for threaded discussions
     public int? ThreadId { get; set; }
@@ -57,8 +56,7 @@ public class CrystaTaskComment : Entity
 
     public string? Reactions { get; set; }
 
-    // Revision number when this comment was recorded
-    public int Revision { get; set; }
+    public string Revision { get; set; }
 
     // Relationships
     public Guid CrystaTaskId { get; set; }

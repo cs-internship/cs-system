@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using CrystaLearn.Core.Extensions;
 using CrystaLearn.Core.Models.Crysta;
 using CrystaLearn.Core.Services;
 using CrystaLearn.Core.Services.AzureBoard;
@@ -22,9 +23,10 @@ public class AzureBoardSyncServiceTests : TestBase
             sc.AddTransient<ICrystaProgramSyncModuleRepository, CrystaProgramSyncModuleRepositoryFake>();
         });
 
-        var service = services.GetRequiredService<IAzureBoardSyncService>();
+        using var scope = services.CreateScope();
+        var service = scope.ServiceProvider.GetRequiredService<IAzureBoardSyncService>();
 
-        var configuration = services.GetRequiredService<IConfiguration>();
+        var configuration = scope.ServiceProvider.GetRequiredService<IConfiguration>();
         var organization = "cs-internship";
         var pat = configuration["AzureDevOps:PersonalAccessToken"]
                   ?? throw new Exception("No PAT provided.");
@@ -73,3 +75,8 @@ public class AzureBoardSyncServiceTests : TestBase
         }
     }
 }
+
+//AzureBoardService Test
+//AzureSyncService Test
+// CrystaTaskRepository -> CrystaTaskService  -> Documented
+// 

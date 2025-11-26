@@ -22,7 +22,7 @@ public partial class CrystaTaskRepository : ICrystaTaskRepository
             {
                 Id = t.Id,
                 SyncInfo = t.WorkItemSyncInfo
-            })
+            }).AsNoTracking()
             .ToListAsync();
 
         return syncItems;
@@ -37,6 +37,7 @@ public partial class CrystaTaskRepository : ICrystaTaskRepository
 
         var syncItems = await DbContext.CrystaTaskComments
             .Where(c => c.SyncInfo != null && ids.Contains(c.SyncInfo.SyncId ?? ""))
+            .AsNoTracking()
             .Select(c => new SyncItem
             {
                 Id = c.Id,
@@ -56,6 +57,7 @@ public partial class CrystaTaskRepository : ICrystaTaskRepository
 
         var syncItems = await DbContext.CrystaTaskUpdates
             .Where(u => u.SyncInfo != null && ids.Contains(u.SyncInfo.SyncId ?? ""))
+            .AsNoTracking()
             .Select(u => new SyncItem
             {
                 Id = u.Id,
@@ -79,8 +81,8 @@ public partial class CrystaTaskRepository : ICrystaTaskRepository
                 Id = r.Id,
                 SyncInfo = new SyncInfo
                 {
-                    SyncId = $"{r.AzureWorkItemId}-{r.RevisionNumber}",
-                    ContentHash = r.SnapshotJson != null ? r.SnapshotJson : ""
+                    SyncId = $"{r.ProviderTaskId}-{r.Revision}",
+                    ContentHash = r.RawJson != null ? r.RawJson : ""
                 }
             })
             .Where(s => ids.Contains(s.SyncInfo.SyncId ?? ""))
@@ -246,8 +248,8 @@ public partial class CrystaTaskRepository : ICrystaTaskRepository
         foreach (var revision in revisions)
         {
             var existingRevision = await DbContext.CrystaTaskRevisions
-                .FirstOrDefaultAsync(r => r.AzureWorkItemId == revision.AzureWorkItemId && 
-                                         r.RevisionNumber == revision.RevisionNumber);
+                .FirstOrDefaultAsync(r => r.ProviderTaskId == revision.ProviderTaskId && 
+                                         r.Revision == revision.Revision);
 
             if (existingRevision == null)
             {
@@ -259,7 +261,6 @@ public partial class CrystaTaskRepository : ICrystaTaskRepository
             else
             {
                 // Update existing revision
-                existingRevision.SnapshotJson = revision.SnapshotJson;
                 existingRevision.Title = revision.Title;
                 existingRevision.Description = revision.Description;
                 existingRevision.State = revision.State;
@@ -268,12 +269,6 @@ public partial class CrystaTaskRepository : ICrystaTaskRepository
                 existingRevision.CreatedDate = revision.CreatedDate;
                 existingRevision.ProjectId = revision.ProjectId;
                 existingRevision.ProjectName = revision.ProjectName;
-                existingRevision.FieldsSnapshot = revision.FieldsSnapshot;
-                existingRevision.RelationsSnapshot = revision.RelationsSnapshot;
-                existingRevision.AttachmentsSnapshot = revision.AttachmentsSnapshot;
-                existingRevision.CommentsSnapshot = revision.CommentsSnapshot;
-                existingRevision.ChangeSummary = revision.ChangeSummary;
-                existingRevision.ChangeDetails = revision.ChangeDetails;
                 existingRevision.RawJson = revision.RawJson;
                 
 #pragma warning disable NonAsyncEFCoreMethodsUsageAnalyzer
@@ -359,7 +354,7 @@ public partial class CrystaTaskRepository : ICrystaTaskRepository
         }
 
         var revisionsToDelete = await DbContext.CrystaTaskRevisions
-            .Where(r => syncIds.Contains($"{r.AzureWorkItemId}-{r.RevisionNumber}"))
+            .Where(r => syncIds.Contains($"{r.ProviderTaskId}-{r.Revision}"))
             .ToListAsync();
 
 #pragma warning disable NonAsyncEFCoreMethodsUsageAnalyzer

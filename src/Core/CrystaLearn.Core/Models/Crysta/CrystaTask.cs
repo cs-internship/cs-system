@@ -9,7 +9,6 @@ using CrystaLearn.Core.Models.Infra;
 namespace CrystaLearn.Core.Models.Crysta;
 public class CrystaTask : Entity
 {
-    // Existing properties (unchanged)
     public string? ProviderTaskId { get; set; } = default;
     public User? AssignedTo { get; set; }
     public User? CompletedBy { get; set; }
@@ -31,7 +30,6 @@ public class CrystaTask : Entity
     public SyncInfo CommentsSyncInfo { get; set; }
     public CrystaProgram? CrystaProgram { get; set; }
 
-    // New Azure DevOps sync properties
     public Guid? ParentId { get; set; }
 
     [MaxLength(100)]
@@ -68,7 +66,7 @@ public class CrystaTask : Entity
     [MaxLength(255)]
     public string? RevisedBy { get; set; }
 
-    public int Revision { get; set; }
+    public string Revision { get; set; }
 
     public Guid? ProjectId { get; set; }
 

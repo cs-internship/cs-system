@@ -64,7 +64,7 @@ public partial class AzureBoardSyncService : IAzureBoardSyncService
             var tasks = workItems
                         .Select(ToCrystaTask)
                         .ToList();
-            
+
             // Collect active work item IDs
             foreach (var task in tasks)
             {
@@ -73,7 +73,7 @@ public partial class AzureBoardSyncService : IAzureBoardSyncService
                     activeWorkItemIds.Add(task.WorkItemSyncInfo.SyncId);
                 }
             }
-            
+
             var workItemResult = await SyncWorkItemsAsync(tasks);
             var updatesResult = await SyncUpdatesAsync(config, tasks);
             var commentsResult = await SyncCommentsAsync(config, tasks);
@@ -88,7 +88,7 @@ public partial class AzureBoardSyncService : IAzureBoardSyncService
         // Handle deletions - find tasks in our DB that are no longer in Azure Board
         var allLocalWorkItemIds = await CrystaTaskRepository.GetAllWorkItemSyncIdsAsync(project);
         var deletedWorkItemIds = allLocalWorkItemIds.Except(activeWorkItemIds).ToList();
-        
+
         if (deletedWorkItemIds.Count > 0)
         {
             var deleteCount = await CrystaTaskRepository.MarkCrystaTasksAsDeletedAsync(deletedWorkItemIds);
@@ -111,7 +111,7 @@ public partial class AzureBoardSyncService : IAzureBoardSyncService
     private async Task<SyncResult> SyncUpdatesAsync(AzureBoardSyncConfig config, List<CrystaTask> tasks)
     {
         var allUpdates = new List<CrystaTaskUpdate>();
-        
+
         foreach (var task in tasks)
         {
             if (string.IsNullOrEmpty(task.ProviderTaskId) || !int.TryParse(task.ProviderTaskId, out var workItemId))
@@ -120,7 +120,7 @@ public partial class AzureBoardSyncService : IAzureBoardSyncService
             }
 
             var azureUpdates = await AzureBoardService.GetUpdatesAsync(config, workItemId);
-            
+
             foreach (var update in azureUpdates)
             {
                 var crystaUpdate = ToCrystaTaskUpdate(update, task.Id, workItemId);
@@ -137,8 +137,8 @@ public partial class AzureBoardSyncService : IAzureBoardSyncService
         }
 
         var updateSyncItems = allUpdates
-            .Select(u => new SyncItem 
-            { 
+            .Select(u => new SyncItem
+            {
                 Id = u.Id,
                 SyncInfo = u.SyncInfo ?? new SyncInfo()
             })
@@ -183,7 +183,7 @@ public partial class AzureBoardSyncService : IAzureBoardSyncService
     private async Task<SyncResult> SyncCommentsAsync(AzureBoardSyncConfig config, List<CrystaTask> tasks)
     {
         var allComments = new List<CrystaTaskComment>();
-        
+
         foreach (var task in tasks)
         {
             if (string.IsNullOrEmpty(task.ProviderTaskId) || !int.TryParse(task.ProviderTaskId, out var workItemId))
@@ -192,7 +192,7 @@ public partial class AzureBoardSyncService : IAzureBoardSyncService
             }
 
             var azureComments = await AzureBoardService.GetCommentsAsync(config, workItemId);
-            
+
             foreach (var comment in azureComments)
             {
                 var crystaComment = ToCrystaTaskComment(comment, task.Id, workItemId);
@@ -209,8 +209,8 @@ public partial class AzureBoardSyncService : IAzureBoardSyncService
         }
 
         var commentSyncItems = allComments
-            .Select(c => new SyncItem 
-            { 
+            .Select(c => new SyncItem
+            {
                 Id = c.Id,
                 SyncInfo = c.SyncInfo ?? new SyncInfo()
             })
@@ -256,7 +256,7 @@ public partial class AzureBoardSyncService : IAzureBoardSyncService
     private async Task<SyncResult> SyncRevisionsAsync(AzureBoardSyncConfig config, List<CrystaTask> tasks)
     {
         var allRevisions = new List<CrystaTaskRevision>();
-        
+
         foreach (var task in tasks)
         {
             if (string.IsNullOrEmpty(task.ProviderTaskId) || !int.TryParse(task.ProviderTaskId, out var workItemId))
@@ -265,7 +265,7 @@ public partial class AzureBoardSyncService : IAzureBoardSyncService
             }
 
             var azureRevisions = await AzureBoardService.GetRevisionsAsync(config, workItemId);
-            
+
             foreach (var revision in azureRevisions)
             {
                 var crystaRevision = ToCrystaTaskRevision(revision, task.Id, workItemId);
@@ -282,13 +282,13 @@ public partial class AzureBoardSyncService : IAzureBoardSyncService
         }
 
         var revisionSyncItems = allRevisions
-            .Select(r => new SyncItem 
-            { 
+            .Select(r => new SyncItem
+            {
                 Id = r.Id,
-                SyncInfo = new SyncInfo 
-                { 
-                    SyncId = $"{r.AzureWorkItemId}-{r.RevisionNumber}",
-                    ContentHash = r.SnapshotJson?.Sha() ?? ""
+                SyncInfo = new SyncInfo
+                {
+                    SyncId = $"{r.ProviderTaskId}-{r.Revision}",
+                    ContentHash = r.RawJson?.Sha() ?? ""
                 }
             })
             .ToList();
@@ -331,10 +331,10 @@ public partial class AzureBoardSyncService : IAzureBoardSyncService
     private async Task<SyncResult> SyncWorkItemsAsync(List<CrystaTask> tasks)
     {
         var boardSyncItems = tasks
-            .Select(task => new SyncItem 
-            { 
+            .Select(task => new SyncItem
+            {
                 Id = task.Id,
-                SyncInfo = task.WorkItemSyncInfo 
+                SyncInfo = task.WorkItemSyncInfo
             })
             .ToList();
 
@@ -387,11 +387,11 @@ public partial class AzureBoardSyncService : IAzureBoardSyncService
             "New" or "To Do" => CrystaTaskStatus.New,
             "Approved" or "In Progress" or "Committed"
                 => CrystaTaskStatus.InProgress,
-            "Done" or "Closed" 
+            "Done" or "Closed"
                 => CrystaTaskStatus.Done,
-            "Canceled" or "Removed" 
+            "Canceled" or "Removed"
                 => CrystaTaskStatus.Canceled,
-            _ 
+            _
                 => throw new Exception($"Invalid status for mapping: {workItem.Fields["System.State"]?.ToString()}")
         };
 
@@ -417,11 +417,12 @@ public partial class AzureBoardSyncService : IAzureBoardSyncService
         //    _ => throw new Exception("Invalid date")
         //};
 
-        var assignedToText = workItem.Fields.GetValueOrDefault("System.AssignedTo") switch {
+        var assignedToText = workItem.Fields.GetValueOrDefault("System.AssignedTo") switch
+        {
             IdentityRef identityRef => $"{identityRef.DisplayName} ({identityRef.UniqueName})",
             _ => ""
         };
-        
+
         var task = new CrystaTask
         {
             ProviderTaskId = workItem.Id?.ToString(),
@@ -453,10 +454,10 @@ public partial class AzureBoardSyncService : IAzureBoardSyncService
         return new CrystaTaskComment
         {
             CrystaTaskId = crystaTaskId,
-            AzureWorkItemId = workItemId,
+            ProviderTaskId = workItemId.ToString(),
             Text = comment.Text,
             FormattedText = comment.RenderedText,
-            Revision = 0, // Will be populated from context if available
+            Revision = "0", // Will be populated from context if available
             CreatedDate = DateTimeOffset.Now,
             RawJson = json,
             SyncInfo = new SyncInfo
@@ -481,7 +482,7 @@ public partial class AzureBoardSyncService : IAzureBoardSyncService
 
         // Get the first field change for simplicity - in production you might create multiple updates
         var firstFieldChange = update.Fields.FirstOrDefault();
-        
+
         return new CrystaTaskUpdate
         {
             CrystaTaskId = crystaTaskId,
@@ -515,18 +516,18 @@ public partial class AzureBoardSyncService : IAzureBoardSyncService
         var json = JsonSerializer.Serialize(revision);
         var hash = json.Sha();
 
-        var revisionNumber = revision.Rev ?? 0;
+        string revisionNumber = revision.Rev?.ToString() ?? "0";
         var title = revision.Fields?.GetValueOrDefault("System.Title")?.ToString();
         var description = revision.Fields?.GetValueOrDefault("System.Description")?.ToString();
         var state = revision.Fields?.GetValueOrDefault("System.State")?.ToString();
         var changedBy = revision.Fields?.GetValueOrDefault("System.ChangedBy") as IdentityRef;
-        
+
         DateTimeOffset changedDate = DateTimeOffset.Now;
         if (revision.Fields?.GetValueOrDefault("System.ChangedDate") is string changedDateStr)
         {
             DateTimeOffset.TryParse(changedDateStr, out changedDate);
         }
-        
+
         DateTimeOffset createdDate = DateTimeOffset.Now;
         if (revision.Fields?.GetValueOrDefault("System.CreatedDate") is string createdDateStr)
         {
@@ -536,9 +537,8 @@ public partial class AzureBoardSyncService : IAzureBoardSyncService
         return new CrystaTaskRevision
         {
             CrystaTaskId = crystaTaskId,
-            AzureWorkItemId = workItemId,
-            RevisionNumber = revisionNumber,
-            SnapshotJson = json,
+            ProviderTaskId = workItemId.ToString(),
+            Revision = revisionNumber,
             RawJson = json,
             Title = title,
             Description = description,

@@ -1,4 +1,4 @@
-using CrystaLearn.Core.Models.Crysta;
+﻿using CrystaLearn.Core.Models.Crysta;
 
 namespace CrystaLearn.Core.Data.Configurations.Crysta;
 
@@ -6,7 +6,7 @@ public class CrystaTaskCommentConfiguration : IEntityTypeConfiguration<CrystaTas
 {
     public void Configure(EntityTypeBuilder<CrystaTaskComment> builder)
     {
-        builder.HasIndex(c => c.AzureWorkItemId);
+        builder.HasIndex(c => c.ProviderTaskId);
         builder.HasIndex(c => c.CrystaTaskId);
         builder.HasIndex(c => c.CreatedDate);
 

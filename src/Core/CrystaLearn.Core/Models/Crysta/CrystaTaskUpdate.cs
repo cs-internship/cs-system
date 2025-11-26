@@ -11,7 +11,6 @@ public class CrystaTaskUpdate : Entity
     [MaxLength(200)]
     public string? ProviderTaskId { get; set; }
 
-    // Revision number where this update occurred
     public string Revision { get; set; }
 
     // Actor information
