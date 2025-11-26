@@ -2,6 +2,8 @@
 using CrystaLearn.Core.Models.Crysta;
 using CrystaLearn.Core.Services.Contracts;
 using CrystaLearn.Core.Services.Sync;
+using Microsoft.EntityFrameworkCore;
+using EFCore.BulkExtensions;
 
 namespace CrystaLearn.Core.Services;
 
@@ -13,7 +15,7 @@ public partial class CrystaTaskRepository : ICrystaTaskRepository
     {
         if (ids == null || ids.Count == 0)
         {
-            return [];
+            return new List<SyncItem>();
         }
 
         var syncItems = await DbContext.CrystaTasks
@@ -32,7 +34,7 @@ public partial class CrystaTaskRepository : ICrystaTaskRepository
     {
         if (ids == null || ids.Count == 0)
         {
-            return [];
+            return new List<SyncItem>();
         }
 
         var syncItems = await DbContext.CrystaTaskComments
@@ -52,7 +54,7 @@ public partial class CrystaTaskRepository : ICrystaTaskRepository
     {
         if (ids == null || ids.Count == 0)
         {
-            return [];
+            return new List<SyncItem>();
         }
 
         var syncItems = await DbContext.CrystaTaskUpdates
@@ -72,7 +74,7 @@ public partial class CrystaTaskRepository : ICrystaTaskRepository
     {
         if (ids == null || ids.Count == 0)
         {
-            return [];
+            return new List<SyncItem>();
         }
 
         var syncItems = await DbContext.CrystaTaskRevisions
@@ -91,193 +93,302 @@ public partial class CrystaTaskRepository : ICrystaTaskRepository
         return syncItems;
     }
 
-    public async Task AddOrUpdateCrystaTasksAsync(List<CrystaTask> tasks)
+    private const int BatchSize = 1000;
+
+    public async Task AddCrystaTasksAsync(List<CrystaTask> tasks)
     {
         if (tasks == null || tasks.Count == 0)
-        {
             return;
-        }
 
-        foreach (var task in tasks)
+        await using var tx = await DbContext.Database.BeginTransactionAsync();
+        try
         {
-            var existingTask = await DbContext.CrystaTasks
-                .FirstOrDefaultAsync(t => t.WorkItemSyncInfo.SyncId == task.WorkItemSyncInfo.SyncId);
+            foreach (var chunk in tasks.Chunk(BatchSize))
+            {
+#pragma warning disable NonAsyncEFCoreMethodsUsageAnalyzer
+                DbContext.CrystaTasks.AddRange(chunk);
+#pragma warning restore NonAsyncEFCoreMethodsUsageAnalyzer
+                await DbContext.SaveChangesAsync();
+            }
 
-            if (existingTask == null)
-            {
-                // Add new task
-#pragma warning disable NonAsyncEFCoreMethodsUsageAnalyzer
-                DbContext.CrystaTasks.Add(task);
-#pragma warning restore NonAsyncEFCoreMethodsUsageAnalyzer
-            }
-            else
-            {
-                // Update existing task
-                existingTask.ProviderTaskId = task.ProviderTaskId;
-                existingTask.Title = task.Title;
-                existingTask.Description = task.Description;
-                existingTask.DescriptionHtml = task.DescriptionHtml;
-                existingTask.Status = task.Status;
-                existingTask.TaskCreateDateTime = task.TaskCreateDateTime;
-                existingTask.TaskDoneDateTime = task.TaskDoneDateTime;
-                existingTask.TaskAssignDateTime = task.TaskAssignDateTime;
-                existingTask.ProviderTaskUrl = task.ProviderTaskUrl;
-                existingTask.AssignedToText = task.AssignedToText;
-                existingTask.CompletedByText = task.CompletedByText;
-                existingTask.CreatedByText = task.CreatedByText;
-                existingTask.WorkItemSyncInfo = task.WorkItemSyncInfo;
-                existingTask.RevisionsSyncInfo = task.RevisionsSyncInfo;
-                existingTask.UpdatesSyncInfo = task.UpdatesSyncInfo;
-                existingTask.CommentsSyncInfo = task.CommentsSyncInfo;
-                
-                // Update Azure DevOps specific fields
-                existingTask.WorkItemType = task.WorkItemType;
-                existingTask.State = task.State;
-                existingTask.Reason = task.Reason;
-                existingTask.AreaPath = task.AreaPath;
-                existingTask.IterationPath = task.IterationPath;
-                existingTask.Revision = task.Revision;
-                existingTask.Priority = task.Priority;
-                existingTask.Tags = task.Tags;
-                existingTask.RawJson = task.RawJson;
-                
-#pragma warning disable NonAsyncEFCoreMethodsUsageAnalyzer
-                DbContext.CrystaTasks.Update(existingTask);
-#pragma warning restore NonAsyncEFCoreMethodsUsageAnalyzer
-            }
+            await tx.CommitAsync();
         }
-
-        await DbContext.SaveChangesAsync();
+        catch
+        {
+            await tx.RollbackAsync();
+            throw;
+        }
     }
 
-    public async Task AddOrUpdateCrystaTaskCommentsAsync(List<CrystaTaskComment> comments)
+    public async Task UpdateCrystaTasksAsync(List<CrystaTask> tasks)
+    {
+        if (tasks == null || tasks.Count == 0)
+            return;
+
+        // Gather sync ids from incoming items
+        var syncIds = tasks.Select(t => t.WorkItemSyncInfo?.SyncId ?? "").Where(s => !string.IsNullOrEmpty(s)).ToList();
+        if (syncIds.Count == 0)
+            return;
+
+        await using var tx = await DbContext.Database.BeginTransactionAsync();
+        try
+        {
+            // Fetch only Id and SyncId mapping (lightweight)
+            var existingMap = await DbContext.CrystaTasks
+                .Where(t => syncIds.Contains(t.WorkItemSyncInfo.SyncId ?? ""))
+                .Select(t => new { t.Id, SyncId = t.WorkItemSyncInfo.SyncId })
+                .ToDictionaryAsync(x => x.SyncId ?? string.Empty, x => x.Id);
+
+            // Set primary keys on incoming entities so BulkUpdate uses PK matching
+            var toUpdate = new List<CrystaTask>();
+            foreach (var task in tasks)
+            {
+                var key = task.WorkItemSyncInfo?.SyncId ?? string.Empty;
+                if (existingMap.TryGetValue(key, out var id))
+                {
+                    task.Id = id; // ensure PK present for BulkUpdate
+                    toUpdate.Add(task);
+                }
+            }
+
+            if (toUpdate.Count == 0)
+            {
+                await tx.CommitAsync();
+                return;
+            }
+
+            // Bulk update in chunks
+            foreach (var chunk in toUpdate.Chunk(BatchSize))
+            {
+                await DbContext.BulkUpdateAsync(chunk);
+            }
+
+            await tx.CommitAsync();
+        }
+        catch
+        {
+            await tx.RollbackAsync();
+            throw;
+        }
+    }
+
+    public async Task AddCrystaTaskCommentsAsync(List<CrystaTaskComment> comments)
     {
         if (comments == null || comments.Count == 0)
-        {
             return;
-        }
 
-        foreach (var comment in comments)
+        await using var tx = await DbContext.Database.BeginTransactionAsync();
+        try
         {
-            var existingComment = await DbContext.CrystaTaskComments
-                .FirstOrDefaultAsync(c => c.SyncInfo != null && c.SyncInfo.SyncId == comment.SyncInfo!.SyncId);
+            foreach (var chunk in comments.Chunk(BatchSize))
+            {
+#pragma warning disable NonAsyncEFCoreMethodsUsageAnalyzer
+                DbContext.CrystaTaskComments.AddRange(chunk);
+#pragma warning restore NonAsyncEFCoreMethodsUsageAnalyzer
+                await DbContext.SaveChangesAsync();
+            }
 
-            if (existingComment == null)
-            {
-                // Add new comment
-#pragma warning disable NonAsyncEFCoreMethodsUsageAnalyzer
-                DbContext.CrystaTaskComments.Add(comment);
-#pragma warning restore NonAsyncEFCoreMethodsUsageAnalyzer
-            }
-            else
-            {
-                // Update existing comment
-                existingComment.Text = comment.Text;
-                existingComment.FormattedText = comment.FormattedText;
-                existingComment.CreatedBy = comment.CreatedBy;
-                existingComment.CreatedById = comment.CreatedById;
-                existingComment.CreatedDate = comment.CreatedDate;
-                existingComment.EditedBy = comment.EditedBy;
-                existingComment.EditedById = comment.EditedById;
-                existingComment.EditedDate = comment.EditedDate;
-                existingComment.IsDeleted = comment.IsDeleted;
-                existingComment.Revision = comment.Revision;
-                existingComment.RawJson = comment.RawJson;
-                existingComment.SyncInfo = comment.SyncInfo;
-                
-#pragma warning disable NonAsyncEFCoreMethodsUsageAnalyzer
-                DbContext.CrystaTaskComments.Update(existingComment);
-#pragma warning restore NonAsyncEFCoreMethodsUsageAnalyzer
-            }
+            await tx.CommitAsync();
         }
-
-        await DbContext.SaveChangesAsync();
+        catch
+        {
+            await tx.RollbackAsync();
+            throw;
+        }
     }
 
-    public async Task AddOrUpdateCrystaTaskUpdatesAsync(List<CrystaTaskUpdate> updates)
+    public async Task UpdateCrystaTaskCommentsAsync(List<CrystaTaskComment> comments)
+    {
+        if (comments == null || comments.Count == 0)
+            return;
+
+        var syncIds = comments.Select(c => c.SyncInfo?.SyncId ?? "").Where(s => !string.IsNullOrEmpty(s)).ToList();
+        if (syncIds.Count == 0)
+            return;
+
+        await using var tx = await DbContext.Database.BeginTransactionAsync();
+        try
+        {
+            var existingMap = await DbContext.CrystaTaskComments
+                .Where(c => c.SyncInfo != null && syncIds.Contains(c.SyncInfo.SyncId ?? ""))
+                .Select(c => new { c.Id, SyncId = c.SyncInfo!.SyncId })
+                .ToDictionaryAsync(x => x.SyncId ?? string.Empty, x => x.Id);
+
+            var toUpdate = new List<CrystaTaskComment>();
+            foreach (var comment in comments)
+            {
+                var key = comment.SyncInfo?.SyncId ?? string.Empty;
+                if (existingMap.TryGetValue(key, out var id))
+                {
+                    comment.Id = id;
+                    toUpdate.Add(comment);
+                }
+            }
+
+            if (toUpdate.Count > 0)
+            {
+                foreach (var chunk in toUpdate.Chunk(BatchSize))
+                {
+                    await DbContext.BulkUpdateAsync(chunk);
+                }
+            }
+
+            await tx.CommitAsync();
+        }
+        catch
+        {
+            await tx.RollbackAsync();
+            throw;
+        }
+    }
+
+    public async Task AddCrystaTaskUpdatesAsync(List<CrystaTaskUpdate> updates)
     {
         if (updates == null || updates.Count == 0)
-        {
             return;
-        }
 
-        foreach (var update in updates)
+        await using var tx = await DbContext.Database.BeginTransactionAsync();
+        try
         {
-            var existingUpdate = await DbContext.CrystaTaskUpdates
-                .FirstOrDefaultAsync(u => u.SyncInfo != null && u.SyncInfo.SyncId == update.SyncInfo!.SyncId);
+            foreach (var chunk in updates.Chunk(BatchSize))
+            {
+#pragma warning disable NonAsyncEFCoreMethodsUsageAnalyzer
+                DbContext.CrystaTaskUpdates.AddRange(chunk);
+#pragma warning restore NonAsyncEFCoreMethodsUsageAnalyzer
+                await DbContext.SaveChangesAsync();
+            }
 
-            if (existingUpdate == null)
-            {
-                // Add new update
-#pragma warning disable NonAsyncEFCoreMethodsUsageAnalyzer
-                DbContext.CrystaTaskUpdates.Add(update);
-#pragma warning restore NonAsyncEFCoreMethodsUsageAnalyzer
-            }
-            else
-            {
-                // Update existing update
-                existingUpdate.Revision = update.Revision;
-                existingUpdate.ChangedBy = update.ChangedBy;
-                existingUpdate.ChangedById = update.ChangedById;
-                existingUpdate.ChangedDate = update.ChangedDate;
-                existingUpdate.FieldName = update.FieldName;
-                existingUpdate.FieldDisplayName = update.FieldDisplayName;
-                existingUpdate.OldValue = update.OldValue;
-                existingUpdate.NewValue = update.NewValue;
-                existingUpdate.Operation = update.Operation;
-                existingUpdate.CommentText = update.CommentText;
-                existingUpdate.RawJson = update.RawJson;
-                existingUpdate.SyncInfo = update.SyncInfo;
-                
-#pragma warning disable NonAsyncEFCoreMethodsUsageAnalyzer
-                DbContext.CrystaTaskUpdates.Update(existingUpdate);
-#pragma warning restore NonAsyncEFCoreMethodsUsageAnalyzer
-            }
+            await tx.CommitAsync();
         }
-
-        await DbContext.SaveChangesAsync();
+        catch
+        {
+            await tx.RollbackAsync();
+            throw;
+        }
     }
 
-    public async Task AddOrUpdateCrystaTaskRevisionsAsync(List<CrystaTaskRevision> revisions)
+    public async Task UpdateCrystaTaskUpdatesAsync(List<CrystaTaskUpdate> updates)
+    {
+        if (updates == null || updates.Count == 0)
+            return;
+
+        var syncIds = updates.Select(u => u.SyncInfo?.SyncId ?? "").Where(s => !string.IsNullOrEmpty(s)).ToList();
+        if (syncIds.Count == 0)
+            return;
+
+        await using var tx = await DbContext.Database.BeginTransactionAsync();
+        try
+        {
+            var existingMap = await DbContext.CrystaTaskUpdates
+                .Where(u => u.SyncInfo != null && syncIds.Contains(u.SyncInfo.SyncId ?? ""))
+                .Select(u => new { u.Id, SyncId = u.SyncInfo!.SyncId })
+                .ToDictionaryAsync(x => x.SyncId ?? string.Empty, x => x.Id);
+
+            var toUpdate = new List<CrystaTaskUpdate>();
+            foreach (var update in updates)
+            {
+                var key = update.SyncInfo?.SyncId ?? string.Empty;
+                if (existingMap.TryGetValue(key, out var id))
+                {
+                    update.Id = id;
+                    toUpdate.Add(update);
+                }
+            }
+
+            if (toUpdate.Count > 0)
+            {
+                foreach (var chunk in toUpdate.Chunk(BatchSize))
+                {
+                    await DbContext.BulkUpdateAsync(chunk);
+                }
+            }
+
+            await tx.CommitAsync();
+        }
+        catch
+        {
+            await tx.RollbackAsync();
+            throw;
+        }
+    }
+
+    public async Task AddCrystaTaskRevisionsAsync(List<CrystaTaskRevision> revisions)
     {
         if (revisions == null || revisions.Count == 0)
-        {
             return;
-        }
 
-        foreach (var revision in revisions)
+        await using var tx = await DbContext.Database.BeginTransactionAsync();
+        try
         {
-            var existingRevision = await DbContext.CrystaTaskRevisions
-                .FirstOrDefaultAsync(r => r.ProviderTaskId == revision.ProviderTaskId && 
-                                         r.Revision == revision.Revision);
+            foreach (var chunk in revisions.Chunk(BatchSize))
+            {
+#pragma warning disable NonAsyncEFCoreMethodsUsageAnalyzer
+                DbContext.CrystaTaskRevisions.AddRange(chunk);
+#pragma warning restore NonAsyncEFCoreMethodsUsageAnalyzer
+                await DbContext.SaveChangesAsync();
+            }
 
-            if (existingRevision == null)
-            {
-                // Add new revision
-#pragma warning disable NonAsyncEFCoreMethodsUsageAnalyzer
-                DbContext.CrystaTaskRevisions.Add(revision);
-#pragma warning restore NonAsyncEFCoreMethodsUsageAnalyzer
-            }
-            else
-            {
-                // Update existing revision
-                existingRevision.Title = revision.Title;
-                existingRevision.Description = revision.Description;
-                existingRevision.State = revision.State;
-                existingRevision.ChangedBy = revision.ChangedBy;
-                existingRevision.ChangedDate = revision.ChangedDate;
-                existingRevision.CreatedDate = revision.CreatedDate;
-                existingRevision.ProjectId = revision.ProjectId;
-                existingRevision.ProjectName = revision.ProjectName;
-                existingRevision.RawJson = revision.RawJson;
-                
-#pragma warning disable NonAsyncEFCoreMethodsUsageAnalyzer
-                DbContext.CrystaTaskRevisions.Update(existingRevision);
-#pragma warning restore NonAsyncEFCoreMethodsUsageAnalyzer
-            }
+            await tx.CommitAsync();
         }
+        catch
+        {
+            await tx.RollbackAsync();
+            throw;
+        }
+    }
 
-        await DbContext.SaveChangesAsync();
+    public async Task UpdateCrystaTaskRevisionsAsync(List<CrystaTaskRevision> revisions)
+    {
+        if (revisions == null || revisions.Count == 0)
+            return;
+
+        // Identify revisions by ProviderTaskId + Revision
+        var keys = revisions.Select(r => (ProviderId: r.ProviderTaskId ?? string.Empty, Revision: r.Revision ?? string.Empty))
+            .Where(k => !string.IsNullOrEmpty(k.ProviderId) && !string.IsNullOrEmpty(k.Revision))
+            .ToList();
+
+        if (keys.Count == 0)
+            return;
+
+        await using var tx = await DbContext.Database.BeginTransactionAsync();
+        try
+        {
+            var providerIds = keys.Select(k => k.ProviderId).Distinct().ToList();
+
+            var existing = await DbContext.CrystaTaskRevisions
+                .Where(r => providerIds.Contains(r.ProviderTaskId ?? string.Empty))
+                .Select(r => new { r.Id, ProviderTaskId = r.ProviderTaskId ?? string.Empty, Revision = r.Revision ?? string.Empty })
+                .ToListAsync();
+
+            var map = existing.ToDictionary(e => $"{e.ProviderTaskId}-{e.Revision}", e => e.Id);
+
+            var toUpdate = new List<CrystaTaskRevision>();
+
+            foreach (var revision in revisions)
+            {
+                var key = $"{revision.ProviderTaskId}-{revision.Revision}";
+                if (map.TryGetValue(key, out var id))
+                {
+                    revision.Id = id;
+                    toUpdate.Add(revision);
+                }
+            }
+
+            if (toUpdate.Count > 0)
+            {
+                foreach (var chunk in toUpdate.Chunk(BatchSize))
+                {
+                    await DbContext.BulkUpdateAsync(chunk);
+                }
+            }
+
+            await tx.CommitAsync();
+        }
+        catch
+        {
+            await tx.RollbackAsync();
+            throw;
+        }
     }
 
     public async Task<int> MarkCrystaTasksAsDeletedAsync(List<string> syncIds)

@@ -14,10 +14,20 @@ public interface ICrystaTaskRepository
     Task<List<SyncItem>> GetCommentsSyncItemsAsync(List<string> ids);
     Task<List<SyncItem>> GetUpdatesSyncItemsAsync(List<string> ids);
     Task<List<SyncItem>> GetRevisionsSyncItemsAsync(List<string> ids);
-    Task AddOrUpdateCrystaTasksAsync(List<CrystaTask> tasks);
-    Task AddOrUpdateCrystaTaskCommentsAsync(List<CrystaTaskComment> comments);
-    Task AddOrUpdateCrystaTaskUpdatesAsync(List<CrystaTaskUpdate> updates);
-    Task AddOrUpdateCrystaTaskRevisionsAsync(List<CrystaTaskRevision> revisions);
+
+    // Split add/update operations into separate methods to allow batching and transactions
+    Task AddCrystaTasksAsync(List<CrystaTask> tasks);
+    Task UpdateCrystaTasksAsync(List<CrystaTask> tasks);
+
+    Task AddCrystaTaskCommentsAsync(List<CrystaTaskComment> comments);
+    Task UpdateCrystaTaskCommentsAsync(List<CrystaTaskComment> comments);
+
+    Task AddCrystaTaskUpdatesAsync(List<CrystaTaskUpdate> updates);
+    Task UpdateCrystaTaskUpdatesAsync(List<CrystaTaskUpdate> updates);
+
+    Task AddCrystaTaskRevisionsAsync(List<CrystaTaskRevision> revisions);
+    Task UpdateCrystaTaskRevisionsAsync(List<CrystaTaskRevision> revisions);
+
     Task<int> MarkCrystaTasksAsDeletedAsync(List<string> syncIds);
     Task<int> DeleteCrystaTaskCommentsAsync(List<string> syncIds);
     Task<int> DeleteCrystaTaskUpdatesAsync(List<string> syncIds);

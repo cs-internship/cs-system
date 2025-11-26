@@ -164,7 +164,15 @@ public partial class AzureBoardSyncService : IAzureBoardSyncService
             .Where(u => toAddList.Any(s => s.Id == u.Id) || toUpdateList.Any(s => s.Id == u.Id))
             .ToList();
 
-        await CrystaTaskRepository.AddOrUpdateCrystaTaskUpdatesAsync(toAddOrUpdate);
+        // split to add and update
+        var toAdd = toAddOrUpdate.Where(u => toAddList.Any(s => s.Id == u.Id)).ToList();
+        var toUpdate = toAddOrUpdate.Where(u => toUpdateList.Any(s => s.Id == u.Id)).ToList();
+
+        if (toAdd.Count > 0)
+            await CrystaTaskRepository.AddCrystaTaskUpdatesAsync(toAdd);
+
+        if (toUpdate.Count > 0)
+            await CrystaTaskRepository.UpdateCrystaTaskUpdatesAsync(toUpdate);
 
         return new SyncResult
         {
@@ -236,7 +244,14 @@ public partial class AzureBoardSyncService : IAzureBoardSyncService
             .Where(c => toAddList.Any(s => s.Id == c.Id) || toUpdateList.Any(s => s.Id == c.Id))
             .ToList();
 
-        await CrystaTaskRepository.AddOrUpdateCrystaTaskCommentsAsync(toAddOrUpdate);
+        var toAdd = toAddOrUpdate.Where(c => toAddList.Any(s => s.Id == c.Id)).ToList();
+        var toUpdate = toAddOrUpdate.Where(c => toUpdateList.Any(s => s.Id == c.Id)).ToList();
+
+        if (toAdd.Count > 0)
+            await CrystaTaskRepository.AddCrystaTaskCommentsAsync(toAdd);
+
+        if (toUpdate.Count > 0)
+            await CrystaTaskRepository.UpdateCrystaTaskCommentsAsync(toUpdate);
 
         return new SyncResult
         {
@@ -313,7 +328,14 @@ public partial class AzureBoardSyncService : IAzureBoardSyncService
             .Where(r => toAddList.Any(s => s.Id == r.Id) || toUpdateList.Any(s => s.Id == r.Id))
             .ToList();
 
-        await CrystaTaskRepository.AddOrUpdateCrystaTaskRevisionsAsync(toAddOrUpdate);
+        var toAdd = toAddOrUpdate.Where(r => toAddList.Any(s => s.Id == r.Id)).ToList();
+        var toUpdate = toAddOrUpdate.Where(r => toUpdateList.Any(s => s.Id == r.Id)).ToList();
+
+        if (toAdd.Count > 0)
+            await CrystaTaskRepository.AddCrystaTaskRevisionsAsync(toAdd);
+
+        if (toUpdate.Count > 0)
+            await CrystaTaskRepository.UpdateCrystaTaskRevisionsAsync(toUpdate);
 
         return new SyncResult
         {
@@ -359,7 +381,14 @@ public partial class AzureBoardSyncService : IAzureBoardSyncService
             .Where(t => toAddList.Any(s => s.Id == t.Id) || toUpdateList.Any(s => s.Id == t.Id))
             .ToList();
 
-        await CrystaTaskRepository.AddOrUpdateCrystaTasksAsync(toAddOrUpdate);
+        var toAdd = toAddOrUpdate.Where(t => toAddList.Any(s => s.Id == t.Id)).ToList();
+        var toUpdate = toAddOrUpdate.Where(t => toUpdateList.Any(s => s.Id == t.Id)).ToList();
+
+        if (toAdd.Count > 0)
+            await CrystaTaskRepository.AddCrystaTasksAsync(toAdd);
+
+        if (toUpdate.Count > 0)
+            await CrystaTaskRepository.UpdateCrystaTasksAsync(toUpdate);
 
         return new SyncResult
         {
