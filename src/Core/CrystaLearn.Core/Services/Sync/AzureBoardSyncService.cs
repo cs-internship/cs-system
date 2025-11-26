@@ -123,7 +123,7 @@ public partial class AzureBoardSyncService : IAzureBoardSyncService
 
             foreach (var update in azureUpdates)
             {
-                var crystaUpdates = ToCrystaTaskUpdate(update, task.Id, workItemId);
+                var crystaUpdates = ToCrystaTaskUpdate(update, task.Id, workItemId, config);
                 if (crystaUpdates != null && crystaUpdates.Count > 0)
                 {
                     allUpdates.AddRange(crystaUpdates);
@@ -203,7 +203,7 @@ public partial class AzureBoardSyncService : IAzureBoardSyncService
 
             foreach (var comment in azureComments)
             {
-                var crystaComment = ToCrystaTaskComment(comment, task.Id, workItemId);
+                var crystaComment = ToCrystaTaskComment(comment, task.Id, workItemId, config);
                 if (crystaComment != null)
                 {
                     allComments.Add(crystaComment);
@@ -428,7 +428,7 @@ public partial class AzureBoardSyncService : IAzureBoardSyncService
         var title = workItem.Fields["System.Title"]?.ToString();
 
         var description = workItem.Fields.GetValueOrDefault("System.Description")?.ToString();
-
+        
         var taskCreateDateTime = workItem.Fields["System.CreatedDate"]?.ToString() switch
         {
             string s => DateTimeOffset.Parse(s),
@@ -481,14 +481,15 @@ public partial class AzureBoardSyncService : IAzureBoardSyncService
             IterationPath = iterationPath,
             CreatedDate = createdDate,
             CreatedByText = createdBy,
-            Tags = workItem.Fields.GetValueOrDefault("System.Tags")?.ToString()
+            Tags = workItem.Fields.GetValueOrDefault("System.Tags")?.ToString(),
+            ProjectName = workItem.Fields.GetValueOrDefault("System.TeamProject")?.ToString()
         };
 
 
         return task;
     }
 
-    private CrystaTaskComment? ToCrystaTaskComment(WorkItemComment comment, Guid crystaTaskId, int workItemId)
+    private CrystaTaskComment? ToCrystaTaskComment(WorkItemComment comment, Guid crystaTaskId, int workItemId, AzureBoardSyncConfig config)
     {
         if (comment == null)
         {
@@ -497,7 +498,7 @@ public partial class AzureBoardSyncService : IAzureBoardSyncService
 
         var json = JsonSerializer.Serialize(comment);
         var hash = json.Sha();
-
+        
         // WorkItemComment properties: Text, RenderedText
         return new CrystaTaskComment
         {
@@ -505,20 +506,21 @@ public partial class AzureBoardSyncService : IAzureBoardSyncService
             ProviderTaskId = workItemId.ToString(),
             Text = comment.Text,
             FormattedText = comment.RenderedText,
-            Revision = "0", // Will be populated from context if available
+            Revision =comment.Revision.ToString(), // Will be populated from context if available
             CreatedDate = DateTimeOffset.Now,
             RawJson = json,
             SyncInfo = new SyncInfo
             {
-                SyncId = $"{workItemId}-comment-{hash.Substring(0, 8)}",
+                SyncId = $"{config.Organization}/{config.Project}/{workItemId.ToString()}/{workItemId}/comment/{hash.Substring(0, 8)}",
                 ContentHash = hash,
                 LastSyncDateTime = DateTimeOffset.Now,
                 SyncStatus = SyncStatus.Success
-            }
+            },
+            ContentHtml = comment.RenderedText
         };
     }
 
-    private List<CrystaTaskUpdate> ToCrystaTaskUpdate(WorkItemUpdate update, Guid crystaTaskId, int workItemId)
+    private List<CrystaTaskUpdate> ToCrystaTaskUpdate(WorkItemUpdate update, Guid crystaTaskId, int workItemId, AzureBoardSyncConfig config)
     {
         var result = new List<CrystaTaskUpdate>();
 
@@ -574,7 +576,7 @@ public partial class AzureBoardSyncService : IAzureBoardSyncService
                 RawJson = json,
                 SyncInfo = new SyncInfo
                 {
-                    SyncId = $"{workItemId}-update-{update.Id}-{fieldName}",
+                    SyncId = $"{config.Organization}/{config.Project}/{workItemId}/update/{update.Id}/{fieldName}",
                     ContentHash = baseHash,
                     LastSyncDateTime = DateTimeOffset.Now,
                     SyncStatus = SyncStatus.Success,
@@ -616,20 +618,55 @@ public partial class AzureBoardSyncService : IAzureBoardSyncService
             DateTimeOffset.TryParse(createdDateStr, out createdDate);
         }
 
+        var areaPath = revision.Fields?.GetValueOrDefault("System.AreaPath")?.ToString();
+        var iterationPath = revision.Fields?.GetValueOrDefault("System.IterationPath")?.ToString();
+
+        var createdBy = revision.Fields?.GetValueOrDefault("System.CreatedBy") switch
+        {
+            IdentityRef identityRef => $"{identityRef.DisplayName} ({identityRef.UniqueName})",
+            _ => ""
+        };
+
+        CrystaTaskStatus? status = state switch
+        {
+            "New" or "To Do" => CrystaTaskStatus.New,
+            "Approved" or "In Progress" or "Committed" => CrystaTaskStatus.InProgress,
+            "Done" or "Closed" => CrystaTaskStatus.Done,
+            "Canceled" or "Removed" => CrystaTaskStatus.Canceled,
+            _ => null
+        };
+
         return new CrystaTaskRevision
         {
             CrystaTaskId = crystaTaskId,
             ProviderTaskId = workItemId.ToString(),
             Revision = revisionNumber,
-            RawJson = json,
+
+            // CrystaTask properties (mapped similar to ToCrystaTask)
             Title = title,
             Description = description,
-            State = state,
-            ChangedBy = changedBy?.DisplayName,
-            ChangedDate = changedDate,
+            DescriptionHtml = description,
+            Status = status,
+            TaskCreateDateTime = createdDate,
+            ProviderTaskUrl = revision.Url,
+            AssignedToText = revision.Fields?.GetValueOrDefault("System.AssignedTo") switch
+            {
+                IdentityRef identityRef => $"{identityRef.DisplayName} ({identityRef.UniqueName})",
+                _ => ""
+            },
+            RawJson = json,
+            WorkItemType = revision.Fields?.GetValueOrDefault("System.WorkItemType")?.ToString(),
+            AreaPath = areaPath,
+            IterationPath = iterationPath,
             CreatedDate = createdDate,
-            ProjectId = Guid.Empty, // Will be set from context if needed
-            ProjectName = revision.Fields?.GetValueOrDefault("System.TeamProject")?.ToString()
+            CreatedByText = createdBy,
+            Tags = revision.Fields?.GetValueOrDefault("System.Tags")?.ToString(),
+            ProjectName = revision.Fields?.GetValueOrDefault("System.TeamProject")?.ToString(),
+
+            // Revision-specific
+            ChangedBy = changedBy?.DisplayName,
+            ChangedDate = changedDate           
+
         };
     }
 }

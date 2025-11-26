@@ -84,6 +84,7 @@ public partial class AzureBoardService : IAzureBoardService
             "System.ChangedDate",
             "System.AreaPath",
             "System.IterationPath",
+            "System.Parent"
         ];
 
         var wiql = new Wiql { Query = query };
