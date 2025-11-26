@@ -62,7 +62,7 @@ public partial class AzureBoardSyncService : IAzureBoardSyncService
         await foreach (var workItems in AzureBoardService.EnumerateWorkItemsQueryAsync(config, query))
         {
             var tasks = workItems
-                        .Select(ToCrystaTask)
+                        .Select(w => ToCrystaTask(w,config))
                         .ToList();
 
             // Collect active work item IDs
@@ -369,17 +369,18 @@ public partial class AzureBoardSyncService : IAzureBoardSyncService
         };
     }
 
-    private CrystaTask ToCrystaTask(WorkItem workItem)
+    private CrystaTask ToCrystaTask(WorkItem workItem, AzureBoardSyncConfig config)
     {
-        var json = JsonSerializer.Serialize(workItem.Fields);
+        var json = JsonSerializer.Serialize(workItem);
         var hash = json.Sha();
 
         var syncInfo = new SyncInfo
         {
-            SyncId = workItem.Id.ToString() ?? throw new Exception("Work Item with no ID from board is not valid."),
+            SyncId = $"{config.Organization}/{config.Project}/{workItem.Id.ToString()}",
             ContentHash = hash,
             LastSyncDateTime = DateTimeOffset.Now,
-            LastSyncOffset = workItem.Id.ToString()
+            LastSyncOffset = workItem.Id.ToString(),
+            SyncGroup = "SyncService"
         };
 
         var status = workItem.Fields["System.State"]?.ToString() switch
@@ -405,6 +406,10 @@ public partial class AzureBoardSyncService : IAzureBoardSyncService
             _ => throw new Exception("Invalid date")
         };
 
+        var areaPath = workItem.Fields["System.AreaPath"]?.ToString();
+        var iterationPath = workItem.Fields["System.IterationPath"]?.ToString();
+        DateTimeOffset.TryParse(workItem.Fields["System.CreatedDate"]?.ToString(), out var createdDate);
+
         //var taskDoneDateTime = workItem.Fields["System.FinishedDate"]?.ToString() switch
         //{
         //    string s => DateTimeOffset.Parse(s),
@@ -423,17 +428,31 @@ public partial class AzureBoardSyncService : IAzureBoardSyncService
             _ => ""
         };
 
+        var createdBy = workItem.Fields.GetValueOrDefault("System.CreatedBy") switch
+        {
+            IdentityRef identityRef => $"{identityRef.DisplayName} ({identityRef.UniqueName})",
+            _ => ""
+        };
+
         var task = new CrystaTask
         {
             ProviderTaskId = workItem.Id?.ToString(),
             Title = title,
-            //Description = description,
-            //DescriptionHtml = description,
+            Description = description,
+            DescriptionHtml = description,
             Status = status,
             TaskCreateDateTime = taskCreateDateTime,
             ProviderTaskUrl = workItem.Url,
             WorkItemSyncInfo = syncInfo,
             AssignedToText = assignedToText,
+            Revision = workItem.Rev?.ToString() ?? string.Empty,
+            RawJson = json,
+            WorkItemType = workItem.Fields["System.WorkItemType"]?.ToString(),
+            AreaPath = areaPath,
+            IterationPath = iterationPath,
+            CreatedDate = createdDate,
+            CreatedByText = createdBy,
+            Tags = workItem.Fields.GetValueOrDefault("System.Tags")?.ToString()
         };
 
 
