@@ -62,7 +62,7 @@ public partial class AzureBoardSyncService : IAzureBoardSyncService
         await foreach (var workItems in AzureBoardService.EnumerateWorkItemsQueryAsync(config, query))
         {
             var tasks = workItems
-                        .Select(w => ToCrystaTask(w,config))
+                        .Select(w => ToCrystaTask(w, config))
                         .ToList();
 
             // Collect active work item IDs
@@ -123,10 +123,10 @@ public partial class AzureBoardSyncService : IAzureBoardSyncService
 
             foreach (var update in azureUpdates)
             {
-                var crystaUpdate = ToCrystaTaskUpdate(update, task.Id, workItemId);
-                if (crystaUpdate != null)
+                var crystaUpdates = ToCrystaTaskUpdate(update, task.Id, workItemId);
+                if (crystaUpdates != null && crystaUpdates.Count > 0)
                 {
-                    allUpdates.Add(crystaUpdate);
+                    allUpdates.AddRange(crystaUpdates);
                 }
             }
         }
@@ -489,40 +489,74 @@ public partial class AzureBoardSyncService : IAzureBoardSyncService
         };
     }
 
-    private CrystaTaskUpdate? ToCrystaTaskUpdate(WorkItemUpdate update, Guid crystaTaskId, int workItemId)
+    private List<CrystaTaskUpdate> ToCrystaTaskUpdate(WorkItemUpdate update, Guid crystaTaskId, int workItemId)
     {
-        if (update == null || update.Fields == null)
+        var result = new List<CrystaTaskUpdate>();
+
+        if (update == null || update.Fields == null || update.Fields.Count == 0)
         {
-            return null;
+            return result;
         }
 
         var json = JsonSerializer.Serialize(update);
-        var hash = json.Sha();
+        var baseHash = json.Sha();
 
-        // Get the first field change for simplicity - in production you might create multiple updates
-        var firstFieldChange = update.Fields.FirstOrDefault();
-
-        return new CrystaTaskUpdate
+        string FormatValue(object? v)
         {
-            CrystaTaskId = crystaTaskId,
-            ProviderTaskId = workItemId.ToString(),
-            ProviderUpdateId = update.Id.ToString(),
-            Revision = update.Rev.ToString(),
-            ChangedBy = update.RevisedBy?.DisplayName,
-            ChangedById = update.RevisedBy?.Id.ToString(),
-            ChangedDate = update.RevisedDate,
-            FieldName = firstFieldChange.Key,
-            OldValue = firstFieldChange.Value?.OldValue?.ToString(),
-            NewValue = firstFieldChange.Value?.NewValue?.ToString(),
-            RawJson = json,
-            SyncInfo = new SyncInfo
+            if (v == null) return null!;
+            if (v is IdentityRef idRef)
             {
-                SyncId = $"{workItemId}-update-{update.Id}",
-                ContentHash = hash,
-                LastSyncDateTime = DateTimeOffset.Now,
-                SyncStatus = SyncStatus.Success
+                return $"{idRef.DisplayName} ({idRef.UniqueName})";
             }
-        };
+            if (v is string s) return s;
+            if (v is JsonElement je)
+            {
+                try
+                {
+                    if (je.ValueKind == JsonValueKind.String) return je.GetString() ?? string.Empty;
+                    return je.ToString() ?? string.Empty;
+                }
+                catch
+                {
+                    return je.ToString() ?? string.Empty;
+                }
+            }
+            return v.ToString() ?? string.Empty;
+        }
+
+        foreach (var fieldChange in update.Fields)
+        {
+            var fieldName = fieldChange.Key;
+            var oldVal = fieldChange.Value?.OldValue is object ov ? FormatValue(ov) : null;
+            var newVal = fieldChange.Value?.NewValue is object nv ? FormatValue(nv) : null;
+
+            var updateObj = new CrystaTaskUpdate
+            {
+                CrystaTaskId = crystaTaskId,
+                ProviderTaskId = workItemId.ToString(),
+                ProviderUpdateId = update.Id.ToString(),
+                Revision = update.Rev.ToString(),
+                ChangedBy = update.RevisedBy?.DisplayName,
+                ChangedById = update.RevisedBy?.Id.ToString(),
+                ChangedDate = update.RevisedDate,
+                FieldName = fieldName,
+                OldValue = oldVal,
+                NewValue = newVal,
+                RawJson = json,
+                SyncInfo = new SyncInfo
+                {
+                    SyncId = $"{workItemId}-update-{update.Id}-{fieldName}",
+                    ContentHash = baseHash,
+                    LastSyncDateTime = DateTimeOffset.Now,
+                    SyncStatus = SyncStatus.Success,
+                    SyncGroup = "SyncService"
+                }
+            };
+
+            result.Add(updateObj);
+        }
+
+        return result;
     }
 
     private CrystaTaskRevision? ToCrystaTaskRevision(WorkItem revision, Guid crystaTaskId, int workItemId)
