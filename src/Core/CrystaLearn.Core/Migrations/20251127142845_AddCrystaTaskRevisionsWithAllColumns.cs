@@ -41,6 +41,10 @@ namespace CrystaLearn.Core.Migrations
                 schema: "CrystaLearn",
                 table: "CrystaTasks");
 
+            migrationBuilder.DropTable(
+              name: "CrystaTaskRevisions",
+              schema: "CrystaLearn");
+
             migrationBuilder.CreateTable(
                 name: "CrystaTaskRevisions",
                 schema: "CrystaLearn",
