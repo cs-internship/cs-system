@@ -74,7 +74,7 @@ public partial class AzureBoardSyncService : IAzureBoardSyncService
                 }
             }
 
-            var workItemResult = await SyncWorkItemsAsync(tasks);
+            var workItemResult = await SyncWorkItemsAsync(config, tasks);
             var updatesResult = await SyncUpdatesAsync(config, tasks);
             var commentsResult = await SyncCommentsAsync(config, tasks);
             var revisionsResult = await SyncRevisionsAsync(config, tasks);
@@ -350,7 +350,7 @@ public partial class AzureBoardSyncService : IAzureBoardSyncService
     /// </summary>
     /// <param name="tasks"></param>
     /// <returns></returns>
-    private async Task<SyncResult> SyncWorkItemsAsync(List<CrystaTask> tasks)
+    private async Task<SyncResult> SyncWorkItemsAsync(AzureBoardSyncConfig config, List<CrystaTask> tasks)
     {
         var boardSyncItems = tasks
             .Select(task => new SyncItem
@@ -383,6 +383,79 @@ public partial class AzureBoardSyncService : IAzureBoardSyncService
 
         var toAdd = toAddOrUpdate.Where(t => toAddList.Any(s => s.Id == t.Id)).ToList();
         var toUpdate = toAddOrUpdate.Where(t => toUpdateList.Any(s => s.Id == t.Id)).ToList();
+
+        // Ensure new tasks have an Id so parent references can be assigned before persisting
+        foreach (var t in toAdd)
+        {
+            if (t.Id == Guid.Empty)
+                t.Id = Guid.NewGuid();
+        }
+
+        // Build a map of SyncId -> CrystaTask.Id that includes existing DB items and the current batch (toAdd)
+        var syncIdToGuid = new Dictionary<string, Guid>(StringComparer.OrdinalIgnoreCase);
+
+        foreach (var existing in existingWorkItemSyncItems)
+        {
+            var sid = existing.SyncInfo?.SyncId;
+            if (!string.IsNullOrEmpty(sid) && existing.Id.HasValue)
+            {
+                syncIdToGuid[sid] = existing.Id.Value;
+            }
+        }
+
+        foreach (var item in toAdd)
+        {
+            var sid = item.WorkItemSyncInfo?.SyncId;
+            if (!string.IsNullOrEmpty(sid))
+            {
+                // Prefer existing DB id if present; otherwise use the in-memory id (for toAdd)
+                if (!syncIdToGuid.ContainsKey(sid))
+                    syncIdToGuid[sid] = item.Id;
+            }
+        }
+
+        // Assign ParentId for tasks that have a ProviderParentId
+        // First, collect missing parent sync ids that are not present in the current map
+        var missingParentSyncIds = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+
+        foreach (var t in toAddOrUpdate)
+        {
+            if (string.IsNullOrEmpty(t.ProviderParentId))
+                continue;
+
+            var parentSyncId = $"{config.Organization}/{config.Project}/{t.ProviderParentId}";
+            if (!syncIdToGuid.ContainsKey(parentSyncId))
+            {
+                missingParentSyncIds.Add(parentSyncId);
+            }
+        }
+
+        if (missingParentSyncIds.Count > 0)
+        {
+            // Try to load missing parents from DB in one call
+            var parentSyncItems = await CrystaTaskRepository.GetWorkItemSyncItemsAsync(missingParentSyncIds.ToList());
+            foreach (var p in parentSyncItems)
+            {
+                var sid = p.SyncInfo?.SyncId;
+                if (!string.IsNullOrEmpty(sid) && p.Id.HasValue && !syncIdToGuid.ContainsKey(sid))
+                {
+                    syncIdToGuid[sid] = p.Id.Value;
+                }
+            }
+        }
+
+        // Now assign ParentId using the updated map
+        foreach (var t in toAddOrUpdate)
+        {
+            if (string.IsNullOrEmpty(t.ProviderParentId))
+                continue;
+
+            var parentSyncId = $"{config.Organization}/{config.Project}/{t.ProviderParentId}";
+            if (syncIdToGuid.TryGetValue(parentSyncId, out var parentGuid))
+            {
+                t.ParentId = parentGuid;
+            }
+        }
 
         if (toAdd.Count > 0)
             await CrystaTaskRepository.AddCrystaTasksAsync(toAdd);
@@ -462,7 +535,7 @@ public partial class AzureBoardSyncService : IAzureBoardSyncService
             IdentityRef identityRef => $"{identityRef.DisplayName} ({identityRef.UniqueName})",
             _ => ""
         };
-        
+
         object? remainingWorkObj = workItem.Fields.GetValueOrDefault("Microsoft.VSTS.Scheduling.RemainingWork");
         double? remainingWork = null;
         if (remainingWorkObj is double d)
@@ -498,7 +571,8 @@ public partial class AzureBoardSyncService : IAzureBoardSyncService
             CreatedByText = createdBy,
             Tags = workItem.Fields.GetValueOrDefault("System.Tags")?.ToString(),
             ProjectName = workItem.Fields.GetValueOrDefault("System.TeamProject")?.ToString(),
-            RemainingWork = remainingWork
+            RemainingWork = remainingWork,
+            ProviderParentId = workItem.Fields.ContainsKey("System.Parent") ? workItem.Fields["System.Parent"]?.ToString() : null
         };
 
         return task;
@@ -591,7 +665,7 @@ public partial class AzureBoardSyncService : IAzureBoardSyncService
                 RawJson = json,
                 SyncInfo = new SyncInfo
                 {
-                    SyncId = $"{config.Organization}/{config.Project}/{workItemId}/update/{update.Id}/{fieldName}",
+                    SyncId = $"{config.Organization}/{config.Project}/{workItemId}/{update.Id}",
                     ContentHash = baseHash,
                     LastSyncDateTime = DateTimeOffset.Now,
                     SyncStatus = SyncStatus.Success,

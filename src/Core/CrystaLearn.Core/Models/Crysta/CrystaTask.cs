@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using CrystaLearn.Core.Models.Identity;
+﻿using CrystaLearn.Core.Models.Identity;
 using CrystaLearn.Core.Models.Infra;
 
 namespace CrystaLearn.Core.Models.Crysta;
@@ -31,6 +26,8 @@ public class CrystaTask : Entity
     public CrystaProgram? CrystaProgram { get; set; }
 
     public Guid? ParentId { get; set; }
+
+    public CrystaTask Parent { get; set; }
 
     [MaxLength(100)]
     public string? WorkItemType { get; set; }
@@ -117,6 +114,8 @@ public class CrystaTask : Entity
 
     public int? CreatedFromRevisionId { get; set; }
 
+    [NotMapped]
+    public string? ProviderParentId { get; set; }
     public override string ToString()
     {
         return $"{Title} / {Description}";

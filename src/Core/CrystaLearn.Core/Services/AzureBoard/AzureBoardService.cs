@@ -92,9 +92,7 @@ public partial class AzureBoardService : IAzureBoardService
         var result = await witClient.QueryByWiqlAsync(wiql, top: top).ConfigureAwait(false);
         var ids = result.WorkItems.Select(item => item.Id).ToArray();
 
-        var workItemChunks = ids.Chunk(200);
-
-        foreach (var chunk in workItemChunks)
+        foreach (var chunk in ids.Chunk(200))
         {
             List<WorkItem> workItems = await witClient.GetWorkItemsAsync(chunk, fields, result.AsOf).ConfigureAwait(false);
             yield return workItems;
