@@ -52,7 +52,7 @@ public class AzureBoardSyncServiceTests : TestBase
             }
         };
 
-        await service.SyncAsync(module);
+        await service.SyncAsync(module,new List<int>() { 14412 });
     }
 
     [Fact]
