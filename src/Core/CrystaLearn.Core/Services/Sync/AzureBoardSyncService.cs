@@ -462,6 +462,21 @@ public partial class AzureBoardSyncService : IAzureBoardSyncService
             IdentityRef identityRef => $"{identityRef.DisplayName} ({identityRef.UniqueName})",
             _ => ""
         };
+        
+        object? remainingWorkObj = workItem.Fields.GetValueOrDefault("Microsoft.VSTS.Scheduling.RemainingWork");
+        double? remainingWork = null;
+        if (remainingWorkObj is double d)
+        {
+            remainingWork = d;
+        }
+        else if (remainingWorkObj is int i)
+        {
+            remainingWork = Convert.ToDouble(i);
+        }
+        else if (remainingWorkObj is string s && double.TryParse(s, out var result))
+        {
+            remainingWork = result;
+        }
 
         var task = new CrystaTask
         {
@@ -482,9 +497,9 @@ public partial class AzureBoardSyncService : IAzureBoardSyncService
             CreatedDate = createdDate,
             CreatedByText = createdBy,
             Tags = workItem.Fields.GetValueOrDefault("System.Tags")?.ToString(),
-            ProjectName = workItem.Fields.GetValueOrDefault("System.TeamProject")?.ToString()
+            ProjectName = workItem.Fields.GetValueOrDefault("System.TeamProject")?.ToString(),
+            RemainingWork = remainingWork
         };
-
 
         return task;
     }
