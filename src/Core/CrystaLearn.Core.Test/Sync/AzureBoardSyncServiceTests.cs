@@ -47,7 +47,7 @@ public class AzureBoardSyncServiceTests : TestBase
             SyncConfig = System.Text.Json.JsonSerializer.Serialize(config),
             SyncInfo = new SyncInfo
             {
-                LastSyncDateTime = DateTimeOffset.Now.AddDays(-2),
+                LastSyncDateTime = DateTimeOffset.Now.AddDays(-4),
                 LastSyncOffset = "0"
             }
         };

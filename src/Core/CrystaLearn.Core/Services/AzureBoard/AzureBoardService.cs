@@ -145,7 +145,7 @@ public partial class AzureBoardService : IAzureBoardService
             new VssBasicCredential(string.Empty, config.PersonalAccessToken));
         
         using WorkItemTrackingHttpClient witClient = await connection.GetClientAsync<WorkItemTrackingHttpClient>();
-
+        
         var result = await witClient.GetRevisionsAsync(workItemId, top: top).ConfigureAwait(false);
         return result;
     }

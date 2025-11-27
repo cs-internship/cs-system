@@ -78,16 +78,12 @@ public partial class CrystaTaskRepository : ICrystaTaskRepository
         }
 
         var syncItems = await DbContext.CrystaTaskRevisions
-            .Select(r => new SyncItem
+            .Where(t => ids.Contains(t.WorkItemSyncInfo.SyncId ?? ""))
+            .Select(t => new SyncItem
             {
-                Id = r.Id,
-                SyncInfo = new SyncInfo
-                {
-                    SyncId = $"{r.ProviderTaskId}-{r.Revision}",
-                    ContentHash = r.RawJson != null ? r.RawJson : ""
-                }
-            })
-            .Where(s => ids.Contains(s.SyncInfo.SyncId ?? ""))
+                Id = t.Id,
+                SyncInfo = t.WorkItemSyncInfo
+            }).AsNoTracking()
             .ToListAsync();
 
         return syncItems;
