@@ -14,7 +14,7 @@ public partial class AzureBoardSyncService : IAzureBoardSyncService
     [AutoInject] private IConfiguration Configuration { get; set; } = default!;
     [AutoInject] private ICrystaTaskRepository CrystaTaskRepository { get; set; } = default!;
 
-    public async Task<SyncResult> SyncAsync(CrystaProgramSyncModule module)
+    public async Task<SyncResult> SyncAsync(CrystaProgramSyncModule module, List<int>? workItemIds = null)
     {
         if (module.ModuleType != SyncModuleType.AzureBoard)
         {
@@ -40,8 +40,16 @@ public partial class AzureBoardSyncService : IAzureBoardSyncService
             lastWorkItemId = 0;
         }
 
-        var query =
-            $"""
+        string query;
+
+        if (workItemIds != null && workItemIds.Count > 0)
+        {
+            query = $"Select [Id] From WorkItems Where [System.Id] In ({string.Join(",", workItemIds)})";
+        }
+        else
+        {
+            query =
+          $"""
              Select 
                  [Id] 
              From 
@@ -53,11 +61,12 @@ public partial class AzureBoardSyncService : IAzureBoardSyncService
              Order By 
                  [Changed Date] Asc
              """;
-
+        }
         var totalResult = new SyncResult { AddCount = 0, UpdateCount = 0, SameCount = 0, DeleteCount = 0 };
 
         // Collect all active work item IDs from Azure Board
         var activeWorkItemIds = new HashSet<string>();
+
 
         await foreach (var workItems in AzureBoardService.EnumerateWorkItemsQueryAsync(config, query))
         {
@@ -84,6 +93,7 @@ public partial class AzureBoardSyncService : IAzureBoardSyncService
             totalResult.UpdateCount += workItemResult.UpdateCount + updatesResult.UpdateCount + commentsResult.UpdateCount + revisionsResult.UpdateCount;
             totalResult.SameCount += workItemResult.SameCount + updatesResult.SameCount + commentsResult.SameCount + revisionsResult.SameCount;
         }
+
 
         // Handle deletions - find tasks in our DB that are no longer in Azure Board
         var allLocalWorkItemIds = await CrystaTaskRepository.GetAllWorkItemSyncIdsAsync(project);

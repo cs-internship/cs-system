@@ -5,6 +5,6 @@ namespace CrystaLearn.Core.Services.Contracts;
 
 public interface IAzureBoardSyncService
 {
-    Task<SyncResult> SyncAsync(CrystaProgramSyncModule module);
+    Task<SyncResult> SyncAsync(CrystaProgramSyncModule module, List<int>? workItemIds = null);
 
 }
