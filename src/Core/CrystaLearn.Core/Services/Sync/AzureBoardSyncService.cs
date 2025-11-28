@@ -13,6 +13,7 @@ public partial class AzureBoardSyncService : IAzureBoardSyncService
     [AutoInject] private IAzureBoardService AzureBoardService { get; set; } = default!;
     [AutoInject] private IConfiguration Configuration { get; set; } = default!;
     [AutoInject] private ICrystaTaskRepository CrystaTaskRepository { get; set; } = default!;
+    [AutoInject] private ICrystaProgramSyncModuleService CrystaProgramSyncModuleRepository { get; set; } = default!;
 
     public async Task<SyncResult> SyncAsync(CrystaProgramSyncModule module, List<int>? workItemIds = null)
     {
@@ -92,6 +93,40 @@ public partial class AzureBoardSyncService : IAzureBoardSyncService
             totalResult.AddCount += workItemResult.AddCount + updatesResult.AddCount + commentsResult.AddCount + revisionsResult.AddCount;
             totalResult.UpdateCount += workItemResult.UpdateCount + updatesResult.UpdateCount + commentsResult.UpdateCount + revisionsResult.UpdateCount;
             totalResult.SameCount += workItemResult.SameCount + updatesResult.SameCount + commentsResult.SameCount + revisionsResult.SameCount;
+
+            // Update module sync info for this batch using the largest 'Changed Date' among loaded work items
+            DateTimeOffset? batchMaxChanged = null;
+            foreach (var wi in workItems)
+            {
+                if (wi.Fields != null && wi.Fields.TryGetValue("System.ChangedDate", out var changedObj))
+                {
+                    var changedStr = changedObj?.ToString();
+                    if (!string.IsNullOrEmpty(changedStr) && DateTimeOffset.TryParse(changedStr, out var changedDt))
+                    {
+                        if (!batchMaxChanged.HasValue || changedDt > batchMaxChanged.Value)
+                            batchMaxChanged = changedDt;
+                    }
+                }
+            }
+
+            if (batchMaxChanged.HasValue)
+            {
+                module.SyncInfo.LastSyncDateTime = batchMaxChanged.Value;
+
+                // Also update LastSyncOffset to the max work item id in this batch so subsequent queries can continue from there
+                var maxId = workItems.Max(w => w.Id ?? 0);
+                module.SyncInfo.LastSyncOffset = maxId.ToString();
+
+                // Persist module after updating sync info for this batch
+                try
+                {
+                    await CrystaProgramSyncModuleRepository.UpdateSyncModuleAsync(module);
+                }
+                catch
+                {
+                    throw;
+                }
+            }
         }
 
 
@@ -108,6 +143,16 @@ public partial class AzureBoardSyncService : IAzureBoardSyncService
         // Update module sync info
         module.SyncInfo.LastSyncDateTime = DateTimeOffset.Now;
         module.SyncInfo.SyncStatus = SyncStatus.Success;
+
+        // Persist final module sync info
+        try
+        {
+            await CrystaProgramSyncModuleRepository.UpdateSyncModuleAsync(module);
+        }
+        catch
+        {
+            // Swallow persistence errors for now
+        }
 
         return totalResult;
     }
@@ -273,7 +318,7 @@ public partial class AzureBoardSyncService : IAzureBoardSyncService
         var sameList = remainedList.Except(toUpdateList).ToList();
 
         var toAddOrUpdate = allComments
-            .Where(c => toAddList.Any(s => s.Id == c.Id) || toUpdateList.Any(s => s.Id == c.Id))
+            .Where(c => toAddList.Any(s => s.Id == c.Id) || toUpdateList.Any(s => c.Id == c.Id))
             .ToList();
 
         var toAdd = toAddOrUpdate.Where(c => toAddList.Any(s => s.Id == c.Id)).ToList();

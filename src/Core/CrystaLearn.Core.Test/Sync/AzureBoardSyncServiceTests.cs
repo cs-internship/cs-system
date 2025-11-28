@@ -20,7 +20,7 @@ public class AzureBoardSyncServiceTests : TestBase
         // Arrange
         var services = CreateServiceProvider(configServices: (sc) =>
         {
-            sc.AddTransient<ICrystaProgramSyncModuleRepository, CrystaProgramSyncModuleRepositoryFake>();
+            sc.AddTransient<ICrystaProgramSyncModuleService, CrystaProgramSyncModuleService>();
         });
 
         using var scope = services.CreateScope();
@@ -47,12 +47,13 @@ public class AzureBoardSyncServiceTests : TestBase
             SyncConfig = System.Text.Json.JsonSerializer.Serialize(config),
             SyncInfo = new SyncInfo
             {
-                LastSyncDateTime = DateTimeOffset.Now.AddDays(-4),
+                LastSyncDateTime = DateTimeOffset.Now.AddYears(-4),
                 LastSyncOffset = "0"
             }
         };
 
-        await service.SyncAsync(module,new List<int>() { 14412 });
+        await service.SyncAsync(module,new List<int>() { 35205 });
+       // await service.SyncAsync(module);
     }
 
     [Fact]
@@ -61,10 +62,10 @@ public class AzureBoardSyncServiceTests : TestBase
         // Arrange
         var services = CreateServiceProvider(configServices: (sc) =>
         {
-            sc.AddTransient<ICrystaProgramSyncModuleRepository, CrystaProgramSyncModuleRepositoryFake>();
+            sc.AddTransient<ICrystaProgramSyncModuleService, CrystaProgramSyncModuleService>();
         });
 
-        var moduleService = services.GetRequiredService<ICrystaProgramSyncModuleRepository>();
+        var moduleService = services.GetRequiredService<ICrystaProgramSyncModuleService>();
         var syncService = services.GetRequiredService<IAzureBoardSyncService>();
 
         var modules = await moduleService.GetSyncModulesAsync(default);

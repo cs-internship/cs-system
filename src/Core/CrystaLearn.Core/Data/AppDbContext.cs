@@ -35,6 +35,8 @@ public partial class AppDbContext(DbContextOptions<AppDbContext> options)
 
     public DbSet<CrystaProgram> CrystaPrograms { get; set; } = default!;
 
+    public DbSet<CrystaProgramSyncModule> CrystaProgramSyncModules { get; set; } = default!;
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
