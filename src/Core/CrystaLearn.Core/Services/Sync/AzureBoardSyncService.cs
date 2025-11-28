@@ -5,6 +5,7 @@ using CrystaLearn.Core.Services.Contracts;
 using Microsoft.TeamFoundation.WorkItemTracking.WebApi.Models;
 using Microsoft.VisualStudio.Services.Common;
 using Microsoft.VisualStudio.Services.WebApi;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace CrystaLearn.Core.Services.Sync;
 
@@ -89,6 +90,16 @@ public partial class AzureBoardSyncService : IAzureBoardSyncService
             var commentsResult = await SyncCommentsAsync(config, tasks);
             var revisionsResult = await SyncRevisionsAsync(config, tasks);
 
+            // Persist only tasks that got new SyncInfo values
+
+            var tasksToUpdate = tasks
+                .Where(t => t.UpdatesSyncInfo != null || t.CommentsSyncInfo != null || t.RevisionsSyncInfo != null)
+                .ToList();
+
+            if (tasksToUpdate.Count > 0)
+                await CrystaTaskRepository.UpdateCrystaTasksAsync(tasksToUpdate);
+
+
             // Aggregate results
             totalResult.AddCount += workItemResult.AddCount + updatesResult.AddCount + commentsResult.AddCount + revisionsResult.AddCount;
             totalResult.UpdateCount += workItemResult.UpdateCount + updatesResult.UpdateCount + commentsResult.UpdateCount + revisionsResult.UpdateCount;
@@ -129,7 +140,6 @@ public partial class AzureBoardSyncService : IAzureBoardSyncService
             }
         }
 
-
         // Handle deletions - find tasks in our DB that are no longer in Azure Board
         var allLocalWorkItemIds = await CrystaTaskRepository.GetAllWorkItemSyncIdsAsync(project);
         var deletedWorkItemIds = allLocalWorkItemIds.Except(activeWorkItemIds).ToList();
@@ -145,14 +155,8 @@ public partial class AzureBoardSyncService : IAzureBoardSyncService
         module.SyncInfo.SyncStatus = SyncStatus.Success;
 
         // Persist final module sync info
-        try
-        {
-            await CrystaProgramSyncModuleRepository.UpdateSyncModuleAsync(module);
-        }
-        catch
-        {
-            // Swallow persistence errors for now
-        }
+
+        await CrystaProgramSyncModuleRepository.UpdateSyncModuleAsync(module);
 
         return totalResult;
     }
@@ -182,6 +186,9 @@ public partial class AzureBoardSyncService : IAzureBoardSyncService
 
             var azureUpdates = await AzureBoardService.GetUpdatesAsync(config, workItemId);
 
+            // collect per-task updates
+            var taskUpdates = new List<CrystaTaskUpdate>();
+
             foreach (var update in azureUpdates)
             {
                 // Resolve CrystaTaskId: prefer task.Id, otherwise try to lookup by SyncId
@@ -192,7 +199,41 @@ public partial class AzureBoardSyncService : IAzureBoardSyncService
                 var crystaUpdates = ToCrystaTaskUpdate(update, crystaTaskId, workItemId, config);
                 if (crystaUpdates != null && crystaUpdates.Count > 0)
                 {
+                    taskUpdates.AddRange(crystaUpdates);
                     allUpdates.AddRange(crystaUpdates);
+                }
+            }
+
+            // compute and assign UpdatesSyncInfo for this task using only its own updates
+            if (taskUpdates.Count > 0)
+            {
+                try
+                {
+                    var combined = string.Join("", taskUpdates.Select(u => u.RawJson ?? string.Empty));
+                    var contentHash = combined.Sha();
+
+                    int maxUpdateId = 0;
+                    foreach (var u in taskUpdates)
+                    {
+                        if (int.TryParse(u.ProviderUpdateId, out var uid))
+                        {
+                            if (uid > maxUpdateId) maxUpdateId = uid;
+                        }
+                    }
+
+                    task.UpdatesSyncInfo = new SyncInfo
+                    {
+                        SyncId = $"{config.Organization}/{config.Project}/{task.ProviderTaskId}/updates",
+                        ContentHash = contentHash,
+                        LastSyncDateTime = DateTimeOffset.Now,
+                        LastSyncOffset = maxUpdateId > 0 ? maxUpdateId.ToString() : null,
+                        SyncStatus = SyncStatus.Success,
+                        SyncGroup = "SyncService"
+                    };
+                }
+                catch
+                {
+                    // swallow per-task sync info errors
                 }
             }
         }
@@ -273,6 +314,8 @@ public partial class AzureBoardSyncService : IAzureBoardSyncService
 
             var azureComments = await AzureBoardService.GetCommentsAsync(config, workItemId);
 
+            var taskComments = new List<CrystaTaskComment>();
+
             foreach (var comment in azureComments)
             {
                 // Resolve CrystaTaskId: prefer task.Id, otherwise try to lookup by SyncId
@@ -283,7 +326,40 @@ public partial class AzureBoardSyncService : IAzureBoardSyncService
                 var crystaComment = ToCrystaTaskComment(comment, crystaTaskId, workItemId, config);
                 if (crystaComment != null)
                 {
+                    taskComments.Add(crystaComment);
                     allComments.Add(crystaComment);
+                }
+            }
+
+            if (taskComments.Count > 0)
+            {
+                try
+                {
+                    var combined = string.Join("", taskComments.Select(c => c.RawJson ?? string.Empty));
+                    var contentHash = combined.Sha();
+
+                    int maxRevision = 0;
+                    foreach (var c in taskComments)
+                    {
+                        if (int.TryParse(c.Revision, out var rv))
+                        {
+                            if (rv > maxRevision) maxRevision = rv;
+                        }
+                    }
+
+                    task.CommentsSyncInfo = new SyncInfo
+                    {
+                        SyncId = $"{config.Organization}/{config.Project}/{task.ProviderTaskId}/comments",
+                        ContentHash = contentHash,
+                        LastSyncDateTime = DateTimeOffset.Now,
+                        LastSyncOffset = maxRevision > 0 ? maxRevision.ToString() : null,
+                        SyncStatus = SyncStatus.Success,
+                        SyncGroup = "SyncService"
+                    };
+                }
+                catch
+                {
+                    // swallow per-task
                 }
             }
         }
@@ -364,6 +440,8 @@ public partial class AzureBoardSyncService : IAzureBoardSyncService
 
             var azureRevisions = await AzureBoardService.GetRevisionsAsync(config, workItemId);
 
+            var taskRevisions = new List<CrystaTaskRevision>();
+
             foreach (var revision in azureRevisions)
             {
                 // Resolve CrystaTaskId: prefer task.Id, otherwise try to lookup by SyncId
@@ -374,7 +452,40 @@ public partial class AzureBoardSyncService : IAzureBoardSyncService
                 var crystaRevision = ToCrystaTaskRevision(revision, crystaTaskId, workItemId, config);
                 if (crystaRevision != null)
                 {
+                    taskRevisions.Add(crystaRevision);
                     allRevisions.Add(crystaRevision);
+                }
+            }
+
+            if (taskRevisions.Count > 0)
+            {
+                try
+                {
+                    var combined = string.Join("", taskRevisions.Select(r => r.RawJson ?? string.Empty));
+                    var contentHash = combined.Sha();
+
+                    int maxRevision = 0;
+                    foreach (var r in taskRevisions)
+                    {
+                        if (int.TryParse(r.Revision, out var rv))
+                        {
+                            if (rv > maxRevision) maxRevision = rv;
+                        }
+                    }
+
+                    task.RevisionsSyncInfo = new SyncInfo
+                    {
+                        SyncId = $"{config.Organization}/{config.Project}/{task.ProviderTaskId}/revisions",
+                        ContentHash = contentHash,
+                        LastSyncDateTime = DateTimeOffset.Now,
+                        LastSyncOffset = maxRevision > 0 ? maxRevision.ToString() : null,
+                        SyncStatus = SyncStatus.Success,
+                        SyncGroup = "SyncService"
+                    };
+                }
+                catch
+                {
+                    // swallow per-task
                 }
             }
         }
