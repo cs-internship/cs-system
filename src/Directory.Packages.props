@@ -13,6 +13,7 @@
     <PackageVersion Include="EFCore.BulkExtensions" Version="9.0.2" />
     <PackageVersion Include="Fido2.AspNet" Version="4.0.0-beta.17" />
     <PackageVersion Include="Fido2.Models" Version="4.0.0-beta.17" />
+    <PackageVersion Include="Hangfire.PostgreSql" Version="1.20.12" />
     <PackageVersion Include="HtmlSanitizer" Version="9.0.886" />
     <PackageVersion Include="libphonenumber-csharp" Version="9.0.11" />
     <PackageVersion Include="Markdig" Version="0.41.0" />
