@@ -156,7 +156,7 @@ public partial class AzureBoardSyncService : IAzureBoardSyncService
         }
 
         // Update module sync info
-        module.SyncInfo.LastSyncDateTime = DateTimeOffset.Now;
+        
         module.SyncInfo.SyncStatus = SyncStatus.Success;
 
         // Persist final module sync info
