@@ -18,6 +18,7 @@ using FluentStorage.Blobs;
 using Ganss.Xss;
 using Hangfire.EntityFrameworkCore;
 using Hangfire.PostgreSql;
+using Hangfire.Storage;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
@@ -354,7 +355,12 @@ public static partial class Program
             }
             else
             {
-                configuration.UsePostgreSqlStorage(options => options.UseNpgsqlConnection(builder.Configuration.GetConnectionString("PostgresConnectionString")));
+                configuration.UsePostgreSqlStorage(options =>
+                       {
+                           options.UseNpgsqlConnection(builder.Configuration.GetConnectionString("PostgresConnectionString"));
+                           AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
+                       }
+                );
             }
 
             configuration.UseRecommendedSerializerSettings();

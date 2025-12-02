@@ -18,6 +18,7 @@ public class CrystaTask : Entity
     public DateTimeOffset? TaskDoneDateTime { get; set; }
     public DateTimeOffset? TaskAssignDateTime { get; set; }
     public CrystaTaskStatus? Status { get; set; }
+    public string? ProviderStatus { get; set; }
     public string? ProviderTaskUrl { get; set; }
     public SyncInfo WorkItemSyncInfo { get; set; } = new();
     public SyncInfo RevisionsSyncInfo { get; set; } = new();
@@ -114,7 +115,6 @@ public class CrystaTask : Entity
 
     public int? CreatedFromRevisionId { get; set; }
 
-    [NotMapped]
     public string? ProviderParentId { get; set; }
     public override string ToString()
     {

@@ -696,7 +696,8 @@ public partial class AzureBoardSyncService : IAzureBoardSyncService
             SyncGroup = "SyncService"
         };
 
-        var status = workItem.Fields["System.State"]?.ToString() switch
+        var providerStatus = workItem.Fields["System.State"]?.ToString();
+        var status = providerStatus switch
         {
             "New" or "To Do" => CrystaTaskStatus.New,
             "Approved" or "In Progress" or "Committed"
@@ -762,6 +763,12 @@ public partial class AzureBoardSyncService : IAzureBoardSyncService
             remainingWork = result;
         }
 
+        var changedBy = workItem.Fields.GetValueOrDefault("System.ChangedBy") switch
+        {
+            IdentityRef identityRef => $"{identityRef.DisplayName} ({identityRef.UniqueName})",
+            _ => ""
+        };
+
         var task = new CrystaTask
         {
             ProviderTaskId = workItem.Id?.ToString(),
@@ -769,6 +776,7 @@ public partial class AzureBoardSyncService : IAzureBoardSyncService
             Description = description,
             DescriptionHtml = description,
             Status = status,
+            ProviderStatus = providerStatus,
             TaskCreateDateTime = taskCreateDateTime,
             ProviderTaskUrl = workItem.Url,
             WorkItemSyncInfo = syncInfo,
@@ -783,7 +791,10 @@ public partial class AzureBoardSyncService : IAzureBoardSyncService
             Tags = workItem.Fields.GetValueOrDefault("System.Tags")?.ToString(),
             ProjectName = workItem.Fields.GetValueOrDefault("System.TeamProject")?.ToString(),
             RemainingWork = remainingWork,
-            ProviderParentId = workItem.Fields.ContainsKey("System.Parent") ? workItem.Fields["System.Parent"]?.ToString() : null
+            ProviderParentId = workItem.Fields.GetValueOrDefault("System.Parent")?.ToString(),
+            ChangedBy = changedBy,
+            BoardColumn = workItem.Fields.GetValueOrDefault("System.BoardColumn")?.ToString(),
+            BoardColumnDone = workItem.Fields.GetValueOrDefault("System.BoardColumnDone") as bool? ?? false
         };
 
         return task;
