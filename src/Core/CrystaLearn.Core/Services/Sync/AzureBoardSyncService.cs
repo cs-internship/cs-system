@@ -72,6 +72,7 @@ public partial class AzureBoardSyncService : IAzureBoardSyncService
 
         await foreach (var workItems in AzureBoardService.EnumerateWorkItemsQueryAsync(config, query))
         {
+            Console.WriteLine($"Processing batch of {workItems.Count} work items...");
             var tasks = workItems
                         .Select(w => ToCrystaTask(w, config))
                         .ToList();
@@ -86,9 +87,13 @@ public partial class AzureBoardSyncService : IAzureBoardSyncService
             }
 
             var workItemResult = await SyncWorkItemsAsync(config, tasks);
-            var updatesResult = await SyncUpdatesAsync(config, tasks);
+            Console.WriteLine($"  WorkItems - Added: {workItemResult.AddCount}, Updated: {workItemResult.UpdateCount}, Unchanged: {workItemResult.SameCount}");
+            //var updatesResult = await SyncUpdatesAsync(config, tasks);
+            //Console.WriteLine($"  Updates   - Added: {updatesResult.AddCount}, Updated: {updatesResult.UpdateCount}, Unchanged: {updatesResult.SameCount}");
             var commentsResult = await SyncCommentsAsync(config, tasks);
+            Console.WriteLine($"  Comments  - Added: {commentsResult.AddCount}, Updated: {commentsResult.UpdateCount}, Unchanged: {commentsResult.SameCount}");
             var revisionsResult = await SyncRevisionsAsync(config, tasks);
+            Console.WriteLine($"  Revisions - Added: {revisionsResult.AddCount}, Updated: {revisionsResult.UpdateCount}, Unchanged: {revisionsResult.SameCount}");
 
             // Persist only tasks that got new SyncInfo values
 
@@ -101,9 +106,9 @@ public partial class AzureBoardSyncService : IAzureBoardSyncService
 
 
             // Aggregate results
-            totalResult.AddCount += workItemResult.AddCount + updatesResult.AddCount + commentsResult.AddCount + revisionsResult.AddCount;
-            totalResult.UpdateCount += workItemResult.UpdateCount + updatesResult.UpdateCount + commentsResult.UpdateCount + revisionsResult.UpdateCount;
-            totalResult.SameCount += workItemResult.SameCount + updatesResult.SameCount + commentsResult.SameCount + revisionsResult.SameCount;
+            totalResult.AddCount += workItemResult.AddCount  + commentsResult.AddCount + revisionsResult.AddCount;
+            totalResult.UpdateCount += workItemResult.UpdateCount + commentsResult.UpdateCount + revisionsResult.UpdateCount;
+            totalResult.SameCount += workItemResult.SameCount + commentsResult.SameCount + revisionsResult.SameCount;
 
             // Update module sync info for this batch using the largest 'Changed Date' among loaded work items
             DateTimeOffset? batchMaxChanged = null;
@@ -268,12 +273,12 @@ public partial class AzureBoardSyncService : IAzureBoardSyncService
         var sameList = remainedList.Except(toUpdateList).ToList();
 
         var toAddOrUpdate = allUpdates
-            .Where(u => toAddList.Any(s => s.Id == u.Id) || toUpdateList.Any(s => s.Id == u.Id))
+            .Where(u => toAddList.Any(s => s.SyncInfo.SyncId == u.SyncInfo.SyncId) || toUpdateList.Any(s => s.SyncInfo.SyncId == u.SyncInfo.SyncId))
             .ToList();
 
         // split to add and update
-        var toAdd = toAddOrUpdate.Where(u => toAddList.Any(s => s.Id == u.Id)).ToList();
-        var toUpdate = toAddOrUpdate.Where(u => toUpdateList.Any(s => s.Id == u.Id)).ToList();
+        var toAdd = toAddOrUpdate.Where(u => toAddList.Any(s => s.SyncInfo.SyncId == u.SyncInfo.SyncId)).ToList();
+        var toUpdate = toAddOrUpdate.Where(u => toUpdateList.Any(s => s.SyncInfo.SyncId == u.SyncInfo.SyncId)).ToList();
 
         if (toAdd.Count > 0)
             await CrystaTaskRepository.AddCrystaTaskUpdatesAsync(toAdd);
@@ -394,11 +399,11 @@ public partial class AzureBoardSyncService : IAzureBoardSyncService
         var sameList = remainedList.Except(toUpdateList).ToList();
 
         var toAddOrUpdate = allComments
-            .Where(c => toAddList.Any(s => s.Id == c.Id) || toUpdateList.Any(s => c.Id == c.Id))
+            .Where(c => toAddList.Any(s => s.SyncInfo.SyncId == c.SyncInfo.SyncId) || toUpdateList.Any(s => s.SyncInfo.SyncId == c.SyncInfo.SyncId))
             .ToList();
 
-        var toAdd = toAddOrUpdate.Where(c => toAddList.Any(s => s.Id == c.Id)).ToList();
-        var toUpdate = toAddOrUpdate.Where(c => toUpdateList.Any(s => s.Id == c.Id)).ToList();
+        var toAdd = toAddOrUpdate.Where(c => toAddList.Any(s => s.SyncInfo.SyncId == c.SyncInfo.SyncId)).ToList();
+        var toUpdate = toAddOrUpdate.Where(c => toUpdateList.Any(s => s.SyncInfo.SyncId == c.SyncInfo.SyncId)).ToList();
 
         if (toAdd.Count > 0)
             await CrystaTaskRepository.AddCrystaTaskCommentsAsync(toAdd);
@@ -501,8 +506,8 @@ public partial class AzureBoardSyncService : IAzureBoardSyncService
                 Id = r.Id,
                 SyncInfo = new SyncInfo
                 {
-                    SyncId = $"{r.ProviderTaskId}-{r.Revision}",
-                    ContentHash = r.RawJson?.Sha() ?? ""
+                    SyncId = r.WorkItemSyncInfo.SyncId,
+                    ContentHash = r.WorkItemSyncInfo.ContentHash
                 }
             })
             .ToList();
@@ -524,11 +529,11 @@ public partial class AzureBoardSyncService : IAzureBoardSyncService
         var sameList = remainedList.Except(toUpdateList).ToList();
 
         var toAddOrUpdate = allRevisions
-            .Where(r => toAddList.Any(s => s.Id == r.Id) || toUpdateList.Any(s => s.Id == r.Id))
+            .Where(r => toAddList.Any(s => s.SyncInfo.SyncId == r.WorkItemSyncInfo.SyncId) || toUpdateList.Any(s => s.SyncInfo.SyncId == r.WorkItemSyncInfo.SyncId))
             .ToList();
 
-        var toAdd = toAddOrUpdate.Where(r => toAddList.Any(s => s.Id == r.Id)).ToList();
-        var toUpdate = toAddOrUpdate.Where(r => toUpdateList.Any(s => s.Id == r.Id)).ToList();
+        var toAdd = toAddOrUpdate.Where(r => toAddList.Any(s => s.SyncInfo.SyncId == r.WorkItemSyncInfo.SyncId)).ToList();
+        var toUpdate = toAddOrUpdate.Where(r => toUpdateList.Any(s => s.SyncInfo.SyncId == r.WorkItemSyncInfo.SyncId)).ToList();
 
         if (toAdd.Count > 0)
             await CrystaTaskRepository.AddCrystaTaskRevisionsAsync(toAdd);
@@ -577,11 +582,11 @@ public partial class AzureBoardSyncService : IAzureBoardSyncService
         var sameList = remainedList.Except(toUpdateList).ToList();
 
         var toAddOrUpdate = tasks
-            .Where(t => toAddList.Any(s => s.Id == t.Id) || toUpdateList.Any(s => s.Id == t.Id))
+            .Where(t => toAddList.Any(s => s.SyncInfo.SyncId == t.WorkItemSyncInfo.SyncId) || toUpdateList.Any(s => s.SyncInfo.SyncId == t.WorkItemSyncInfo.SyncId))
             .ToList();
 
-        var toAdd = toAddOrUpdate.Where(t => toAddList.Any(s => s.Id == t.Id)).ToList();
-        var toUpdate = toAddOrUpdate.Where(t => toUpdateList.Any(s => s.Id == t.Id)).ToList();
+        var toAdd = toAddOrUpdate.Where(t => toAddList.Any(s => s.SyncInfo.SyncId == t.WorkItemSyncInfo.SyncId)).ToList();
+        var toUpdate = toAddOrUpdate.Where(t => toUpdateList.Any(s => s.SyncInfo.SyncId == t.WorkItemSyncInfo.SyncId)).ToList();
 
         // Ensure new tasks have an Id so parent references can be assigned before persisting
         foreach (var t in toAdd)
@@ -933,7 +938,7 @@ public partial class AzureBoardSyncService : IAzureBoardSyncService
 
         var syncInfo = new SyncInfo
         {
-            SyncId = $"{config.Organization}/{config.Project}/{revision.Id.ToString()}",
+            SyncId = $"{config.Organization}/{config.Project}/{revision.Id.ToString()}/{revisionNumber}",
             ContentHash = hash,
             LastSyncDateTime = DateTimeOffset.Now,
             LastSyncOffset = revision.Id.ToString(),

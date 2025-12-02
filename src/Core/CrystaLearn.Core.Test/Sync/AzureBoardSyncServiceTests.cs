@@ -25,7 +25,8 @@ public class AzureBoardSyncServiceTests : TestBase
 
         using var scope = services.CreateScope();
         var service = scope.ServiceProvider.GetRequiredService<IAzureBoardSyncService>();
-
+        var moduleService = scope.ServiceProvider.GetRequiredService<ICrystaProgramSyncModuleService>();
+        
         var configuration = scope.ServiceProvider.GetRequiredService<IConfiguration>();
         var organization = "cs-internship";
         var pat = configuration["AzureDevOps:PersonalAccessToken"]
@@ -52,9 +53,32 @@ public class AzureBoardSyncServiceTests : TestBase
             }
         };
 
-        await service.SyncAsync(module,new List<int>() { 35205 });
-       // await service.SyncAsync(module);
+        await service.SyncAsync(module, new List<int>() { 3964 });
+        // await service.SyncAsync(module);
     }
+
+
+    [Fact]
+    public async Task SyncAzureBoard_MustWork()
+    {
+        // Arrange
+        var services = CreateServiceProvider(configServices: (sc) =>
+        {
+            sc.AddTransient<ICrystaProgramSyncModuleService, CrystaProgramSyncModuleService>();
+        });
+
+        using var scope = services.CreateScope();
+        var service = scope.ServiceProvider.GetRequiredService<IAzureBoardSyncService>();
+        var moduleService = scope.ServiceProvider.GetRequiredService<ICrystaProgramSyncModuleService>();
+        var moduleList = await moduleService.GetSyncModulesAsync(CancellationToken.None);
+        var configuration = scope.ServiceProvider.GetRequiredService<IConfiguration>();
+        
+
+
+        await service.SyncAsync(moduleList.First(f => f.ModuleType == SyncModuleType.AzureBoard), new List<int>() { 3964 });
+        // await service.SyncAsync(module);
+    }
+
 
     [Fact]
     public async Task SyncAzureBoard_WithFakeRepo_MustWork()
@@ -65,8 +89,10 @@ public class AzureBoardSyncServiceTests : TestBase
             sc.AddTransient<ICrystaProgramSyncModuleService, CrystaProgramSyncModuleService>();
         });
 
-        var moduleService = services.GetRequiredService<ICrystaProgramSyncModuleService>();
-        var syncService = services.GetRequiredService<IAzureBoardSyncService>();
+        using var scope = services.CreateScope();
+        var moduleService = scope.ServiceProvider.GetRequiredService<ICrystaProgramSyncModuleService>();
+        await moduleService.GetSyncModulesAsync(CancellationToken.None);
+        var syncService = scope.ServiceProvider.GetRequiredService<IAzureBoardSyncService>();
 
         var modules = await moduleService.GetSyncModulesAsync(default);
 

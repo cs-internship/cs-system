@@ -11,13 +11,13 @@ namespace CrystaLearn.Core.Services;
 
 public partial class CrystaProgramSyncModuleService : ICrystaProgramSyncModuleService
 {
+
     private static List<CrystaProgramSyncModule> _modules = new();
+    private AppDbContext DbContext { get; set; } = default!;
 
-    // AppDbContext will be available in server environment; use it to persist changes.
-    [AutoInject] private AppDbContext DbContext { get; set; } = default!;
-
-    public CrystaProgramSyncModuleService()
+    public CrystaProgramSyncModuleService(AppDbContext dbContext)
     {
+        this.DbContext = dbContext;
         if (_modules.Count == 0)
         {
             _modules = DbContext.Set<CrystaProgramSyncModule>().ToListAsync().GetAwaiter().GetResult();

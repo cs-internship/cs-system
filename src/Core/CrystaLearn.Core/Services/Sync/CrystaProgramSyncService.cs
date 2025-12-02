@@ -10,7 +10,7 @@ namespace CrystaLearn.Core.Services.Sync;
 
 public partial class CrystaProgramSyncService : ICrystaProgramSyncService
 {
-    private IAzureBoardSyncService AzureBoardSyncService { get; set; } = default!;
+    [AutoInject] private IAzureBoardSyncService AzureBoardSyncService { get; set; } = default!;
 
     public async Task SyncAsync(CrystaProgramSyncModule module)
     {

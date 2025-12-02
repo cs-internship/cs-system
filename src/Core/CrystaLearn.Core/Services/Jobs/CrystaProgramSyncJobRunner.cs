@@ -21,7 +21,7 @@ public partial class CrystaProgramSyncJobRunner
             }
 
             Console.Write($"Sync Start at {DateTime.UtcNow}");
-
+            
             isRunning = true;
             var modules = await syncModuleService.GetSyncModulesAsync(cancellationToken);
 
