@@ -15,6 +15,9 @@ public class CrystaTaskCommentConfiguration : IEntityTypeConfiguration<CrystaTas
             .HasForeignKey(c => c.CrystaTaskId)
             .OnDelete(DeleteBehavior.Cascade);
 
-        builder.OwnsOne(c => c.SyncInfo);
+        builder.OwnsOne(u => u.SyncInfo, sync =>
+        {
+            sync.HasIndex(s => s.SyncId).IsUnique();
+        });
     }
 }

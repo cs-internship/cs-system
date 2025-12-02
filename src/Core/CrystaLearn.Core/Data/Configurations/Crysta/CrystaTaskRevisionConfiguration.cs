@@ -35,9 +35,13 @@ public class CrystaTaskRevisionConfiguration : IEntityTypeConfiguration<CrystaTa
             .WithMany()
             .HasForeignKey(r => r.CrystaProgramId);
 
-        builder.OwnsOne(r => r.WorkItemSyncInfo);
+        builder.OwnsOne(u => u.WorkItemSyncInfo, sync =>
+        {
+            sync.HasIndex(s => s.SyncId).IsUnique();
+        });
         builder.OwnsOne(r => r.RevisionsSyncInfo);
         builder.OwnsOne(r => r.UpdatesSyncInfo);
         builder.OwnsOne(r => r.CommentsSyncInfo);
+       
     }
 }
