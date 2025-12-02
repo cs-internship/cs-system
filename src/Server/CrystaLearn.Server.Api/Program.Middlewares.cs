@@ -61,6 +61,9 @@ public static partial class Program
             Authorization = [new HangfireDashboardAuthorizationFilter()]
         });
 
+        // Configure recurring jobs
+        ConfigureHangfireRecurringJobs();
+
         app.MapGet("/api/minimal-api-sample/{routeParameter}", [AppResponseCache(MaxAge = 3600 * 24)] (string routeParameter, [FromQuery] string queryStringParameter) => new
         {
             RouteParameter = routeParameter,
@@ -72,5 +75,14 @@ public static partial class Program
         app.MapControllers()
            .RequireAuthorization()
            .CacheOutput("AppResponseCachePolicy");
+    }
+
+    private static void ConfigureHangfireRecurringJobs()
+    {
+        // Schedule CrystaProgram sync to run every 5 hours
+        RecurringJob.AddOrUpdate<CrystaLearn.Core.Services.Jobs.CrystaProgramSyncJobRunner>(
+            recurringJobId: "crysta-program-sync",
+            methodCall: x => x.RunSyncForAllModules(CancellationToken.None),
+            cronExpression: "*/1 * * * *");
     }
 }
