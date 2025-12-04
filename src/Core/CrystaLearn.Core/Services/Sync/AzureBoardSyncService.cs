@@ -355,9 +355,9 @@ public partial class AzureBoardSyncService : IAzureBoardSyncService
 
                     task.CommentsSyncInfo = new SyncInfo
                     {
-                        SyncId = $"{config.Organization}/{config.Project}/{task.ProviderTaskId}/comments",
+                        SyncId = $"{config.Organization}/{config.Project}/{task.ProviderTaskId}",
                         ContentHash = contentHash,
-                        LastSyncDateTime = DateTimeOffset.Now,
+                        LastSyncDateTime = taskComments.Max(f => f.SyncInfo.LastSyncDateTime),
                         LastSyncOffset = maxRevision > 0 ? maxRevision.ToString() : null,
                         SyncStatus = SyncStatus.Success,
                         SyncGroup = "SyncService"
@@ -845,7 +845,7 @@ public partial class AzureBoardSyncService : IAzureBoardSyncService
             RawJson = json,
             SyncInfo = new SyncInfo
             {
-                SyncId = $"{config.Organization}/{config.Project}/{workItemId.ToString()}/{workItemId}/comment/{hash.Substring(0, 8)}",
+                SyncId = $"{config.Organization}/{config.Project}/{workItemId.ToString()}/comment/{hash.Substring(0, 8)}",
                 ContentHash = hash,
                 LastSyncDateTime = DateTimeOffset.Now,
                 SyncStatus = SyncStatus.Success
