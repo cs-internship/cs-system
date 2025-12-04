@@ -700,13 +700,10 @@ public partial class AzureBoardSyncService : IAzureBoardSyncService
         var providerStatus = workItem.Fields["System.State"]?.ToString();
         var status = providerStatus switch
         {
-            "New" or "To Do" => CrystaTaskStatus.New,
-            "Approved" or "In Progress" or "Committed"
-                => CrystaTaskStatus.InProgress,
-            "Done" or "Closed"
-                => CrystaTaskStatus.Done,
-            "Canceled" or "Removed"
-                => CrystaTaskStatus.Canceled,
+            "New" or "To Do" or "Design"=> CrystaTaskStatus.New,
+            "Approved" or "In Progress" or "Committed" or "Ready" => CrystaTaskStatus.InProgress,
+            "Done" or "Closed" => CrystaTaskStatus.Done,
+            "Canceled" or "Removed" => CrystaTaskStatus.Canceled,
             _
                 => throw new Exception($"Invalid status for mapping: {workItem.Fields["System.State"]?.ToString()}")
         };

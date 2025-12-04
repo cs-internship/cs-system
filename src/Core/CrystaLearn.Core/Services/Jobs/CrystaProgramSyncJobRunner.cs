@@ -33,6 +33,8 @@ public partial class CrystaProgramSyncJobRunner
         catch (Exception ex)
         {
             Console.WriteLine($"Error during sync: {ex.Message} {ex}");
+            isRunning = false;
+            throw;
         }
 
         isRunning = false;
