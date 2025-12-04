@@ -153,15 +153,8 @@ public partial class AzureBoardSyncService : IAzureBoardSyncService
             }
         }
 
-        // Handle deletions - find tasks in our DB that are no longer in Azure Board
-        var allLocalWorkItemIds = await CrystaTaskRepository.GetAllWorkItemSyncIdsAsync(project);
-        var deletedWorkItemIds = allLocalWorkItemIds.Except(activeWorkItemIds).ToList();
-
-        if (deletedWorkItemIds.Count > 0)
-        {
-            var deleteCount = await CrystaTaskRepository.MarkCrystaTasksAsDeletedAsync(deletedWorkItemIds);
-            totalResult.DeleteCount += deleteCount;
-        }
+        //TODO: Handle deletions - find tasks in our DB that are no longer in Azure Board
+       
 
         // Update module sync info
         
@@ -826,7 +819,8 @@ public partial class AzureBoardSyncService : IAzureBoardSyncService
                 int c => c,
                 string cs when int.TryParse(cs, out var ci) => ci,
                 _ => null
-            }
+            },
+            IsDeleted = false
         };
 
         return task;
