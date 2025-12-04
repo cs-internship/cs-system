@@ -73,6 +73,9 @@ public partial class AzureBoardSyncService : IAzureBoardSyncService
         await foreach (var workItems in AzureBoardService.EnumerateWorkItemsQueryAsync(config, query))
         {
             Console.WriteLine($"Processing batch of {workItems.Count} work items...");
+            
+            module.SyncInfo.SyncStartDateTime = DateTimeOffset.Now;
+
             var tasks = workItems
                         .Select(w => ToCrystaTask(w, config))
                         .ToList();
@@ -128,10 +131,15 @@ public partial class AzureBoardSyncService : IAzureBoardSyncService
             if (batchMaxChanged.HasValue)
             {
                 module.SyncInfo.LastSyncDateTime = batchMaxChanged.Value;
-
+                module.UpdatedAt = DateTimeOffset.Now;
                 // Also update LastSyncOffset to the max work item id in this batch so subsequent queries can continue from there
                 var maxId = workItems.Max(w => w.Id ?? 0);
                 module.SyncInfo.LastSyncOffset = maxId.ToString();
+
+                module.SyncInfo.SyncEndDateTime = DateTimeOffset.Now;
+                config.WorkItemChangedFromDateTime = batchMaxChanged.Value;
+
+                module.SyncConfig = JsonSerializer.Serialize<AzureBoardSyncConfig>(config);
 
                 // Persist module after updating sync info for this batch
                 try
@@ -720,10 +728,15 @@ public partial class AzureBoardSyncService : IAzureBoardSyncService
             _ => throw new Exception("Invalid date")
         };
 
+        var taskChangeDateTime = workItem.Fields["System.ChangedDate"]?.ToString() switch
+        {
+            string s => DateTimeOffset.Parse(s),
+            _ => throw new Exception("Invalid date")
+        };
+
         var areaPath = workItem.Fields["System.AreaPath"]?.ToString();
         var iterationPath = workItem.Fields["System.IterationPath"]?.ToString();
-        DateTimeOffset.TryParse(workItem.Fields["System.CreatedDate"]?.ToString(), out var createdDate);
-
+        
         //var taskDoneDateTime = workItem.Fields["System.FinishedDate"]?.ToString() switch
         //{
         //    string s => DateTimeOffset.Parse(s),
@@ -778,7 +791,8 @@ public partial class AzureBoardSyncService : IAzureBoardSyncService
             Status = status,
             ProviderStatus = providerStatus,
             TaskCreateDateTime = taskCreateDateTime,
-            ProviderTaskUrl = workItem.Url,
+            TaskChangedDateTime = taskChangeDateTime,
+            ProviderTaskUrl = $"https://dev.azure.com/{config.Organization}/{config.Project}/_workitems/edit/{workItem.Id}",
             WorkItemSyncInfo = syncInfo,
             AssignedToText = assignedToText,
             Revision = workItem.Rev?.ToString() ?? string.Empty,
@@ -786,7 +800,6 @@ public partial class AzureBoardSyncService : IAzureBoardSyncService
             WorkItemType = workItem.Fields["System.WorkItemType"]?.ToString(),
             AreaPath = areaPath,
             IterationPath = iterationPath,
-            CreatedDate = createdDate,
             CreatedByText = createdBy,
             Tags = workItem.Fields.GetValueOrDefault("System.Tags")?.ToString(),
             ProjectName = workItem.Fields.GetValueOrDefault("System.TeamProject")?.ToString(),
@@ -794,7 +807,26 @@ public partial class AzureBoardSyncService : IAzureBoardSyncService
             ProviderParentId = workItem.Fields.GetValueOrDefault("System.Parent")?.ToString(),
             ChangedBy = changedBy,
             BoardColumn = workItem.Fields.GetValueOrDefault("System.BoardColumn")?.ToString(),
-            BoardColumnDone = workItem.Fields.GetValueOrDefault("System.BoardColumnDone") as bool? ?? false
+            BoardColumnDone = workItem.Fields.GetValueOrDefault("System.BoardColumnDone") as bool? ?? false,
+            Reason = workItem.Fields.GetValueOrDefault("System.Reason")?.ToString(),
+            Priority = workItem.Fields.GetValueOrDefault("Microsoft.VSTS.Common.Priority") switch
+            {
+                int p => p,
+                string ps when int.TryParse(ps, out var pi) => pi,
+                _ => null
+            },
+            CommentCount = workItem.Fields.GetValueOrDefault("System.CommentCount") switch
+            {
+                int c => c,
+                string cs when int.TryParse(cs, out var ci) => ci,
+                _ => null
+            },
+            AttachmentsCount = workItem.Fields.GetValueOrDefault("System.AttachedFileCount") switch
+            {
+                int c => c,
+                string cs when int.TryParse(cs, out var ci) => ci,
+                _ => null
+            }
         };
 
         return task;

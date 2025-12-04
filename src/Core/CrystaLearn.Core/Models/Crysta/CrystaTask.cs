@@ -2,6 +2,7 @@
 using CrystaLearn.Core.Models.Infra;
 
 namespace CrystaLearn.Core.Models.Crysta;
+
 public class CrystaTask : Entity
 {
     public string? ProviderTaskId { get; set; } = default;
@@ -17,6 +18,7 @@ public class CrystaTask : Entity
     public DateTimeOffset? TaskCreateDateTime { get; set; }
     public DateTimeOffset? TaskDoneDateTime { get; set; }
     public DateTimeOffset? TaskAssignDateTime { get; set; }
+    public DateTimeOffset? TaskChangedDateTime { get; set; }
     public CrystaTaskStatus? Status { get; set; }
     public string? ProviderStatus { get; set; }
     public string? ProviderTaskUrl { get; set; }
@@ -33,9 +35,6 @@ public class CrystaTask : Entity
     [MaxLength(100)]
     public string? WorkItemType { get; set; }
 
-    [MaxLength(100)]
-    public string? State { get; set; }
-
     [MaxLength(200)]
     public string? Reason { get; set; }
 
@@ -45,13 +44,8 @@ public class CrystaTask : Entity
     [MaxLength(500)]
     public string? IterationPath { get; set; }
 
-    [MaxLength(255)]
-    public string? CreatedByDisplayName { get; set; }
-
     [MaxLength(200)]
     public string? CreatedById { get; set; }
-
-    public DateTimeOffset? CreatedDate { get; set; }
 
     [MaxLength(255)]
     public string? ChangedBy { get; set; }
@@ -59,11 +53,10 @@ public class CrystaTask : Entity
     [MaxLength(200)]
     public string? ChangedById { get; set; }
 
-    public DateTimeOffset? ChangedDate { get; set; }
-
     [MaxLength(255)]
     public string? RevisedBy { get; set; }
 
+    [MaxLength(50)]
     public string Revision { get; set; }
 
     public Guid? ProjectId { get; set; }
@@ -86,25 +79,19 @@ public class CrystaTask : Entity
     [MaxLength(2000)]
     public string? Tags { get; set; }
 
-    public int AttachmentsCount { get; set; }
+    public int? AttachmentsCount { get; set; }
 
     public string? Relations { get; set; }
     public string? Links { get; set; }
 
     public bool IsDeleted { get; set; }
 
-    public int CommentCount { get; set; }
+    public int? CommentCount { get; set; }
 
     [MaxLength(100)]
     public string? BoardColumn { get; set; }
 
     public bool BoardColumnDone { get; set; }
-
-    public DateTimeOffset? StateChangeDate { get; set; }
-    public DateTimeOffset? DueDate { get; set; }
-    public DateTimeOffset? StartDate { get; set; }
-    public DateTimeOffset? ClosedDate { get; set; }
-    public DateTimeOffset? ResolvedDate { get; set; }
 
     [MaxLength(200)]
     public string? ExternalId { get; set; }

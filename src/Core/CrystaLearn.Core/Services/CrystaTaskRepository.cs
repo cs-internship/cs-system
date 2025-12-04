@@ -476,7 +476,7 @@ public partial class CrystaTaskRepository : ICrystaTaskRepository
     {
         // Get all non-deleted tasks sync IDs
         var syncIds = await DbContext.CrystaTasks
-            .Where(t => !t.IsDeleted)
+            .Where(t => !t.IsDeleted && t.ProjectName == project)
             .Select(t => t.WorkItemSyncInfo.SyncId ?? "")
             .Where(id => !string.IsNullOrEmpty(id))
             .ToListAsync();

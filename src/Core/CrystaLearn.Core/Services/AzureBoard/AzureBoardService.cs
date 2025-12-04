@@ -41,7 +41,9 @@ public partial class AzureBoardService : IAzureBoardService
             "System.WorkItemType", 
             "System.AssignedTo", 
             "System.CreatedDate", 
-            "System.ChangedDate"
+            "System.ChangedDate",
+            "System.AttachedFileCount",
+            "System.CreatedBy"
         ];
 
         var wiql = new Wiql { Query = query };
@@ -85,14 +87,17 @@ public partial class AzureBoardService : IAzureBoardService
             "System.AreaPath",
             "System.IterationPath",
             "System.Parent",
-            "System.ChangedBy"
+            "System.ChangedBy",
+            "System.ChangedDate",
+            "System.CreatedBy",
+            "System.AttachedFileCount"
         ];
 
         var wiql = new Wiql { Query = query };
 
         var result = await witClient.QueryByWiqlAsync(wiql, top: top).ConfigureAwait(false);
         var ids = result.WorkItems.Select(item => item.Id).ToArray();
-
+        
         foreach (var chunk in ids.Chunk(200))
         {
             List<WorkItem> workItems = await witClient.GetWorkItemsAsync(chunk, fields, result.AsOf).ConfigureAwait(false);
@@ -116,7 +121,8 @@ public partial class AzureBoardService : IAzureBoardService
             "System.WorkItemType",
             "System.AssignedTo",
             "System.CreatedDate",
-            "System.ChangedDate"
+            "System.ChangedDate",
+            "System.CreatedBy"
         ];
 
         var wiql = new Wiql { Query = query };

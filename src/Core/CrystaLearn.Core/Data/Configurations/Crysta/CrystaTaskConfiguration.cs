@@ -8,10 +8,8 @@ public class CrystaTaskConfiguration : IEntityTypeConfiguration<CrystaTask>
     {
         builder.HasIndex(t => t.ProviderTaskId);
         builder.HasIndex(t => t.ProjectId);
-        builder.HasIndex(t => t.State);
-        builder.HasIndex(t => t.CreatedDate);
-        builder.HasIndex(t => t.ChangedDate);
-
+        builder.HasIndex(t => t.TaskCreateDateTime);
+        builder.HasIndex(t => t.Status);
         builder.OwnsOne(u => u.WorkItemSyncInfo, sync =>
         {
             sync.HasIndex(s => s.SyncId).IsUnique();
