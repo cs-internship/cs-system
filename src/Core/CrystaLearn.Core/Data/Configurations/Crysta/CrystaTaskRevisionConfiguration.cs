@@ -42,6 +42,5 @@ public class CrystaTaskRevisionConfiguration : IEntityTypeConfiguration<CrystaTa
         builder.OwnsOne(r => r.RevisionsSyncInfo);
         builder.OwnsOne(r => r.UpdatesSyncInfo);
         builder.OwnsOne(r => r.CommentsSyncInfo);
-       
     }
 }
