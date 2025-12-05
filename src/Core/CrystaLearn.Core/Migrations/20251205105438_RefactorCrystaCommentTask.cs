@@ -39,27 +39,29 @@ namespace CrystaLearn.Core.Migrations
                 table: "CrystaTaskComments",
                 newName: "CreatedByText");
 
-            migrationBuilder.AlterColumn<Guid>(
+            migrationBuilder.DropColumn(
+             name: "EditedById",
+             schema: "CrystaLearn",
+             table: "CrystaTaskComments");
+
+            migrationBuilder.DropColumn(
+            name: "CreatedById",
+            schema: "CrystaLearn",
+            table: "CrystaTaskComments");
+
+            migrationBuilder.AddColumn<Guid>(
                 name: "EditedById",
                 schema: "CrystaLearn",
                 table: "CrystaTaskComments",
                 type: "uuid",
-                nullable: true,
-                oldClrType: typeof(string),
-                oldType: "character varying(200)",
-                oldMaxLength: 200,
-                oldNullable: true);
+                nullable: true);
 
-            migrationBuilder.AlterColumn<Guid>(
+            migrationBuilder.AddColumn<Guid>(
                 name: "CreatedById",
                 schema: "CrystaLearn",
                 table: "CrystaTaskComments",
                 type: "uuid",
-                nullable: true,
-                oldClrType: typeof(string),
-                oldType: "character varying(200)",
-                oldMaxLength: 200,
-                oldNullable: true);
+                nullable: true);
 
             migrationBuilder.AddColumn<DateTimeOffset>(
                 name: "CreatedDateTime",
