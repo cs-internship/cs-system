@@ -5,7 +5,6 @@ using CrystaLearn.Core.Services.Contracts;
 using Microsoft.TeamFoundation.WorkItemTracking.WebApi.Models;
 using Microsoft.VisualStudio.Services.Common;
 using Microsoft.VisualStudio.Services.WebApi;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace CrystaLearn.Core.Services.Sync;
 
@@ -95,8 +94,8 @@ public partial class AzureBoardSyncService : IAzureBoardSyncService
             //Console.WriteLine($"  Updates   - Added: {updatesResult.AddCount}, Updated: {updatesResult.UpdateCount}, Unchanged: {updatesResult.SameCount}");
             var commentsResult = await SyncCommentsAsync(config, tasks);
             Console.WriteLine($"  Comments  - Added: {commentsResult.AddCount}, Updated: {commentsResult.UpdateCount}, Unchanged: {commentsResult.SameCount}");
-            var revisionsResult = await SyncRevisionsAsync(config, tasks);
-            Console.WriteLine($"  Revisions - Added: {revisionsResult.AddCount}, Updated: {revisionsResult.UpdateCount}, Unchanged: {revisionsResult.SameCount}");
+            //  var revisionsResult = await SyncRevisionsAsync(config, tasks);
+            //     Console.WriteLine($"  Revisions - Added: {revisionsResult.AddCount}, Updated: {revisionsResult.UpdateCount}, Unchanged: {revisionsResult.SameCount}");
 
             // Persist only tasks that got new SyncInfo values
 
@@ -109,9 +108,9 @@ public partial class AzureBoardSyncService : IAzureBoardSyncService
 
 
             // Aggregate results
-            totalResult.AddCount += workItemResult.AddCount  + commentsResult.AddCount + revisionsResult.AddCount;
-            totalResult.UpdateCount += workItemResult.UpdateCount + commentsResult.UpdateCount + revisionsResult.UpdateCount;
-            totalResult.SameCount += workItemResult.SameCount + commentsResult.SameCount + revisionsResult.SameCount;
+            totalResult.AddCount += workItemResult.AddCount + commentsResult.AddCount;
+            totalResult.UpdateCount += workItemResult.UpdateCount + commentsResult.UpdateCount;
+            totalResult.SameCount += workItemResult.SameCount + commentsResult.SameCount;
 
             // Update module sync info for this batch using the largest 'Changed Date' among loaded work items
             DateTimeOffset? batchMaxChanged = null;
@@ -344,21 +343,14 @@ public partial class AzureBoardSyncService : IAzureBoardSyncService
                     var combined = string.Join("", taskComments.Select(c => c.RawJson ?? string.Empty));
                     var contentHash = combined.Sha();
 
-                    int maxRevision = 0;
-                    foreach (var c in taskComments)
-                    {
-                        if (int.TryParse(c.Revision, out var rv))
-                        {
-                            if (rv > maxRevision) maxRevision = rv;
-                        }
-                    }
+                    SyncInfo syncInfo = taskComments.OrderByDescending(f => f.EditedDateTime).First().SyncInfo;
 
                     task.CommentsSyncInfo = new SyncInfo
                     {
-                        SyncId = $"{config.Organization}/{config.Project}/{task.ProviderTaskId}",
-                        ContentHash = contentHash,
-                        LastSyncDateTime = taskComments.Max(f => f.SyncInfo.LastSyncDateTime),
-                        LastSyncOffset = maxRevision > 0 ? maxRevision.ToString() : null,
+                        SyncId = syncInfo.SyncId,
+                        ContentHash = syncInfo.ContentHash,
+                        LastSyncDateTime = syncInfo.LastSyncDateTime,
+                        LastSyncOffset = syncInfo.LastSyncOffset,
                         SyncStatus = SyncStatus.Success,
                         SyncGroup = "SyncService"
                     };
@@ -845,14 +837,20 @@ public partial class AzureBoardSyncService : IAzureBoardSyncService
             Text = comment.Text,
             FormattedText = comment.RenderedText,
             Revision = comment.Revision.ToString(), // Will be populated from context if available
-            CreatedDate = DateTimeOffset.Now,
+            CreatedDateTime = comment.RevisedDate,
+            EditedDateTime = comment.RevisedDate,
+            CreatedByText = $"{comment.RevisedBy.DisplayName} ({comment.RevisedBy.UniqueName})",
             RawJson = json,
             SyncInfo = new SyncInfo
             {
-                SyncId = $"{config.Organization}/{config.Project}/{workItemId.ToString()}/comment/{hash.Substring(0, 8)}",
+                SyncId = $"{config.Organization}/{config.Project}/{workItemId.ToString()}/{comment.Revision.ToString()}",
                 ContentHash = hash,
                 LastSyncDateTime = DateTimeOffset.Now,
-                SyncStatus = SyncStatus.Success
+                SyncStatus = SyncStatus.Success,
+                LastSyncOffset = comment.Revision.ToString(),
+                SyncGroup = "SyncService",
+                SyncStartDateTime = DateTimeOffset.Now,
+                SyncEndDateTime = DateTimeOffset.Now
             },
             ContentHtml = comment.RenderedText
         };

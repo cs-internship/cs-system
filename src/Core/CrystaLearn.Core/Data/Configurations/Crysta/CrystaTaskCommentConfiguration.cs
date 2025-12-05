@@ -8,7 +8,7 @@ public class CrystaTaskCommentConfiguration : IEntityTypeConfiguration<CrystaTas
     {
         builder.HasIndex(c => c.ProviderTaskId);
         builder.HasIndex(c => c.CrystaTaskId);
-        builder.HasIndex(c => c.CreatedDate);
+        builder.HasIndex(c => c.CreatedDateTime);
 
         builder.HasOne(c => c.CrystaTask)
             .WithMany()

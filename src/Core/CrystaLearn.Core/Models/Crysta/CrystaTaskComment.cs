@@ -21,21 +21,18 @@ public class CrystaTaskComment : Entity
 
     // Author information
     [MaxLength(255)]
-    public string? CreatedBy { get; set; }
+    public string? CreatedByText { get; set; }
 
-    [MaxLength(200)]
-    public string? CreatedById { get; set; }
+    public User? CreatedBy { get; set; }
 
-    public DateTimeOffset CreatedDate { get; set; }
+    public DateTimeOffset? CreatedDateTime { get; set; }
 
-    // Edit information
+    public DateTimeOffset? EditedDateTime { get; set; }
+
     [MaxLength(255)]
-    public string? EditedBy { get; set; }
+    public string? EditedByText { get; set; }
 
-    [MaxLength(200)]
-    public string? EditedById { get; set; }
-
-    public DateTimeOffset? EditedDate { get; set; }
+    public User? EditedBy { get; set; }
 
     // Status flags
     public bool IsDeleted { get; set; }
