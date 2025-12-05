@@ -3,6 +3,7 @@ using System;
 using CrystaLearn.Core.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace CrystaLearn.Core.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20251204144555_RefactorCrystaTask")]
+    partial class RefactorCrystaTask
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -371,14 +374,15 @@ namespace CrystaLearn.Core.Migrations
                     b.Property<DateTimeOffset>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<Guid?>("CreatedById")
-                        .HasColumnType("uuid");
-
-                    b.Property<string>("CreatedByText")
+                    b.Property<string>("CreatedBy")
                         .HasMaxLength(255)
                         .HasColumnType("character varying(255)");
 
-                    b.Property<DateTimeOffset?>("CreatedDateTime")
+                    b.Property<string>("CreatedById")
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)");
+
+                    b.Property<DateTimeOffset>("CreatedDate")
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<Guid?>("CrystaProgramId")
@@ -387,14 +391,15 @@ namespace CrystaLearn.Core.Migrations
                     b.Property<Guid>("CrystaTaskId")
                         .HasColumnType("uuid");
 
-                    b.Property<Guid?>("EditedById")
-                        .HasColumnType("uuid");
-
-                    b.Property<string>("EditedByText")
+                    b.Property<string>("EditedBy")
                         .HasMaxLength(255)
                         .HasColumnType("character varying(255)");
 
-                    b.Property<DateTimeOffset?>("EditedDateTime")
+                    b.Property<string>("EditedById")
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)");
+
+                    b.Property<DateTimeOffset?>("EditedDate")
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("FormattedText")
@@ -450,15 +455,11 @@ namespace CrystaLearn.Core.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CreatedById");
-
-                    b.HasIndex("CreatedDateTime");
+                    b.HasIndex("CreatedDate");
 
                     b.HasIndex("CrystaProgramId");
 
                     b.HasIndex("CrystaTaskId");
-
-                    b.HasIndex("EditedById");
 
                     b.HasIndex("ProviderTaskId");
 
@@ -1828,10 +1829,6 @@ namespace CrystaLearn.Core.Migrations
 
             modelBuilder.Entity("CrystaLearn.Core.Models.Crysta.CrystaTaskComment", b =>
                 {
-                    b.HasOne("CrystaLearn.Core.Models.Identity.User", "CreatedBy")
-                        .WithMany()
-                        .HasForeignKey("CreatedById");
-
                     b.HasOne("CrystaLearn.Core.Models.Crysta.CrystaProgram", "CrystaProgram")
                         .WithMany()
                         .HasForeignKey("CrystaProgramId");
@@ -1841,10 +1838,6 @@ namespace CrystaLearn.Core.Migrations
                         .HasForeignKey("CrystaTaskId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.HasOne("CrystaLearn.Core.Models.Identity.User", "EditedBy")
-                        .WithMany()
-                        .HasForeignKey("EditedById");
 
                     b.HasOne("CrystaLearn.Core.Models.Identity.User", "User")
                         .WithMany()
@@ -1896,13 +1889,9 @@ namespace CrystaLearn.Core.Migrations
                                 .HasForeignKey("CrystaTaskCommentId");
                         });
 
-                    b.Navigation("CreatedBy");
-
                     b.Navigation("CrystaProgram");
 
                     b.Navigation("CrystaTask");
-
-                    b.Navigation("EditedBy");
 
                     b.Navigation("SyncInfo");
 

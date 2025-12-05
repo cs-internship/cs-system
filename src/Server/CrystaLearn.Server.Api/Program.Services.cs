@@ -4,6 +4,7 @@ using System.Net.Mail;
 using AdsPush;
 using AdsPush.Abstraction;
 using Azure.Storage.Blobs;
+using CrystaLearn.Core.Data;
 using CrystaLearn.Core.Extensions;
 using CrystaLearn.Core.Models.Identity;
 using CrystaLearn.Server.Api.Controllers;
@@ -16,6 +17,8 @@ using FluentStorage;
 using FluentStorage.Blobs;
 using Ganss.Xss;
 using Hangfire.EntityFrameworkCore;
+using Hangfire.PostgreSql;
+using Hangfire.Storage;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
@@ -24,6 +27,7 @@ using Microsoft.AspNetCore.OData;
 using Microsoft.Identity.Web;
 using Microsoft.Net.Http.Headers;
 using Microsoft.OpenApi.Models;
+using Microsoft.TeamFoundation.TestManagement.WebApi;
 using PhoneNumbers;
 using Twilio;
 
@@ -331,29 +335,32 @@ public static partial class Program
 
         builder.Services.AddHangfire(configuration =>
         {
-            var efCoreStorage = configuration.UseEFCoreStorage(optionsBuilder =>
+            if (appSettings.Hangfire?.UseIsolatedStorage is true)
             {
-                if (appSettings.Hangfire?.UseIsolatedStorage is true)
+                var efCoreStorage = configuration.UseEFCoreStorage(optionsBuilder =>
                 {
                     var connectionString = "Data Source=CrystaLearnJobs.db;Mode=Memory;Cache=Shared;";
                     var connection = new Microsoft.Data.Sqlite.SqliteConnection(connectionString);
                     connection.Open();
                     AppContext.SetData("ReferenceTheKeepTheInMemorySQLiteDatabaseAlive", connection);
                     optionsBuilder.UseSqlite(connectionString);
-                }
-                else
-                {
-                    AddDbContext(optionsBuilder);
-                }
-            }, new()
-            {
-                Schema = "jobs",
-                QueuePollInterval = new TimeSpan(0, 0, 1)
-            });
 
-            if (appSettings.Hangfire?.UseIsolatedStorage is true)
-            {
+                }, new()
+                {
+                    Schema = "jobs",
+                    QueuePollInterval = new TimeSpan(0, 0, 1)
+                });
+
                 efCoreStorage.UseDatabaseCreator();
+            }
+            else
+            {
+                configuration.UsePostgreSqlStorage(options =>
+                       {
+                           options.UseNpgsqlConnection(builder.Configuration.GetConnectionString("PostgresConnectionString"));
+                           AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
+                       }
+                );
             }
 
             configuration.UseRecommendedSerializerSettings();

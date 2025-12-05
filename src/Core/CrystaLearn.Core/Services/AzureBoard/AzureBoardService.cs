@@ -41,7 +41,9 @@ public partial class AzureBoardService : IAzureBoardService
             "System.WorkItemType", 
             "System.AssignedTo", 
             "System.CreatedDate", 
-            "System.ChangedDate"
+            "System.ChangedDate",
+            "System.AttachedFileCount",
+            "System.CreatedBy"
         ];
 
         var wiql = new Wiql { Query = query };
@@ -84,16 +86,19 @@ public partial class AzureBoardService : IAzureBoardService
             "System.ChangedDate",
             "System.AreaPath",
             "System.IterationPath",
+            "System.Parent",
+            "System.ChangedBy",
+            "System.ChangedDate",
+            "System.CreatedBy",
+            "System.AttachedFileCount"
         ];
 
         var wiql = new Wiql { Query = query };
 
         var result = await witClient.QueryByWiqlAsync(wiql, top: top).ConfigureAwait(false);
         var ids = result.WorkItems.Select(item => item.Id).ToArray();
-
-        var workItemChunks = ids.Chunk(200);
-
-        foreach (var chunk in workItemChunks)
+        
+        foreach (var chunk in ids.Chunk(200))
         {
             List<WorkItem> workItems = await witClient.GetWorkItemsAsync(chunk, fields, result.AsOf).ConfigureAwait(false);
             yield return workItems;
@@ -116,7 +121,8 @@ public partial class AzureBoardService : IAzureBoardService
             "System.WorkItemType",
             "System.AssignedTo",
             "System.CreatedDate",
-            "System.ChangedDate"
+            "System.ChangedDate",
+            "System.CreatedBy"
         ];
 
         var wiql = new Wiql { Query = query };
@@ -134,24 +140,54 @@ public partial class AzureBoardService : IAzureBoardService
         return workItems;
     }
 
-    public async Task<List<WorkItem>> GetRevisionsAsync(int workItemId)
+    public async Task<List<WorkItem>> GetRevisionsAsync(AzureBoardSyncConfig config, int workItemId, int top = 200)
     {
-        var pat = Configuration["AzureDevOps:PersonalAccessToken"];
-        VssConnection connection = new VssConnection(new Uri("https://dev.azure.com/cs-internship"), new VssBasicCredential(string.Empty, pat));
-        using WorkItemTrackingHttpClient witClient = await connection.GetClientAsync<WorkItemTrackingHttpClient>();
+        if (top > 200)
+        {
+            throw new InvalidOperationException("Top cannot be greater than 200");
+        }
 
-        var result = await witClient.GetRevisionsAsync(workItemId, top: 100).ConfigureAwait(false);
+        VssConnection connection = new VssConnection(
+            new Uri($"https://dev.azure.com/{config.Organization}"), 
+            new VssBasicCredential(string.Empty, config.PersonalAccessToken));
+        
+        using WorkItemTrackingHttpClient witClient = await connection.GetClientAsync<WorkItemTrackingHttpClient>();
+        
+        var result = await witClient.GetRevisionsAsync(workItemId, top: top).ConfigureAwait(false);
         return result;
     }
 
-    public async Task<List<WorkItemUpdate>> GetUpdatesAsync(int workItemId)
+    public async Task<List<WorkItemUpdate>> GetUpdatesAsync(AzureBoardSyncConfig config, int workItemId, int top = 200)
     {
-        var pat = Configuration["AzureDevOps:PersonalAccessToken"];
-        VssConnection connection = new VssConnection(new Uri("https://dev.azure.com/cs-internship"), new VssBasicCredential(string.Empty, pat));
+        if (top > 200)
+        {
+            throw new InvalidOperationException("Top cannot be greater than 200");
+        }
+
+        VssConnection connection = new VssConnection(
+            new Uri($"https://dev.azure.com/{config.Organization}"), 
+            new VssBasicCredential(string.Empty, config.PersonalAccessToken));
+        
         using WorkItemTrackingHttpClient witClient = await connection.GetClientAsync<WorkItemTrackingHttpClient>();
 
-
-        var result = await witClient.GetUpdatesAsync(workItemId, top: 100).ConfigureAwait(false);
+        var result = await witClient.GetUpdatesAsync(workItemId, top: top).ConfigureAwait(false);
         return result;
+    }
+
+    public async Task<List<WorkItemComment>> GetCommentsAsync(AzureBoardSyncConfig config, int workItemId, int top = 200)
+    {
+        if (top > 200)
+        {
+            throw new InvalidOperationException("Top cannot be greater than 200");
+        }
+
+        VssConnection connection = new VssConnection(
+            new Uri($"https://dev.azure.com/{config.Organization}"), 
+            new VssBasicCredential(string.Empty, config.PersonalAccessToken));
+        
+        using WorkItemTrackingHttpClient witClient = await connection.GetClientAsync<WorkItemTrackingHttpClient>();
+
+        var result = await witClient.GetCommentsAsync(workItemId, top: top).ConfigureAwait(false);
+        return result.Comments.ToList();
     }
 }

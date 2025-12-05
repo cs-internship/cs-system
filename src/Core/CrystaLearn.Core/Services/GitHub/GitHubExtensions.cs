@@ -71,7 +71,7 @@ public static class GitHubExtensions
             SyncInfo = new SyncInfo()
             {
                 SyncStatus = SyncStatus.Success,
-                SyncHash = item.Sha,
+                ContentHash = item.Sha,
                 SyncStartDateTime = DateTimeOffset.Now,
             }
         };

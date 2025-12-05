@@ -2,7 +2,7 @@
 
 public enum SyncModuleType
 {
-    GitHubDocument,
-    GitHubBadge,
-    AzureBoard,
+    GitHubDocument = 1,
+    GitHubBadge = 2,
+    AzureBoard = 3
 }

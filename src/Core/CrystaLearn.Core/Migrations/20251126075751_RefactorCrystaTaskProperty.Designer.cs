@@ -3,6 +3,7 @@ using System;
 using CrystaLearn.Core.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,14 +12,16 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace CrystaLearn.Core.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20251126075751_RefactorCrystaTaskProperty")]
+    partial class RefactorCrystaTaskProperty
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
                 .HasDefaultSchema("CrystaLearn")
-                .HasAnnotation("ProductVersion", "9.0.9")
+                .HasAnnotation("ProductVersion", "9.0.8")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
@@ -113,361 +116,7 @@ namespace CrystaLearn.Core.Migrations
                     b.ToTable("CrystaPrograms", "CrystaLearn");
                 });
 
-            modelBuilder.Entity("CrystaLearn.Core.Models.Crysta.CrystaProgramSyncModule", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid")
-                        .HasDefaultValueSql("gen_random_uuid()");
-
-                    b.Property<DateTimeOffset>("CreatedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<Guid>("CrystaProgramId")
-                        .HasColumnType("uuid");
-
-                    b.Property<int>("ModuleType")
-                        .HasColumnType("integer");
-
-                    b.Property<string>("SyncConfig")
-                        .HasColumnType("text");
-
-                    b.Property<DateTimeOffset>("UpdatedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CrystaProgramId");
-
-                    b.HasIndex("ModuleType");
-
-                    b.ToTable("CrystaProgramSyncModules", "CrystaLearn");
-                });
-
             modelBuilder.Entity("CrystaLearn.Core.Models.Crysta.CrystaTask", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid")
-                        .HasDefaultValueSql("gen_random_uuid()");
-
-                    b.Property<Guid?>("AreaId")
-                        .HasColumnType("uuid");
-
-                    b.Property<string>("AreaPath")
-                        .HasMaxLength(500)
-                        .HasColumnType("character varying(500)");
-
-                    b.Property<Guid?>("AssignedToId")
-                        .HasColumnType("uuid");
-
-                    b.Property<string>("AssignedToText")
-                        .HasColumnType("text");
-
-                    b.Property<int?>("AttachmentsCount")
-                        .HasColumnType("integer");
-
-                    b.Property<string>("BoardColumn")
-                        .HasMaxLength(100)
-                        .HasColumnType("character varying(100)");
-
-                    b.Property<bool>("BoardColumnDone")
-                        .HasColumnType("boolean");
-
-                    b.Property<string>("ChangedBy")
-                        .HasMaxLength(255)
-                        .HasColumnType("character varying(255)");
-
-                    b.Property<string>("ChangedById")
-                        .HasMaxLength(200)
-                        .HasColumnType("character varying(200)");
-
-                    b.Property<int?>("CommentCount")
-                        .HasColumnType("integer");
-
-                    b.Property<Guid?>("CompletedById")
-                        .HasColumnType("uuid");
-
-                    b.Property<string>("CompletedByText")
-                        .HasColumnType("text");
-
-                    b.Property<double?>("CompletedWork")
-                        .HasColumnType("double precision");
-
-                    b.Property<DateTimeOffset>("CreatedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<string>("CreatedById")
-                        .HasMaxLength(200)
-                        .HasColumnType("character varying(200)");
-
-                    b.Property<Guid?>("CreatedById1")
-                        .HasColumnType("uuid");
-
-                    b.Property<string>("CreatedByText")
-                        .HasColumnType("text");
-
-                    b.Property<int?>("CreatedFromRevisionId")
-                        .HasColumnType("integer");
-
-                    b.Property<Guid?>("CrystaProgramId")
-                        .HasColumnType("uuid");
-
-                    b.Property<string>("CustomFields")
-                        .HasColumnType("text");
-
-                    b.Property<string>("Description")
-                        .HasColumnType("text");
-
-                    b.Property<string>("DescriptionHtml")
-                        .HasColumnType("text");
-
-                    b.Property<string>("ExternalId")
-                        .HasMaxLength(200)
-                        .HasColumnType("character varying(200)");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("boolean");
-
-                    b.Property<Guid?>("IterationId")
-                        .HasColumnType("uuid");
-
-                    b.Property<string>("IterationPath")
-                        .HasMaxLength(500)
-                        .HasColumnType("character varying(500)");
-
-                    b.Property<string>("Links")
-                        .HasColumnType("text");
-
-                    b.Property<double?>("OriginalEstimate")
-                        .HasColumnType("double precision");
-
-                    b.Property<Guid?>("ParentId")
-                        .HasColumnType("uuid");
-
-                    b.Property<int?>("Priority")
-                        .HasColumnType("integer");
-
-                    b.Property<Guid?>("ProjectId")
-                        .HasColumnType("uuid");
-
-                    b.Property<string>("ProjectName")
-                        .HasMaxLength(255)
-                        .HasColumnType("character varying(255)");
-
-                    b.Property<string>("ProviderParentId")
-                        .HasColumnType("text");
-
-                    b.Property<string>("ProviderStatus")
-                        .HasColumnType("text");
-
-                    b.Property<string>("ProviderTaskId")
-                        .HasColumnType("text");
-
-                    b.Property<string>("ProviderTaskUrl")
-                        .HasColumnType("text");
-
-                    b.Property<string>("RawJson")
-                        .HasColumnType("text");
-
-                    b.Property<string>("Reason")
-                        .HasMaxLength(200)
-                        .HasColumnType("character varying(200)");
-
-                    b.Property<string>("Relations")
-                        .HasColumnType("text");
-
-                    b.Property<double?>("RemainingWork")
-                        .HasColumnType("double precision");
-
-                    b.Property<string>("RevisedBy")
-                        .HasMaxLength(255)
-                        .HasColumnType("character varying(255)");
-
-                    b.Property<string>("Revision")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("character varying(50)");
-
-                    b.Property<string>("Severity")
-                        .HasMaxLength(100)
-                        .HasColumnType("character varying(100)");
-
-                    b.Property<int?>("Status")
-                        .HasColumnType("integer");
-
-                    b.Property<double?>("StoryPoints")
-                        .HasColumnType("double precision");
-
-                    b.Property<string>("SystemFields")
-                        .HasColumnType("text");
-
-                    b.Property<string>("Tags")
-                        .HasMaxLength(2000)
-                        .HasColumnType("character varying(2000)");
-
-                    b.Property<DateTimeOffset?>("TaskAssignDateTime")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<DateTimeOffset?>("TaskChangedDateTime")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<DateTimeOffset?>("TaskCreateDateTime")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<DateTimeOffset?>("TaskDoneDateTime")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<string>("Title")
-                        .HasColumnType("text");
-
-                    b.Property<DateTimeOffset>("UpdatedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<string>("WorkItemType")
-                        .HasMaxLength(100)
-                        .HasColumnType("character varying(100)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("AssignedToId");
-
-                    b.HasIndex("CompletedById");
-
-                    b.HasIndex("CreatedById1");
-
-                    b.HasIndex("CrystaProgramId");
-
-                    b.HasIndex("ParentId");
-
-                    b.HasIndex("ProjectId");
-
-                    b.HasIndex("ProviderTaskId");
-
-                    b.HasIndex("Status");
-
-                    b.HasIndex("TaskCreateDateTime");
-
-                    b.ToTable("CrystaTasks", "CrystaLearn");
-                });
-
-            modelBuilder.Entity("CrystaLearn.Core.Models.Crysta.CrystaTaskComment", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid")
-                        .HasDefaultValueSql("gen_random_uuid()");
-
-                    b.Property<string>("CommentType")
-                        .HasMaxLength(100)
-                        .HasColumnType("character varying(100)");
-
-                    b.Property<string>("Content")
-                        .HasColumnType("text");
-
-                    b.Property<string>("ContentHtml")
-                        .HasColumnType("text");
-
-                    b.Property<DateTimeOffset>("CreatedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<Guid?>("CreatedById")
-                        .HasColumnType("uuid");
-
-                    b.Property<string>("CreatedByText")
-                        .HasMaxLength(255)
-                        .HasColumnType("character varying(255)");
-
-                    b.Property<DateTimeOffset?>("CreatedDateTime")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<Guid?>("CrystaProgramId")
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid>("CrystaTaskId")
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid?>("EditedById")
-                        .HasColumnType("uuid");
-
-                    b.Property<string>("EditedByText")
-                        .HasMaxLength(255)
-                        .HasColumnType("character varying(255)");
-
-                    b.Property<DateTimeOffset?>("EditedDateTime")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<string>("FormattedText")
-                        .HasColumnType("text");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("boolean");
-
-                    b.Property<bool>("IsSystem")
-                        .HasColumnType("boolean");
-
-                    b.Property<int?>("ParentCommentId")
-                        .HasColumnType("integer");
-
-                    b.Property<string>("ProviderCommentId")
-                        .HasMaxLength(200)
-                        .HasColumnType("character varying(200)");
-
-                    b.Property<string>("ProviderCommentUrl")
-                        .HasMaxLength(1000)
-                        .HasColumnType("character varying(1000)");
-
-                    b.Property<string>("ProviderTaskId")
-                        .IsRequired()
-                        .HasMaxLength(200)
-                        .HasColumnType("character varying(200)");
-
-                    b.Property<string>("RawJson")
-                        .HasColumnType("text");
-
-                    b.Property<string>("Reactions")
-                        .HasColumnType("text");
-
-                    b.Property<string>("Revision")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("Text")
-                        .HasColumnType("text");
-
-                    b.Property<int?>("ThreadId")
-                        .HasColumnType("integer");
-
-                    b.Property<DateTimeOffset>("UpdatedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<Guid?>("UserId")
-                        .HasColumnType("uuid");
-
-                    b.Property<string>("Visibility")
-                        .HasMaxLength(100)
-                        .HasColumnType("character varying(100)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CreatedById");
-
-                    b.HasIndex("CreatedDateTime");
-
-                    b.HasIndex("CrystaProgramId");
-
-                    b.HasIndex("CrystaTaskId");
-
-                    b.HasIndex("EditedById");
-
-                    b.HasIndex("ProviderTaskId");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("CrystaTaskComments", "CrystaLearn");
-                });
-
-            modelBuilder.Entity("CrystaLearn.Core.Models.Crysta.CrystaTaskRevision", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -530,12 +179,12 @@ namespace CrystaLearn.Core.Migrations
                         .HasMaxLength(255)
                         .HasColumnType("character varying(255)");
 
-                    b.Property<Guid?>("CreatedById")
-                        .HasColumnType("uuid");
-
-                    b.Property<string>("CreatedByIdString")
+                    b.Property<string>("CreatedById")
                         .HasMaxLength(200)
                         .HasColumnType("character varying(200)");
+
+                    b.Property<Guid?>("CreatedById1")
+                        .HasColumnType("uuid");
 
                     b.Property<string>("CreatedByText")
                         .HasColumnType("text");
@@ -549,9 +198,6 @@ namespace CrystaLearn.Core.Migrations
                     b.Property<Guid?>("CrystaProgramId")
                         .HasColumnType("uuid");
 
-                    b.Property<Guid>("CrystaTaskId")
-                        .HasColumnType("uuid");
-
                     b.Property<string>("CustomFields")
                         .HasColumnType("text");
 
@@ -560,6 +206,11 @@ namespace CrystaLearn.Core.Migrations
 
                     b.Property<string>("DescriptionHtml")
                         .HasColumnType("text");
+
+                    b.Property<string>("Discriminator")
+                        .IsRequired()
+                        .HasMaxLength(21)
+                        .HasColumnType("character varying(21)");
 
                     b.Property<DateTimeOffset?>("DueDate")
                         .HasColumnType("timestamp with time zone");
@@ -627,10 +278,6 @@ namespace CrystaLearn.Core.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<string>("RevisionCode")
-                        .HasMaxLength(100)
-                        .HasColumnType("character varying(100)");
-
                     b.Property<string>("Severity")
                         .HasMaxLength(100)
                         .HasColumnType("character varying(100)");
@@ -685,7 +332,125 @@ namespace CrystaLearn.Core.Migrations
 
                     b.HasIndex("CompletedById");
 
-                    b.HasIndex("CreatedById");
+                    b.HasIndex("CreatedById1");
+
+                    b.HasIndex("CreatedDate");
+
+                    b.HasIndex("CrystaProgramId");
+
+                    b.HasIndex("ProjectId");
+
+                    b.HasIndex("ProviderTaskId");
+
+                    b.HasIndex("State");
+
+                    b.ToTable("CrystaTasks", "CrystaLearn");
+
+                    b.HasDiscriminator().HasValue("CrystaTask");
+
+                    b.UseTphMappingStrategy();
+                });
+
+            modelBuilder.Entity("CrystaLearn.Core.Models.Crysta.CrystaTaskComment", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasDefaultValueSql("gen_random_uuid()");
+
+                    b.Property<string>("CommentType")
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.Property<string>("Content")
+                        .HasColumnType("text");
+
+                    b.Property<string>("ContentHtml")
+                        .HasColumnType("text");
+
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("CreatedBy")
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)");
+
+                    b.Property<string>("CreatedById")
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)");
+
+                    b.Property<DateTimeOffset>("CreatedDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid?>("CrystaProgramId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("CrystaTaskId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("EditedBy")
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)");
+
+                    b.Property<string>("EditedById")
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)");
+
+                    b.Property<DateTimeOffset?>("EditedDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("FormattedText")
+                        .HasColumnType("text");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("IsSystem")
+                        .HasColumnType("boolean");
+
+                    b.Property<int?>("ParentCommentId")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("ProviderCommentId")
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)");
+
+                    b.Property<string>("ProviderCommentUrl")
+                        .HasMaxLength(1000)
+                        .HasColumnType("character varying(1000)");
+
+                    b.Property<string>("ProviderTaskId")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)");
+
+                    b.Property<string>("RawJson")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Reactions")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Revision")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Text")
+                        .HasColumnType("text");
+
+                    b.Property<int?>("ThreadId")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTimeOffset>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid?>("UserId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Visibility")
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.HasKey("Id");
 
                     b.HasIndex("CreatedDate");
 
@@ -693,15 +458,11 @@ namespace CrystaLearn.Core.Migrations
 
                     b.HasIndex("CrystaTaskId");
 
-                    b.HasIndex("ProjectId");
-
                     b.HasIndex("ProviderTaskId");
 
-                    b.HasIndex("Revision");
+                    b.HasIndex("UserId");
 
-                    b.HasIndex("State");
-
-                    b.ToTable("CrystaTaskRevisions", "CrystaLearn");
+                    b.ToTable("CrystaTaskComments", "CrystaLearn");
                 });
 
             modelBuilder.Entity("CrystaLearn.Core.Models.Crysta.CrystaTaskUpdate", b =>
@@ -1549,61 +1310,22 @@ namespace CrystaLearn.Core.Migrations
                     b.ToTable("DataProtectionKeys", "CrystaLearn");
                 });
 
-            modelBuilder.Entity("CrystaLearn.Core.Models.Crysta.CrystaProgramSyncModule", b =>
+            modelBuilder.Entity("CrystaLearn.Core.Models.Crysta.CrystaTaskRevision", b =>
                 {
-                    b.HasOne("CrystaLearn.Core.Models.Crysta.CrystaProgram", "CrystaProgram")
-                        .WithMany()
-                        .HasForeignKey("CrystaProgramId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                    b.HasBaseType("CrystaLearn.Core.Models.Crysta.CrystaTask");
 
-                    b.OwnsOne("CrystaLearn.Core.Models.Crysta.SyncInfo", "SyncInfo", b1 =>
-                        {
-                            b1.Property<Guid>("CrystaProgramSyncModuleId")
-                                .ValueGeneratedOnAdd()
-                                .HasColumnType("uuid")
-                                .HasDefaultValueSql("gen_random_uuid()");
+                    b.Property<Guid>("CrystaTaskId")
+                        .HasColumnType("uuid");
 
-                            b1.Property<string>("ContentHash")
-                                .HasMaxLength(100)
-                                .HasColumnType("character varying(100)");
+                    b.Property<string>("RevisionCode")
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
 
-                            b1.Property<DateTimeOffset?>("LastSyncDateTime")
-                                .HasColumnType("timestamp with time zone");
+                    b.HasIndex("CrystaTaskId");
 
-                            b1.Property<string>("LastSyncOffset")
-                                .HasMaxLength(40)
-                                .HasColumnType("character varying(40)");
+                    b.HasIndex("Revision");
 
-                            b1.Property<DateTimeOffset?>("SyncEndDateTime")
-                                .HasColumnType("timestamp with time zone");
-
-                            b1.Property<string>("SyncGroup")
-                                .HasMaxLength(100)
-                                .HasColumnType("character varying(100)");
-
-                            b1.Property<string>("SyncId")
-                                .HasMaxLength(100)
-                                .HasColumnType("character varying(100)");
-
-                            b1.Property<DateTimeOffset?>("SyncStartDateTime")
-                                .HasColumnType("timestamp with time zone");
-
-                            b1.Property<int?>("SyncStatus")
-                                .HasColumnType("integer");
-
-                            b1.HasKey("CrystaProgramSyncModuleId");
-
-                            b1.ToTable("CrystaProgramSyncModules", "CrystaLearn");
-
-                            b1.WithOwner()
-                                .HasForeignKey("CrystaProgramSyncModuleId");
-                        });
-
-                    b.Navigation("CrystaProgram");
-
-                    b.Navigation("SyncInfo")
-                        .IsRequired();
+                    b.HasDiscriminator().HasValue("CrystaTaskRevision");
                 });
 
             modelBuilder.Entity("CrystaLearn.Core.Models.Crysta.CrystaTask", b =>
@@ -1623,10 +1345,6 @@ namespace CrystaLearn.Core.Migrations
                     b.HasOne("CrystaLearn.Core.Models.Crysta.CrystaProgram", "CrystaProgram")
                         .WithMany()
                         .HasForeignKey("CrystaProgramId");
-
-                    b.HasOne("CrystaLearn.Core.Models.Crysta.CrystaTask", "Parent")
-                        .WithMany()
-                        .HasForeignKey("ParentId");
 
                     b.OwnsOne("CrystaLearn.Core.Models.Crysta.SyncInfo", "CommentsSyncInfo", b1 =>
                         {
@@ -1794,9 +1512,6 @@ namespace CrystaLearn.Core.Migrations
 
                             b1.HasKey("CrystaTaskId");
 
-                            b1.HasIndex("SyncId")
-                                .IsUnique();
-
                             b1.ToTable("CrystaTasks", "CrystaLearn");
 
                             b1.WithOwner()
@@ -1814,8 +1529,6 @@ namespace CrystaLearn.Core.Migrations
 
                     b.Navigation("CrystaProgram");
 
-                    b.Navigation("Parent");
-
                     b.Navigation("RevisionsSyncInfo")
                         .IsRequired();
 
@@ -1828,10 +1541,6 @@ namespace CrystaLearn.Core.Migrations
 
             modelBuilder.Entity("CrystaLearn.Core.Models.Crysta.CrystaTaskComment", b =>
                 {
-                    b.HasOne("CrystaLearn.Core.Models.Identity.User", "CreatedBy")
-                        .WithMany()
-                        .HasForeignKey("CreatedById");
-
                     b.HasOne("CrystaLearn.Core.Models.Crysta.CrystaProgram", "CrystaProgram")
                         .WithMany()
                         .HasForeignKey("CrystaProgramId");
@@ -1841,10 +1550,6 @@ namespace CrystaLearn.Core.Migrations
                         .HasForeignKey("CrystaTaskId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.HasOne("CrystaLearn.Core.Models.Identity.User", "EditedBy")
-                        .WithMany()
-                        .HasForeignKey("EditedById");
 
                     b.HasOne("CrystaLearn.Core.Models.Identity.User", "User")
                         .WithMany()
@@ -1887,248 +1592,19 @@ namespace CrystaLearn.Core.Migrations
 
                             b1.HasKey("CrystaTaskCommentId");
 
-                            b1.HasIndex("SyncId")
-                                .IsUnique();
-
                             b1.ToTable("CrystaTaskComments", "CrystaLearn");
 
                             b1.WithOwner()
                                 .HasForeignKey("CrystaTaskCommentId");
                         });
 
-                    b.Navigation("CreatedBy");
-
                     b.Navigation("CrystaProgram");
 
                     b.Navigation("CrystaTask");
-
-                    b.Navigation("EditedBy");
 
                     b.Navigation("SyncInfo");
 
                     b.Navigation("User");
-                });
-
-            modelBuilder.Entity("CrystaLearn.Core.Models.Crysta.CrystaTaskRevision", b =>
-                {
-                    b.HasOne("CrystaLearn.Core.Models.Identity.User", "AssignedTo")
-                        .WithMany()
-                        .HasForeignKey("AssignedToId");
-
-                    b.HasOne("CrystaLearn.Core.Models.Identity.User", "CompletedBy")
-                        .WithMany()
-                        .HasForeignKey("CompletedById");
-
-                    b.HasOne("CrystaLearn.Core.Models.Identity.User", "CreatedBy")
-                        .WithMany()
-                        .HasForeignKey("CreatedById");
-
-                    b.HasOne("CrystaLearn.Core.Models.Crysta.CrystaProgram", "CrystaProgram")
-                        .WithMany()
-                        .HasForeignKey("CrystaProgramId");
-
-                    b.HasOne("CrystaLearn.Core.Models.Crysta.CrystaTask", "CrystaTask")
-                        .WithMany()
-                        .HasForeignKey("CrystaTaskId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.OwnsOne("CrystaLearn.Core.Models.Crysta.SyncInfo", "CommentsSyncInfo", b1 =>
-                        {
-                            b1.Property<Guid>("CrystaTaskRevisionId")
-                                .ValueGeneratedOnAdd()
-                                .HasColumnType("uuid")
-                                .HasDefaultValueSql("gen_random_uuid()");
-
-                            b1.Property<string>("ContentHash")
-                                .HasMaxLength(100)
-                                .HasColumnType("character varying(100)");
-
-                            b1.Property<DateTimeOffset?>("LastSyncDateTime")
-                                .HasColumnType("timestamp with time zone");
-
-                            b1.Property<string>("LastSyncOffset")
-                                .HasMaxLength(40)
-                                .HasColumnType("character varying(40)");
-
-                            b1.Property<DateTimeOffset?>("SyncEndDateTime")
-                                .HasColumnType("timestamp with time zone");
-
-                            b1.Property<string>("SyncGroup")
-                                .HasMaxLength(100)
-                                .HasColumnType("character varying(100)");
-
-                            b1.Property<string>("SyncId")
-                                .HasMaxLength(100)
-                                .HasColumnType("character varying(100)");
-
-                            b1.Property<DateTimeOffset?>("SyncStartDateTime")
-                                .HasColumnType("timestamp with time zone");
-
-                            b1.Property<int?>("SyncStatus")
-                                .HasColumnType("integer");
-
-                            b1.HasKey("CrystaTaskRevisionId");
-
-                            b1.ToTable("CrystaTaskRevisions", "CrystaLearn");
-
-                            b1.WithOwner()
-                                .HasForeignKey("CrystaTaskRevisionId");
-                        });
-
-                    b.OwnsOne("CrystaLearn.Core.Models.Crysta.SyncInfo", "RevisionsSyncInfo", b1 =>
-                        {
-                            b1.Property<Guid>("CrystaTaskRevisionId")
-                                .ValueGeneratedOnAdd()
-                                .HasColumnType("uuid")
-                                .HasDefaultValueSql("gen_random_uuid()");
-
-                            b1.Property<string>("ContentHash")
-                                .HasMaxLength(100)
-                                .HasColumnType("character varying(100)");
-
-                            b1.Property<DateTimeOffset?>("LastSyncDateTime")
-                                .HasColumnType("timestamp with time zone");
-
-                            b1.Property<string>("LastSyncOffset")
-                                .HasMaxLength(40)
-                                .HasColumnType("character varying(40)");
-
-                            b1.Property<DateTimeOffset?>("SyncEndDateTime")
-                                .HasColumnType("timestamp with time zone");
-
-                            b1.Property<string>("SyncGroup")
-                                .HasMaxLength(100)
-                                .HasColumnType("character varying(100)");
-
-                            b1.Property<string>("SyncId")
-                                .HasMaxLength(100)
-                                .HasColumnType("character varying(100)");
-
-                            b1.Property<DateTimeOffset?>("SyncStartDateTime")
-                                .HasColumnType("timestamp with time zone");
-
-                            b1.Property<int?>("SyncStatus")
-                                .HasColumnType("integer");
-
-                            b1.HasKey("CrystaTaskRevisionId");
-
-                            b1.ToTable("CrystaTaskRevisions", "CrystaLearn");
-
-                            b1.WithOwner()
-                                .HasForeignKey("CrystaTaskRevisionId");
-                        });
-
-                    b.OwnsOne("CrystaLearn.Core.Models.Crysta.SyncInfo", "UpdatesSyncInfo", b1 =>
-                        {
-                            b1.Property<Guid>("CrystaTaskRevisionId")
-                                .ValueGeneratedOnAdd()
-                                .HasColumnType("uuid")
-                                .HasDefaultValueSql("gen_random_uuid()");
-
-                            b1.Property<string>("ContentHash")
-                                .HasMaxLength(100)
-                                .HasColumnType("character varying(100)");
-
-                            b1.Property<DateTimeOffset?>("LastSyncDateTime")
-                                .HasColumnType("timestamp with time zone");
-
-                            b1.Property<string>("LastSyncOffset")
-                                .HasMaxLength(40)
-                                .HasColumnType("character varying(40)");
-
-                            b1.Property<DateTimeOffset?>("SyncEndDateTime")
-                                .HasColumnType("timestamp with time zone");
-
-                            b1.Property<string>("SyncGroup")
-                                .HasMaxLength(100)
-                                .HasColumnType("character varying(100)");
-
-                            b1.Property<string>("SyncId")
-                                .HasMaxLength(100)
-                                .HasColumnType("character varying(100)");
-
-                            b1.Property<DateTimeOffset?>("SyncStartDateTime")
-                                .HasColumnType("timestamp with time zone");
-
-                            b1.Property<int?>("SyncStatus")
-                                .HasColumnType("integer");
-
-                            b1.HasKey("CrystaTaskRevisionId");
-
-                            b1.ToTable("CrystaTaskRevisions", "CrystaLearn");
-
-                            b1.WithOwner()
-                                .HasForeignKey("CrystaTaskRevisionId");
-                        });
-
-                    b.OwnsOne("CrystaLearn.Core.Models.Crysta.SyncInfo", "WorkItemSyncInfo", b1 =>
-                        {
-                            b1.Property<Guid>("CrystaTaskRevisionId")
-                                .ValueGeneratedOnAdd()
-                                .HasColumnType("uuid")
-                                .HasDefaultValueSql("gen_random_uuid()");
-
-                            b1.Property<string>("ContentHash")
-                                .HasMaxLength(100)
-                                .HasColumnType("character varying(100)");
-
-                            b1.Property<DateTimeOffset?>("LastSyncDateTime")
-                                .HasColumnType("timestamp with time zone");
-
-                            b1.Property<string>("LastSyncOffset")
-                                .HasMaxLength(40)
-                                .HasColumnType("character varying(40)");
-
-                            b1.Property<DateTimeOffset?>("SyncEndDateTime")
-                                .HasColumnType("timestamp with time zone");
-
-                            b1.Property<string>("SyncGroup")
-                                .HasMaxLength(100)
-                                .HasColumnType("character varying(100)");
-
-                            b1.Property<string>("SyncId")
-                                .HasMaxLength(100)
-                                .HasColumnType("character varying(100)");
-
-                            b1.Property<DateTimeOffset?>("SyncStartDateTime")
-                                .HasColumnType("timestamp with time zone");
-
-                            b1.Property<int?>("SyncStatus")
-                                .HasColumnType("integer");
-
-                            b1.HasKey("CrystaTaskRevisionId");
-
-                            b1.HasIndex("SyncId")
-                                .IsUnique();
-
-                            b1.ToTable("CrystaTaskRevisions", "CrystaLearn");
-
-                            b1.WithOwner()
-                                .HasForeignKey("CrystaTaskRevisionId");
-                        });
-
-                    b.Navigation("AssignedTo");
-
-                    b.Navigation("CommentsSyncInfo")
-                        .IsRequired();
-
-                    b.Navigation("CompletedBy");
-
-                    b.Navigation("CreatedBy");
-
-                    b.Navigation("CrystaProgram");
-
-                    b.Navigation("CrystaTask");
-
-                    b.Navigation("RevisionsSyncInfo")
-                        .IsRequired();
-
-                    b.Navigation("UpdatesSyncInfo")
-                        .IsRequired();
-
-                    b.Navigation("WorkItemSyncInfo")
-                        .IsRequired();
                 });
 
             modelBuilder.Entity("CrystaLearn.Core.Models.Crysta.CrystaTaskUpdate", b =>
@@ -2183,9 +1659,6 @@ namespace CrystaLearn.Core.Migrations
                                 .HasColumnType("integer");
 
                             b1.HasKey("CrystaTaskUpdateId");
-
-                            b1.HasIndex("SyncId")
-                                .IsUnique();
 
                             b1.ToTable("CrystaTaskUpdates", "CrystaLearn");
 
@@ -2337,6 +1810,17 @@ namespace CrystaLearn.Core.Migrations
                         .IsRequired();
 
                     b.Navigation("Job");
+                });
+
+            modelBuilder.Entity("CrystaLearn.Core.Models.Crysta.CrystaTaskRevision", b =>
+                {
+                    b.HasOne("CrystaLearn.Core.Models.Crysta.CrystaTask", "CrystaTask")
+                        .WithMany()
+                        .HasForeignKey("CrystaTaskId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("CrystaTask");
                 });
 
             modelBuilder.Entity("CrystaLearn.Core.Models.Identity.Role", b =>
