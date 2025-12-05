@@ -73,7 +73,7 @@ public partial class AzureBoardSyncService : IAzureBoardSyncService
         await foreach (var workItems in AzureBoardService.EnumerateWorkItemsQueryAsync(config, query))
         {
             Console.WriteLine($"Processing batch of {workItems.Count} work items...");
-            
+
             module.SyncInfo.SyncStartDateTime = DateTimeOffset.Now;
 
             var tasks = workItems
@@ -154,10 +154,10 @@ public partial class AzureBoardSyncService : IAzureBoardSyncService
         }
 
         //TODO: Handle deletions - find tasks in our DB that are no longer in Azure Board
-       
+
 
         // Update module sync info
-        
+
         module.SyncInfo.SyncStatus = SyncStatus.Success;
 
         // Persist final module sync info
@@ -698,15 +698,7 @@ public partial class AzureBoardSyncService : IAzureBoardSyncService
         };
 
         var providerStatus = workItem.Fields["System.State"]?.ToString();
-        var status = providerStatus switch
-        {
-            "New" or "To Do" or "Design"=> CrystaTaskStatus.New,
-            "Approved" or "In Progress" or "Committed" or "Ready" => CrystaTaskStatus.InProgress,
-            "Done" or "Closed" => CrystaTaskStatus.Done,
-            "Canceled" or "Removed" => CrystaTaskStatus.Canceled,
-            _
-                => throw new Exception($"Invalid status for mapping: {workItem.Fields["System.State"]?.ToString()}")
-        };
+        var status = GetStatus(workItem, providerStatus);
 
         var title = workItem.Fields["System.Title"]?.ToString();
 
@@ -726,7 +718,7 @@ public partial class AzureBoardSyncService : IAzureBoardSyncService
 
         var areaPath = workItem.Fields["System.AreaPath"]?.ToString();
         var iterationPath = workItem.Fields["System.IterationPath"]?.ToString();
-        
+
         //var taskDoneDateTime = workItem.Fields["System.FinishedDate"]?.ToString() switch
         //{
         //    string s => DateTimeOffset.Parse(s),
@@ -821,6 +813,18 @@ public partial class AzureBoardSyncService : IAzureBoardSyncService
         };
 
         return task;
+    }
+
+    private static CrystaTaskStatus? GetStatus(WorkItem work, string? providerStatus)
+    {
+        return providerStatus switch
+        {
+            "New" or "To Do" or "Design" => CrystaTaskStatus.New,
+            "Approved" or "In Progress" or "Committed" or "Ready" or "Active" or "Open" => CrystaTaskStatus.InProgress,
+            "Done" or "Closed" => CrystaTaskStatus.Done,
+            "Canceled" or "Removed" or "Inactive" => CrystaTaskStatus.Canceled,
+            _ => throw new Exception($"Invalid status for mapping: {providerStatus}, WorkItemId: {work.Id}")
+        };
     }
 
     private CrystaTaskComment? ToCrystaTaskComment(WorkItemComment comment, Guid crystaTaskId, int workItemId, AzureBoardSyncConfig config)
@@ -961,14 +965,7 @@ public partial class AzureBoardSyncService : IAzureBoardSyncService
             _ => ""
         };
 
-        CrystaTaskStatus? status = state switch
-        {
-            "New" or "To Do" => CrystaTaskStatus.New,
-            "Approved" or "In Progress" or "Committed" => CrystaTaskStatus.InProgress,
-            "Done" or "Closed" => CrystaTaskStatus.Done,
-            "Canceled" or "Removed" => CrystaTaskStatus.Canceled,
-            _ => null
-        };
+        CrystaTaskStatus? status = GetStatus(revision, state);
 
         var syncInfo = new SyncInfo
         {
