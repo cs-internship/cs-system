@@ -11,8 +11,9 @@ public interface IAzureBoardService
 {
     Task<List<WorkItem>> GetWorkItemsRawQueryAsync(AzureBoardSyncConfig config, string query, string[]? fields = null, int? top = 200);
     Task<List<WorkItem>> GetWorkItemsBatchAsync(AzureBoardSyncConfig config, string query, string[]? fields = null);
-    Task<List<WorkItem>> GetRevisionsAsync(int workItemId);
-    Task<List<WorkItemUpdate>> GetUpdatesAsync(int workItemId);
+    Task<List<WorkItem>> GetRevisionsAsync(AzureBoardSyncConfig config, int workItemId, int top = 200);
+    Task<List<WorkItemUpdate>> GetUpdatesAsync(AzureBoardSyncConfig config, int workItemId, int top = 200);
+    Task<List<WorkItemComment>> GetCommentsAsync(AzureBoardSyncConfig config, int workItemId, int top = 200);
 
     IAsyncEnumerable<List<WorkItem>> EnumerateWorkItemsQueryAsync(
         AzureBoardSyncConfig config,

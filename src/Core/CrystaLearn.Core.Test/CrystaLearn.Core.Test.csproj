@@ -5,7 +5,8 @@
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
         <IsPackable>false</IsPackable>
-    </PropertyGroup>
+      <UserSecretsId>0f8f5f21-4e94-4185-9731-96793571b980</UserSecretsId>
+  </PropertyGroup>
 
     <ItemGroup>
         <PackageReference Include="coverlet.collector" />

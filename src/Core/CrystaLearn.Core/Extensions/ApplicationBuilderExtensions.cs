@@ -16,19 +16,19 @@ public static class ApplicationBuilderExtensions
         var services = builder.Services;
         var configuration = builder.Configuration;
 
-        builder.AddGitHubClient();
-
         services.AddPooledDbContextFactory<AppDbContext>(AddDbContext);
         services.AddDbContextPool<AppDbContext>(AddDbContext);
 
         void AddDbContext(DbContextOptionsBuilder options)
         {
             options.EnableSensitiveDataLogging(env.IsDevelopment())
-                   .EnableDetailedErrors(env.IsDevelopment());
+                .EnableDetailedErrors(env.IsDevelopment());
 
             options.UseNpgsql(configuration.GetConnectionString("PostgresConnectionString"));
+            AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
         }
-        ;
+
+        builder.AddGitHubClient();
 
         services.AddSingleton<IDocumentRepository, DocumentRepositoryInMemory>();
         services.AddTransient<ICrystaProgramRepository, CrystaProgramRepositoryFake>();
@@ -36,8 +36,8 @@ public static class ApplicationBuilderExtensions
         services.AddTransient<IAzureBoardService, AzureBoardService>();
         services.AddTransient<ICrystaProgramSyncService, CrystaProgramSyncService>();
         services.AddTransient<IAzureBoardSyncService, AzureBoardSyncService>();
-        services.AddTransient<ICrystaProgramSyncModuleRepository, CrystaProgramSyncModuleRepositoryFake>();
-        services.AddTransient<ICrystaTaskRepository, CrystaTaskRepositoryFake>();
+        services.AddTransient<ICrystaProgramSyncModuleService, CrystaProgramSyncModuleService>();
+        services.AddTransient<ICrystaTaskRepository, CrystaTaskRepository>();
     }
 
     private static void AddGitHubClient(this IHostApplicationBuilder builder)

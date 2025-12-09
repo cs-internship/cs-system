@@ -18,5 +18,7 @@ public enum SignInPanelType
     /// <summary>
     /// Shows email, phone and send otp button.
     /// </summary>
-    Otp
+    Otp,
+
+    Social
 }

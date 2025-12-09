@@ -4,6 +4,7 @@ using System.Net.Mail;
 using AdsPush;
 using AdsPush.Abstraction;
 using Azure.Storage.Blobs;
+using CrystaLearn.Core.Data;
 using CrystaLearn.Core.Extensions;
 using CrystaLearn.Core.Models.Identity;
 using CrystaLearn.Server.Api.Controllers;
@@ -16,12 +17,17 @@ using FluentStorage;
 using FluentStorage.Blobs;
 using Ganss.Xss;
 using Hangfire.EntityFrameworkCore;
+using Hangfire.PostgreSql;
+using Hangfire.Storage;
 using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.OData;
 using Microsoft.Identity.Web;
 using Microsoft.Net.Http.Headers;
 using Microsoft.OpenApi.Models;
+using Microsoft.TeamFoundation.TestManagement.WebApi;
 using PhoneNumbers;
 using Twilio;
 
@@ -183,6 +189,7 @@ public static partial class Program
                 .EnableDetailedErrors(env.IsDevelopment());
 
             options.UseNpgsql(configuration.GetConnectionString("PostgresConnectionString"));
+            AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
         }
 
         services.AddOptions<IdentityOptions>()
@@ -328,29 +335,32 @@ public static partial class Program
 
         builder.Services.AddHangfire(configuration =>
         {
-            var efCoreStorage = configuration.UseEFCoreStorage(optionsBuilder =>
+            if (appSettings.Hangfire?.UseIsolatedStorage is true)
             {
-                if (appSettings.Hangfire?.UseIsolatedStorage is true)
+                var efCoreStorage = configuration.UseEFCoreStorage(optionsBuilder =>
                 {
                     var connectionString = "Data Source=CrystaLearnJobs.db;Mode=Memory;Cache=Shared;";
                     var connection = new Microsoft.Data.Sqlite.SqliteConnection(connectionString);
                     connection.Open();
                     AppContext.SetData("ReferenceTheKeepTheInMemorySQLiteDatabaseAlive", connection);
                     optionsBuilder.UseSqlite(connectionString);
-                }
-                else
-                {
-                    AddDbContext(optionsBuilder);
-                }
-            }, new()
-            {
-                Schema = "jobs",
-                QueuePollInterval = new TimeSpan(0, 0, 1)
-            });
 
-            if (appSettings.Hangfire?.UseIsolatedStorage is true)
-            {
+                }, new()
+                {
+                    Schema = "jobs",
+                    QueuePollInterval = new TimeSpan(0, 0, 1)
+                });
+
                 efCoreStorage.UseDatabaseCreator();
+            }
+            else
+            {
+                configuration.UsePostgreSqlStorage(options =>
+                       {
+                           options.UseNpgsqlConnection(builder.Configuration.GetConnectionString("PostgresConnectionString"));
+                           AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
+                       }
+                );
             }
 
             configuration.UseRecommendedSerializerSettings();
@@ -440,11 +450,15 @@ public static partial class Program
             });
         }
 
-        if (string.IsNullOrEmpty(configuration["Authentication:AzureAD:ClientId"]) is false)
+        if (string.IsNullOrEmpty(configuration["Authentication:Microsoft:ClientId"]) is false)
         {
+
             authenticationBuilder.AddMicrosoftIdentityWebApp(options =>
             {
                 options.SignInScheme = IdentityConstants.ExternalScheme;
+                options.Scope.Add("email");
+                options.Scope.Add("profile");
+                options.Scope.Add("User.Read");
                 options.Events = new()
                 {
                     OnTokenValidated = async context =>
@@ -452,9 +466,15 @@ public static partial class Program
                         var props = new AuthenticationProperties();
                         props.Items["LoginProvider"] = "AzureAD";
                         await context.HttpContext.SignInAsync(IdentityConstants.ExternalScheme, context.Principal!, props);
+                    },
+                    OnRedirectToIdentityProvider = context =>
+                    {
+                        var redirectUri = new Uri(context.ProtocolMessage.RedirectUri);
+                        context.ProtocolMessage.RedirectUri = redirectUri.UpgradeToHttpsIfNotLocalhost().ToString();
+                        return Task.CompletedTask;
                     }
                 };
-                configuration.GetRequiredSection("Authentication:AzureAD").Bind(options);
+                configuration.GetRequiredSection("Authentication:Microsoft").Bind(options);
             }, openIdConnectScheme: "AzureAD");
         }
 

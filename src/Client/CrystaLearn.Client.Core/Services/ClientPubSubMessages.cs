@@ -28,10 +28,14 @@ public partial class ClientPubSubMessages
     public const string NAVIGATE_TO = nameof(NAVIGATE_TO);
     public const string SHOW_DIAGNOSTIC_MODAL = nameof(SHOW_DIAGNOSTIC_MODAL);
 
+    public const string OPEN_BUTTON_SHIT = nameof(OPEN_BUTTON_SHIT);
 
+    public const string CLOSE_BUTTON_SHIT = nameof(CLOSE_BUTTON_SHIT);
 
 
     public const string SOCIAL_SIGN_IN = nameof(SOCIAL_SIGN_IN);
 
     public const string FORCE_UPDATE = nameof(FORCE_UPDATE);
+
+    public static string SIGNIN_BUTTON_CLICKED = nameof(SIGNIN_BUTTON_CLICKED);
 }

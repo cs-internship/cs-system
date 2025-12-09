@@ -46,10 +46,6 @@
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\..\Shared\CrystaLearn.Shared.csproj" />
-    </ItemGroup>
-
-    <ItemGroup>
         <TypeScriptFiles Include="**\*.ts" Exclude="node_modules\**\*.ts" />
     </ItemGroup>
 
@@ -75,13 +71,20 @@
     <ItemGroup>
         <Content Remove="package*.json" />
         <Content Remove="tsconfig.json" />
+        <Content Include="Styles\abstracts\_font-icon-illustrator.scss" />
+        <Content Include="Styles\abstracts\_font-icon.scss" />
         <None Include="package*json" />
         <None Include="tsconfig.json" />
     </ItemGroup>
 
+    
     <ItemGroup>
       <Folder Include="Components\CrystaComponents\" />
       <Folder Include="wwwroot\images\backgrounds\" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\..\Shared\CrystaLearn.Shared\CrystaLearn.Shared.csproj" />
     </ItemGroup>
 
 </Project>

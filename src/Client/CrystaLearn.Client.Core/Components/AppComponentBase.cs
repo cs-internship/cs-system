@@ -1,5 +1,4 @@
 ﻿using System.Runtime.CompilerServices;
-
 namespace CrystaLearn.Client.Core.Components;
 
 public partial class AppComponentBase : ComponentBase, IAsyncDisposable

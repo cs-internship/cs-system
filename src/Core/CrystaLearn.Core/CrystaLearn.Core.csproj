@@ -7,6 +7,7 @@
     </PropertyGroup>
 
     <ItemGroup>
+        <PackageReference Include="EFCore.BulkExtensions" />
         <PackageReference Include="Hangfire.EntityFrameworkCore" />
         <PackageReference Include="Markdig" />
         <PackageReference Include="Microsoft.AspNetCore.DataProtection.EntityFrameworkCore" />
@@ -24,6 +25,7 @@
         <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" />
         <PackageReference Include="Octokit" />
         <PackageReference Include="Riok.Mapperly" />
+        <ProjectReference Include="..\..\Shared\CrystaLearn.Shared\CrystaLearn.Shared.csproj" />
 
         <Using Include="Microsoft.EntityFrameworkCore.Migrations" />
         <Using Include="Microsoft.EntityFrameworkCore.Metadata.Builders" />
@@ -31,10 +33,6 @@
         <Using Include="Hangfire" />
         <Using Include="Microsoft.AspNetCore.Identity" />
         <Using Include="Microsoft.EntityFrameworkCore" />
-    </ItemGroup>
-
-    <ItemGroup>
-        <ProjectReference Include="..\..\Shared\CrystaLearn.Shared.csproj" />
     </ItemGroup>
 
 </Project>

@@ -1,18 +1,12 @@
 @inherits AppComponentBase
 
-<section>
-    <BitStack Gap="0">
-        <BitStack Horizontal FitHeight Class="header-stack">
-            <BitSpacer />
-            <BitButton OnClick="CloseModal"
-                       Color="BitColor.Tertiary"
-                       Variant="BitVariant.Text"
-                       IconName="@BitIconName.ChromeClose" />
-        </BitStack>
-        <BitStack Class="stack" FitHeight>
-            <SignInPanel OnSuccess="OnSuccess"
-                         ReturnUrl="@ReturnUrl"
-                         SignInPanelType="SignInPanelType.Otp" />
-        </BitStack>
-    </BitStack>
+<section class="sign-in-section">
+	<BitStack FitHeight Gap="0.8rem">
+		<SignInPanel OnSuccess="OnSuccess"
+					 ReturnUrlQueryString="@ReturnUrl"
+					 SignInPanelType="SignInPanelType.Social"
+					 Title=@Title
+					 OnClose="@CloseModal"
+					 SubTitle=@SubTitle />
+	</BitStack>
 </section>

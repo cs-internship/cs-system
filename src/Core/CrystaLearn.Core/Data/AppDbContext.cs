@@ -1,5 +1,6 @@
 ﻿using CrystaLearn.Core.Models.Attachments;
 using CrystaLearn.Core.Models.Chatbot;
+using CrystaLearn.Core.Models.Crysta;
 using CrystaLearn.Core.Models.Identity;
 using CrystaLearn.Core.Models.PushNotification;
 using CrystaLearn.Server.Api.Data.Configurations;
@@ -23,6 +24,18 @@ public partial class AppDbContext(DbContextOptions<AppDbContext> options)
     public DbSet<Attachment> Attachments { get; set; } = default!;
 
     public DbSet<DataProtectionKey> DataProtectionKeys { get; set; } = default!;
+
+    public DbSet<CrystaTask> CrystaTasks { get; set; } = default!;
+
+    public DbSet<CrystaTaskComment> CrystaTaskComments { get; set; } = default!;
+
+    public DbSet<CrystaTaskUpdate> CrystaTaskUpdates { get; set; } = default!;
+
+    public DbSet<CrystaTaskRevision> CrystaTaskRevisions { get; set; } = default!;
+
+    public DbSet<CrystaProgram> CrystaPrograms { get; set; } = default!;
+
+    public DbSet<CrystaProgramSyncModule> CrystaProgramSyncModules { get; set; } = default!;
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

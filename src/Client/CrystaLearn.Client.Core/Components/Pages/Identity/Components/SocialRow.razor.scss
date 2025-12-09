@@ -1,13 +1,32 @@
 section {
-    margin-top: 1rem;
+    //margin-top: 1rem;
 }
 
 ::deep {
     .social-button {
-        width: 60px;
-        height: 60px;
         display: flex;
-        align-items: center;
+        width: 6.4rem;
+        height: 6.4rem;
+        padding: 1.6rem 1.6rem 1.6rem 1.5rem;
         justify-content: center;
+        align-items: center;
+        border-radius: 0.8rem;
+        border: 0.1rem solid;
+        border-color: var(--bit-clr-brd-pri-2);
+        background-color: var(--bit-clr-brd-pri-2);
+    }
+
+    .cslearn-social-icon-style {
+        font-size: 4rem;
+        color: var(--bit-clr-fg-pri);
+    }
+
+    .icon-apple-style {
+        font-size: 4.2rem;
+        padding-bottom: 0.5rem;
+    }
+
+    .disabled-button {
+        color: var(--bit-clr-brd-sec);
     }
 }

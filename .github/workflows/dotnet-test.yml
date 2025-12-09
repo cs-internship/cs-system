@@ -1,0 +1,46 @@
+name: .NET Test
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [ develop, main ]
+  pull_request:
+    branches: [ develop, main ]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    env:
+      AZUREDEVOPS__PERSONALACCESSTOKEN: ${{ secrets.AZUREDEVOPS__PERSONALACCESSTOKEN }}
+      CONNECTIONSTRINGS__POSTGRESCONNECTIONSTRING: ${{ secrets.CONNECTIONSTRINGS__POSTGRESCONNECTIONSTRING }}
+      GitHub__GitHubAccessToken : ${{ secrets.GITHUBACCESSTOKEN }}
+    steps:
+      - name: Checkout source code
+        uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          global-json-file: global.json
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 23
+
+      - name: Install wasm
+        run:  cd src && dotnet workload install wasm-tools
+
+      - name: Restore dependencies
+        run: dotnet restore CrystaLearn.TestOnly.sln
+
+      - name: Build
+        run: dotnet build CrystaLearn.TestOnly.sln --no-restore
+
+      - name: Install Playwright Browsers
+        run:  |
+            cd src/Test/CrystaLearn.Test
+            dotnet tool restore
+            dotnet playwright install
+            
+      - name: Run tests
+        run: dotnet test CrystaLearn.TestOnly.sln --no-build --verbosity normal
