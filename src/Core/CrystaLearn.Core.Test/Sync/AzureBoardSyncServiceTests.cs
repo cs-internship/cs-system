@@ -54,7 +54,6 @@ public class AzureBoardSyncServiceTests : TestBase
         };
 
         await service.SyncAsync(module, new List<int>() { 1332 });
-        // await service.SyncAsync(module);
     }
 
 
@@ -76,7 +75,6 @@ public class AzureBoardSyncServiceTests : TestBase
 
 
         await service.SyncAsync(moduleList.First(f => f.ModuleType == SyncModuleType.AzureBoard), new List<int>() { 36233 });
-        // await service.SyncAsync(module);
     }
 
 
