@@ -25,9 +25,11 @@ public partial class CrystaProgramSyncJobRunner
             isRunning = true;
             var modules = await syncModuleService.GetSyncModulesAsync(cancellationToken);
 
-            foreach (var module in modules)
+            int i = 0;
+            while (i < modules.Count)
             {
-                await syncService.SyncAsync(module);
+                await syncService.SyncAsync(modules[i]);
+                i++;
             }
         }
         catch (Exception ex)
