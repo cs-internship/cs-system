@@ -167,7 +167,7 @@ public static partial class Program
         RecurringJob.AddOrUpdate<CrystaLearn.Core.Services.Jobs.CrystaProgramSyncJobRunner>(
             recurringJobId: "crysta-program-sync",
             methodCall: x => x.RunSyncForAllModules(CancellationToken.None),
-            cronExpression: "*/1 * * * *");
+            cronExpression: "0 */1 * * *");
     }
 
     /// <summary>
