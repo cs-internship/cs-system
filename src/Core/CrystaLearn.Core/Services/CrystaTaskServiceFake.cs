@@ -140,17 +140,7 @@ public class CrystaTaskServiceFake : ICrystaTaskService
         if (ids == null || ids.Count == 0) return Task.FromResult(new List<SyncItem>());
         var found = _tasks
             .Where(t => ids.Contains(t.WorkItemSyncInfo.SyncId ?? ""))
-            .Select(t => new SyncItem
-            {
-                Id = t.Id,
-                SyncInfo = t.WorkItemSyncInfo == null
-                    ? null
-                    : new SyncInfo
-                    {
-                        SyncId = t.WorkItemSyncInfo.SyncId,
-                        ContentHash = t.WorkItemSyncInfo.ContentHash
-                    }
-            })
+            .Select(t => new SyncItem { Id = t.Id, SyncInfo = t.WorkItemSyncInfo })
             .ToList();
         return Task.FromResult(found);
     }
