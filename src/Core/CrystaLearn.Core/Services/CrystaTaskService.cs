@@ -7,7 +7,7 @@ using EFCore.BulkExtensions;
 
 namespace CrystaLearn.Core.Services;
 
-public partial class CrystaTaskRepository : ICrystaTaskRepository
+public partial class CrystaTaskService : ICrystaTaskService
 {
     [AutoInject] private AppDbContext DbContext { get; set; } = default!;
 

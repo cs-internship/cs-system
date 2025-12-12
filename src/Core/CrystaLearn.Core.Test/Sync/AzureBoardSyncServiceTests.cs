@@ -20,7 +20,8 @@ public class AzureBoardSyncServiceTests : TestBase
         // Arrange
         var services = CreateServiceProvider(configServices: (sc) =>
         {
-            sc.AddTransient<ICrystaProgramSyncModuleService, CrystaProgramSyncModuleService>();
+            sc.AddTransient<ICrystaProgramSyncModuleService, CrystaProgramSyncModuleServiceFake>();
+            sc.AddTransient<ICrystaTaskService, CrystaTaskServiceFake>();
         });
 
         using var scope = services.CreateScope();
@@ -63,7 +64,8 @@ public class AzureBoardSyncServiceTests : TestBase
         // Arrange
         var services = CreateServiceProvider(configServices: (sc) =>
         {
-            sc.AddTransient<ICrystaProgramSyncModuleService, CrystaProgramSyncModuleService>();
+            sc.AddTransient<ICrystaProgramSyncModuleService, CrystaProgramSyncModuleServiceFake>();
+            sc.AddTransient<ICrystaTaskService, CrystaTaskServiceFake>();
         });
 
         using var scope = services.CreateScope();
@@ -84,7 +86,8 @@ public class AzureBoardSyncServiceTests : TestBase
         // Arrange
         var services = CreateServiceProvider(configServices: (sc) =>
         {
-            sc.AddTransient<ICrystaProgramSyncModuleService, CrystaProgramSyncModuleService>();
+            sc.AddTransient<ICrystaProgramSyncModuleService, CrystaProgramSyncModuleServiceFake>();
+            sc.AddTransient<ICrystaTaskService, CrystaTaskServiceFake>();
         });
 
         using var scope = services.CreateScope();
@@ -100,8 +103,3 @@ public class AzureBoardSyncServiceTests : TestBase
         }
     }
 }
-
-//AzureBoardService Test
-//AzureSyncService Test
-// CrystaTaskRepository -> CrystaTaskService  -> Documented
-// 

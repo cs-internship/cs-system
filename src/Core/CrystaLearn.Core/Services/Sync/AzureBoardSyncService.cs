@@ -12,7 +12,7 @@ public partial class AzureBoardSyncService : IAzureBoardSyncService
 {
     [AutoInject] private IAzureBoardService AzureBoardService { get; set; } = default!;
     [AutoInject] private IConfiguration Configuration { get; set; } = default!;
-    [AutoInject] private ICrystaTaskRepository CrystaTaskRepository { get; set; } = default!;
+    [AutoInject] private ICrystaTaskService CrystaTaskService { get; set; } = default!;
     [AutoInject] private ICrystaProgramSyncModuleService CrystaProgramSyncModuleRepository { get; set; } = default!;
 
     public async Task<SyncResult> SyncAsync(CrystaProgramSyncModule module, List<int>? workItemIds = null)
@@ -104,7 +104,7 @@ public partial class AzureBoardSyncService : IAzureBoardSyncService
                 .ToList();
 
             if (tasksToUpdate.Count > 0)
-                await CrystaTaskRepository.UpdateCrystaTasksAsync(tasksToUpdate);
+                await CrystaTaskService.UpdateCrystaTasksAsync(tasksToUpdate);
 
 
             // Aggregate results
@@ -178,7 +178,7 @@ public partial class AzureBoardSyncService : IAzureBoardSyncService
 
         // Preload mapping of WorkItem SyncId -> CrystaTask.Id for existing tasks (used when task.Id == Guid.Empty)
         var taskSyncIds = tasks.Select(t => t.WorkItemSyncInfo.SyncId ?? "").Where(s => !string.IsNullOrEmpty(s)).Distinct().ToList();
-        var workItemSyncItems = taskSyncIds.Count > 0 ? await CrystaTaskRepository.GetWorkItemSyncItemsAsync(taskSyncIds) : new List<SyncItem>();
+        var workItemSyncItems = taskSyncIds.Count > 0 ? await CrystaTaskService.GetWorkItemSyncItemsAsync(taskSyncIds) : new List<SyncItem>();
         var syncIdToGuidMap = workItemSyncItems.Where(s => s.SyncInfo != null && s.Id.HasValue)
             .ToDictionary(s => s.SyncInfo.SyncId ?? string.Empty, s => s.Id.Value, StringComparer.OrdinalIgnoreCase);
 
@@ -257,7 +257,7 @@ public partial class AzureBoardSyncService : IAzureBoardSyncService
             .ToList();
 
         var ids = updateSyncItems.Select(u => u.SyncInfo.SyncId ?? "").Where(id => !string.IsNullOrEmpty(id)).ToList();
-        var existingUpdateSyncItems = await CrystaTaskRepository.GetUpdatesSyncItemsAsync(ids);
+        var existingUpdateSyncItems = await CrystaTaskService.GetUpdatesSyncItemsAsync(ids);
 
         var toAddList = updateSyncItems
                         .Where(board => existingUpdateSyncItems.All(existing => board.SyncInfo.SyncId != existing.SyncInfo.SyncId))
@@ -281,10 +281,10 @@ public partial class AzureBoardSyncService : IAzureBoardSyncService
         var toUpdate = toAddOrUpdate.Where(u => toUpdateList.Any(s => s.SyncInfo.SyncId == u.SyncInfo.SyncId)).ToList();
 
         if (toAdd.Count > 0)
-            await CrystaTaskRepository.AddCrystaTaskUpdatesAsync(toAdd);
+            await CrystaTaskService.AddCrystaTaskUpdatesAsync(toAdd);
 
         if (toUpdate.Count > 0)
-            await CrystaTaskRepository.UpdateCrystaTaskUpdatesAsync(toUpdate);
+            await CrystaTaskService.UpdateCrystaTaskUpdatesAsync(toUpdate);
 
         return new SyncResult
         {
@@ -306,7 +306,7 @@ public partial class AzureBoardSyncService : IAzureBoardSyncService
 
         // Preload mapping of WorkItem SyncId -> CrystaTask.Id for existing tasks
         var taskSyncIds = tasks.Select(t => t.WorkItemSyncInfo.SyncId ?? "").Where(s => !string.IsNullOrEmpty(s)).Distinct().ToList();
-        var workItemSyncItems = taskSyncIds.Count > 0 ? await CrystaTaskRepository.GetWorkItemSyncItemsAsync(taskSyncIds) : new List<SyncItem>();
+        var workItemSyncItems = taskSyncIds.Count > 0 ? await CrystaTaskService.GetWorkItemSyncItemsAsync(taskSyncIds) : new List<SyncItem>();
         var syncIdToGuidMap = workItemSyncItems.Where(s => s.SyncInfo != null && s.Id.HasValue)
             .ToDictionary(s => s.SyncInfo.SyncId ?? string.Empty, s => s.Id.Value, StringComparer.OrdinalIgnoreCase);
 
@@ -376,7 +376,7 @@ public partial class AzureBoardSyncService : IAzureBoardSyncService
             .ToList();
 
         var ids = commentSyncItems.Select(c => c.SyncInfo.SyncId ?? "").Where(id => !string.IsNullOrEmpty(id)).ToList();
-        var existingCommentSyncItems = await CrystaTaskRepository.GetCommentsSyncItemsAsync(ids);
+        var existingCommentSyncItems = await CrystaTaskService.GetCommentsSyncItemsAsync(ids);
 
         var toAddList = commentSyncItems
                         .Where(board => existingCommentSyncItems.All(existing => board.SyncInfo.SyncId != existing.SyncInfo.SyncId))
@@ -399,10 +399,10 @@ public partial class AzureBoardSyncService : IAzureBoardSyncService
         var toUpdate = toAddOrUpdate.Where(c => toUpdateList.Any(s => s.SyncInfo.SyncId == c.SyncInfo.SyncId)).ToList();
 
         if (toAdd.Count > 0)
-            await CrystaTaskRepository.AddCrystaTaskCommentsAsync(toAdd);
+            await CrystaTaskService.AddCrystaTaskCommentsAsync(toAdd);
 
         if (toUpdate.Count > 0)
-            await CrystaTaskRepository.UpdateCrystaTaskCommentsAsync(toUpdate);
+            await CrystaTaskService.UpdateCrystaTaskCommentsAsync(toUpdate);
 
         return new SyncResult
         {
@@ -425,7 +425,7 @@ public partial class AzureBoardSyncService : IAzureBoardSyncService
 
         // Preload mapping of WorkItem SyncId -> CrystaTask.Id for existing tasks
         var taskSyncIds = tasks.Select(t => t.WorkItemSyncInfo.SyncId ?? "").Where(s => !string.IsNullOrEmpty(s)).Distinct().ToList();
-        var workItemSyncItems = taskSyncIds.Count > 0 ? await CrystaTaskRepository.GetWorkItemSyncItemsAsync(taskSyncIds) : new List<SyncItem>();
+        var workItemSyncItems = taskSyncIds.Count > 0 ? await CrystaTaskService.GetWorkItemSyncItemsAsync(taskSyncIds) : new List<SyncItem>();
         var syncIdToGuidMap = workItemSyncItems.Where(s => s.SyncInfo != null && s.Id.HasValue)
             .ToDictionary(s => s.SyncInfo.SyncId ?? string.Empty, s => s.Id.Value, StringComparer.OrdinalIgnoreCase);
 
@@ -506,7 +506,7 @@ public partial class AzureBoardSyncService : IAzureBoardSyncService
             .ToList();
 
         var ids = revisionSyncItems.Select(r => r.SyncInfo.SyncId ?? "").Where(id => !string.IsNullOrEmpty(id)).ToList();
-        var existingRevisionSyncItems = await CrystaTaskRepository.GetRevisionsSyncItemsAsync(ids);
+        var existingRevisionSyncItems = await CrystaTaskService.GetRevisionsSyncItemsAsync(ids);
 
         var toAddList = revisionSyncItems
                         .Where(board => existingRevisionSyncItems.All(existing => board.SyncInfo.SyncId != existing.SyncInfo.SyncId))
@@ -529,10 +529,10 @@ public partial class AzureBoardSyncService : IAzureBoardSyncService
         var toUpdate = toAddOrUpdate.Where(r => toUpdateList.Any(s => s.SyncInfo.SyncId == r.WorkItemSyncInfo.SyncId)).ToList();
 
         if (toAdd.Count > 0)
-            await CrystaTaskRepository.AddCrystaTaskRevisionsAsync(toAdd);
+            await CrystaTaskService.AddCrystaTaskRevisionsAsync(toAdd);
 
         if (toUpdate.Count > 0)
-            await CrystaTaskRepository.UpdateCrystaTaskRevisionsAsync(toUpdate);
+            await CrystaTaskService.UpdateCrystaTaskRevisionsAsync(toUpdate);
 
         return new SyncResult
         {
@@ -559,7 +559,7 @@ public partial class AzureBoardSyncService : IAzureBoardSyncService
 
         var ids = boardSyncItems.Select(wi => wi.SyncInfo.SyncId ?? "").Where(id => !string.IsNullOrEmpty(id)).ToList();
 
-        var existingWorkItemSyncItems = await CrystaTaskRepository.GetWorkItemSyncItemsAsync(ids);
+        var existingWorkItemSyncItems = await CrystaTaskService.GetWorkItemSyncItemsAsync(ids);
 
         var toAddList = boardSyncItems
                         .Where(board => existingWorkItemSyncItems.All(existing => board.SyncInfo.SyncId != existing.SyncInfo.SyncId))
@@ -630,7 +630,7 @@ public partial class AzureBoardSyncService : IAzureBoardSyncService
         if (missingParentSyncIds.Count > 0)
         {
             // Try to load missing parents from DB in one call
-            var parentSyncItems = await CrystaTaskRepository.GetWorkItemSyncItemsAsync(missingParentSyncIds.ToList());
+            var parentSyncItems = await CrystaTaskService.GetWorkItemSyncItemsAsync(missingParentSyncIds.ToList());
             foreach (var p in parentSyncItems)
             {
                 var sid = p.SyncInfo?.SyncId;
@@ -655,10 +655,10 @@ public partial class AzureBoardSyncService : IAzureBoardSyncService
         }
 
         if (toAdd.Count > 0)
-            await CrystaTaskRepository.AddCrystaTasksAsync(toAdd);
+            await CrystaTaskService.AddCrystaTasksAsync(toAdd);
 
         if (toUpdate.Count > 0)
-            await CrystaTaskRepository.UpdateCrystaTasksAsync(toUpdate);
+            await CrystaTaskService.UpdateCrystaTasksAsync(toUpdate);
 
         // Build combined list: existing + newly added (toAddList)
         //var combined = new List<SyncItem>(existingWorkItemSyncItems.Count + toAddList.Count);
