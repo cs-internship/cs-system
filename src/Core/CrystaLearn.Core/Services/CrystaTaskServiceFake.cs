@@ -87,9 +87,7 @@ public class CrystaTaskServiceFake : ICrystaTaskService
     {
         if (syncIds == null || syncIds.Count == 0) return Task.FromResult(0);
         var removed = _updates.RemoveAll(u =>
-            (u.Revision != null && syncIds.Contains(u.Revision)) ||
-            (u.ProviderTaskId != null && syncIds.Contains(u.ProviderTaskId)) ||
-            (u.Id != Guid.Empty && syncIds.Contains(u.Id.ToString())));
+            u.SyncInfo != null && !string.IsNullOrEmpty(u.SyncInfo.SyncId) && syncIds.Contains(u.SyncInfo.SyncId));
         return Task.FromResult(removed);
     }
 
