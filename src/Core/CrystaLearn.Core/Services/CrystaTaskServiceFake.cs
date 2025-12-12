@@ -77,7 +77,6 @@ public class CrystaTaskServiceFake : ICrystaTaskService
                 if (c.IsDeleted != true)
                 {
                     c.IsDeleted = true;
-                    c.SyncStatus = CrystaSyncStatus.Deleted;
                     marked++;
                 }
             }
