@@ -176,7 +176,10 @@ public class CrystaTaskServiceFake : ICrystaTaskService
         if (comments == null) return Task.CompletedTask;
         foreach (var c in comments)
         {
-            var existing = _comments.FirstOrDefault(x => x.Id == c.Id || (!string.IsNullOrEmpty(x.Revision) && x.Revision == c.Revision));
+            var existing = _comments.FirstOrDefault(x =>
+                x.SyncInfo?.SyncId != null &&
+                c.SyncInfo?.SyncId != null &&
+                x.SyncInfo.SyncId == c.SyncInfo.SyncId);
             if (existing != null)
             {
                 // naive replace of reference properties
