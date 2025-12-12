@@ -66,11 +66,24 @@ public class CrystaTaskServiceFake : ICrystaTaskService
     public Task<int> DeleteCrystaTaskCommentsAsync(List<string> syncIds)
     {
         if (syncIds == null || syncIds.Count == 0) return Task.FromResult(0);
-        var removed = _comments.RemoveAll(c =>
-            (c.Revision != null && syncIds.Contains(c.Revision)) ||
-            (c.ProviderTaskId != null && syncIds.Contains(c.ProviderTaskId)) ||
-            (c.Id != Guid.Empty && syncIds.Contains(c.Id.ToString())));
-        return Task.FromResult(removed);
+        int marked = 0;
+        foreach (var c in _comments)
+        {
+            if (
+                (c.Revision != null && syncIds.Contains(c.Revision)) ||
+                (c.ProviderTaskId != null && syncIds.Contains(c.ProviderTaskId)) ||
+                (c.Id != Guid.Empty && syncIds.Contains(c.Id.ToString()))
+            )
+            {
+                if (c.IsDeleted != true)
+                {
+                    c.IsDeleted = true;
+                    c.SyncStatus = CrystaSyncStatus.Deleted;
+                    marked++;
+                }
+            }
+        }
+        return Task.FromResult(marked);
     }
 
     public Task<int> DeleteCrystaTaskRevisionsAsync(List<string> syncIds)
