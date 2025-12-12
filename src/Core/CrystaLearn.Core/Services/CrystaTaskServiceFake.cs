@@ -90,9 +90,13 @@ public class CrystaTaskServiceFake : ICrystaTaskService
     {
         if (syncIds == null || syncIds.Count == 0) return Task.FromResult(0);
         var removed = _revisions.RemoveAll(r =>
-            (r.Revision != null && syncIds.Contains(r.Revision)) ||
-            (r.ProviderTaskId != null && syncIds.Contains(r.ProviderTaskId)) ||
-            (r.Id != Guid.Empty && syncIds.Contains(r.Id.ToString())));
+        {
+            // Compose the composite key as in the real service: ProviderTaskId-Revision
+            var providerTaskId = r.ProviderTaskId ?? "";
+            var revision = r.Revision ?? "";
+            var compositeKey = $"{providerTaskId}-{revision}";
+            return syncIds.Contains(compositeKey);
+        });
         return Task.FromResult(removed);
     }
 
