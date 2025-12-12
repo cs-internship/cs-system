@@ -95,29 +95,22 @@ public class CrystaTaskServiceFake : ICrystaTaskService
 
     public Task<List<string>> GetAllWorkItemSyncIdsAsync(string project)
     {
-        var ids = _tasks
-            .Where(t => !string.IsNullOrEmpty(t.ProviderTaskId))
-            .Select(t => t.ProviderTaskId!)
+        // Get all non-deleted tasks sync IDs matching the project
+        var syncIds = _tasks
+            .Where(t => !t.IsDeleted && t.ProjectName == project && !string.IsNullOrEmpty(t.WorkItemSyncInfo.SyncId))
+            .Select(t => t.WorkItemSyncInfo.SyncId ?? "")
+            .Where(id => !string.IsNullOrEmpty(id))
             .ToList();
 
-        // If project filtering is required and CrystaProgram contains project name, filter.
-        if (!string.IsNullOrEmpty(project))
-        {
-            ids = _tasks
-                .Where(t => t.CrystaProgram != null && string.Equals(t.CrystaProgram.ToString(), project, StringComparison.OrdinalIgnoreCase) && !string.IsNullOrEmpty(t.ProviderTaskId))
-                .Select(t => t.ProviderTaskId!)
-                .ToList();
-        }
-
-        return Task.FromResult(ids);
+        return Task.FromResult(syncIds);
     }
 
     public Task<List<SyncItem>> GetCommentsSyncItemsAsync(List<string> ids)
     {
         if (ids == null || ids.Count == 0) return Task.FromResult(new List<SyncItem>());
         var found = _comments
-            .Where(c => (c.Revision != null && ids.Contains(c.Revision)) || (c.ProviderTaskId != null && ids.Contains(c.ProviderTaskId)) || (c.Id != Guid.Empty && ids.Contains(c.Id.ToString())))
-            .Select(c => new SyncItem { Id = c.Id })
+            .Where(c => c.SyncInfo != null && ids.Contains(c.SyncInfo.SyncId ?? ""))
+            .Select(c => new SyncItem { Id = c.Id, SyncInfo = c.SyncInfo })
             .ToList();
         return Task.FromResult(found);
     }
@@ -126,8 +119,8 @@ public class CrystaTaskServiceFake : ICrystaTaskService
     {
         if (ids == null || ids.Count == 0) return Task.FromResult(new List<SyncItem>());
         var found = _revisions
-            .Where(r => (r.Revision != null && ids.Contains(r.Revision)) || (r.ProviderTaskId != null && ids.Contains(r.ProviderTaskId)) || (r.Id != Guid.Empty && ids.Contains(r.Id.ToString())))
-            .Select(r => new SyncItem { Id = r.Id })
+            .Where(r => ids.Contains(r.WorkItemSyncInfo.SyncId ?? ""))
+            .Select(r => new SyncItem { Id = r.Id, SyncInfo = r.WorkItemSyncInfo })
             .ToList();
         return Task.FromResult(found);
     }
@@ -136,8 +129,8 @@ public class CrystaTaskServiceFake : ICrystaTaskService
     {
         if (ids == null || ids.Count == 0) return Task.FromResult(new List<SyncItem>());
         var found = _updates
-            .Where(u => (u.Revision != null && ids.Contains(u.Revision)) || (u.ProviderTaskId != null && ids.Contains(u.ProviderTaskId)) || (u.Id != Guid.Empty && ids.Contains(u.Id.ToString())))
-            .Select(u => new SyncItem { Id = u.Id })
+            .Where(u => u.SyncInfo != null && ids.Contains(u.SyncInfo.SyncId ?? ""))
+            .Select(u => new SyncItem { Id = u.Id, SyncInfo = u.SyncInfo })
             .ToList();
         return Task.FromResult(found);
     }
@@ -146,8 +139,18 @@ public class CrystaTaskServiceFake : ICrystaTaskService
     {
         if (ids == null || ids.Count == 0) return Task.FromResult(new List<SyncItem>());
         var found = _tasks
-            .Where(t => (t.ProviderTaskId != null && ids.Contains(t.ProviderTaskId)) || (t.Id != Guid.Empty && ids.Contains(t.Id.ToString())))
-            .Select(t => new SyncItem { Id = t.Id })
+            .Where(t => ids.Contains(t.WorkItemSyncInfo.SyncId ?? ""))
+            .Select(t => new SyncItem
+            {
+                Id = t.Id,
+                SyncInfo = t.WorkItemSyncInfo == null
+                    ? null
+                    : new SyncInfo
+                    {
+                        SyncId = t.WorkItemSyncInfo.SyncId,
+                        ContentHash = t.WorkItemSyncInfo.ContentHash
+                    }
+            })
             .ToList();
         return Task.FromResult(found);
     }

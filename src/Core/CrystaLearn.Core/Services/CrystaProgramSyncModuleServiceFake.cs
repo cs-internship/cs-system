@@ -10,7 +10,7 @@ public partial class CrystaProgramSyncModuleServiceFake : ICrystaProgramSyncModu
 {
     private static List<CrystaProgramSyncModule> _modules = new();
 
-     private IConfiguration Configuration { get; set; } = default!;
+    private IConfiguration Configuration { get; set; } = default!;
 
     public CrystaProgramSyncModuleServiceFake(IConfiguration configuration)
     {
