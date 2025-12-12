@@ -10,10 +10,11 @@ public partial class CrystaProgramSyncModuleServiceFake : ICrystaProgramSyncModu
 {
     private static List<CrystaProgramSyncModule> _modules = new();
 
-    [AutoInject] private IConfiguration Configuration { get; set; } = default!;
+     private IConfiguration Configuration { get; set; } = default!;
 
-    public CrystaProgramSyncModuleServiceFake()
+    public CrystaProgramSyncModuleServiceFake(IConfiguration configuration)
     {
+        Configuration = configuration;
         if (_modules.Count == 0)
         {
             var pat = Configuration["AzureDevOps:PersonalAccessToken"];
@@ -26,14 +27,14 @@ public partial class CrystaProgramSyncModuleServiceFake : ICrystaProgramSyncModu
                     CrystaProgramId = CrystaProgramRepositoryFake.FakeProgramCSI.Id,
                     CrystaProgram = CrystaProgramRepositoryFake.FakeProgramCSI,
                     ModuleType = SyncModuleType.AzureBoard,
-                    SyncConfig =
-                        $$"""
-                        {   
-                            "Organization": "cs-internship",
-                            "PersonalAccessToken": "{pat}",
-                            "Project": "CS Internship Program"
-                        }
-                        """,
+                   SyncConfig =
+                          $$"""
+                            {
+                                "Organization": "cs-internship",
+                                "PersonalAccessToken": "{{pat}}",
+                                "Project": "CS Internship Program"
+                            }
+                            """,
                     SyncInfo = new SyncInfo
                     {
                         LastSyncDateTime = DateTimeOffset.Now.AddDays(-2),

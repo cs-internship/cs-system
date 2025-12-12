@@ -8,7 +8,7 @@ using CrystaLearn.Core.Services.Sync;
 
 namespace CrystaLearn.Core.Services.Contracts;
 
-public interface ICrystaTaskRepository
+public interface ICrystaTaskService
 {
     Task<List<SyncItem>> GetWorkItemSyncItemsAsync(List<string> ids);
     Task<List<SyncItem>> GetCommentsSyncItemsAsync(List<string> ids);
