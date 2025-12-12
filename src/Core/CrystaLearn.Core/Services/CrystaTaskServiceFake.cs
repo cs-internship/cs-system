@@ -162,7 +162,7 @@ public class CrystaTaskServiceFake : ICrystaTaskService
     public Task<int> MarkCrystaTasksAsDeletedAsync(List<string> syncIds)
     {
         if (syncIds == null || syncIds.Count == 0) return Task.FromResult(0);
-        var matched = _tasks.Where(t => (t.ProviderTaskId != null && syncIds.Contains(t.ProviderTaskId)) || (t.Id != Guid.Empty && syncIds.Contains(t.Id.ToString()))).ToList();
+        var matched = _tasks.Where(t => t.WorkItemSyncInfo != null && syncIds.Contains(t.WorkItemSyncInfo.SyncId ?? "")).ToList();
         foreach (var t in matched)
         {
             t.IsDeleted = true;
