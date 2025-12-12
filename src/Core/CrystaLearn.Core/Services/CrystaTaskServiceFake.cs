@@ -194,7 +194,17 @@ public class CrystaTaskServiceFake : ICrystaTaskService
         if (revisions == null) return Task.CompletedTask;
         foreach (var r in revisions)
         {
-            var existing = _revisions.FirstOrDefault(x => x.Id == r.Id || (!string.IsNullOrEmpty(x.Revision) && x.Revision == r.Revision));
+            var existing = _revisions.FirstOrDefault(x =>
+                x.Id == r.Id ||
+                (
+                    !string.IsNullOrEmpty(x.ProviderTaskId) &&
+                    !string.IsNullOrEmpty(r.ProviderTaskId) &&
+                    x.ProviderTaskId == r.ProviderTaskId &&
+                    !string.IsNullOrEmpty(x.Revision) &&
+                    !string.IsNullOrEmpty(r.Revision) &&
+                    x.Revision == r.Revision
+                )
+            );
             if (existing != null)
             {
                 var idx = _revisions.IndexOf(existing);
