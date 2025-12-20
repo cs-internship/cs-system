@@ -36,6 +36,7 @@ public static class ApplicationBuilderExtensions
         services.AddTransient<IAzureBoardService, AzureBoardService>();
         services.AddTransient<ICrystaProgramSyncService, CrystaProgramSyncService>();
         services.AddTransient<IAzureBoardSyncService, AzureBoardSyncService>();
+        services.AddTransient<IGithubSyncService, GithubSyncService>();
         services.AddTransient<ICrystaProgramSyncModuleService, CrystaProgramSyncModuleService>();
         services.AddTransient<ICrystaTaskService, CrystaTaskService>();
     }
