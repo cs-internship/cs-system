@@ -5,7 +5,7 @@ using Markdig;
 namespace CrystaLearn.Core.Services.GitHub;
 public static class GitHubExtensions
 {
-    public static Models.Crysta.Document CreateDocument(this GitHubItem item, CrystaProgram program)
+    public static Models.Crysta.CrystaDocument CreateDocument(this GitHubItem item, CrystaProgram program)
     {
         string culture = "";
         string programDocUrl = program.DocumentUrl ?? throw new Exception($"Program with code '{program.Code}' has no document url.");
@@ -50,7 +50,7 @@ public static class GitHubExtensions
 
         var folderPath = relativePath;
 
-        var doc = new Models.Crysta.Document
+        var doc = new Models.Crysta.CrystaDocument
         {
             Id = Guid.NewGuid(),
             Code = code,
@@ -78,7 +78,7 @@ public static class GitHubExtensions
         return doc;
     }
 
-    public static string? GetHtmlContent(this Models.Crysta.Document doc)
+    public static string? GetHtmlContent(this Models.Crysta.CrystaDocument doc)
     {
         var content = doc.Content;
         if (content == null)

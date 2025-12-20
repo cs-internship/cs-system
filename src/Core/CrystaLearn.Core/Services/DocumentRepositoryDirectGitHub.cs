@@ -11,7 +11,7 @@ public partial class DocumentRepositoryDirectGitHub : IDocumentRepository
     [AutoInject] private IGitHubService GitHubService { get; set; } = default;
     [AutoInject] private ICrystaProgramRepository CrystaProgramRepository { get; set; } = default;
 
-    public async Task<List<Document>> GetDocumentsAsync(string programCode, CancellationToken cancellationToken)
+    public async Task<List<CrystaDocument>> GetDocumentsAsync(string programCode, CancellationToken cancellationToken)
     {
         var program = await CrystaProgramRepository.GetCrystaProgramByCodeAsync(programCode, cancellationToken);
         if (program == null)
@@ -23,7 +23,7 @@ public partial class DocumentRepositoryDirectGitHub : IDocumentRepository
 
         var list = await GitHubService.GetFilesAsync(documentUrl);
 
-        var result = new List<Document>();
+        var result = new List<CrystaDocument>();
 
         var culture = "";
 
