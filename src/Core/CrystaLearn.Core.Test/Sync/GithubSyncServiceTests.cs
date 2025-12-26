@@ -6,7 +6,7 @@ using CrystaLearn.Core.Tests.Infra;
 
 namespace CrystaLearn.Core.Tests.Sync;
 
-public class GithubSyncServiceTests : TestBase
+public class GitHubSyncServiceTests : TestBase
 {
     [Fact]
     public async Task SyncGithubDocuments_WithValidModule_MustWork()
@@ -20,7 +20,7 @@ public class GithubSyncServiceTests : TestBase
         });
 
         using var scope = services.CreateScope();
-        var service = scope.ServiceProvider.GetRequiredService<IGithubSyncService>();
+        var service = scope.ServiceProvider.GetRequiredService<IGitHubSyncService>();
         var programRepo = scope.ServiceProvider.GetRequiredService<ICrystaProgramRepository>();
 
         // Get a test program
@@ -68,7 +68,7 @@ public class GithubSyncServiceTests : TestBase
         });
 
         using var scope = services.CreateScope();
-        var service = scope.ServiceProvider.GetRequiredService<IGithubSyncService>();
+        var service = scope.ServiceProvider.GetRequiredService<IGitHubSyncService>();
 
         var module = new CrystaProgramSyncModule
         {

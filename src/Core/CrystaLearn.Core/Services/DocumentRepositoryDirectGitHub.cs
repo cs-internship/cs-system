@@ -3,6 +3,7 @@ using CrystaLearn.Core.Services.Contracts;
 using CrystaLearn.Core.Services.GitHub;
 using CrystaLearn.Shared.Dtos.Crysta;
 using Markdig;
+using CrystaLearn.Core.Mappers;
 
 namespace CrystaLearn.Core.Services;
 
@@ -10,6 +11,7 @@ public partial class DocumentRepositoryDirectGitHub : IDocumentRepository
 {
     [AutoInject] private IGitHubService GitHubService { get; set; } = default;
     [AutoInject] private ICrystaProgramRepository CrystaProgramRepository { get; set; } = default;
+    [AutoInject] private CrystaLearn.Core.Services.Sync.ICrystaDocumentService CrystaDocumentService { get; set; } = default!;
 
     public async Task<List<CrystaDocument>> GetDocumentsAsync(string programCode, CancellationToken cancellationToken)
     {
@@ -42,10 +44,36 @@ public partial class DocumentRepositoryDirectGitHub : IDocumentRepository
         return result;
     }
 
-    public async Task<DocumentDto> GetDocumentByCrystaUrlAsync(string crystaUrl,
+    public async Task<DocumentDto?> GetDocumentByCrystaUrlAsync(string crystaUrl,
         string? culture, CancellationToken cancellationToken)
     {
-        throw new NotImplementedException();
+        var languageVariants = await CrystaDocumentService.GetDocumentsByCrystaUrlAsync(crystaUrl, cancellationToken);
+
+        if (languageVariants == null || !languageVariants.Any())
+        {
+            return null;
+        }
+
+        var document = languageVariants.FirstOrDefault(d => culture?.StartsWith(d.Culture) ?? false);
+        document ??= languageVariants.FirstOrDefault(d => d.Culture.StartsWith("en"));
+        document ??= languageVariants.FirstOrDefault(d => d.Culture.StartsWith("fa"));
+
+        if (document is null)
+        {
+            return null;
+        }
+
+        if (!string.IsNullOrWhiteSpace(document.SourceHtmlUrl) && string.IsNullOrEmpty(document.Content))
+        {
+            document.Content ??= await GitHubService.GetFileContentAsync(document.SourceHtmlUrl);
+            document.Content = document.GetHtmlContent();
+            document.Content = new string(document.Content?.Where(c => c != '\0').ToArray());
+        }
+
+        var dto = document.Map();
+        dto.CultureVariants = languageVariants.Select(x => x.Culture).ToArray();
+
+        return dto;
     }
 
     //public async Task<DocumentDto?> GetDocumentContentByUrlAsync(string programCode, string url,
