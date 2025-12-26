@@ -12,20 +12,40 @@ namespace CrystaLearn.Core.Services;
 public partial class CrystaProgramSyncModuleService : ICrystaProgramSyncModuleService
 {
 
-    private static List<CrystaProgramSyncModule> _modules = new();
-    private AppDbContext DbContext { get; set; } = default!;
+    private List<CrystaProgramSyncModule> _modules = new();
+    private IDbContextFactory<AppDbContext> DbContextFactory { get; set; } = default!;
+    private bool _initialized = false;
+    private readonly SemaphoreSlim _initLock = new SemaphoreSlim(1, 1);
 
-    public CrystaProgramSyncModuleService(AppDbContext dbContext)
+    public CrystaProgramSyncModuleService(IDbContextFactory<AppDbContext> dbContextFactory)
     {
-        this.DbContext = dbContext;
-        if (_modules.Count == 0)
+        this.DbContextFactory = dbContextFactory;
+    }
+
+    private async Task EnsureInitializedAsync(CancellationToken cancellationToken)
+    {
+        if (!_initialized)
         {
-            _modules = DbContext.Set<CrystaProgramSyncModule>().Include(f => f.CrystaProgram).ToListAsync().GetAwaiter().GetResult();
+            await _initLock.WaitAsync(cancellationToken);
+            try
+            {
+                if (!_initialized)
+                {
+                    await using var dbContext = await DbContextFactory.CreateDbContextAsync(cancellationToken);
+                    _modules = await dbContext.Set<CrystaProgramSyncModule>().Include(f => f.CrystaProgram).ToListAsync(cancellationToken);
+                    _initialized = true;
+                }
+            }
+            finally
+            {
+                _initLock.Release();
+            }
         }
     }
 
     public async Task<List<CrystaProgramSyncModule>> GetSyncModulesAsync(CancellationToken cancellationToken)
     {
+        await EnsureInitializedAsync(cancellationToken);
         return _modules;
     }
 
@@ -34,32 +54,33 @@ public partial class CrystaProgramSyncModuleService : ICrystaProgramSyncModuleSe
         // Try to persist to database if DbContext is available and configured
         try
         {
-            if (DbContext != null)
+            if (DbContextFactory != null)
             {
-                var set = DbContext.Set<CrystaProgramSyncModule>();
+                await using var dbContext = await DbContextFactory.CreateDbContextAsync(CancellationToken.None);
+                var set = dbContext.Set<CrystaProgramSyncModule>();
 
                 var existing = await set.FindAsync(new object[] { module.Id }, cancellationToken: CancellationToken.None);
                 if (existing != null)
                 {
                     // Update all scalar properties from incoming module
-                    DbContext.Entry(existing).CurrentValues.SetValues(module);
+                    dbContext.Entry(existing).CurrentValues.SetValues(module);
 
                     // If SyncInfo is an owned/complex type, ensure its properties are updated as well
                     if (module.SyncInfo != null)
                     {
                         existing.SyncInfo ??= new SyncInfo();
-                        DbContext.Entry(existing).CurrentValues.SetValues(existing); // ensure entry is tracked
-                        DbContext.Entry(existing).Reference(e => e.SyncInfo).TargetEntry?.CurrentValues.SetValues(module.SyncInfo);
+                        dbContext.Entry(existing).CurrentValues.SetValues(existing); // ensure entry is tracked
+                        dbContext.Entry(existing).Reference(e => e.SyncInfo).TargetEntry?.CurrentValues.SetValues(module.SyncInfo);
                     }
 
-                    DbContext.Update(existing);
+                    dbContext.Update(existing);
                 }
                 else
                 {
                     await set.AddAsync(module);
                 }
 
-                await DbContext.SaveChangesAsync();
+                await dbContext.SaveChangesAsync();
 
                 // keep in-memory copy in sync as well - replace whole object to reflect all fields
                 var idx = _modules.FindIndex(m => m.Id == module.Id);

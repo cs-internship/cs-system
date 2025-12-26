@@ -8,14 +8,15 @@ namespace CrystaLearn.Core.Services;
 
 public partial class CrystaProgramSyncModuleServiceFake : ICrystaProgramSyncModuleService
 {
-    private static List<CrystaProgramSyncModule> _modules = new();
+    private List<CrystaProgramSyncModule> _modules = new();
+    private bool _initialized = false;
 
     private IConfiguration Configuration { get; set; } = default!;
 
     public CrystaProgramSyncModuleServiceFake(IConfiguration configuration)
     {
         Configuration = configuration;
-        if (_modules.Count == 0)
+        if (!_initialized)
         {
             var pat = Configuration["AzureDevOps:PersonalAccessToken"];
 
@@ -42,6 +43,7 @@ public partial class CrystaProgramSyncModuleServiceFake : ICrystaProgramSyncModu
                     }
                 }
             };
+            _initialized = true;
         }
     }
 
