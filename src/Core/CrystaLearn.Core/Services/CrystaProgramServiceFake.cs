@@ -3,7 +3,7 @@ using CrystaLearn.Core.Services.Contracts;
 
 namespace CrystaLearn.Core.Services;
 
-public partial class CrystaProgramRepositoryFake : ICrystaProgramRepository
+public partial class CrystaProgramServiceFake : ICrystaProgramRepository
 {
     public static CrystaProgram FakeProgramCSI = new()
     {

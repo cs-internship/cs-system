@@ -1,4 +1,4 @@
-using CrystaLearn.Core.Data;
+﻿using CrystaLearn.Core.Data;
 using CrystaLearn.Core.Extensions;
 using CrystaLearn.Core.Models.Crysta;
 using CrystaLearn.Core.Services.Contracts;
@@ -10,6 +10,7 @@ public partial class GithubSyncService : IGithubSyncService
     [AutoInject] private IDocumentRepository DocumentRepository { get; set; } = default!;
     [AutoInject] private AppDbContext DbContext { get; set; } = default!;
     [AutoInject] private ICrystaProgramSyncModuleService CrystaProgramSyncModuleService { get; set; } = default!;
+    [AutoInject] private ICrystaDocumentService CrystaDocumentService { get; set; } = default!;
 
     public async Task<SyncResult> SyncAsync(CrystaProgramSyncModule module, CancellationToken cancellationToken = default)
     {
@@ -56,6 +57,11 @@ public partial class GithubSyncService : IGithubSyncService
         // Track which documents from GitHub we've processed
         var processedKeys = new HashSet<string>();
 
+        // Collect documents to add / update / delete and then save in batch
+        var newDocuments = new List<CrystaDocument>();
+        var updatedDocuments = new List<CrystaDocument>();
+        var deletedDocuments = new List<CrystaDocument>();
+
         foreach (var githubDoc in githubDocuments)
         {
             var key = $"{githubDoc.Code}_{githubDoc.Culture}";
@@ -85,6 +91,8 @@ public partial class GithubSyncService : IGithubSyncService
                     existingDoc.UpdatedAt = DateTimeOffset.Now;
 
                     result.UpdateCount++;
+                    // Keep track to update in batch
+                    updatedDocuments.Add(existingDoc);
                 }
                 else
                 {
@@ -94,17 +102,14 @@ public partial class GithubSyncService : IGithubSyncService
             }
             else
             {
-                // New document - add it
+                // New document - prepare to add it in batch
                 githubDoc.CrystaProgramId = programId;
                 githubDoc.CreatedAt = DateTimeOffset.Now;
                 githubDoc.UpdatedAt = DateTimeOffset.Now;
                 githubDoc.SyncInfo.LastSyncDateTime = DateTimeOffset.Now;
                 githubDoc.SyncInfo.SyncStatus = SyncStatus.Success;
                 githubDoc.SyncInfo.ContentHash = githubDoc.LastHash;
-
-#pragma warning disable NonAsyncEFCoreMethodsUsageAnalyzer
-                DbContext.CrystaDocument.Add(githubDoc);
-#pragma warning restore NonAsyncEFCoreMethodsUsageAnalyzer
+                newDocuments.Add(githubDoc);
                 result.AddCount++;
             }
         }
@@ -118,11 +123,16 @@ public partial class GithubSyncService : IGithubSyncService
                 existingDoc.IsActive = false;
                 existingDoc.UpdatedAt = DateTimeOffset.Now;
                 result.DeleteCount++;
+                deletedDocuments.Add(existingDoc);
             }
         }
 
-        // Save all changes to database
-        await DbContext.SaveChangesAsync(cancellationToken);
+        // Persist changes via the document service (batch save)
+        await CrystaDocumentService.SaveDocumentsAsync(
+            newDocuments,
+            updatedDocuments,
+            deletedDocuments,
+            cancellationToken);
 
         return result;
     }

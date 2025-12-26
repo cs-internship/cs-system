@@ -1,4 +1,4 @@
-using CrystaLearn.Core.Extensions;
+﻿using CrystaLearn.Core.Extensions;
 using CrystaLearn.Core.Models.Crysta;
 using CrystaLearn.Core.Services;
 using CrystaLearn.Core.Services.Contracts;
@@ -15,6 +15,7 @@ public class GithubSyncServiceTests : TestBase
         var services = CreateServiceProvider(configServices: (sc) =>
         {
             sc.AddTransient<ICrystaProgramSyncModuleService, CrystaProgramSyncModuleServiceFake>();
+            sc.AddTransient<ICrystaProgramRepository, CrystaProgramServiceFake>();
             sc.AddSingleton<IDocumentRepository, DocumentRepositoryInMemory>();
         });
 

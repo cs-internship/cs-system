@@ -30,8 +30,10 @@ public static class ApplicationBuilderExtensions
 
         builder.AddGitHubClient();
 
-        services.AddSingleton<IDocumentRepository, DocumentRepositoryInMemory>();
-        services.AddTransient<ICrystaProgramRepository, CrystaProgramRepositoryFake>();
+        services.AddTransient<IDocumentRepository, DocumentRepositoryDirectGitHub>();
+        
+        services.AddTransient<ICrystaProgramRepository, CrystaProgramService>();
+        services.AddTransient<ICrystaDocumentService, CrystaDocumentService>();
         services.AddTransient<IGitHubService, GitHubService>();
         services.AddTransient<IAzureBoardService, AzureBoardService>();
         services.AddTransient<ICrystaProgramSyncService, CrystaProgramSyncService>();

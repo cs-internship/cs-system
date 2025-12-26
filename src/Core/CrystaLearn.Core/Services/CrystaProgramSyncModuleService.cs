@@ -20,7 +20,7 @@ public partial class CrystaProgramSyncModuleService : ICrystaProgramSyncModuleSe
         this.DbContext = dbContext;
         if (_modules.Count == 0)
         {
-            _modules = DbContext.Set<CrystaProgramSyncModule>().ToListAsync().GetAwaiter().GetResult();
+            _modules = DbContext.Set<CrystaProgramSyncModule>().Include(f => f.CrystaProgram).ToListAsync().GetAwaiter().GetResult();
         }
     }
 
