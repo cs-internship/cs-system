@@ -103,4 +103,14 @@ public class CrystaDocumentServiceFake : ICrystaDocumentService
         existing.SyncInfo = src.SyncInfo;
         existing.UpdatedAt = DateTimeOffset.Now;
     }
+
+    public Task<List<CrystaDocument>> GetDocumentsByCrystaUrlAsync(string crystaUrl, CancellationToken cancellationToken = default)
+    {
+        throw new NotImplementedException();
+    }
+
+    public Task<List<CrystaDocument>> GetDocumentsByProgramCodeAsync(string programCode, CancellationToken cancellationToken = default)
+    {
+        throw new NotImplementedException();
+    }
 }
