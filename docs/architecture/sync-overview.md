@@ -23,7 +23,7 @@ graph TB
 
     subgraph "CrystaLearn Sync Layer"
         ABS[AzureBoardSyncService]
-        GHS[GitHubService]
+        GHS[GithubSyncService]
         LIS[LinkedInSyncService*]
         TWS[TwitterSyncService*]
     end
@@ -146,7 +146,7 @@ Each synced entity follows a consistent three-layer service architecture:
    - Orchestrates synchronization between external source and local database
    - Handles change detection via hash comparison
    - Manages incremental sync using timestamps and offsets
-   - Example: `AzureBoardSyncService`
+   - Example: `AzureBoardSyncService`, `GithubSyncService`
 
 3. **Provider Service Layer** (`[Provider]Service`)
    - Low-level communication with external APIs

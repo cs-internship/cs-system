@@ -24,8 +24,8 @@ public partial class CrystaProgramSyncModuleServiceFake : ICrystaProgramSyncModu
                 new CrystaProgramSyncModule
                 {
                     Id = Guid.NewGuid(),
-                    CrystaProgramId = CrystaProgramRepositoryFake.FakeProgramCSI.Id,
-                    CrystaProgram = CrystaProgramRepositoryFake.FakeProgramCSI,
+                    CrystaProgramId = CrystaProgramServiceFake.FakeProgramCSI.Id,
+                    CrystaProgram = CrystaProgramServiceFake.FakeProgramCSI,
                     ModuleType = SyncModuleType.AzureBoard,
                    SyncConfig =
                           $$"""
