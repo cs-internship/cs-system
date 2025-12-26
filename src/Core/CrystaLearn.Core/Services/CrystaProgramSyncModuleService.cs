@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using CrystaLearn.Core.Data;
 using CrystaLearn.Core.Models.Crysta;
 using CrystaLearn.Core.Services.Contracts;
+using Microsoft.EntityFrameworkCore;
 
 namespace CrystaLearn.Core.Services;
 
@@ -16,6 +17,7 @@ public partial class CrystaProgramSyncModuleService : ICrystaProgramSyncModuleSe
     private IDbContextFactory<AppDbContext> DbContextFactory { get; set; } = default!;
     private bool _initialized = false;
     private readonly SemaphoreSlim _initLock = new SemaphoreSlim(1, 1);
+    private readonly SemaphoreSlim _updateLock = new SemaphoreSlim(1, 1);
 
     public CrystaProgramSyncModuleService(IDbContextFactory<AppDbContext> dbContextFactory)
     {
@@ -83,14 +85,22 @@ public partial class CrystaProgramSyncModuleService : ICrystaProgramSyncModuleSe
                 await dbContext.SaveChangesAsync();
 
                 // keep in-memory copy in sync as well - replace whole object to reflect all fields
-                var idx = _modules.FindIndex(m => m.Id == module.Id);
-                if (idx >= 0)
+                await _updateLock.WaitAsync();
+                try
                 {
-                    _modules[idx] = module;
+                    var idx = _modules.FindIndex(m => m.Id == module.Id);
+                    if (idx >= 0)
+                    {
+                        _modules[idx] = module;
+                    }
+                    else
+                    {
+                        _modules.Add(module);
+                    }
                 }
-                else
+                finally
                 {
-                    _modules.Add(module);
+                    _updateLock.Release();
                 }
 
                 return;
@@ -102,14 +112,22 @@ public partial class CrystaProgramSyncModuleService : ICrystaProgramSyncModuleSe
         }
 
         // Fallback: update in-memory collection (replace whole object)
-        var existingInMemoryIndex = _modules.FindIndex(m => m.Id == module.Id);
-        if (existingInMemoryIndex >= 0)
+        await _updateLock.WaitAsync();
+        try
         {
-            _modules[existingInMemoryIndex] = module;
+            var existingInMemoryIndex = _modules.FindIndex(m => m.Id == module.Id);
+            if (existingInMemoryIndex >= 0)
+            {
+                _modules[existingInMemoryIndex] = module;
+            }
+            else
+            {
+                _modules.Add(module);
+            }
         }
-        else
+        finally
         {
-            _modules.Add(module);
+            _updateLock.Release();
         }
     }
 }

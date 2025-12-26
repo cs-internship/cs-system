@@ -10,59 +10,85 @@ public partial class CrystaProgramSyncModuleServiceFake : ICrystaProgramSyncModu
 {
     private List<CrystaProgramSyncModule> _modules = new();
     private bool _initialized = false;
+    private readonly SemaphoreSlim _initLock = new SemaphoreSlim(1, 1);
+    private readonly SemaphoreSlim _updateLock = new SemaphoreSlim(1, 1);
 
     private IConfiguration Configuration { get; set; } = default!;
 
     public CrystaProgramSyncModuleServiceFake(IConfiguration configuration)
     {
         Configuration = configuration;
+    }
+
+    private async Task EnsureInitializedAsync()
+    {
         if (!_initialized)
         {
-            var pat = Configuration["AzureDevOps:PersonalAccessToken"];
-
-            _modules = new List<CrystaProgramSyncModule>
+            await _initLock.WaitAsync();
+            try
             {
-                new CrystaProgramSyncModule
+                if (!_initialized)
                 {
-                    Id = Guid.NewGuid(),
-                    CrystaProgramId = CrystaProgramServiceFake.FakeProgramCSI.Id,
-                    CrystaProgram = CrystaProgramServiceFake.FakeProgramCSI,
-                    ModuleType = SyncModuleType.AzureBoard,
-                   SyncConfig =
-                          $$"""
-                            {
-                                "Organization": "cs-internship",
-                                "PersonalAccessToken": "{{pat}}",
-                                "Project": "CS Internship Program"
-                            }
-                            """,
-                    SyncInfo = new SyncInfo
+                    var pat = Configuration["AzureDevOps:PersonalAccessToken"];
+
+                    _modules = new List<CrystaProgramSyncModule>
                     {
-                        LastSyncDateTime = DateTimeOffset.Now.AddDays(-2),
-                        LastSyncOffset = "0"
-                    }
+                        new CrystaProgramSyncModule
+                        {
+                            Id = Guid.NewGuid(),
+                            CrystaProgramId = CrystaProgramServiceFake.FakeProgramCSI.Id,
+                            CrystaProgram = CrystaProgramServiceFake.FakeProgramCSI,
+                            ModuleType = SyncModuleType.AzureBoard,
+                           SyncConfig =
+                                  $$"""
+                                    {
+                                        "Organization": "cs-internship",
+                                        "PersonalAccessToken": "{{pat}}",
+                                        "Project": "CS Internship Program"
+                                    }
+                                    """,
+                            SyncInfo = new SyncInfo
+                            {
+                                LastSyncDateTime = DateTimeOffset.Now.AddDays(-2),
+                                LastSyncOffset = "0"
+                            }
+                        }
+                    };
+                    _initialized = true;
                 }
-            };
-            _initialized = true;
+            }
+            finally
+            {
+                _initLock.Release();
+            }
         }
     }
 
     public async Task<List<CrystaProgramSyncModule>> GetSyncModulesAsync(CancellationToken cancellationToken)
     {
+        await EnsureInitializedAsync();
         return _modules;
     }
 
     public async Task UpdateSyncModuleAsync(CrystaProgramSyncModule module)
     {
-        var existing = _modules.FirstOrDefault(m => m.Id == module.Id);
-        if (existing != null)
+        await _updateLock.WaitAsync();
+        try
         {
-            existing.SyncInfo = module.SyncInfo;
-            existing.SyncConfig = module.SyncConfig;
+            var existing = _modules.FirstOrDefault(m => m.Id == module.Id);
+            if (existing != null)
+            {
+                existing.SyncInfo = module.SyncInfo;
+                existing.SyncConfig = module.SyncConfig;
+            }
+            else
+            {
+                _modules.Add(module);
+            }
         }
-        else
+        finally
         {
-            _modules.Add(module);
+            _updateLock.Release();
         }
     }
 }
