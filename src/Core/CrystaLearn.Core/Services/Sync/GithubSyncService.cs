@@ -52,8 +52,10 @@ public partial class GitHubSyncService : IGitHubSyncService
             .ToListAsync(cancellationToken);
 
         // Create a map of existing documents by their unique identifier (combination of code and culture)
-        
-        var existingDocMap = existingDocuments.ToDictionary(d => d.SyncInfo.SyncId, d => d);
+        // Filter out documents with null SyncId to prevent ArgumentNullException
+        var existingDocMap = existingDocuments
+            .Where(d => !string.IsNullOrWhiteSpace(d.SyncInfo.SyncId))
+            .ToDictionary(d => d.SyncInfo.SyncId!, d => d);
 
         // Track which documents from GitHub we've processed
         var processedKeys = new HashSet<string>();
@@ -66,6 +68,13 @@ public partial class GitHubSyncService : IGitHubSyncService
         foreach (var githubDoc in githubDocuments)
         {
             var key = githubDoc.SyncInfo.SyncId;
+            
+            // Skip documents with null SyncId to prevent adding null to HashSet
+            if (string.IsNullOrWhiteSpace(key))
+            {
+                continue;
+            }
+            
             processedKeys.Add(key);
 
             if (existingDocMap.TryGetValue(key, out var existingDoc))
@@ -119,6 +128,13 @@ public partial class GitHubSyncService : IGitHubSyncService
         foreach (var existingDoc in existingDocuments)
         {
             var key = existingDoc.SyncInfo.SyncId;
+            
+            // Skip documents with null SyncId to prevent checking null in HashSet
+            if (string.IsNullOrWhiteSpace(key))
+            {
+                continue;
+            }
+            
             if (!processedKeys.Contains(key) && existingDoc.IsActive)
             {
                 existingDoc.IsActive = false;
