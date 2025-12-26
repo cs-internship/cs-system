@@ -54,6 +54,7 @@ public static class GitHubExtensions
         {
             Id = Guid.NewGuid(),
             Code = code,
+            DisplayCode = code,
             Title = title,
             Culture = culture,
             Content = null,
@@ -73,6 +74,7 @@ public static class GitHubExtensions
                 SyncStatus = SyncStatus.Success,
                 ContentHash = item.Sha,
                 SyncStartDateTime = DateTimeOffset.Now,
+                SyncId = item.HtmlUrl
             }
         };
         return doc;

@@ -52,7 +52,8 @@ public partial class GithubSyncService : IGithubSyncService
             .ToListAsync(cancellationToken);
 
         // Create a map of existing documents by their unique identifier (combination of code and culture)
-        var existingDocMap = existingDocuments.ToDictionary(d => $"{d.Code}_{d.Culture}", d => d);
+        
+        var existingDocMap = existingDocuments.ToDictionary(d => d.SyncInfo.SyncId, d => d);
 
         // Track which documents from GitHub we've processed
         var processedKeys = new HashSet<string>();
@@ -64,7 +65,7 @@ public partial class GithubSyncService : IGithubSyncService
 
         foreach (var githubDoc in githubDocuments)
         {
-            var key = $"{githubDoc.Code}_{githubDoc.Culture}";
+            var key = githubDoc.SyncInfo.SyncId;
             processedKeys.Add(key);
 
             if (existingDocMap.TryGetValue(key, out var existingDoc))

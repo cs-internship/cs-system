@@ -1,4 +1,4 @@
-using CrystaLearn.Core.Models.Crysta;
+﻿using CrystaLearn.Core.Models.Crysta;
 
 namespace CrystaLearn.Core.Services.Sync;
 
@@ -65,6 +65,7 @@ public class CrystaDocumentServiceFake : ICrystaDocumentService
         {
             Id = src.Id,
             Code = src.Code,
+            DisplayCode = src.DisplayCode,
             Culture = src.Culture,
             Title = src.Title,
             Content = src.Content,

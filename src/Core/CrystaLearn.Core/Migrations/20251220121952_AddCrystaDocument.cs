@@ -54,12 +54,12 @@ namespace CrystaLearn.Core.Migrations
                         principalColumn: "Id");
                 });
 
-            migrationBuilder.CreateIndex(
-                name: "IX_CrystaDocument_Code",
-                schema: "CrystaLearn",
-                table: "CrystaDocument",
-                column: "Code",
-                unique: true);
+            //migrationBuilder.CreateIndex(
+            //    name: "IX_CrystaDocument_Code",
+            //    schema: "CrystaLearn",
+            //    table: "CrystaDocument",
+            //    column: "Code",
+            //    unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_CrystaDocument_CrystaProgramId",
