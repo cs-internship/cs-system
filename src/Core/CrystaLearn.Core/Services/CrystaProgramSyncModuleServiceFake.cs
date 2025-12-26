@@ -70,9 +70,9 @@ public partial class CrystaProgramSyncModuleServiceFake : ICrystaProgramSyncModu
         return _modules;
     }
 
-    public async Task UpdateSyncModuleAsync(CrystaProgramSyncModule module)
+    public async Task UpdateSyncModuleAsync(CrystaProgramSyncModule module, CancellationToken cancellationToken = default)
     {
-        await _updateLock.WaitAsync();
+        await _updateLock.WaitAsync(cancellationToken);
         try
         {
             var existing = _modules.FirstOrDefault(m => m.Id == module.Id);

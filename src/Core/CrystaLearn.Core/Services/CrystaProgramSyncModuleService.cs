@@ -51,17 +51,17 @@ public partial class CrystaProgramSyncModuleService : ICrystaProgramSyncModuleSe
         return _modules;
     }
 
-    public async Task UpdateSyncModuleAsync(CrystaProgramSyncModule module)
+    public async Task UpdateSyncModuleAsync(CrystaProgramSyncModule module, CancellationToken cancellationToken = default)
     {
         // Try to persist to database if DbContext is available and configured
         try
         {
             if (DbContextFactory != null)
             {
-                await using var dbContext = await DbContextFactory.CreateDbContextAsync(CancellationToken.None);
+                await using var dbContext = await DbContextFactory.CreateDbContextAsync(cancellationToken);
                 var set = dbContext.Set<CrystaProgramSyncModule>();
 
-                var existing = await set.FindAsync(new object[] { module.Id }, cancellationToken: CancellationToken.None);
+                var existing = await set.FindAsync(new object[] { module.Id }, cancellationToken: cancellationToken);
                 if (existing != null)
                 {
                     // Update all scalar properties from incoming module
@@ -79,13 +79,13 @@ public partial class CrystaProgramSyncModuleService : ICrystaProgramSyncModuleSe
                 }
                 else
                 {
-                    await set.AddAsync(module);
+                    await set.AddAsync(module, cancellationToken);
                 }
 
-                await dbContext.SaveChangesAsync();
+                await dbContext.SaveChangesAsync(cancellationToken);
 
                 // keep in-memory copy in sync as well - replace whole object to reflect all fields
-                await _updateLock.WaitAsync();
+                await _updateLock.WaitAsync(cancellationToken);
                 try
                 {
                     var idx = _modules.FindIndex(m => m.Id == module.Id);
@@ -112,7 +112,7 @@ public partial class CrystaProgramSyncModuleService : ICrystaProgramSyncModuleSe
         }
 
         // Fallback: update in-memory collection (replace whole object)
-        await _updateLock.WaitAsync();
+        await _updateLock.WaitAsync(cancellationToken);
         try
         {
             var existingInMemoryIndex = _modules.FindIndex(m => m.Id == module.Id);
