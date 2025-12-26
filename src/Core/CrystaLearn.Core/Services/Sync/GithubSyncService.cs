@@ -54,7 +54,7 @@ public partial class GitHubSyncService : IGitHubSyncService
         // Create a map of existing documents by their unique identifier (combination of code and culture)
         // Filter out documents with null SyncId to prevent ArgumentNullException
         var existingDocMap = existingDocuments
-            .Where(d => d.SyncInfo.SyncId != null)
+            .Where(d => !string.IsNullOrWhiteSpace(d.SyncInfo.SyncId))
             .ToDictionary(d => d.SyncInfo.SyncId!, d => d);
 
         // Track which documents from GitHub we've processed
