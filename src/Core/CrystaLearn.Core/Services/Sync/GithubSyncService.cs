@@ -5,7 +5,7 @@ using CrystaLearn.Core.Services.Contracts;
 
 namespace CrystaLearn.Core.Services.Sync;
 
-public partial class GithubSyncService : IGithubSyncService
+public partial class GitHubSyncService : IGitHubSyncService
 {
     [AutoInject] private IDocumentRepository DocumentRepository { get; set; } = default!;
     [AutoInject] private AppDbContext DbContext { get; set; } = default!;
