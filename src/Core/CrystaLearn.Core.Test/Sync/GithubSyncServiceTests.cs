@@ -21,7 +21,6 @@ public class GithubSyncServiceTests : TestBase
 
         using var scope = services.CreateScope();
         var service = scope.ServiceProvider.GetRequiredService<IGithubSyncService>();
-        var moduleService = scope.ServiceProvider.GetRequiredService<ICrystaProgramSyncModuleService>();
         var programRepo = scope.ServiceProvider.GetRequiredService<ICrystaProgramRepository>();
 
         // Get a test program
