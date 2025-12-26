@@ -21,11 +21,11 @@ public partial class CrystaProgramSyncModuleServiceFake : ICrystaProgramSyncModu
         Configuration = configuration;
     }
 
-    private async Task EnsureInitializedAsync()
+    private async Task EnsureInitializedAsync(CancellationToken cancellationToken = default)
     {
         if (!_initialized)
         {
-            await _initLock.WaitAsync();
+            await _initLock.WaitAsync(cancellationToken);
             try
             {
                 if (!_initialized)
@@ -67,7 +67,7 @@ public partial class CrystaProgramSyncModuleServiceFake : ICrystaProgramSyncModu
 
     public async Task<List<CrystaProgramSyncModule>> GetSyncModulesAsync(CancellationToken cancellationToken)
     {
-        await EnsureInitializedAsync();
+        await EnsureInitializedAsync(cancellationToken);
         return _modules;
     }
 
