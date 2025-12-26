@@ -30,6 +30,11 @@ public partial class DocumentRepositoryDirectGitHub : IDocumentRepository
         foreach(var item in list)
         {
             var doc = item.CreateDocument(program);
+            if (!string.IsNullOrWhiteSpace(doc.SourceHtmlUrl))
+            {
+                doc.Content ??= await GitHubService.GetFileContentAsync(doc.SourceHtmlUrl);
+                doc.Content = doc.GetHtmlContent();
+            }
             result.Add(doc);
         }
 
