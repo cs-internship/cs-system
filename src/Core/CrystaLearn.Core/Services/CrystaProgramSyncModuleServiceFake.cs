@@ -6,12 +6,13 @@ using CrystaLearn.Core.Services.Contracts;
 
 namespace CrystaLearn.Core.Services;
 
-public partial class CrystaProgramSyncModuleServiceFake : ICrystaProgramSyncModuleService
+public partial class CrystaProgramSyncModuleServiceFake : ICrystaProgramSyncModuleService, IDisposable
 {
     private List<CrystaProgramSyncModule> _modules = new();
     private bool _initialized = false;
     private readonly SemaphoreSlim _initLock = new SemaphoreSlim(1, 1);
     private readonly SemaphoreSlim _updateLock = new SemaphoreSlim(1, 1);
+    private bool _disposed = false;
 
     private IConfiguration Configuration { get; set; } = default!;
 
@@ -89,6 +90,16 @@ public partial class CrystaProgramSyncModuleServiceFake : ICrystaProgramSyncModu
         finally
         {
             _updateLock.Release();
+        }
+    }
+
+    public void Dispose()
+    {
+        if (!_disposed)
+        {
+            _initLock?.Dispose();
+            _updateLock?.Dispose();
+            _disposed = true;
         }
     }
 }
