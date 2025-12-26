@@ -41,27 +41,6 @@
 			"options": {
 				"cwd": "${workspaceFolder}/src/Tests"
 			}
-		},
-		{
-			"label": "build",
-			"type": "shell",
-			"command": "dotnet build src/Server/CrystaLearn.Server.Web/CrystaLearn.Server.Web.csproj"
-		},
-		{
-			"label": "run-tests",
-			"type": "shell",
-			"command": "dotnet",
-			"args": [
-				"test"
-			]
-		},
-		{
-			"label": "run-tests",
-			"type": "shell",
-			"command": "dotnet",
-			"args": [
-				"test"
-			]
 		}
 	]
 }
