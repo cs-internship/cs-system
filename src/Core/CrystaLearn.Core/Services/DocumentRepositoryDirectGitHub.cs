@@ -34,6 +34,7 @@ public partial class DocumentRepositoryDirectGitHub : IDocumentRepository
             {
                 doc.Content ??= await GitHubService.GetFileContentAsync(doc.SourceHtmlUrl);
                 doc.Content = doc.GetHtmlContent();
+                doc.Content = new string(doc.Content?.Where(c => c != '\0').ToArray());
             }
             result.Add(doc);
         }

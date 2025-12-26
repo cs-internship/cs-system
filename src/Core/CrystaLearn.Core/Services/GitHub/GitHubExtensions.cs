@@ -1,4 +1,5 @@
-﻿using CrystaLearn.Core.Models.Crysta;
+﻿using CrystaLearn.Core.Extensions;
+using CrystaLearn.Core.Models.Crysta;
 using CrystaLearn.Shared;
 using Markdig;
 
@@ -74,7 +75,7 @@ public static class GitHubExtensions
                 SyncStatus = SyncStatus.Success,
                 ContentHash = item.Sha,
                 SyncStartDateTime = DateTimeOffset.Now,
-                SyncId = item.HtmlUrl
+                SyncId = item.HtmlUrl.Sha()
             }
         };
         return doc;

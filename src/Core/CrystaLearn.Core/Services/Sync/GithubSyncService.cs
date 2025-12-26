@@ -118,7 +118,7 @@ public partial class GithubSyncService : IGithubSyncService
         // Mark documents that are no longer in GitHub as inactive
         foreach (var existingDoc in existingDocuments)
         {
-            var key = $"{existingDoc.Code}_{existingDoc.Culture}";
+            var key = existingDoc.SyncInfo.SyncId;
             if (!processedKeys.Contains(key) && existingDoc.IsActive)
             {
                 existingDoc.IsActive = false;
