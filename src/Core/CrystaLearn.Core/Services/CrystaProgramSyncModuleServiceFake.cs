@@ -6,61 +6,100 @@ using CrystaLearn.Core.Services.Contracts;
 
 namespace CrystaLearn.Core.Services;
 
-public partial class CrystaProgramSyncModuleServiceFake : ICrystaProgramSyncModuleService
+public partial class CrystaProgramSyncModuleServiceFake : ICrystaProgramSyncModuleService, IDisposable
 {
-    private static List<CrystaProgramSyncModule> _modules = new();
+    private List<CrystaProgramSyncModule> _modules = new();
+    private bool _initialized = false;
+    private readonly SemaphoreSlim _initLock = new SemaphoreSlim(1, 1);
+    private readonly SemaphoreSlim _updateLock = new SemaphoreSlim(1, 1);
+    private bool _disposed = false;
 
     private IConfiguration Configuration { get; set; } = default!;
 
     public CrystaProgramSyncModuleServiceFake(IConfiguration configuration)
     {
         Configuration = configuration;
-        if (_modules.Count == 0)
-        {
-            var pat = Configuration["AzureDevOps:PersonalAccessToken"];
+    }
 
-            _modules = new List<CrystaProgramSyncModule>
+    private async Task EnsureInitializedAsync(CancellationToken cancellationToken = default)
+    {
+        if (!_initialized)
+        {
+            await _initLock.WaitAsync(cancellationToken);
+            try
             {
-                new CrystaProgramSyncModule
+                if (!_initialized)
                 {
-                    Id = Guid.NewGuid(),
-                    CrystaProgramId = CrystaProgramServiceFake.FakeProgramCSI.Id,
-                    CrystaProgram = CrystaProgramServiceFake.FakeProgramCSI,
-                    ModuleType = SyncModuleType.AzureBoard,
-                   SyncConfig =
-                          $$"""
-                            {
-                                "Organization": "cs-internship",
-                                "PersonalAccessToken": "{{pat}}",
-                                "Project": "CS Internship Program"
-                            }
-                            """,
-                    SyncInfo = new SyncInfo
+                    var pat = Configuration["AzureDevOps:PersonalAccessToken"];
+
+                    _modules = new List<CrystaProgramSyncModule>
                     {
-                        LastSyncDateTime = DateTimeOffset.Now.AddDays(-2),
-                        LastSyncOffset = "0"
-                    }
+                        new CrystaProgramSyncModule
+                        {
+                            Id = Guid.NewGuid(),
+                            CrystaProgramId = CrystaProgramServiceFake.FakeProgramCSI.Id,
+                            CrystaProgram = CrystaProgramServiceFake.FakeProgramCSI,
+                            ModuleType = SyncModuleType.AzureBoard,
+                           SyncConfig =
+                                  $$"""
+                                    {
+                                        "Organization": "cs-internship",
+                                        "PersonalAccessToken": "{{pat}}",
+                                        "Project": "CS Internship Program"
+                                    }
+                                    """,
+                            SyncInfo = new SyncInfo
+                            {
+                                LastSyncDateTime = DateTimeOffset.Now.AddDays(-2),
+                                LastSyncOffset = "0"
+                            }
+                        }
+                    };
+                    _initialized = true;
                 }
-            };
+            }
+            finally
+            {
+                _initLock.Release();
+            }
         }
     }
 
     public async Task<List<CrystaProgramSyncModule>> GetSyncModulesAsync(CancellationToken cancellationToken)
     {
+        await EnsureInitializedAsync(cancellationToken);
         return _modules;
     }
 
-    public async Task UpdateSyncModuleAsync(CrystaProgramSyncModule module)
+    public async Task UpdateSyncModuleAsync(CrystaProgramSyncModule module, CancellationToken cancellationToken = default)
     {
-        var existing = _modules.FirstOrDefault(m => m.Id == module.Id);
-        if (existing != null)
+        await _updateLock.WaitAsync(cancellationToken);
+        try
         {
-            existing.SyncInfo = module.SyncInfo;
-            existing.SyncConfig = module.SyncConfig;
+            var existing = _modules.FirstOrDefault(m => m.Id == module.Id);
+            if (existing != null)
+            {
+                existing.SyncInfo = module.SyncInfo;
+                existing.SyncConfig = module.SyncConfig;
+            }
+            else
+            {
+                _modules.Add(module);
+            }
         }
-        else
+        finally
         {
-            _modules.Add(module);
+            _updateLock.Release();
+        }
+    }
+
+    public void Dispose()
+    {
+        if (!_disposed)
+        {
+            _initLock?.Dispose();
+            _updateLock?.Dispose();
+            _disposed = true;
         }
     }
 }
