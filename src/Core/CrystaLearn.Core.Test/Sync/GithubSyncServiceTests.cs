@@ -2,6 +2,7 @@
 using CrystaLearn.Core.Models.Crysta;
 using CrystaLearn.Core.Services;
 using CrystaLearn.Core.Services.Contracts;
+using CrystaLearn.Core.Services.Sync;
 using CrystaLearn.Core.Tests.Infra;
 
 namespace CrystaLearn.Core.Tests.Sync;
@@ -16,6 +17,7 @@ public class GitHubSyncServiceTests : TestBase
         {
             sc.AddTransient<ICrystaProgramSyncModuleService, CrystaProgramSyncModuleServiceFake>();
             sc.AddTransient<ICrystaProgramRepository, CrystaProgramServiceFake>();
+            sc.AddTransient<ICrystaDocumentService, CrystaDocumentServiceFake>();
             sc.AddSingleton<IDocumentRepository, DocumentRepositoryInMemory>();
         });
 
