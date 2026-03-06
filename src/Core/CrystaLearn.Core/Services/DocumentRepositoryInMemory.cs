@@ -12,9 +12,9 @@ public partial class DocumentRepositoryInMemory : IDocumentRepository
     [AutoInject] private IGitHubService GitHubService { get; set; } = default;
     [AutoInject] private ICrystaProgramRepository CrystaProgramRepository { get; set; } = default;
 
-    private ConcurrentDictionary<string, List<Document>> ProgramDocs { get; set; } = new();
+    private ConcurrentDictionary<string, List<CrystaDocument>> ProgramDocs { get; set; } = new();
 
-    public async Task<List<Document>> GetDocumentsAsync(string programCode, CancellationToken cancellationToken)
+    public async Task<List<CrystaDocument>> GetDocumentsAsync(string programCode, CancellationToken cancellationToken)
     {
         if (ProgramDocs.TryGetValue(programCode, out var list))
         {
@@ -57,7 +57,7 @@ public partial class DocumentRepositoryInMemory : IDocumentRepository
 
 
 
-    private async Task PopulateContentAsync(Document document)
+    private async Task PopulateContentAsync(CrystaDocument document)
     {
         if (string.IsNullOrWhiteSpace(document.SourceHtmlUrl))
         {
@@ -68,7 +68,7 @@ public partial class DocumentRepositoryInMemory : IDocumentRepository
         document.Content = document.GetHtmlContent();
     }
 
-    private async Task<List<Document>> GetProgramDocsFromGitHubAsync(string programCode, CancellationToken cancellationToken)
+    private async Task<List<CrystaDocument>> GetProgramDocsFromGitHubAsync(string programCode, CancellationToken cancellationToken)
     {
         var program = await CrystaProgramRepository.GetCrystaProgramByCodeAsync(programCode, cancellationToken);
         if (program == null)
@@ -78,7 +78,7 @@ public partial class DocumentRepositoryInMemory : IDocumentRepository
 
         var list = program.DocumentUrl is not null ? await GitHubService.GetFilesAsync(program.DocumentUrl) : [];
 
-        var result = new List<Document>();
+        var result = new List<CrystaDocument>();
 
         foreach (var item in list)
         {

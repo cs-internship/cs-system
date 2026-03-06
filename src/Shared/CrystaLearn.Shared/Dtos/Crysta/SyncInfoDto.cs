@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace CrystaLearn.Shared.Dtos.Crysta;
 public class SyncInfoDto
 {
-    public Guid? SyncId { get; set; }
+    public string? SyncId { get; set; }
     public DateTimeOffset? SyncStartDateTime { get; set; }
     public DateTimeOffset? SyncEndDateTime { get; set; }
     [MaxLength(100)]

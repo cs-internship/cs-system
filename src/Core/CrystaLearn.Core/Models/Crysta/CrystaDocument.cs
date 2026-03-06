@@ -3,10 +3,14 @@ using CrystaLearn.Core.Models.Infra;
 
 namespace CrystaLearn.Core.Models.Crysta;
 
-public class Document : Entity
+[Table("CrystaDocument", Schema = "CrystaLearn")]
+public class CrystaDocument : Entity
 {
-    [MaxLength(150)]
     public virtual string Code { get; set; } = default!;
+
+    [MaxLength(150)]
+    public virtual string DisplayCode { get; set; } = default!;
+
     [MaxLength(200)]
     public virtual string Title { get; set; } = default!;
     [MaxLength(10)] 

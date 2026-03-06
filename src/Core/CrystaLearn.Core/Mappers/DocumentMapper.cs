@@ -7,5 +7,5 @@ namespace CrystaLearn.Core.Mappers;
 [Mapper]
 public static partial class DocumentMapper
 {
-    public static partial DocumentDto Map(this Document source);
+    public static partial DocumentDto Map(this CrystaDocument source);
 }

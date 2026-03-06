@@ -1,11 +1,12 @@
-﻿using CrystaLearn.Core.Models.Crysta;
+﻿using CrystaLearn.Core.Extensions;
+using CrystaLearn.Core.Models.Crysta;
 using CrystaLearn.Shared;
 using Markdig;
 
 namespace CrystaLearn.Core.Services.GitHub;
 public static class GitHubExtensions
 {
-    public static Models.Crysta.Document CreateDocument(this GitHubItem item, CrystaProgram program)
+    public static Models.Crysta.CrystaDocument CreateDocument(this GitHubItem item, CrystaProgram program)
     {
         string culture = "";
         string programDocUrl = program.DocumentUrl ?? throw new Exception($"Program with code '{program.Code}' has no document url.");
@@ -50,10 +51,11 @@ public static class GitHubExtensions
 
         var folderPath = relativePath;
 
-        var doc = new Models.Crysta.Document
+        var doc = new Models.Crysta.CrystaDocument
         {
             Id = Guid.NewGuid(),
             Code = code,
+            DisplayCode = code,
             Title = title,
             Culture = culture,
             Content = null,
@@ -73,12 +75,13 @@ public static class GitHubExtensions
                 SyncStatus = SyncStatus.Success,
                 ContentHash = item.Sha,
                 SyncStartDateTime = DateTimeOffset.Now,
+                SyncId = item.HtmlUrl.Sha()
             }
         };
         return doc;
     }
 
-    public static string? GetHtmlContent(this Models.Crysta.Document doc)
+    public static string? GetHtmlContent(this Models.Crysta.CrystaDocument doc)
     {
         var content = doc.Content;
         if (content == null)
