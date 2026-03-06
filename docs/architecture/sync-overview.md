@@ -23,7 +23,7 @@ graph TB
 
     subgraph "CrystaLearn Sync Layer"
         ABS[AzureBoardSyncService]
-        GHS[GithubSyncService]
+        GHS[GitHubSyncService]
         LIS[LinkedInSyncService*]
         TWS[TwitterSyncService*]
     end
