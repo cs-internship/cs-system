@@ -37,11 +37,14 @@ The solution is organized into the following projects. Understand their roles to
 *   **CrystaLearn.Server.Web**: The application's default startup project and entry point. It hosts `App.razor` and configures Blazor Server and server-side rendering (SSR).
 *   **CrystaLearn.Server.Shared**: (Also known as Aspire's ServiceDefaults) Contains common code shared between the `Server.Api` and `Server.Web` projects.
 *   **CrystaLearn.Shared**: Contains shared DTOs, enums, custom exceptions, shared services, and `.resx` resource files.
-*   **CrystaLearn.Tests**: Contains all UI and integration tests.
+*   **CrystaLearn.Test**: Contains integration tests, identity tests, and end-to-end application tests.
+*   **CrystaLearn.Core.Test**: Contains unit tests for core services (GitHub, Azure DevOps, TextUtil).
 *   **CrystaLearn.Client.Core**: The heart of the client application. Contains all shared Blazor components, pages, layouts, client-side services, and the primary `App.ts` and `App.scss` files.
 *   **CrystaLearn.Client.Web**: The Blazor WebAssembly (WASM) standalone project.
 *   **CrystaLearn.Client.Maui**: The .NET MAUI Blazor Hybrid project for native mobile and desktop apps.
 *   **CrystaLearn.Client.Windows**: The Windows Forms Blazor Hybrid project.
+*   **CrystaLearn.Console**: Console application for administrative tasks and batch operations.
+*   **CrystaLearn.Core**: Core business logic, domain models, and services shared across the application.
 
 ## 4. Available Tooling
 
@@ -88,9 +91,10 @@ After applying changes, you **MUST** verify the integrity of the application.
 
 -   **Build the project**: Run `dotnet build` in CrystaLearn.Server.Web project root directory.
 -   **Run the project**: Run `dotnet run` in CrystaLearn.Server.Web project root directory.
--   **Run tests**: Run `dotnet test` in CrystaLearn.Tests project root directory.
+-   **Run tests**: Run `dotnet test` in the solution root directory or in specific test project directories (CrystaLearn.Test or CrystaLearn.Core.Test).
 -   **Add new migrations**: Run `dotnet ef migrations add <MigrationName> --verbose` in CrystaLearn.Server.Api project root directory.
 -   **Generate Resx C# code**: Run `dotnet build -t:PrepareResources` in CrystaLearn.Shared project root directory.
+-   **Restore packages**: Run `dotnet restore` in the solution root directory.
 
 ## 8. Coding Conventions & Best Practices
 
@@ -99,10 +103,10 @@ After applying changes, you **MUST** verify the integrity of the application.
 03. **Embrace Nullable Reference Types**: All new code must be nullable-aware.
 04. **Use Dependency Injection**: Use the `[AutoInject]` attribute in components. For other classes, use constructor injection.
 05. **Implement Structured Logging**: Use structured logging for clear, queryable application logs.
-06. **Adhere to Security Best Practices**: Implement robust authentication and authorization patterns.
+06. **Adhere to Security Best Practices**: Implement robust authentication and authorization patterns. Never commit secrets or sensitive data.
 07. **Use Async Programming**: Employ `async/await` for all I/O-bound operations to prevent blocking.
-08. **Write Modern C#**: Utilize the latest C# features, including implicit and global using statements.
-09. **Respect .editorconfig**: Adhere to the `.editorconfig` settings for consistent code style.
+08. **Write Modern C#**: Utilize the latest C# features, including implicit and global using statements, file-scoped namespaces, and records.
+09. **Respect .editorconfig**: Adhere to the `.editorconfig` settings for consistent code style. Use 4 spaces for indentation, file-scoped namespaces, and PascalCase for constants.
 10. **Use Code-Behind Files**: Place component logic in `.razor.cs` files instead of `@code` blocks.
 11. **Use Scoped SCSS Files**: Place component styles in `.razor.scss` files for CSS isolation.
 12. **Style Bit.BlazorUI Components Correctly**: Use the `::deep` selector in your `.scss` files to style `Bit.BlazorUI` components.
@@ -114,6 +118,8 @@ Example 2: `OnClick="WrapHandled(async () => await MyMethod())"` instead of `OnC
 16. **Use OData Query Options**: Leverage `[EnableQuery]` and `ODataQueryOptions` for efficient data filtering and pagination.
 17. **Follow Mapperly Conventions**: Use partial static classes and extensions methods with Mapperly for high-performance object mapping.
 18. **Handle Concurrency**: Always use `ConcurrencyStamp` for optimistic concurrency control in update and delete operations.
+19. **Write Tests**: Add tests for new functionality in the appropriate test project (CrystaLearn.Test for integration tests, CrystaLearn.Core.Test for unit tests).
+20. **Document Your Code**: Add XML documentation comments for public APIs, complex algorithms, and non-obvious implementations.
 
 ## Instructions for adding new model/entity to ef-core DbContext / Database
 Create the Entity Model
@@ -173,3 +179,70 @@ Create the Mapper
   - Implement validation in private methods
   - Use `Project()` for querying and mapping
   - Handle resource not found scenarios using ResourceNotFoundException.
+
+## 9. Testing Guidelines
+
+### Test Project Structure
+- **CrystaLearn.Test**: Integration tests, identity tests, and end-to-end tests
+- **CrystaLearn.Core.Test**: Unit tests for core services and utilities (GitHub, Azure DevOps, TextUtil)
+
+### Writing Tests
+- Use xUnit as the testing framework
+- Follow AAA pattern: Arrange, Act, Assert
+- Use descriptive test method names that explain what is being tested
+- Mock external dependencies appropriately
+- Ensure tests are isolated and can run independently
+- Use `AppTestServer.cs` for integration tests that require the full application context
+
+### Running Tests
+- Run all tests: `dotnet test` from solution root
+- Run specific test project: `dotnet test <path-to-test-project>`
+- Use `.runsettings` file for test configuration when available
+
+## 10. Documentation Standards
+
+### Code Documentation
+- Add XML documentation comments (`///`) for all public APIs
+- Document complex algorithms with inline comments
+- Keep comments up-to-date with code changes
+- Use clear, concise language
+
+### Markdown Documentation
+- Follow the structure in `/docs` directory:
+  - `/docs/technical` - Technical documentation (architecture, setup, API)
+  - `/docs/standards` - Contribution and workflow standards
+  - `/docs/roadmap` - Feature roadmaps and planning
+- Use relative links for internal documentation references
+- Keep README.md updated with major changes
+
+## 11. Contribution Workflow
+
+Before starting work, review these documents:
+- [Contribution Guidelines](/docs/standards/contribution.md) - Fork, branch, commit, and PR workflow
+- [Working on Issues](/docs/standards/working-on-issues.md) - How to claim and complete issues
+- [Setup Development Environment](/docs/technical/setup-dev-environment.md) - Local environment setup
+
+### Branch Strategy
+- Base branch: `develop`
+- Feature branches: `feature/<feature-name>`
+- Bug fix branches: `fix/<bug-name>`
+- Always create PRs against `develop` branch
+
+### Commit Messages
+- Use descriptive commit messages
+- Format: `<Type>: <Short description>`
+- Examples: `feat: Add user profile page`, `fix: Resolve authentication issue`
+
+## 12. Security and Secrets Management
+
+- **NEVER** commit secrets, connection strings, access tokens, or sensitive data to source control
+- Use `dotnet user-secrets` for local development secrets
+- Required secrets for development:
+  - `ConnectionStrings:PostgresConnectionString` - Database connection string
+  - `GitHub:GitHubAccessToken` - GitHub API access token
+  - `AzureDevOps:PersonalAccessToken` - Azure DevOps PAT
+- Initialize secrets in these projects:
+  - `src/Server/CrystaLearn.Server.Web`
+  - `src/Console/CrystaLearn.Console`
+  - `src/Core/CrystaLearn.Core.Test`
+- See [Setup Development Environment](/docs/technical/setup-dev-environment.md) for detailed instructions
